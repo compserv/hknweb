@@ -9,6 +9,7 @@ class Event(models.Model):
     start_time  = models.DateTimeField(null=False)
     end_time    = models.DateTimeField(null=False)
     event_type_id = models.IntegerField()
+    # event_type_id  = models.ForeignKey()
     need_transportation = models.BooleanField(default=False)
     view_permission_group_id = models.IntegerField(null=True)
     rsvp_permission_group_id = models.IntegerField(null=True)
@@ -62,4 +63,4 @@ class Rsvp(models.Model):
     updated_at      = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return "RSVP(person_id={}, event_id={})".format(self.person_id, self.event_id)
+        return "RSVP(person_id={}, event_id={})".format(self.person, self.event)
