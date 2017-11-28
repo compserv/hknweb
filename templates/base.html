@@ -1,0 +1,52 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		{% block 'title' %}
+		{% endblock %}
+		<!-- Icon font -->
+		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+
+		<!-- MaterializeCSS -->
+		<link type="text/css" rel="stylesheet" href="{% static 'css/materialize.min.css' %}" media="screen,projection" />
+
+		<!-- We should have a mobile version too -->
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+		<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+		<script type="text/javascript" src="{% static 'js/materialize.min.js' %}"></script>
+		<script type="text/javascript" src="{% static 'js/init.js' %}"></script>		
+
+		{% block extra_head_stuff %}
+		{% endblock %}
+	</head>
+	<body>
+		<nav class="blue" role="navigation">
+			<div class="nav-wrapper container">
+				
+				<a href="#" data-activates="nav-mobile" class="button-collapse">
+					<i class="material-icons">
+						menu
+					</i>
+				</a>
+				<ul style="margin-top: 5px" class="left hide-on-med-and-down">
+					<li> <h5 class="white-text">HKN Candidate Portal</h5> </li>
+				</ul>
+				<ul id="nav-mobile" class="side-nav">
+					<li>
+						<a href="#">
+							menu
+						</a>
+					</li>
+				</ul>
+			</div>
+		</nav>
+		<br />
+		<br />
+		{% block 'content' %}
+		{% endblock %}
+		<br />
+		<br />
+	</body>
+</html>
