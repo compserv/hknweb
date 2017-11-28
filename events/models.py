@@ -10,11 +10,16 @@ class Event(models.Model):
     end_time    = models.DateTimeField(null=False)
     event_type_id = models.IntegerField()
     need_transportation = models.BooleanField(default=False)
-    view_permission_group_id = models.ForeignKey('people.Group', on_delete=models.SET_NULL, null=True)
-    rsvp_permission_group_id = models.ForeignKey('people.Group', on_delete=models.SET_NULL, null=True)
+    view_permission_group_id = models.IntegerField(null=True)
+    rsvp_permission_group_id = models.IntegerField(null=True)
+    # view_permission_group_id = models.ForeignKey('people.Group', on_delete=models.SET_NULL, null=True)
+    # rsvp_permission_group_id = models.ForeignKey('people.Group', on_delete=models.SET_NULL, null=True)
     markdown    = models.BooleanField(default=False)
     created_at  = models.DateTimeField(auto_now_add=True)
     updated_at  = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return "Event(name={}, location={})".format(self.name, self.location)
 
 
 class Rsvp(models.Model):
@@ -47,10 +52,14 @@ class Rsvp(models.Model):
                                        choices=CONFIRMATION,
                                        default=UNCONFIRMED)
     confirm_comment = models.TextField()
-    person_id       = models.ForeignKey('people.Person', on_delete=models.CASCADE)
+    person_id       = models.IntegerField(null=True)
+    # person_id       = models.ForeignKey('people.Person', on_delete=models.CASCADE)
     event_id        = models.ForeignKey(Event, on_delete=models.CASCADE)
     comment         = models.TextField()
     transportation  = models.IntegerField(choices=TRANSPORT_ENUM,
                                           default=HAVE_RIDE)
     created_at      = models.DateTimeField(auto_now_add=True)
     updated_at      = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return "RSVP(person_id={}, event_id={})".format(self.person_id, self.event_id)
