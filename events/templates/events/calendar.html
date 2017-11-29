@@ -1,125 +1,40 @@
+{% extends "base.html" %}
 {% load static %}
 
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset='utf-8' />
-<link href="{% static "stylesheets/fullcalendar.min.css"%}" rel='stylesheet' />
-<link href="{% static "stylesheets/fullcalendar.print.min.css" %}" rel='stylesheet' media='print' />
-<script src="{% static "javascripts/moment.min.js" %}"></script>
-<script src="{% static "javascripts/jquery.min.js" %}"></script>
-<script src="{% static "javascripts/fullcalendar.min.js" %}"></script>
-<script>
+{% block title %}Events{% endblock %}
 
-    $(document).ready(function() {
+{% block header %}
+<link rel='stylesheet' href="{% static "css/fullcalendar.min.css" %}" />
+<link rel='stylesheet' href="{% static "css/fullcalendar.print.min.css" %}" media='print' />
+<script src="{% static "js/moment.min.js" %}"></script>
+<script src="{% static "js/jquery.min.js" %}"></script>
+<script src="{% static "js/fullcalendar.min.js" %}"></script>
 
-        $('#calendar').fullCalendar({
-            header: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'month,basicWeek,basicDay'
-            },
-            defaultDate: '2017-10-12',
-            navLinks: true, // can click day/week names to navigate views
-            editable: true,
-            eventLimit: true, // allow "more" link when too many events
-            events: [
-                {
-                    title: 'All Day Event',
-                    start: '2017-10-01'
-                },
-                {
-                    title: 'Long Event',
-                    start: '2017-10-07',
-                    end: '2017-10-10'
-                },
-                {
-                    id: 999,
-                    title: 'Repeating Event',
-                    start: '2017-10-09T16:00:00'
-                },
-                {
-                    id: 999,
-                    title: 'Repeating Event',
-                    start: '2017-10-16T16:00:00'
-                },
-                {
-                    title: 'Conference',
-                    start: '2017-10-11',
-                    end: '2017-10-13'
-                },
-                {
-                    title: 'Meeting',
-                    start: '2017-10-12T10:30:00',
-                    end: '2017-10-12T12:30:00'
-                },
-                {
-                    title: 'Lunch',
-                    start: '2017-10-12T12:00:00'
-                },
-                {
-                    title: 'Meeting',
-                    start: '2017-10-12T14:30:00'
-                },
-                {
-                    title: 'Happy Hour',
-                    start: '2017-10-12T17:30:00'
-                },
-                {
-                    title: 'Dinner',
-                    start: '2017-10-12T20:00:00'
-                },
-                {
-                    title: 'Birthday Party',
-                    start: '2017-10-13T07:00:00'
-                },
-                {
-                    title: 'Click for Google',
-                    url: 'http://google.com/',
-                    start: '2017-10-28'
-                }
-            ]
-        });
+<link href="{% static "css/calendar.css" %}" rel='stylesheet' />
+<script src="{% static "js/calendar.js" %}"></script>
+{% endblock %}
 
-    });
+{% block content %}
+<h1 class="">HKN Events</h1>
 
-</script>
-<style>
+<h2>Calendar</h2>
+<div id='calendar'></div>
 
-    body {
-        margin: 40px 10px;
-        padding: 0;
-        font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
-        font-size: 14px;
-    }
+<h2>Agenda</h2>
+<div id='agenda'></div>
 
-    #calendar {
-        max-width: 900px;
-        margin: 0 auto;
-    }
+{% comment %}
+<div style="float:right;text-align:right">
+<%= link_to "public event feed", events_ical_url({ format: :ics, protocol: "webcal" }) %>
+<% if @current_user %>
+    <!-- figure out auth for feeds later -->
+    <br /><%= link_to "download my visible events", ical_events_url({ format: :ics })%>
+<% end %>
+<br /><a href="http://www.google.com/calendar/render?cid=http%3A%2F%2Fwebcal%3A%2F%2Fhkn.eecs.berkeley.edu%2Fevents%2Fhkn.ics" target="_blank"><img src="//www.google.com/calendar/images/ext/gc_button1.gif" border=0></a>
+</div>
 
-</style>
-</head>
-<body>
-    <h1>HKN Events Calendar</h1>
-
-    <div id='calendar'></div>
-
-    {% comment %} {% block calendar %} {% endcomment %}
-
-    {% comment %}
-    <div style="float:right;text-align:right">
-    <%= link_to "public event feed", events_ical_url({ format: :ics, protocol: "webcal" }) %>
-    <% if @current_user %>
-        <!-- figure out auth for feeds later -->
-        <br /><%= link_to "download my visible events", ical_events_url({ format: :ics })%>
-    <% end %>
-    <br /><a href="http://www.google.com/calendar/render?cid=http%3A%2F%2Fwebcal%3A%2F%2Fhkn.eecs.berkeley.edu%2Fevents%2Fhkn.ics" target="_blank"><img src="//www.google.com/calendar/images/ext/gc_button1.gif" border=0></a>
-    </div>
-
-    <% if @auth["officers"] || @auth["assistants"] || @auth["cmembers"] %>
-    <span style="float:left"><%= link_to 'New Event', new_event_path %></span>
-    <% end %>
-    {% endcomment %}
-</body>
-</html>
+<% if @auth["officers"] || @auth["assistants"] || @auth["cmembers"] %>
+<span style="float:left"><%= link_to 'New Event', new_event_path %></span>
+<% end %>
+{% endcomment %}
+{% endblock %}
