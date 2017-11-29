@@ -10,10 +10,9 @@ def index(request):
 
 def calendar(request):
     events = Event.objects.order_by('-created_at')[:10]
-    output = '\n'.join([str(event) for event in events])
 
     context = {
-        'events': output,
+        'events': events,
     }
     return render(request, 'events/calendar.html', context)
 

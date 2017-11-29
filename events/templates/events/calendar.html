@@ -21,7 +21,13 @@
 <div id='calendar'></div>
 
 <h2>Agenda</h2>
-<div id='agenda'></div>
+<div id='agenda'>
+ {% for event in events %}
+    <h3>{{ event.name }}</h3>
+    <p>{{ event.description }}</p>
+    <br/>
+{% endfor %}
+</div>
 
 {% comment %}
 <div style="float:right;text-align:right">
