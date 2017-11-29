@@ -15,8 +15,10 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
+import hknweb.views as views
 
 urlpatterns = [
     url(r'^events/', include('hknweb.events.urls')),
     url(r'^admin/', admin.site.urls),
+    url(r'^account-settings/', views.account_settings)
 ]
