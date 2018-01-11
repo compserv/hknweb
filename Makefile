@@ -1,21 +1,16 @@
-BIN := venv/bin
-PYTHON := $(BIN)/python
 DEV_LISTEN_IP := 0.0.0.0
 DEV_PORT := 3000
 
 .PHONY: dev
 dev: venv
-	@echo -e "\e[1m\e[93mRunning on http://$(shell hostname -f):$(DEV_PORT)/\e[0m"
-	$(PYTHON) ./manage.py runserver $(DEV_LISTEN_IP):$(DEV_PORT)
+	@echo -e "\e[1m\e[93mRunning on http://localhost:$(DEV_PORT)/\e[0m"
+	pipenv run python ./manage.py runserver $(DEV_LISTEN_IP):$(DEV_PORT)
 
-venv: requirements.txt requirements-dev.txt
-	python ./vendor/venv-update venv= venv -ppython3 install= \
-		-r requirements.txt -r requirements-dev.txt
+venv: Pipfile Pipfile.lock
+	pipenv install --dev --three
 
-.PHONY: clean
 clean:
-	rm -rf venv
+	pipenv uninstall --all --rm
 
-.PHONY: update-requirements
-update-requirements: venv
-	$(BIN)/upgrade-requirements
+update: venv
+	pipenv update
