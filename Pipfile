@@ -3,6 +3,9 @@ url = "https://pypi.python.org/simple"
 verify_ssl = true
 name = "pypi"
 
+[required]
+python_version = "3.7"
+
 [packages]
 django = ">=2.0"
 pymysql = ">=0.7.11"

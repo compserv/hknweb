@@ -24,7 +24,7 @@ $ make venv
 
 To run the Django development server (which runs a web server locally), run
 ```sh
-$ make dev
+$ make serve
 ```
 
 which will make the web site available at `http://localhost:3000`.
