@@ -1,6 +1,7 @@
 # hknweb-specific stuff
-/venv
+.vagrant/
 db.sqlite3
+venv/
 
 # Generic python stuff
 __pycache__/
