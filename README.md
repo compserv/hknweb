@@ -7,7 +7,7 @@ website, built with Django.
 ## Setup
 
 hknweb uses Django 2.0, which requires Python 3.4+. However, the latest
-version (Python 3.7) is recommended.
+version (Python 3.6) is recommended.
 
 Development requires [`pipenv`](https://docs.pipenv.org):
 

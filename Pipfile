@@ -3,13 +3,12 @@ url = "https://pypi.python.org/simple"
 verify_ssl = true
 name = "pypi"
 
-[required]
-python_version = "3.7"
+[requires]
+python_version = "3"
 
 [packages]
 django = ">=2.0"
 pymysql = ">=0.7.11"
-pytz = "==2017.3"
 
 [dev-packages]
 pre-commit = "*"
