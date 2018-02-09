@@ -5,7 +5,7 @@ DEV_PORT := 3000
 dev: venv serve
 
 venv: Pipfile Pipfile.lock
-	pipenv --venv || pipenv install --three --dev
+	pipenv install --dev
 
 serve:
 	@echo -e "\e[1m\e[93mRunning on http://$(DEV_LISTEN_IP):$(DEV_PORT)/\e[0m"
