@@ -56,9 +56,12 @@ $ pip install pipenv
 For systems without sudo privileges, the following will work:
 
 ```sh
-$ pip install --user pipenv
+$ make setup
 ```
-as well as adding `~/.local/bin` to your `PATH` variable. On Linux, for instance,
+
+which will also install the Python dev environment (Python dependencies, a virtualenv).
+You will need to add the binary location to your `PATH` variable.
+On Linux, this is `~/.local/bin`, and on Windows, this is `AppData\Roaming\Python\bin`.
 
 ```sh
 $ echo "export PATH="$PATH:$HOME/.local/bin" >> .bashrc
@@ -66,16 +69,16 @@ $ echo "export PATH="$PATH:$HOME/.local/bin" >> .bashrc
 
 Django will also require a working copy of MySQL (or MariaDB).
 
-To install the Python dev environment (Python dependencies, a virtualenv), run
-```sh
-$ make venv
-```
-
 ## Development
 
 To run the Django development server (which runs a web server locally), run
 ```sh
-$ make serve
+$ make dev
+```
+
+or more simply,
+```sh
+$ make
 ```
 
 which will make the web site available at `http://localhost:3000`.
