@@ -1,12 +1,13 @@
 DEV_LISTEN_IP := localhost
 DEV_PORT := 3000
+PIP_HOME := $(shell python -c "import site; import os; print(os.path.join(site.USER_BASE, 'bin'))")
 
 .PHONY: dev
 dev: venv serve
 
 setup:
-	pip install --local pipenv
-	@echo 'Please add $HOME/.local/bin to your PATH variable.'
+	pip install --user pipenv > /dev/null
+	@echo "Please add $(PIP_HOME) to your PATH variable."
 
 venv: Pipfile Pipfile.lock
 	pipenv install --dev
