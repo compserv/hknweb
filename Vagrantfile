@@ -80,10 +80,15 @@ Vagrant.configure("2") do |config|
     dpkg-reconfigure -f noninteractive tzdata
 
     apt-get update
-    apt-get install -y make curl make tmux vim git mariadb-server
+    apt-get install -y make curl make tmux vim git mariadb-server python3 python3-pip
 
     # Set up MySQL database and development user
-    mysql -e "CREATE DATABASE hkn;"
+    mysql -e "CREATE DATABASE IF NOT EXISTS hkn;"
     mysql -e "GRANT ALL PRIVILEGES ON hkn.* TO 'hkn'@'localhost' IDENTIFIED BY 'hknweb-dev';"
+
+    # Setup pipenv and virtualenv
+    cd /vagrant
+    pip3 install pipenv
+    make venv
   SHELL
 end
