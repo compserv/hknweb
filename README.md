@@ -6,8 +6,6 @@ built with Django.
 
 ## Setup (Quick)
 
-**TODO**: merge Vagrant branch.
-
 This approach is simpler if you are new to developing software.
 
 **Vagrant** will automatically setup a virtual machine with the correct
