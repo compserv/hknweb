@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>{% block title %}{% endblock %}</title>
+
+    <!-- Mobile-responsive rendering -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- jQuery, the one and only -->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+
+    <link rel="stylesheet" href="{% static "css/base.css" %}">
+
+    {% block header %}{% endblock %}
+</head>
+<body>
+    <header id="header">
+        <nav class="header-nav">
+            <a class="header-icon" href="#" title="Home">
+                <img src="{% static "img/hkn-bear-golden.svg" %}"
+                     alt="HKN Logo"
+                     height="48px" />
+            </a>
+            <a class="header-link" href="#" title="Student Services">Student Services</a>
+            <a class="header-link" href="#" title="Industry Relations">Industry Relations</a>
+            <a class="header-link" href="#" title="Events">Events</a>
+            <a class="header-link" href="#" title="Service">Service</a>
+            <a class="header-link" href="#" title="Alumni">Alumni</a>
+            <a class="header-link" href="#" title="About">About HKN</a>
+            <a class="header-link" href="#" title="Login">Login</a>
+            <a class="header-link" href="#" title="Register">Register</a>
+        </nav>
+    </header>
+    <div id="content">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

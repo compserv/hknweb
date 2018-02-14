@@ -1,0 +1,5 @@
+[client]
+database = hkn
+user =
+password =
+default-character-set = utf8
