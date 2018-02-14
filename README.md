@@ -16,24 +16,26 @@ setup for developing `hknweb`.
 Install [Vagrant](https://www.vagrantup.com/) and [VirtualBox](https://www.virtualbox.org/),
 then run:
 
-```
-vagrant up
+```sh
+$ vagrant up
 ```
 
 which will download and boot a Linux virtual machine, then run setup.
 
 To access the environment, run
 
-```
-vagrant ssh
+```sh
+$ vagrant ssh
 ```
 
 which will `ssh` your terminal into the virtual machine.
 
+See [Development](#development) for how to run the Django web server.
+
 To turn off the virtual machine, run
 
-```
-vagrant halt
+```sh
+$ vagrant halt
 ```
 
 which will attempt to safely shutdown the virtual machine, or kill it otherwise.
@@ -60,7 +62,7 @@ $ make setup
 ```
 
 which will also install the Python dev environment (Python dependencies, a virtualenv).
-You will need to add the binary location to your `PATH` variable.
+Without sudo privileges, you will need to add the binary location to your `PATH` variable.
 On Linux, this is `~/.local/bin`, and on Windows, this is `AppData\Roaming\Python\bin`.
 
 ```sh
@@ -79,6 +81,12 @@ $ make dev
 or more simply,
 ```sh
 $ make
+```
+
+In a Vagrant box, run
+```sh
+$ cd /vagrant
+$ make dev-vagrant
 ```
 
 which will make the web site available at `http://localhost:3000`.

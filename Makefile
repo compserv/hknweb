@@ -5,8 +5,11 @@ PIP_HOME = $(shell python3 -c "import site; import os; print(os.path.join(site.U
 
 .PHONY: dev
 dev:
-	@echo -e "\e[1m\e[93mRunning on http://${DEV_LISTEN_IP}:${DEV_PORT}/\e[0m"
-	pipenv run python ./manage.py runserver ${DEV_LISTEN_IP}:${DEV_PORT}
+	pipenv run python ./manage.py runserver $(DEV_LISTEN_IP):$(DEV_PORT)
+
+.PHONY: dev-vagrant
+dev-vagrant:
+	pipenv run python ./manage.py runserver [::]:$(DEV_PORT)
 
 setup: pipenv venv
 
