@@ -16,6 +16,9 @@ def calendar(request):
     }
     return render(request, 'events/calendar.html', context)
 
+def calendar(request):
+    return redirect('/events')
+
 
 def future(request):
     return HttpResponse("Hello, world. You're at the future index.")

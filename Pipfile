@@ -8,7 +8,9 @@ python_version = "3"
 
 [packages]
 django = ">=2.0"
-pymysql = ">=0.7.11"
+mysqlclient = "*"
+livereload = "*"
+dj-static = "*"
 
 [dev-packages]
 pre-commit = "*"

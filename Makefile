@@ -11,6 +11,11 @@ dev:
 dev-vagrant:
 	pipenv run python ./manage.py runserver [::]:$(DEV_PORT)
 
+.PHONY: livereload
+livereload:
+	pipenv run python ./manage.py livereload $(DEV_LISTEN_IP):$(DEV_PORT)
+
+
 setup: pipenv venv
 
 .PHONY: pipenv
