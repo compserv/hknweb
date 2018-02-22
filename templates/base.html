@@ -7,8 +7,12 @@
 
   <!-- Mobile-responsive rendering -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="{% static "css/base.css" %}">
 
+  <!-- Tachyon CSS - tachyons.io -->
+  <link rel="stylesheet" href="https://unpkg.com/tachyons/css/tachyons.min.css">
+
+  <!-- Base CSS -->
+  <link rel="stylesheet" href="{% static "css/base.css" %}">
   {% block header %}{% endblock %}
 </head>
 <body>
