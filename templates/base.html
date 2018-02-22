@@ -16,8 +16,8 @@
   {% block header %}{% endblock %}
 </head>
 <body>
-  <header>
-    <nav class="dt w-100 bg-near-black bb b--silver border-box">
+  <header class="w-100 bg-near-black">
+    <nav class="dt w-100 border-box">
       <a class="dtc pa1 tc" href="#" title="Home">
           <img src="{% static "img/hkn-bear-golden.svg" %}" alt="HKN Logo" height="48px" />
       </a>
@@ -38,5 +38,12 @@
   <div id="content">
     {% block content %}{% endblock %}
   </div>
+  <footer class="dt w-100 bg-black pa2 border-box">
+    <a class="dtc link b white v-mid pl3" href="#">Contact</a>
+    <a class="dtc tr v-mid" href="https://www.ocf.berkeley.edu">
+      <img src="{% static "img/ocf-hosted-penguin-dark.svg" %}" alt="Hosted by
+      the OCF" />
+    </a>
+  </footer>
 </body>
 </html>
