@@ -9,17 +9,19 @@
   <script src="http://unpkg.com/jquery/dist/jquery.slim.min.js"></script>
   <script src="http://unpkg.com/fullcalendar/dist/fullcalendar.min.js"></script>
 {% endblock %}
+
 {% block content %}
 <div class="center w-80">
-  <h1 class="f2 tc">HKN Events</h1>
+  <h1 class="f3 f2-ns tc">HKN Events</h1>
 
-  <h2 class="f3">Calendar</h2>
-  <section id='calendar'></section>
+  <h2 class="f4 f3-ns">Calendar</h2>
+  <div id='calendar'>
+  </div>
 
-  <h2 class="f3">Agenda</h2>
+  <h2 class="f4 f3-ns">Agenda</h2>
   <section id='agenda'>
     {% for event in events %}
-      <h3 class="f4 mv2">{{ event.name }}</h3>
+      <h3 class="f5 f4-l mv2">{{ event.name }}</h3>
       <p class="f5 lh-copy mv2">{{ event.location }}</p>
       <blockquote class="ml0 mt0 pl4 black-90 bl bw2 b--blue">
         <p class="f5 lh-copy mt0">{{ event.description }}</p>

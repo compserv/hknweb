@@ -16,36 +16,40 @@
   {% block header %}{% endblock %}
 </head>
 <body>
+  <div class="min-vh-100 relative">
   <header>
     <nav class="dt border-box bg-near-black w-100 sans-serif pv1 pv0-ns">
-      <a class="dtc v-mid w-20 w-20-ns tc" href="#" title="Home">
+      <a class="dtc v-mid w-10 tc" href="#" title="Home">
           <img class="w2 w3-ns h2 h3-ns" src="{% static "img/hkn-bear-golden.svg" %}" alt="HKN" />
       </a>
-      <div class="f7 dtc w-60 w-50-ns tc tl-ns v-mid">
-        <a class="b near-white link pv1 pv2-ns mr3 dib hover-yellow" href="#" title="Students">Students</a>
-        <a class="b near-white link pv1 pv2-ns mr3 dib hover-yellow" href="#" title="Industry">Industry</a>
-        <a class="b near-white link pv1 pv2-ns mr3 dib hover-yellow" href="/events" title="Events">Events</a>
-        <a class="b near-white link pv1 pv2-ns mr3 dib hover-yellow" href="#" title="Service">Service</a>
-        <a class="b near-white link pv1 pv2-ns mr3 dib hover-yellow" href="#" title="Alumni">Alumni</a>
+      <div class="f6 f5-ns dtc w-50 w-60-l tc tl-ns v-mid">
+        <a class="dib b near-white link pv1 pv2-ns mh2 hover-yellow" href="#" title="Students">Students</a>
+        <a class="dib b near-white link pv1 pv2-ns mh2 hover-yellow" href="#" title="Industry">Industry</a>
+        <a class="dib b near-white link pv1 pv2-ns mh2 hover-yellow" href="/events" title="Events">Events</a>
+        <a class="dib b near-white link pv1 pv2-ns mh2 hover-yellow" href="#" title="Service">Service</a>
+        <a class="dib b near-white link pv1 pv2-ns mh2 hover-yellow" href="#" title="Alumni">Alumni</a>
       </div>
-      <div class="f7 dtc w-20 w-30-ns tc v-mid">
-        <a class="b near-white link dib mh2 mr3-ns pv1 pv3-ns ph2 hover-yellow" href="#" title="Register">Register</a>
-        <a class="b bg-near-white near-black link dib mh2 mv2-ns pv1 pv2-ns ph2 ba br2 hover-bg-yellow" href="#" title="Login">Login</a>
+      <div class="f6 f5-ns dtc w-30 w-20-l tc tr-ns v-mid ph3">
+        <a class="dib b near-white link pv1 pv3-ns ph2 hover-yellow" href="#" title="Register">Register</a>
+        <a class="dib b bg-near-white near-black link pv1 pv2-ns ph2 ba br2 hover-bg-yellow" href="#" title="Login">Login</a>
       </div>
     </nav>
   </header>
-  <div id="content">
+  <main id="content">
     {% block content %}{% endblock %}
-  </div>
-  <footer>
+  </main>
+  <footer class="absolute bottom-0 w-100">
     <nav class="dt border-box w-100 bg-black sans-serif">
-      <a class="dtc b near-white link v-mid pv3 pl3 mr3 w-25 hover-yellow" href="#">Contact</a>
-      <a class="dtc b near-white link v-mid pv3 mr3 w-25 hover-yellow" href="#" title="About">About</a>
-      <a class="dtc tr v-mid w-50 pv1" href="https://www.ocf.berkeley.edu">
+      <div class="dtc f6 f5-ns w-50 tl v-mid">
+        <a class="dib b near-white link pv3 pl3 mr3 hover-yellow" href="#">Contact</a>
+        <a class="dib b near-white link pv3 mr3 hover-yellow" href="#" title="About">About</a>
+      </div>
+      <a class="dtc tr v-mid w-50" href="https://www.ocf.berkeley.edu">
         <img src="{% static "img/ocf-hosted-penguin-dark.svg" %}" alt="Hosted by
         the OCF" />
       </a>
     </nav>
   </footer>
+  </div>
 </body>
 </html>
