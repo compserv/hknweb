@@ -16,19 +16,23 @@
   {% block header %}{% endblock %}
 </head>
 <body>
-  <header id="header">
-    <nav class="header-nav">
-      <a class="header-icon" href="#" title="Home">
+  <header>
+    <nav class="dt w-100 bg-near-black bb b--silver border-box">
+      <a class="dtc pa1 tc" href="#" title="Home">
           <img src="{% static "img/hkn-bear-golden.svg" %}" alt="HKN Logo" height="48px" />
       </a>
-      <a class="header-link" href="#" title="Student Services">Student Services</a>
-      <a class="header-link" href="#" title="Industry Relations">Industry Relations</a>
-      <a class="header-link" href="#" title="Events">Events</a>
-      <a class="header-link" href="#" title="Service">Service</a>
-      <a class="header-link" href="#" title="Alumni">Alumni</a>
-      <a class="header-link" href="#" title="About">About HKN</a>
-      <a class="header-link" href="#" title="Login">Login</a>
-      <a class="header-link" href="#" title="Register">Register</a>
+      <div class="dtc v-mid pa2">
+        <a class="f5 b near-white link mr3 dib dim" href="#" title="Student Services">Student Services</a>
+        <a class="f5 b near-white link mr3 dib dim" href="#" title="Industry">Industry</a>
+        <a class="f5 b near-white link mr3 dib dim" href="#" title="Events">Events</a>
+        <a class="f5 b near-white link mr3 dib dim" href="#" title="Service">Service</a>
+        <a class="f5 b near-white link mr3 dib dim" href="#" title="Alumni">Alumni</a>
+        <a class="f5 b near-white link mr3 dib dim" href="#" title="About">About HKN</a>
+      </div>
+      <div class="dtc v-mid pa2 pr3 tr">
+        <a class="f5 b near-white link mr3 dib dim" href="#" title="Register">Register</a>
+        <a class="f5 b near-white link mr3 dib dim pv2 ph4 ba br2 b--near-white" href="#" title="Login">Login</a>
+      </div>
     </nav>
   </header>
   <div id="content">

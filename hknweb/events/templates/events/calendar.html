@@ -9,10 +9,11 @@
   <script src="http://unpkg.com/jquery/dist/jquery.slim.min.js"></script>
   <script src="http://unpkg.com/fullcalendar/dist/fullcalendar.min.js"></script>
   <script src="{% static "calendar.js" %}"></script>
-{% endblock %}
 
+{% endblock %}
 {% block content %}
-  <h1 class="">HKN Events</h1>
+<div class="center measure measure-wide-ns">
+  <h1 class="tc">HKN Events</h1>
 
   <h2>Calendar</h2>
   <div id='calendar'></div>
@@ -25,6 +26,7 @@
     <br/>
   {% endfor %}
   </div>
+</div>
 
   <!-- TODO: add public event feed (ical) -->
 {% endblock %}
