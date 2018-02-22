@@ -4,31 +4,27 @@
 {% block title %}Events{% endblock %}
 
 {% block header %}
-<link rel='stylesheet' href="{% static "css/fullcalendar.min.css" %}" />
-<link rel='stylesheet' href="{% static "css/fullcalendar.print.min.css" %}" media='print' />
-<script src="{% static "js/moment.min.js" %}"></script>
-<script src="{% static "js/jquery.min.js" %}"></script>
-<script src="{% static "js/fullcalendar.min.js" %}"></script>
-
-<link href="{% static "css/calendar.css" %}" rel='stylesheet' />
-<script src="{% static "js/calendar.js" %}"></script>
+  <link rel='stylesheet' href="http://unpkg.com/fullcalendar/dist/fullcalendar.min.css" />
+  <script src="http://unpkg.com/moment/min/moment.min.js"></script>
+  <script src="http://unpkg.com/jquery/dist/jquery.slim.min.js"></script>
+  <script src="http://unpkg.com/fullcalendar/dist/fullcalendar.min.js"></script>
+  <script src="{% static "js/calendar.js" %}"></script>
 {% endblock %}
 
 {% block content %}
-<h1 class="">HKN Events</h1>
+  <h1 class="">HKN Events</h1>
 
-<h2>Calendar</h2>
-<div id='calendar'></div>
+  <h2>Calendar</h2>
+  <div id='calendar'></div>
 
-<h2>Agenda</h2>
-<div id='agenda'>
- {% for event in events %}
+  <h2>Agenda</h2>
+  <div id='agenda'>
+  {% for event in events %}
     <h3>{{ event.name }}</h3>
     <p>{{ event.description }}</p>
     <br/>
-{% endfor %}
-</div>
+  {% endfor %}
+  </div>
 
-<!-- TODO: add public event feed (ical) -->
-
+  <!-- TODO: add public event feed (ical) -->
 {% endblock %}
