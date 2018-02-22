@@ -5,16 +5,12 @@ from django.template import loader
 from .models import Event
 
 def index(request):
-    return redirect('calendar')
-
-
-def calendar(request):
     events = Event.objects.order_by('-created_at')[:10]
 
     context = {
         'events': events,
     }
-    return render(request, 'events/calendar.html', context)
+    return render(request, 'events/index.html', context)
 
 
 def future(request):
