@@ -88,4 +88,3 @@ $ make dev-vagrant
 ```
 
 which will make the web site available at `http://localhost:3000`.
-
