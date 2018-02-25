@@ -9,6 +9,8 @@ $(document).ready(function () {
     navLinks: true, // can click day/week names to navigate views
     editable: true,
     eventLimit: true, // allow "more" link when too many events
+    fixedWeekCount: false,
+    aspectRatio: 1.75,
     events: [
       {
         title: 'All Day Event',
