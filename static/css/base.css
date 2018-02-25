@@ -1,5 +1,33 @@
  /* @import url('https://fonts.googleapis.com/css?family=Open+Sans'); */
 
-.sans-serif {
+/* fonts */
+.font-body {
   font-family: "Open Sans", Arial, Helvetica, sans-serif
+}
+
+.font-title {
+  font-family: "Open Sans", Arial, Helvetica, sans-serif
+}
+
+/* wide measure (max-width) */
+.measure-very-wide {
+  max-width: 72em;
+}
+
+@media (--breakpoint-not-small) {
+  .measure-very-wide-ns {
+    max-width: 72em;
+  }
+}
+
+@media (--breakpoint-medium) {
+  .measure-very-wide-m {
+    max-width: 72em;
+  }
+}
+
+@media (--breakpoint-large) {
+  .measure-very-wide-l {
+    max-width: 72em;
+  }
 }

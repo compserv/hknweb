@@ -12,13 +12,13 @@
 {% endblock %}
 
 {% block content %}
-<div class="center w-80 pv4">
-  <h1 class="f3 f2-ns tc">HKN Events</h1>
+<div class="center measure-very-wide pv4">
+  <h1 class="font-title f3 f2-ns tc">HKN Events</h1>
 
   <section id='calendar'></section>
 
   <section id='agenda'>
-  <h2 class="f4 f3-ns">Agenda</h2>
+    <h2 class="font-title f4 f3-ns">Agenda</h2>
     {% for event in events %}
       <h3 class="f5 f4-l mv2">{{ event.name }}</h3>
       <p class="f5 lh-copy mv2">{{ event.location }}</p>
