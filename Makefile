@@ -15,7 +15,7 @@ setup: pipenv venv
 
 .PHONY: pipenv
 pipenv:
-	pip install --user pipenv
+	pip3 install --user pipenv
 	@echo Please add $(PIP_HOME) to your PATH variable.
 
 .PHONY: venv
