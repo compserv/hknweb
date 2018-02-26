@@ -24,6 +24,7 @@ venv: Pipfile Pipfile.lock
 
 .PHONY: test
 test: venv
+	pipenv run pytest -v tests/
 	pipenv run pre-commit run --all-files
 
 .PHONY: clean
