@@ -22,6 +22,11 @@ pipenv:
 venv: Pipfile Pipfile.lock
 	pipenv install --dev
 
+.PHONY: test
+test: venv
+	pipenv run pytest -v tests/
+	pipenv run pre-commit run --all-files
+
 .PHONY: clean
 clean:
 	pipenv --rm
@@ -29,4 +34,3 @@ clean:
 .PHONY: update
 update: venv
 	pipenv update
-
