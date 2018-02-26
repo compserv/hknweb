@@ -13,7 +13,7 @@ class Profile(models.Model):
     phone_regex = RegexValidator(regex=r'^/([^\d]*\d){10}$/', message="Phone number must be ten digits.")
     phone_number = models.CharField(validators=[phone_regex], max_length=15, blank=True)
     resume = models.FileField(blank=True)
-    graduation_date = models.DateField()
+    graduation_date = models.DateField(blank=True)
 
     @receiver(post_save, sender=User)
     def create_user_profile(sender, instance, created, **kwargs):

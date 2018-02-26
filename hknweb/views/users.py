@@ -1,13 +1,14 @@
 from django.shortcuts import redirect
 from django.http import HttpResponse
 from django.http import JsonResponse
-from hknweb.models import *
-import ast
+from hknweb.models import Profile
+# import ast
 from django.contrib.auth.models import User
-from hknweb.forms import SettingsForm
+from hknweb.forms import SettingsForm, ProfileForm
 from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
+from django.shortcuts import render
 
 @login_required
 def account_settings(request):
@@ -26,7 +27,7 @@ def account_settings(request):
             user = password_form.save()
             update_session_auth_hash(request, user)
             messages.success(request, _('Your profile was successfully updated!'))
-            return redirect('/account_settings')
+            return redirect('/account/settings')
         else:
             messages.error(request, _('Please correct the errors.'))
     else:
@@ -34,4 +35,4 @@ def account_settings(request):
         password_form =  PasswordChangeForm(current_user)
         profile_form = ProfileForm(instance = current_user.profile)
         context = {"user": current_user, 'user_form': user_form, 'password_form': password_form, 'profile_form': profile_form}
-        return render(request, 'account_settings.html', context=context)
+        return render(request, 'account/settings.html', context=context)
