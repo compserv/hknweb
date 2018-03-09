@@ -14,6 +14,8 @@ python_version = "3"
 
 django = ">=2.0"
 mysqlclient = "*"
+livereload = "*"
+whitenoise = "*"
 
 
 [dev-packages]
