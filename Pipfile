@@ -1,18 +1,25 @@
 [[source]]
+
 url = "https://pypi.python.org/simple"
 verify_ssl = true
 name = 'pypi'
 
+
 [requires]
+
 python_version = "3"
 
+
 [packages]
+
 django = ">=2.0"
 mysqlclient = "*"
 livereload = "*"
-dj-static = "*"
+whitenoise = "*"
+
 
 [dev-packages]
+
 pre-commit = "*"
 pytest = "*"
 pytest-django = "*"
