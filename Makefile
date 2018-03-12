@@ -11,11 +11,16 @@ dev:
 dev-vagrant:
 	pipenv run python ./manage.py runserver [::]:$(DEV_PORT)
 
+.PHONY: livereload
+livereload:
+	pipenv run python ./manage.py livereload $(DEV_LISTEN_IP):$(DEV_PORT)
+
+
 setup: pipenv venv
 
 .PHONY: pipenv
 pipenv:
-	pip install --user pipenv
+	pip3 install --user pipenv || pip install --user pipenv
 	@echo Please add $(PIP_HOME) to your PATH variable.
 
 .PHONY: venv
