@@ -19,4 +19,5 @@ from django.contrib import admin
 urlpatterns = [
     url(r'^events/', include('hknweb.events.urls')),
     url(r'^admin/', admin.site.urls),
+    url(r'^people/', include('hknweb.people.urls')),
 ]
