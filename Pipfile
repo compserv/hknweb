@@ -16,6 +16,7 @@ django = ">=2.0"
 mysqlclient = "*"
 livereload = "*"
 whitenoise = "*"
+pillow = "*"
 
 
 [dev-packages]
