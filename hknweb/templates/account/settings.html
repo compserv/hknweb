@@ -1,0 +1,12 @@
+<h1>Account Settings</h1>
+
+<form action="/account_settings/" method="post">
+	{% csrf_token %}
+	<h2>Account settings</h2>
+	{{ user_form.as_p }}
+	<h2>Change password</h2>
+	{{ password_form.as_p}}
+	<h2>Edit profile</h2>
+	{{ profile_form.as_p}}
+	<button type="submit">Save</button>
+</form>
