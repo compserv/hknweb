@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'hknweb',
     'hknweb.events',
+    'hknweb.people',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
