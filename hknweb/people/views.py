@@ -2,15 +2,9 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.template import loader
 
-# from .models import Event
 
 def index(request):
-    # events = Event.objects.order_by('-created_at')[:10]
-
-    # context = {
-    #     'events': events,
-    # }
-    return render(request, 'events/index.html', context)
+    return HttpResponse("Hello, world. You're at the people index.")
 
 
 def officers(request):
