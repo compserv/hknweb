@@ -17,6 +17,7 @@ mysqlclient = "*"
 livereload = "*"
 whitenoise = "*"
 pillow = "*"
+django-markdownx = ">=2.0"
 
 
 [dev-packages]

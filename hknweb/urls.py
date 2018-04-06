@@ -27,4 +27,6 @@ urlpatterns = [
         path('login/', login, {'template_name': 'admin/login.html'}),
         path('logout/', logout),
     ]))
+    
+    url(r'^pages/', include('hknweb.markdown_pages.urls')),
 ]

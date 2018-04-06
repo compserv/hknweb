@@ -46,3 +46,6 @@ target/
 # Emacs stuff
 \#*\#
 *~
+
+# VSCode
+.vscode/
