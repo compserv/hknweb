@@ -16,7 +16,7 @@ livereload:
 	pipenv run python ./manage.py livereload $(DEV_LISTEN_IP):$(DEV_PORT)
 
 
-setup: pipenv venv
+setup: pipenv venv migrate
 
 .PHONY: pipenv
 pipenv:
@@ -26,6 +26,10 @@ pipenv:
 .PHONY: venv
 venv: Pipfile Pipfile.lock
 	pipenv install --dev
+
+.PHONY: migrate
+migrate:
+	pipenv run python ./manage.py migrate
 
 .PHONY: test
 test: venv
