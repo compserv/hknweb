@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+
+pipenv run gunicorn -w 2 -b unix:/srv/apps/$(whoami)/dev-$(whoami).sock --log-file - main:app
