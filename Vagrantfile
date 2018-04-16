@@ -50,7 +50,7 @@ Vagrant.configure("2") do |config|
   # the path on the host to the actual folder. The second argument is
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
-  config.vm.synced_folder ".", "/vagrant", type: "virtualbox"
+  config.vm.synced_folder ".", "/home/vagrant/hknweb", type: "virtualbox", mount_options: ["dmode=755", "fmode=644"]
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -96,6 +96,6 @@ Vagrant.configure("2") do |config|
     mysql -e "GRANT ALL PRIVILEGES ON hkn.* TO 'hkn'@'localhost' IDENTIFIED BY 'hknweb-dev';"
 
     # Setup pipenv and virtualenv
-    su - vagrant -c 'cd /vagrant; make setup'
+    su - vagrant -c 'cd ~/hknweb; make setup'
   SHELL
 end
