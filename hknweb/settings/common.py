@@ -73,9 +73,11 @@ WSGI_APPLICATION = 'hknweb.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'hknweb',
+        'HOST': 'mysql',
         'OPTIONS': {
-            'read_default_file': './db.cnf',
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            'read_default_file': "~/.my.cnf",
         },
     },
 }
