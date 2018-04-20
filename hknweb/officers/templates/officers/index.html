@@ -4,30 +4,29 @@
 {% block title %}Events{% endblock %}
 
 {% block header %}
-  <link rel='stylesheet' href="http://unpkg.com/fullcalendar/dist/fullcalendar.min.css" />
-  <script src="http://unpkg.com/moment/min/moment.min.js"></script>
-  <script src="http://unpkg.com/jquery/dist/jquery.slim.min.js"></script>
-  <script src="http://unpkg.com/fullcalendar/dist/fullcalendar.min.js"></script>
-  <script src="{% static "calendar.js" %}"></script>
+<!--asdd -->
 {% endblock %}
 
 {% block content %}
 <div class="center measure-very-wide pv4">
-  <h1 class="font-title f3 f2-ns tc">HKN Events</h1>
+  <h1 class="font-title f3 f2-ns tc">HKN Officers</h1>
+  <h2> Excs </h2>
 
-  <section id='calendar'></section>
+  <div class = "cf">
+    <div class = "fl w-30">
+      <h3>president(pre@hkn)</h3>
+      <img></img>
+      <p>Alice Tang</p>
+      <p>alicetang@hkn</p>
+    </div>
+    <div class = "fl w-30">
+      <h3>vice president(pre@hkn)</h3>
+      <img></img>
+      <p>Kevin Chen</p>
+      <p>KevinChen@hkn</p>
+    </div>
+  </div>
 
-  <section id='agenda'>
-    <h2 class="font-title f4 f3-ns">Agenda</h2>
-    {% for event in events %}
-      <h3 class="f5 f4-l mv2">{{ event.name }}</h3>
-      <p class="f5 lh-copy mv2">{{ event.location }}</p>
-      <blockquote class="ml0 mt0 pl4 black-90 bl bw2 b--blue">
-        <p class="f5 lh-copy mt0">{{ event.description }}</p>
-      </blockquote>
-      <br/>
-    {% endfor %}
-  </section>
 </div>
 
   <!-- TODO: add public event feed (ical) -->

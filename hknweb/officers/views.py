@@ -10,7 +10,7 @@ def index(request):
     context = {
         # 'events': events,
     }
-    return render(request, 'events/index.html', context)
+    return render(request, 'officers/index.html', context)
 
 
 # def future(request):
