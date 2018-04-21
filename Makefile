@@ -22,7 +22,6 @@ dev-c9:
 livereload:
 	pipenv run python ./manage.py livereload $(DEV_LISTEN_IP):$(DEV_PORT)
 
-
 setup: pipenv venv migrate
 
 .PHONY: pipenv
@@ -50,3 +49,8 @@ clean:
 .PHONY: update
 update: venv
 	pipenv update
+
+.PHONY: mysql
+mysql:
+	mysql -e "CREATE DATABASE IF NOT EXISTS hkn;"
+	mysql -e "GRANT ALL PRIVILEGES ON hkn.* TO 'hkn'@'localhost' IDENTIFIED BY 'hknweb-dev';"
