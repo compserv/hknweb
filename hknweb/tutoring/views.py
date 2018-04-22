@@ -16,18 +16,20 @@ def past(request):
     return HttpResponse("Hello, world. You're at the past index.")
 
 def index(request):
-	days = Day.objects.order_by('id')
-	#slots_per_day = [day.slot_set.all().order_by('starttime') for day in days]
-	monday_slots = Day.objects.get(id=0).slot_set.order_by('starttime')
-	slotcount = Slot.objects.count()
-	#for i in range(0,slotcount):
-	#	tutors_per_slot +=  [Slot.objects.get(id=i).tutor_set.all()]
-
+	days = Day.objects.order_by('id').all()
+	slots_11 = Slot.objects.filter(starttime=11).order_by('day_id').all()
+	slots_12 = Slot.objects.filter(starttime=12).order_by('day_id').all()
+	slots_1 = Slot.objects.filter(starttime=1).order_by('day_id').all()
+	slots_2 = Slot.objects.filter(starttime=2).order_by('day_id').all()
+	slots_3 = Slot.objects.filter(starttime=3).order_by('day_id').all()
+	slots_4 = Slot.objects.filter(starttime=4).order_by('day_id').all()
 	context = {
 		'days' : days,
-		#'slots_per_day' : slots_per_day,
-		#'tutors_per_slot' : tutors_per_slot,
-		'monday_slots' : monday_slots,
-
+		'slots_11' : slots_11,
+		'slots_12' : slots_12,
+		'slots_1' : slots_1,
+		'slots_2' : slots_2,
+		'slots_3' : slots_3,
+		'slots_4' : slots_4,
 	}
 	return render(request, 'tutoring/index.html', context)
