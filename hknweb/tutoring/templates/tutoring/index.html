@@ -20,6 +20,7 @@ table {
 th {
 	width: 100px;
 	text-align: center;
+	padding: 15px;
 	border-bottom: 1px solid #ddd;
 }
 
@@ -37,7 +38,6 @@ td {
 .tooltip {
     position: relative;
     display: inline-block;
-    border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
 }
 
 /* Tooltip text */
@@ -59,6 +59,9 @@ td {
     z-index: 1;
 }
 
+li {
+	padding-bottom: 5px;
+}
 /* Show the tooltip text when you mouse over the tooltip container */
 .tooltip:hover .tooltiptext {
     visibility: visible;
@@ -70,7 +73,7 @@ td {
 
 <div class="center measure-very-wide pv4">
 <h1 class="font-title f3 f2-ns tc">Tutoring Schedule</h1>
-<table>
+<table class="font-body">
 	<tr>
 		<th>Hours</th>
 		{% for day in days %}
@@ -83,13 +86,13 @@ td {
 		{% for slot in slots_11 %}
 			<td>
 			{% for tutor in slot.tutor_set.all %}  
-				<p class="tooltip">{{tutor.name}}
+				<li class="tooltip">{{tutor.name}}
 					<span class="tooltiptext">
 						{% for course in tutor.courses.all %}
 							{{course.name}}
 						{% endfor %}
 					</span>
-				</p>
+				</li>
 			{% endfor %}
 			</td>
 		{% endfor %}
@@ -101,13 +104,13 @@ td {
 			<td>
 			{% for tutor in slot.tutor_set.all %} 
 
-				<p class="tooltip">{{tutor.name}}
+				<li class="tooltip">{{tutor.name}}
 					<span class="tooltiptext">
 						{% for course in tutor.courses.all %}
 							{{course.name}}
 						{% endfor %}
 					</span>
-				</p>
+				</li>
 			{% endfor %}
 			</td>
 		{% endfor %}
@@ -118,13 +121,13 @@ td {
 		{% for slot in slots_1 %}
 			<td>
 			{% for tutor in slot.tutor_set.all %}  
-				<p class="tooltip">{{tutor.name}}
+				<li class="tooltip">{{tutor.name}}
 					<span class="tooltiptext">
 						{% for course in tutor.courses.all %}
 							{{course.name}}
 						{% endfor %}
 					</span>
-				</p>
+				</li>
 			{% endfor %}
 			</td>
 		{% endfor %}
@@ -135,13 +138,13 @@ td {
 		{% for slot in slots_2 %}
 			<td>
 			{% for tutor in slot.tutor_set.all %}  
-				<p class="tooltip">{{tutor.name}}
+				<li class="tooltip">{{tutor.name}}
 					<span class="tooltiptext">
 						{% for course in tutor.courses.all %}
 							{{course.name}}
 						{% endfor %}
 					</span>
-				</p>
+				</li>
 			{% endfor %}
 			</td>
 		{% endfor %}
@@ -152,13 +155,13 @@ td {
 		{% for slot in slots_3 %}
 			<td>
 			{% for tutor in slot.tutor_set.all %}  
-				<p class="tooltip">{{tutor.name}}
+				<li class="tooltip">{{tutor.name}}
 					<span class="tooltiptext">
 						{% for course in tutor.courses.all %}
 							{{course.name}}
 						{% endfor %}
 					</span>
-				</p>
+				</li>
 			{% endfor %}
 			</td>
 		{% endfor %}
@@ -169,13 +172,13 @@ td {
 		{% for slot in slots_4 %}
 			<td>
 			{% for tutor in slot.tutor_set.all %}  
-				<p class="tooltip">{{tutor.name}}
+				<li class="tooltip">{{tutor.name}}
 					<span class="tooltiptext">
 						{% for course in tutor.courses.all %}
 							{{course.name}}
 						{% endfor %}
 					</span>
-				</p>
+				</li>
 			{% endfor %}
 			</td>
 		{% endfor %}
