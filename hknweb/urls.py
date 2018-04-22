@@ -26,5 +26,6 @@ urlpatterns = [
         path('settings/', views.account_settings),
         path('login/', login, {'template_name': 'admin/login.html'}),
         path('logout/', logout),
-    ]))
+    ])),
+    path('tutoring/', include('hknweb.tutoring.urls'))
 ]

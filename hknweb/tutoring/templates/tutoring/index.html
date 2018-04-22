@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Tutoring{% endblock %}
+
+{% block header %}
+  <link rel='stylesheet' href="http://unpkg.com/fullcalendar/dist/fullcalendar.min.css" />
+  <script src="http://unpkg.com/moment/min/moment.min.js"></script>
+  <script src="http://unpkg.com/jquery/dist/jquery.slim.min.js"></script>
+  <script src="http://unpkg.com/fullcalendar/dist/fullc
+alendar.min.js"></script>
+  <script src="{% static "calendar.js" %}"></script>
+{% endblock %}
+
+{% block content %}
+{% for day in days %}
+	<h3> {{ day.name }} </h3>
+	{% for slot in day.slot_set.all %}
+		<p> {{ slot.starttime}} </p>
+		<p> {{ slot.endtime}} </p>
+		{% for tutor in slot.tutor_set.all %}
+			<p> {{tutor.name}} <p>
+			{% for course in tutor.courses.all %}
+				<p> {{course.name}} <p>
+			{% endfor %}
+		{% endfor %}
+	{% endfor %}	
+{% endfor %}
+{% endblock %}
