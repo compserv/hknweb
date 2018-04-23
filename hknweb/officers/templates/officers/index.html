@@ -2,6 +2,7 @@
 {% load static %}
 {% block title %}Officers{% endblock %}
 {% block header %}
+  <link rel="stylesheet"  href="{% static 'css/index.css' %}" />
 {% endblock %}
 
 {% block content %}
@@ -9,10 +10,10 @@
   <h1 class="font-title f3 f2-ns tc">HKN Officers</h1>
   <h2> Excs </h2>
   <hr>
-  <div class = "execs">
+  <div class = "branch">
     {% for officer in officers %}
     {% if officer.department == "Execs" %}
-    <div class="exec">
+    <div class = "member">
       <h3> {{officer.title}} ({{officer.email}})</h3>
       <div class = "photo ">
         <img style="max-width: 125px; height: 100px;" src= officer.image alt = {{officer.name}}>
@@ -25,12 +26,12 @@
   </div>
   <h2> Committees </h2>
   <hr>
-  <div class = "committees">
-    <div class = "activities">
-      <h3>Activities (act@hkn)</h3>
+  <div class = "Committees">
+    <h3>Activities (act@hkn)</h3>
+    <div class = "branch">
       {% for officer in officers %}
       {% if officer.department == "Activities" %}
-      <div class="activities">
+      <div class = "member">
         <div class = "photo ">
           <img style="max-width: 125px; height: 100px;" src= officer.image alt = {{officer.name}}>
         </div> 
@@ -41,11 +42,11 @@
       {% endif %}
       {% endfor %}
     </div>
-    <div class = "bridge">
-      <h3>Bridge (bridge@hkn)</h3>
+    <h3>Bridge (bridge@hkn)</h3>
+    <div class = "branch">
       {% for officer in officers %}
       {% if officer.department == "Bridge" %}
-      <div class="bridge">
+      <div class = "member">
         <div class = "photo ">
           <img style="max-width: 125px; height: 100px;" src= officer.image alt = {{officer.name}}>
         </div>
@@ -56,11 +57,11 @@
       {% endif %}
       {% endfor %}
     </div>
-    <div class = "computing Services">
-      <h3>Computing Services (compserv@hkn)</h3>
+    <h3>Computing Services (compserv@hkn)</h3>
+    <div class = "branch">
       {% for officer in officers %}
       {% if officer.department == "Computing Services" %}
-      <div class="computing Services">
+      <div class = "member">
         <div class = "photo ">
           <img style="max-width: 125px; height: 100px;" src= officer.image alt = {{officer.name}}>
         </div> 
@@ -71,11 +72,11 @@
       {% endif %}
       {% endfor %}
     </div>
-    <div class = "decal">
-      <h3>Decal (decal@hkn)</h3>
+    <h3>Decal (decal@hkn)</h3>
+    <div class = "branch">  
       {% for officer in officers %}
       {% if officer.department == "Decal" %}
-      <div class="decal">
+      <div class = "decal">
         <div class = "photo ">
           <img style="max-width: 125px; height: 100px;" src= officer.image alt = {{officer.name}}>
         </div> 
@@ -86,11 +87,11 @@
       {% endif %}
       {% endfor %}
     </div>
-    <div class = "industrial relations">
-      <h3>Industrial relations (indrel@hkn)</h3>
+    <h3>Industrial relations (indrel@hkn)</h3>
+    <div class = "branch">
       {% for officer in officers %}
       {% if officer.department == "Industrial relations" %}
-      <div class="industrial relations">
+      <div class="industrial-relations">
         <div class = "photo ">
           <img style="max-width: 125px; height: 100px;" src= officer.image alt = {{officer.name}}>
         </div> 
@@ -101,11 +102,11 @@
       {% endif %}
       {% endfor %}
     </div>
-    <div class = "service">
-      <h3>Service (serv@hkn)</h3>
+    <h3>Service (serv@hkn)</h3>
+    <div class = "branch">  
       {% for officer in officers %}
       {% if officer.department == "Service" %}
-      <div class="service">
+      <div class="member">
         <div class = "photo ">
           <img style="max-width: 125px; height: 100px;" src= officer.image alt = {{officer.name}}>
         </div> 
@@ -116,11 +117,11 @@
       {% endif %}
       {% endfor %}
     </div>
-    <div class = "student relations">
-      <h3>Student Selations (studrel@hkn)</h3>
+    <h3>Student Selations (studrel@hkn)</h3>
+    <div class = "branch"> 
       {% for officer in officers %}
       {% if officer.department == "Student Relations" %}
-      <div class="student relations">
+      <div class="member">
         <div class = "photo ">
           <img style="max-width: 125px; height: 100px;" src= officer.image alt = {{officer.name}}>
         </div> 
@@ -131,11 +132,11 @@
       {% endif %}
       {% endfor %}
     </div>
-    <div class = "tutoring">
-      <h3>Tutoring (tutoring@hkn)</h3>
+    <h3>Tutoring (tutoring@hkn)</h3>
+    <div class = "branch">
       {% for officer in officers %}
       {% if officer.department == "Tutoring" %}
-      <div class="tutoring">
+      <div class="member">
         <div class = "photo ">
           <img style="max-width: 125px; height: 100px;" src= officer.image alt = {{officer.name}}>
         </div> 

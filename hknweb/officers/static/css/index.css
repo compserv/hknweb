@@ -1,8 +1,9 @@
-.execs {
+.branch {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
 }
-.exec {
-    width: 32%;
-    padding: 5px;
+.branch .member {
+    /*float: left;*/
+    width: 33%;
 }
