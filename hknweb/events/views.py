@@ -6,7 +6,6 @@ from .models import Event
 
 def index(request):
     events = Event.objects.order_by('-created_at')[:10]
-
     context = {
         'events': events,
     }
