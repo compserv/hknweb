@@ -17,6 +17,8 @@ from django.urls import include, path
 from django.contrib import admin
 from django.contrib.auth.views import login, logout
 import hknweb.views as views
+import hknweb.views.landing as landing
+
 
 urlpatterns = [
     path('events/', include('hknweb.events.urls')),
@@ -26,5 +28,8 @@ urlpatterns = [
         path('settings/', views.account_settings),
         path('login/', login, {'template_name': 'admin/login.html'}),
         path('logout/', logout),
-    ]))
+    ])), 
+    path('', landing.home),
 ]
+
+ 
