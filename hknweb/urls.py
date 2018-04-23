@@ -29,4 +29,5 @@ urlpatterns = [
     ]))
     
     url(r'^pages/', include('hknweb.markdown_pages.urls')),
+    url(r'^markdownx/', include('markdownx.urls')),
 ]
