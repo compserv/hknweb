@@ -1,14 +1,16 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.template import loader
-
+from .models import Officer
 # from .models import Event
 
 def index(request):
     # events = Event.objects.order_by('-created_at')[:10]
+    officers = Officer.objects.all()
 
     context = {
         # 'events': events,
+        "officers":officers,
     }
     return render(request, 'officers/index.html', context)
 

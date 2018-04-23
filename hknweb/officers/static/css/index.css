@@ -1,0 +1,8 @@
+.execs {
+    display: flex;
+    justify-content: space-between;
+}
+.exec {
+    width: 32%;
+    padding: 5px;
+}
