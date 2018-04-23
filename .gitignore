@@ -2,6 +2,7 @@
 .vagrant/
 db.sqlite3
 venv/
+media/
 
 # Generic python stuff
 __pycache__/

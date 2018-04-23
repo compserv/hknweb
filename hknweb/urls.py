@@ -17,9 +17,12 @@ from django.urls import include, path
 from django.contrib import admin
 from django.contrib.auth.views import login, logout
 import hknweb.views as views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('events/', include('hknweb.events.urls')),
+    path('exams/', include('hknweb.exams.urls')),
     path('admin/', admin.site.urls),
     path('accounts/', include([
         path('profile/', views.account_settings),
@@ -28,3 +31,6 @@ urlpatterns = [
         path('logout/', logout),
     ]))
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
