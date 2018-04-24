@@ -20,6 +20,7 @@ import hknweb.views as views
 
 urlpatterns = [
     path('events/', include('hknweb.events.urls')),
+    path('courses/', include('hknweb.courses.urls')),
     path('admin/', admin.site.urls),
     path('accounts/', include([
         path('profile/', views.account_settings),
