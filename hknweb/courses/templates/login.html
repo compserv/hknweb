@@ -10,14 +10,13 @@
 {% endblock %}
 
 {% block content %}
-<a href="addCourse" class="button">Add courses</a>
 
 <ul>
 
 {% for course in Courses%}
 
 
-<li><a href="{{course.department}}/{{course.course_number}}">{{course.name}}</a></li>
+<li><a href="{{course.department}}/{{course.course_number}}">{{course.department}}{{course.course_number}}</a></li>
 
 
 {% endfor%}
