@@ -13,19 +13,23 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.urls import include, path
 from django.contrib import admin
-from django.contrib.auth.views import login, logout
-import hknweb.views as views
+from django.contrib.auth import views as auth_views
+from django.urls import include
+from django.urls import path
+
+from . import views
 
 urlpatterns = [
-    path('events/', include('hknweb.events.urls')),
     path('admin/', admin.site.urls),
-    path('accounts/', include([
-        path('profile/', views.account_settings),
-        path('settings/', views.account_settings),
-        path('login/', login, {'template_name': 'admin/login.html'}),
-        path('logout/', logout),
-    ])),
-    path('tutoring/', include('hknweb.tutoring.urls'))
+    path(
+        'accounts/', include([
+            path('profile/', views.account_settings),
+            path('settings/', views.account_settings),
+            path('login/', auth_views.LoginView.as_view(template_name='admin/login.html')),
+            path('logout/', auth_views.LogoutView.as_view()),
+        ]),
+    ),
+    path('events/', include('hknweb.events.urls')),
+    path('tutoring/', include('hknweb.tutoring.urls')),
 ]
