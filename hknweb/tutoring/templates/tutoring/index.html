@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Tutoring{% endblock %}
+
+{% block header %}
+  <link rel='stylesheet' href="http://unpkg.com/fullcalendar/dist/fullcalendar.min.css" />
+  <script src="http://unpkg.com/moment/min/moment.min.js"></script>
+  <script src="http://unpkg.com/jquery/dist/jquery.slim.min.js"></script>
+ 
+{% endblock %}
+
+
+{% block content %}
+<style>
+table {
+	width: auto;
+}
+
+th {
+	width: 100px;
+	text-align: center;
+	padding: 15px;
+	border-bottom: 1px solid #ddd;
+}
+
+td {
+	height: auto;
+	text-align: center;
+	padding: 15px;
+	border-bottom: 1px solid #ddd;
+}
+
+.slider-container {
+	padding: 10px 15px;
+}
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+/* Tooltip text */
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+    width: 120px;
+    bottom: 100%;
+    left: 50%; 
+    margin-left: -60px; /* Use half of the width (120/2 = 60), to center the tooltip */
+ 
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    z-index: 1;
+}
+
+li {
+	padding-bottom: 5px;
+}
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+}
+
+
+
+</style>
+
+<div class="center measure-very-wide pv4">
+<h1 class="font-title f3 f2-ns tc">Tutoring Schedule</h1>
+<table class="font-body">
+	<tr>
+		<th>Hours</th>
+		{% for day in days %}
+			<th> {{ day.name }} </th>
+		{% endfor %}
+	</tr>
+
+	<tr>
+		<td> 11am - 12pm </td>
+		{% for slot in slots_11 %}
+			<td>
+			{% for tutor in slot.tutor_set.all %}  
+				<li class="tooltip">{{tutor.name}}
+					<span class="tooltiptext">
+						{% for course in tutor.courses.all %}
+							{{course.name}}
+						{% endfor %}
+					</span>
+				</li>
+			{% endfor %}
+			</td>
+		{% endfor %}
+	</tr>
+
+	<tr>
+		<td> 12pm - 1pm </td>
+		{% for slot in slots_12 %}
+			<td>
+			{% for tutor in slot.tutor_set.all %} 
+
+				<li class="tooltip">{{tutor.name}}
+					<span class="tooltiptext">
+						{% for course in tutor.courses.all %}
+							{{course.name}}
+						{% endfor %}
+					</span>
+				</li>
+			{% endfor %}
+			</td>
+		{% endfor %}
+	</tr>
+
+	<tr>
+		<td> 1pm - 2pm </td>
+		{% for slot in slots_1 %}
+			<td>
+			{% for tutor in slot.tutor_set.all %}  
+				<li class="tooltip">{{tutor.name}}
+					<span class="tooltiptext">
+						{% for course in tutor.courses.all %}
+							{{course.name}}
+						{% endfor %}
+					</span>
+				</li>
+			{% endfor %}
+			</td>
+		{% endfor %}
+	</tr>
+
+	<tr>
+		<td> 2pm - 3pm </td>
+		{% for slot in slots_2 %}
+			<td>
+			{% for tutor in slot.tutor_set.all %}  
+				<li class="tooltip">{{tutor.name}}
+					<span class="tooltiptext">
+						{% for course in tutor.courses.all %}
+							{{course.name}}
+						{% endfor %}
+					</span>
+				</li>
+			{% endfor %}
+			</td>
+		{% endfor %}
+	</tr>
+
+	<tr>
+		<td> 3pm - 4pm </td>
+		{% for slot in slots_3 %}
+			<td>
+			{% for tutor in slot.tutor_set.all %}  
+				<li class="tooltip">{{tutor.name}}
+					<span class="tooltiptext">
+						{% for course in tutor.courses.all %}
+							{{course.name}}
+						{% endfor %}
+					</span>
+				</li>
+			{% endfor %}
+			</td>
+		{% endfor %}
+	</tr>
+
+	<tr>
+		<td> 4pm - 5pm </td>
+		{% for slot in slots_4 %}
+			<td>
+			{% for tutor in slot.tutor_set.all %}  
+				<li class="tooltip">{{tutor.name}}
+					<span class="tooltiptext">
+						{% for course in tutor.courses.all %}
+							{{course.name}}
+						{% endfor %}
+					</span>
+				</li>
+			{% endfor %}
+			</td>
+		{% endfor %}
+	</tr>
+</table>
+
+</div>
+{% endblock %}
