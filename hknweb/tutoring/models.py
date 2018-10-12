@@ -14,24 +14,21 @@ class Slot(models.Model):
     WED = 3
     THU = 4
     FRI = 5
-    DAYS = [MON, TUE, WED, THU, FRI]
     DAY_CHOICES = [
-        (MON, 'Monday'),
-        (TUE, 'Tuesday'),
-        (WED, 'Wednesday'),
-        (THU, 'Thursday'),
-        (FRI, 'Friday'),
+        (MON, 'Mon'),
+        (TUE, 'Tue'),
+        (WED, 'Wed'),
+        (THU, 'Thu'),
+        (FRI, 'Fri'),
     ]
 
     CORY = 0
     SODA = 1
-
     ROOM_CHOICES = [
         (CORY, 'Cory'),
         (SODA, 'Soda'),
     ]
 
-    HOURS = [11, 12, 13, 14, 15, 16]
     HOUR_CHOICES = [
         (11, '11am'),
         (12, '12pm'),

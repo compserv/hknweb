@@ -3,27 +3,8 @@
 
 {% block title %}Tutoring{% endblock %}
 
-{% block header %}
-  <link rel='stylesheet' href="http://unpkg.com/fullcalendar/dist/fullcalendar.min.css" />
-  <script src="http://unpkg.com/moment/min/moment.min.js"></script>
-  <script src="http://unpkg.com/jquery/dist/jquery.slim.min.js"></script>
-
-{% endblock %}
-
-
 {% block content %}
 <style>
-table {
-    width: auto;
-}
-
-th {
-    width: 100px;
-    text-align: center;
-    padding: 15px;
-    border-bottom: 1px solid #ddd;
-}
-
 td {
     height: auto;
     text-align: center;
@@ -33,11 +14,6 @@ td {
 
 .slider-container {
     padding: 10px 15px;
-}
-
-.tooltip {
-    position: relative;
-    display: inline-block;
 }
 
 /* Tooltip text */
@@ -69,49 +45,40 @@ li {
 
 </style>
 
-<div class="center measure-very-wide pv4">
-<h1 class="font-title f3 f2-ns tc">Tutoring Schedule</h1>
-<table class="font-body">
-    <tr>
-        <th>Hours</th>
-        {% for day in days %}
-            <th> {{ day }} </th>
-        {% endfor %}
-    </tr>
-
-    {% for hour in hours %}
-        {% if hour < 12 %}
-            {% start_suffix = "am" %}
-        {% else %}
-            {% start_suffix = "pm" %}
-        {% endif %}
-        {% start_str = hour | stringformat:"d" | add:start_suffix %}
-
-        {% end = hour + 1 %}
-        {% if end < 12 %}
-            {% end_suffix = "am" %}
-        {% else %}
-            {% end_suffix = "pm" %}
-        {% endif %}
-        {% end_str = end | stringformat:"d" | add:end_suffix %}
-
+<div class="center measure-narrow measure-wide-m measure-very-wide-l pv4">
+    <h1 class="font-title f3 f2-ns tc">Tutoring Schedule</h1>
+    {% for office in offices %}
+    <h2 class="font-title f4 f3-ns tc pb2 bb b--light-gray">{{office.room}}</h2>
+    <table class="center font-body overflow-auto">
+        <!-- Header row -->
         <tr>
-            <td> {{start_str}} - {{end_str}} </td>
-            {% for slot in cory_slots[hour] %}
-                <td>
-                {% for tutor in slot.tutor_set.all %}
-                    <li class="tooltip">{{tutor.name}}
+            <th class="w3 pv2 bb b--light-gray">Hours</th>
+            {% for day in days %}
+            <th class="w4 pv2 bb b--light-gray">{{ day }}</th>
+            {% endfor %}
+        </tr>
+        {% for hour, hour_pretty in hours %}
+        <tr>
+            <td class="pv2 w3 bb b--near-white"> {{hour_pretty}} </td>
+            {% for slot in office.slots.hour %}
+            <td class="pv2 w ba b--near-white">
+                <ul class="list">
+                    {% for tutor in slot.tutor_set.all %}
+                    <li class="relative dib">{{tutor.name}}
                         <span class="tooltiptext">
-                            {% for course in tutor.courses.all %}
-                                {{course.name}}
-                            {% endfor %}
+                        {% for course in tutor.courses.all %}
+                        {{course.name}}
+                        {% endfor %}
                         </span>
                     </li>
                 {% endfor %}
-                </td>
+                </ul>
+            </td>
             {% endfor %}
         </tr>
+        {% endfor %}
+    </table>
     {% endfor %}
-</table>
 </div>
+
 {% endblock %}
