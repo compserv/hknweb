@@ -9,7 +9,7 @@ except ImportError:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost','127.0.0.1','hkn.eecs.berkely.edu','hkn.mu']
+ALLOWED_HOSTS = ['localhost','127.0.0.1','hkn.eecs.berkely.edu','hkn.mu','hknweb-geohh.c9users.io']
 
 
 
