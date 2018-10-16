@@ -1,0 +1,9 @@
+.branch {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+.branch .member {
+    /*float: left;*/
+    width: 33%;
+}

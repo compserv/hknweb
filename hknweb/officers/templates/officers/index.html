@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Officers{% endblock %}
+{% block header %}
+  <link rel="stylesheet"  href="{% static 'css/index.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="center measure-very-wide pv4">
+  <h1 class="font-title f3 f2-ns tc">HKN Officers</h1>
+  <h2> Excs </h2>
+  <hr>
+  <div class = "branch">
+    {% for officer in officers %}
+    {% if officer.department == "Execs" %}
+    <div class = "member">
+      <h3> {{officer.title}} ({{officer.email}})</h3>
+      <div class = "photo ">
+        <img style="max-width: 125px; height: 100px;" src= officer.image alt = {{officer.name}}>
+      </div> 
+      <p>{{officer.name}}</p>
+      <p>{{officer.personal_email}}</p>
+    </div>
+    {% endif %}
+    {% endfor %}
+  </div>
+  <h2> Committees </h2>
+  <hr>
+  <div class = "Committees">
+    <h3>Activities (act@hkn)</h3>
+    <div class = "branch">
+      {% for officer in officers %}
+      {% if officer.department == "Activities" %}
+      <div class = "member">
+        <div class = "photo ">
+          <img style="max-width: 125px; height: 100px;" src= officer.image alt = {{officer.name}}>
+        </div> 
+        <p>{{officer.name}}</p>
+        <p>{{officer.personal_email}}</p>
+        <p>{{officer.title}}</p>
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+    <h3>Bridge (bridge@hkn)</h3>
+    <div class = "branch">
+      {% for officer in officers %}
+      {% if officer.department == "Bridge" %}
+      <div class = "member">
+        <div class = "photo ">
+          <img style="max-width: 125px; height: 100px;" src= officer.image alt = {{officer.name}}>
+        </div>
+        <p>{{officer.name}}</p>
+        <p>{{officer.personal_email}}</p>
+        <p>{{officer.title}}</p>
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+    <h3>Computing Services (compserv@hkn)</h3>
+    <div class = "branch">
+      {% for officer in officers %}
+      {% if officer.department == "Computing Services" %}
+      <div class = "member">
+        <div class = "photo ">
+          <img style="max-width: 125px; height: 100px;" src= officer.image alt = {{officer.name}}>
+        </div> 
+        <p>{{officer.name}}</p>
+        <p>{{officer.personal_email}}</p>
+        <p>{{officer.title}}</p>
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+    <h3>Decal (decal@hkn)</h3>
+    <div class = "branch">  
+      {% for officer in officers %}
+      {% if officer.department == "Decal" %}
+      <div class = "decal">
+        <div class = "photo ">
+          <img style="max-width: 125px; height: 100px;" src= officer.image alt = {{officer.name}}>
+        </div> 
+        <p>{{officer.name}}</p>
+        <p>{{officer.personal_email}}</p>
+        <p>{{officer.title}}</p>
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+    <h3>Industrial relations (indrel@hkn)</h3>
+    <div class = "branch">
+      {% for officer in officers %}
+      {% if officer.department == "Industrial relations" %}
+      <div class="industrial-relations">
+        <div class = "photo ">
+          <img style="max-width: 125px; height: 100px;" src= officer.image alt = {{officer.name}}>
+        </div> 
+        <p>{{officer.name}}</p>
+        <p>{{officer.personal_email}}</p>
+        <p>{{officer.title}}</p>
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+    <h3>Service (serv@hkn)</h3>
+    <div class = "branch">  
+      {% for officer in officers %}
+      {% if officer.department == "Service" %}
+      <div class="member">
+        <div class = "photo ">
+          <img style="max-width: 125px; height: 100px;" src= officer.image alt = {{officer.name}}>
+        </div> 
+        <p>{{officer.name}}</p>
+        <p>{{officer.personal_email}}</p>
+        <p>{{officer.title}}</p>
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+    <h3>Student Selations (studrel@hkn)</h3>
+    <div class = "branch"> 
+      {% for officer in officers %}
+      {% if officer.department == "Student Relations" %}
+      <div class="member">
+        <div class = "photo ">
+          <img style="max-width: 125px; height: 100px;" src= officer.image alt = {{officer.name}}>
+        </div> 
+        <p>{{officer.name}}</p>
+        <p>{{officer.personal_email}}</p>
+        <p>{{officer.title}}</p>
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+    <h3>Tutoring (tutoring@hkn)</h3>
+    <div class = "branch">
+      {% for officer in officers %}
+      {% if officer.department == "Tutoring" %}
+      <div class="member">
+        <div class = "photo ">
+          <img style="max-width: 125px; height: 100px;" src= officer.image alt = {{officer.name}}>
+        </div> 
+        <p>{{officer.name}}</p>
+        <p>{{officer.personal_email}}</p>
+        <p>{{officer.title}}</p>
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+  <!-- TODO: add public event feed (ical) -->
+{% endblock %}
