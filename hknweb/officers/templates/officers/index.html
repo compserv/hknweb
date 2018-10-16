@@ -8,8 +8,9 @@
 {% block content %}
 <div class="center measure-very-wide pv4">
   <h1 class="font-title f3 f2-ns tc">HKN Officers</h1>
-  <h2> Excs </h2>
+  <h2> Execs </h2>
   <hr>
+  {% for committee in committees %}
   <div class = "branch">
     {% for officer in officers %}
     {% if officer.department == "Execs" %}
@@ -17,7 +18,7 @@
       <h3> {{officer.title}} ({{officer.email}})</h3>
       <div class = "photo ">
         <img style="max-width: 125px; height: 100px;" src= officer.image alt = {{officer.name}}>
-      </div> 
+      </div>
       <p>{{officer.name}}</p>
       <p>{{officer.personal_email}}</p>
     </div>
@@ -34,7 +35,7 @@
       <div class = "member">
         <div class = "photo ">
           <img style="max-width: 125px; height: 100px;" src= officer.image alt = {{officer.name}}>
-        </div> 
+        </div>
         <p>{{officer.name}}</p>
         <p>{{officer.personal_email}}</p>
         <p>{{officer.title}}</p>
@@ -64,7 +65,7 @@
       <div class = "member">
         <div class = "photo ">
           <img style="max-width: 125px; height: 100px;" src= officer.image alt = {{officer.name}}>
-        </div> 
+        </div>
         <p>{{officer.name}}</p>
         <p>{{officer.personal_email}}</p>
         <p>{{officer.title}}</p>
@@ -73,13 +74,13 @@
       {% endfor %}
     </div>
     <h3>Decal (decal@hkn)</h3>
-    <div class = "branch">  
+    <div class = "branch">
       {% for officer in officers %}
       {% if officer.department == "Decal" %}
       <div class = "decal">
         <div class = "photo ">
           <img style="max-width: 125px; height: 100px;" src= officer.image alt = {{officer.name}}>
-        </div> 
+        </div>
         <p>{{officer.name}}</p>
         <p>{{officer.personal_email}}</p>
         <p>{{officer.title}}</p>
@@ -94,7 +95,7 @@
       <div class="industrial-relations">
         <div class = "photo ">
           <img style="max-width: 125px; height: 100px;" src= officer.image alt = {{officer.name}}>
-        </div> 
+        </div>
         <p>{{officer.name}}</p>
         <p>{{officer.personal_email}}</p>
         <p>{{officer.title}}</p>
@@ -103,13 +104,13 @@
       {% endfor %}
     </div>
     <h3>Service (serv@hkn)</h3>
-    <div class = "branch">  
+    <div class = "branch">
       {% for officer in officers %}
       {% if officer.department == "Service" %}
       <div class="member">
         <div class = "photo ">
           <img style="max-width: 125px; height: 100px;" src= officer.image alt = {{officer.name}}>
-        </div> 
+        </div>
         <p>{{officer.name}}</p>
         <p>{{officer.personal_email}}</p>
         <p>{{officer.title}}</p>
@@ -118,13 +119,13 @@
       {% endfor %}
     </div>
     <h3>Student Selations (studrel@hkn)</h3>
-    <div class = "branch"> 
+    <div class = "branch">
       {% for officer in officers %}
       {% if officer.department == "Student Relations" %}
       <div class="member">
         <div class = "photo ">
           <img style="max-width: 125px; height: 100px;" src= officer.image alt = {{officer.name}}>
-        </div> 
+        </div>
         <p>{{officer.name}}</p>
         <p>{{officer.personal_email}}</p>
         <p>{{officer.title}}</p>
@@ -139,7 +140,7 @@
       <div class="member">
         <div class = "photo ">
           <img style="max-width: 125px; height: 100px;" src= officer.image alt = {{officer.name}}>
-        </div> 
+        </div>
         <p>{{officer.name}}</p>
         <p>{{officer.personal_email}}</p>
         <p>{{officer.title}}</p>
