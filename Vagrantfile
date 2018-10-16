@@ -70,6 +70,8 @@ Vagrant.configure("2") do |config|
   # Enable provisioning with a shell script. Additional provisioners such as
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
+  config.vm.synced_folder ".", "/vagrant", type: "virtualbox", mount_options: ["dmode=775", "fmode=644"]
+
   config.vm.provision "shell", inline: <<-SHELL
     # Set locale to UTF-8
     update-locale LC_ALL=en_US.UTF-8

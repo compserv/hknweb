@@ -14,19 +14,19 @@
   max-width: 72em;
 }
 
-@media (--breakpoint-not-small) {
+@media screen and (min-width:30em) {
   .measure-very-wide-ns {
     max-width: 72em;
   }
 }
 
-@media (--breakpoint-medium) {
+@media screen and (min-width:30em) and (max-width:60em) {
   .measure-very-wide-m {
     max-width: 72em;
   }
 }
 
-@media (--breakpoint-large) {
+@media screen and (min-width:60em) {
   .measure-very-wide-l {
     max-width: 72em;
   }
