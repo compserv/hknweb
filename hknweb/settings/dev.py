@@ -11,6 +11,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['localhost','127.0.0.1','hkn.eecs.berkeley.edu','hkn.mu']
 
+INSTALLED_APPS += [
+    'livereload',
+]
 
 DATABASES = {
     'default': {
