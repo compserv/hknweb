@@ -10,6 +10,10 @@ dev:
 .PHONY: dev-vagrant
 dev-vagrant:
 	HKNWEB_MODE='dev' pipenv run python ./manage.py runserver [::]:$(DEV_PORT)
+	
+.PHONY: dev-c9
+dev-c9:
+	HKNWEB_MODE='dev' pipenv run -- python manage.py runserver ${IP}:${PORT}
 
 .PHONY: livereload
 livereload:
