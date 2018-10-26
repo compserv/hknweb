@@ -31,4 +31,5 @@ urlpatterns = [
         ]),
     ),
     path('events/', include('hknweb.events.urls')),
+    path('tutoring/', include('hknweb.tutoring.urls')),
 ]

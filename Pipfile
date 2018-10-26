@@ -6,7 +6,6 @@ name = 'pypi'
 [packages]
 django = ">=2.1.2"
 mysqlclient = "*"
-livereload = "*"
 whitenoise = "*"
 pillow = "*"
 
@@ -15,7 +14,9 @@ pre-commit = "*"
 pytest = "*"
 pytest-django = "*"
 tox = "*"
+livereload = "*"
 
 
 [requires]
 python_version=="3.6"
+
