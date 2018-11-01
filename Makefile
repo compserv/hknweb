@@ -3,9 +3,12 @@ DEV_PORT := 3000
 PIP_HOME = $(shell python3 -c "import site; import os; print(os.path.join(site.USER_BASE, 'bin'))" \
 	|| python -c "import site; import os; print(os.path.join(site.USER_BASE, 'bin'))")
 
+IP ?= 127.0.0.1
+PORT ?= 3000
+
 .PHONY: dev
 dev:
-	HKNWEB_MODE='dev' pipenv run python ./manage.py runserver $(DEV_LISTEN_IP):$(DEV_PORT)
+	HKNWEB_MODE='dev' pipenv run python ./manage.py runserver $(IP):$(PORT)
 
 .PHONY: dev-vagrant
 dev-vagrant:

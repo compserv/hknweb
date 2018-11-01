@@ -11,8 +11,12 @@ import os
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+INSTALLED_APPS += [
+    'livereload',
+]
 
-ALLOWED_HOSTS = ['localhost','127.0.0.1','hkn.eecs.berkely.edu','hkn.mu','hknweb-geohh.c9users.io']
+
+ALLOWED_HOSTS = ['localhost','127.0.0.1','hkn.eecs.berkeley.edu','hkn.mu','hknweb-geohh.c9users.io']
 
 
 DATABASES = {
