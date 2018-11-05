@@ -15,11 +15,18 @@
 <div class="center measure-very-wide pv4">
   <h1 class="font-title f3 f2-ns tc">Submit Your Alumni Information</h1>
 
-  <h3 class="font-title f4 f5-ns ph6 tl">Email</h3>
-  <h3 class="font-title f4 f5-ns ph6 tl">Add me to the Alumni Mailing List</h3>
-  <h3 class="font-title f4 f5-ns ph6 tl">Semester Graduated (Undergrad)</h3>
-  <h3 class="font-title f4 f5-ns ph6 tl">Grad School</h3>
-  <h3 class="font-title f4 f5-ns ph6 tl">Job Title</h3>
+  <form action="/success/" method="post">
+	  <table>
+		  {% csrf_token %}
+    		  {{ form.as_table }}
+	  </table>
+	  <input type="submit" value="Submit"/>
+  </form>
+
+
+
+
+
 </div>
 
 {% endblock %}

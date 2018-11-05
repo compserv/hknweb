@@ -2,6 +2,7 @@ from django.http import HttpResponse
 from django.views import generic
 from django.shortcuts import render, redirect
 
+from .forms import AlumniForm
 
 class IndexView(generic.TemplateView):
     template_name = 'alumni/index.html'
@@ -12,6 +13,12 @@ class IndexView(generic.TemplateView):
 #     }
 #     return render(request, 'alumni/index.html', context)
 
-class FormView(generic.TemplateView):
-    template_name = 'alumni/form.html'
+def FormView(request):
+    form = AlumniForm(request.POST or None)
+    
+    if form.is_valid():
+        form.save()
+
+    context = {'form': form}
+    return render(request, 'alumni/form.html', context)
 
