@@ -11,14 +11,14 @@ class Alumnus(models.Model):
     perm_email      = models.EmailField(default='')
     mailing_list    = models.BooleanField(default='')
     grad_semester   = models.CharField(max_length=max_strlen, default='')
-    grad_school     = models.CharField(max_length=max_strlen, default='')
-    job_title       = models.CharField(max_length=max_strlen, default='')
-    company         = models.CharField(max_length=max_strlen, default='')
-    salary          = models.IntegerField(default=-1)
+    grad_school     = models.CharField(max_length=max_strlen, blank=True, default='')
+    job_title       = models.CharField(max_length=max_strlen, blank=True, default='')
+    company         = models.CharField(max_length=max_strlen, blank=True, default='')
+    salary          = models.IntegerField(default=0)
     created_at      = models.DateTimeField(default=timezone.now)
     updated_at      = models.DateTimeField(default=timezone.now)
     location        = models.CharField(max_length=max_strlen, default='')
-    suggestions     = models.CharField(max_length=2000, default='')
+    suggestions     = models.CharField(max_length=2000, blank=True, default='')
 
     def generate_grad_semester(self, semester, year):
         return semester + ' ' + year
