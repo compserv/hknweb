@@ -6,7 +6,7 @@ max_strlen = 255
 
 
 class Alumnus(models.Model):
-    name_id         = models.IntegerField(default=-1)
+    name_id         = models.IntegerField(default=0)
     first_name      = models.CharField(max_length=max_strlen, default='')
     last_name       = models.CharField(max_length=max_strlen, default='')
     perm_email      = models.EmailField(default='')
@@ -19,6 +19,7 @@ class Alumnus(models.Model):
     created_at      = models.DateTimeField(default=timezone.now)
     updated_at      = models.DateTimeField(default=timezone.now)
     location        = models.CharField(max_length=max_strlen, default='')
+    suggestions     = models.CharField(max_length=2000, default='')
 
     def generate_grad_semester(self, semester, year):
         return semester + ' ' + year
