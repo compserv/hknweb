@@ -13,6 +13,10 @@ class Alumnus(models.Model):
     grad_school = models.CharField(max_length=max_strlen)
     job_title = models.CharField(max_length=max_strlen)
     company = models.CharField(max_length=max_strlen)
+    salary = models.IntegerField()
+    person_id = models.IntegerField()
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
     location = models.CharField(max_length=max_strlen)
 
     def generate_grad_semester(self, semester, year):
