@@ -1,10 +1,10 @@
 DEV_LISTEN_IP := localhost
-DEV_PORT := 3000
+DEV_PORT := 1234
 PIP_HOME = $(shell python3 -c "import site; import os; print(os.path.join(site.USER_BASE, 'bin'))" \
 	|| python -c "import site; import os; print(os.path.join(site.USER_BASE, 'bin'))")
 
 IP ?= 127.0.0.1
-PORT ?= 3000
+PORT ?= 1234
 
 .PHONY: dev
 dev:
