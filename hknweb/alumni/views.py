@@ -4,14 +4,10 @@ from django.shortcuts import render, redirect
 
 from .forms import AlumniForm
 
+
 class IndexView(generic.TemplateView):
     template_name = 'alumni/index.html'
 
-
-# def index(request):
-#     context = {
-#     }
-#     return render(request, 'alumni/index.html', context)
 
 def FormView(request):
     form = AlumniForm(request.POST or None)

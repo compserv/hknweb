@@ -6,7 +6,6 @@ max_strlen = 255
 
 
 class Alumnus(models.Model):
-    name_id         = models.IntegerField(default=0)
     first_name      = models.CharField(max_length=max_strlen, default='')
     last_name       = models.CharField(max_length=max_strlen, default='')
     perm_email      = models.EmailField(default='')
