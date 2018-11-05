@@ -3,15 +3,15 @@ from django.views import generic
 from django.shortcuts import render, redirect
 
 
-# class IndexView(generic.TemplateView):
-#     template_name = 'alumni/index.html'
+class IndexView(generic.TemplateView):
+    template_name = 'alumni/index.html'
 
 
-def index(request):
-    context = {
-    }
-    return render(request, 'alumni/index.html', context)
+# def index(request):
+#     context = {
+#     }
+#     return render(request, 'alumni/index.html', context)
 
+class FormView(generic.TemplateView):
+    template_name = 'alumni/form.html'
 
-def form(request):
-    return HttpResponse("Hello, world. You're at the form.")
