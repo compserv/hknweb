@@ -1,23 +1,46 @@
 from django.db import models
 from django.utils import timezone
+from django.core.validators import MaxValueValidator, MinValueValidator
+import datetime
+import os
+from hknweb.settings.common import BASE_DIR
 
 
 max_strlen = 255
 
+FALL = 'FA'
+SPRING = 'SP'
+SUMMER = 'SU'
+SEASONS = ((FALL, "Fall"), (SPRING, "Spring"), (SUMMER, "Summer"))
+
+
+def current_year():
+    return datetime.date.today().year
+
+def max_value_current_year(value):
+    return MaxValueValidator(current_year())(value)
+
+
+with open(os.path.join(BASE_DIR, 'hknweb/alumni/static/countries_states.txt')) as f:
+    COUNTRIES = f.read().splitlines()
+
 
 class Alumnus(models.Model):
+    id              = models.AutoField(primary_key=True)
     first_name      = models.CharField(max_length=max_strlen, default='')
     last_name       = models.CharField(max_length=max_strlen, default='')
     perm_email      = models.EmailField(default='')
     mailing_list    = models.BooleanField(default='')
-    grad_semester   = models.CharField(max_length=max_strlen, default='')
+    grad_season     = models.CharField(max_length=2, choices=SEASONS, default=FALL)
+    grad_year       = models.IntegerField(validators=[MinValueValidator(1915), max_value_current_year], default=current_year())
     grad_school     = models.CharField(max_length=max_strlen, blank=True, default='')
     job_title       = models.CharField(max_length=max_strlen, blank=True, default='')
     company         = models.CharField(max_length=max_strlen, blank=True, default='')
     salary          = models.IntegerField(default=0)
     created_at      = models.DateTimeField(default=timezone.now)
     updated_at      = models.DateTimeField(default=timezone.now)
-    location        = models.CharField(max_length=max_strlen, default='')
+    city            = models.CharField(max_length=max_strlen, default='')
+    country_state   = models.CharField(max_length=max_strlen, choices=[(c, c) for c in COUNTRIES], default='USA: CA')
     suggestions     = models.CharField(max_length=2000, blank=True, default='')
 
     def generate_grad_semester(self, semester, year):
