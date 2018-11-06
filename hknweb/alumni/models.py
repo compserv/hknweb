@@ -29,10 +29,11 @@ class Alumnus(models.Model):
     id              = models.AutoField(primary_key=True)
     first_name      = models.CharField(max_length=max_strlen, default='')
     last_name       = models.CharField(max_length=max_strlen, default='')
-    perm_email      = models.EmailField(default='')
+    perm_email      = models.EmailField(default='', verbose_name="permanent email")
     mailing_list    = models.BooleanField(default='')
-    grad_season     = models.CharField(max_length=2, choices=SEASONS, default=FALL)
-    grad_year       = models.IntegerField(validators=[MinValueValidator(1915), max_value_current_year], default=current_year())
+    grad_season     = models.CharField(max_length=2, choices=SEASONS, default=FALL, verbose_name="graduation season")
+    grad_year       = models.IntegerField(validators=[MinValueValidator(1915), max_value_current_year],
+                                          default=current_year(), verbose_name="graduation year")
     grad_school     = models.CharField(max_length=max_strlen, blank=True, default='')
     job_title       = models.CharField(max_length=max_strlen, blank=True, default='')
     company         = models.CharField(max_length=max_strlen, blank=True, default='')
@@ -40,7 +41,8 @@ class Alumnus(models.Model):
     created_at      = models.DateTimeField(default=timezone.now)
     updated_at      = models.DateTimeField(default=timezone.now)
     city            = models.CharField(max_length=max_strlen, default='')
-    country_state   = models.CharField(max_length=max_strlen, choices=[(c, c) for c in COUNTRIES], default='USA: CA')
+    country_state   = models.CharField(max_length=max_strlen, choices=[(c, c) for c in COUNTRIES],
+                                       default='USA: CA', verbose_name="country or state")
     suggestions     = models.CharField(max_length=2000, blank=True, default='')
 
     def generate_grad_semester(self, semester, year):
