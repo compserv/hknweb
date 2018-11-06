@@ -6,10 +6,10 @@ class AlumnusAdmin(admin.ModelAdmin):
     fields = ['first_name', 'last_name', 'perm_email', 'mailing_list',
               'grad_season', 'grad_year', 'grad_school', 'job_title',
               'company', 'salary', 'city', 'country_state', 'suggestions']
-    list_display = ('first_name', 'last_name', 'perm_email', 'country_state', 'grad_year')
+    list_display = ('name', 'perm_email', 'country_state', 'graduation_semester')
     list_filter = ['grad_year', 'mailing_list', 'created_at',
                    'updated_at', 'country_state']
-    search_fields = ['name', 'perm_email', 'grad_school', 'city']
+    search_fields = ['first_name', 'last_name', 'perm_email', 'grad_school', 'city']
 
 
 admin.site.register(Alumnus, AlumnusAdmin)

@@ -8,9 +8,9 @@ from hknweb.settings.common import BASE_DIR
 
 max_strlen = 255
 
-FALL = 'FA'
-SPRING = 'SP'
-SUMMER = 'SU'
+FALL = 'Fall'
+SPRING = 'Spring'
+SUMMER = 'Summer'
 SEASONS = ((FALL, "Fall"), (SPRING, "Spring"), (SUMMER, "Summer"))
 
 
@@ -45,8 +45,9 @@ class Alumnus(models.Model):
                                        default='USA: CA', verbose_name="country or state")
     suggestions     = models.CharField(max_length=2000, blank=True, default='')
 
-    def generate_grad_semester(self, semester, year):
-        return semester + ' ' + year
+    @property
+    def graduation_semester(self):
+        return self.grad_season + ' ' + str(self.grad_year)
 
     @property
     def name(self):
