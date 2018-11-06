@@ -51,8 +51,6 @@ USA: WV
 USA: WY
 USA: Puerto Rico
 USA: Other Territory
-
-
 Afghanistan
 Albania
 Algeria
@@ -64,8 +62,6 @@ Armenia
 Australia
 Austria
 Azerbaijan
-
-
 The Bahamas
 Bahrain
 Bangladesh
@@ -83,8 +79,6 @@ Brunei
 Bulgaria
 Burkina Faso
 Burundi
-
-
 Cabo Verde
 Cambodia
 Cameroon
@@ -103,14 +97,10 @@ Croatia
 Cuba
 Cyprus
 Czech Republic
-
-
 Denmark
 Djibouti
 Dominica
 Dominican Republic
-
-
 East Timor (Timor-Leste)
 Ecuador
 Egypt
@@ -120,13 +110,9 @@ Eritrea
 Estonia
 Ethiopia
 Advertisement
-
-
 Fiji
 Finland
 France
-
-
 Gabon
 The Gambia
 Georgia
@@ -138,13 +124,9 @@ Guatemala
 Guinea
 Guinea-Bissau
 Guyana
-
-
 Haiti
 Honduras
 Hungary
-
-
 Iceland
 India
 Indonesia
@@ -153,13 +135,9 @@ Iraq
 Ireland
 Israel
 Italy
-
-
 Jamaica
 Japan
 Jordan
-
-
 Kazakhstan
 Kenya
 Kiribati
@@ -168,8 +146,6 @@ Korea, South
 Kosovo
 Kuwait
 Kyrgyzstan
-
-
 Laos
 Latvia
 Lebanon
@@ -179,8 +155,6 @@ Libya
 Liechtenstein
 Lithuania
 Luxembourg
-
-
 Macedonia
 Madagascar
 Malawi
@@ -200,8 +174,6 @@ Montenegro
 Morocco
 Mozambique
 Myanmar (Burma)
-
-
 Namibia
 Nauru
 Nepal
@@ -211,11 +183,7 @@ Nicaragua
 Niger
 Nigeria
 Norway
-
-
 Oman
-
-
 Pakistan
 Palau
 Panama
@@ -225,16 +193,10 @@ Peru
 Philippines
 Poland
 Portugal
-
-
 Qatar
-
-
 Romania
 Russia
 Rwanda
-
-
 Saint Kitts and Nevis
 Saint Lucia
 Saint Vincent and the Grenadines
@@ -261,8 +223,6 @@ Swaziland
 Sweden
 Switzerland
 Syria
-
-
 Taiwan
 Tajikistan
 Tanzania
@@ -274,8 +234,6 @@ Tunisia
 Turkey
 Turkmenistan
 Tuvalu
-
-
 Uganda
 Ukraine
 United Arab Emirates
@@ -283,16 +241,10 @@ United Kingdom
 United States
 Uruguay
 Uzbekistan
-
-
 Vanuatu
 Vatican City
 Venezuela
 Vietnam
-
-
 Yemen
-
-
 Zambia
 Zimbabwe
