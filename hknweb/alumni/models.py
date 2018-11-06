@@ -17,6 +17,7 @@ SEASONS = ((FALL, "Fall"), (SPRING, "Spring"), (SUMMER, "Summer"))
 def current_year():
     return datetime.date.today().year
 
+
 def max_value_current_year(value):
     return MaxValueValidator(current_year())(value)
 
@@ -51,7 +52,7 @@ class Alumnus(models.Model):
 
     @property
     def name(self):
-        return self.first_name + " " + self.last_name
+        return self.first_name + ' ' + self.last_name
 
     def __str__(self):
         return self.name
