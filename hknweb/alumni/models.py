@@ -31,7 +31,7 @@ class Alumnus(models.Model):
     last_name       = models.CharField(max_length=max_strlen, default='')
     perm_email      = models.EmailField(default='', verbose_name="permanent email")
     mailing_list    = models.BooleanField(default='')
-    grad_season     = models.CharField(max_length=2, choices=SEASONS, default=FALL, verbose_name="graduation season")
+    grad_season     = models.CharField(max_length=6, choices=SEASONS, default=FALL, verbose_name="graduation season")
     grad_year       = models.IntegerField(validators=[MinValueValidator(1915), max_value_current_year],
                                           default=current_year(), verbose_name="graduation year")
     grad_school     = models.CharField(max_length=max_strlen, blank=True, default='')
