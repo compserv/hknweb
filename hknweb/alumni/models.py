@@ -44,7 +44,7 @@ class Alumnus(models.Model):
     city            = models.CharField(max_length=max_strlen, default='')
     country_state   = models.CharField(max_length=max_strlen, choices=[(c, c) for c in COUNTRIES],
                                        default='USA: CA', verbose_name="country or state")
-    suggestions     = models.CharField(max_length=2000, blank=True, default='')
+    suggestions     = models.TextField(max_length=2000, blank=True, default='')
 
     @property
     def graduation_semester(self):
