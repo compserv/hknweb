@@ -28,8 +28,9 @@ class SearchView(generic.ListView):
         query = self.request.GET.get('q')
         if not query:
             return []
+        elif query[0] == '\\':
+            return ['\\']
 
-        print(query)
         query_list = query.split()
         result = result.filter(
             reduce(operator.and_,
@@ -37,7 +38,6 @@ class SearchView(generic.ListView):
             reduce(operator.and_,
                    (Q(city__icontains=q) for q in query_list))
         )
-        print(result)
         return result
 
 

@@ -22,7 +22,9 @@
       <input class="searchfield" id="searchbox" name="q" type="text" placeholder="Search">
     </form>
 
-    {% if matching_alumni_list %}
+    {% if '\\' in matching_alumni_list %}
+        <p>Enter any keyword in the search bar.</p>
+    {% elif matching_alumni_list %}
         <ul>
         {% for alumnus in matching_alumni_list %}
             <li><a href="{% url 'alumni:index' %}">{{ alumnus.name }}</a>
