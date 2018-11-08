@@ -2,6 +2,7 @@ from django.http import HttpResponse
 from django.views import generic
 from django.shortcuts import render, redirect
 from django.db.models import Q
+from django.contrib import messages
 
 from .models import Alumnus
 from .forms import AlumniForm
@@ -45,11 +46,12 @@ def FormView(request):
     if request.method == 'POST':
         if form.is_valid():
             form.save()
-            return redirect('/alumni/form_success')
+            messages.success(request, 'Thanks for submitting')
+            return redirect('/alumni/form')
         else:
-            return render(request, 'alumni/form.html', {'form': form})
+            return render(request, 'alumni/form.html', {'form': AlumniForm(None)})
 
-    return render(request, 'alumni/form.html', {'form':form})
+    return render(request, 'alumni/form.html', {'form': AlumniForm(None)})
 
 def FormViewSuccess(request):
     form = AlumniForm(request.POST or None)
