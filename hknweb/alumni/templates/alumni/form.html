@@ -23,9 +23,13 @@
 	  <input class="f6 grow no-underline br-pill ph3 pv2 mb2 dib white bg-black" type="submit" value="Submit"/>
   </form>
 
-
-
-
+  {% if messages %}
+  <ul class="messages">
+  	{% for message in messages %}
+	<li{% if messages.tags %} class="{{message.tags}}" {%endif%}>{{message}}</li>
+	{%endfor%}
+  </ul>
+  {%endif%}
 
 </div>
 
