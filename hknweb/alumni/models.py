@@ -28,7 +28,7 @@ with open(os.path.join(BASE_DIR, 'hknweb/alumni/static/countries_states.txt')) a
 
 class Alumnus(models.Model):
     class Meta:
-        verbose_name_plural = "alumni" # correct plural
+        verbose_name_plural = "alumni"  # correct plural
 
     id              = models.AutoField(primary_key=True)
     first_name      = models.CharField(max_length=max_strlen, default='')
@@ -41,7 +41,7 @@ class Alumnus(models.Model):
     grad_school     = models.CharField(max_length=max_strlen, blank=True, default='')
     job_title       = models.CharField(max_length=max_strlen, blank=True, default='')
     company         = models.CharField(max_length=max_strlen, blank=True, default='')
-    salary          = models.IntegerField(default=0)
+    salary          = models.IntegerField(default=0, validators=[MinValueValidator(0)])
     created_at      = models.DateTimeField(default=timezone.now)
     updated_at      = models.DateTimeField(default=timezone.now)
     city            = models.CharField(max_length=max_strlen, default='')
