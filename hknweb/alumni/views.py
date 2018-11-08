@@ -11,10 +11,21 @@ class IndexView(generic.TemplateView):
 
 def FormView(request):
     form = AlumniForm(request.POST or None)
-    
-    if form.is_valid():
-        form.save()
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            return redirect('/alumni/form_success')
+        else:
+            return render(request, 'alumni/form.html', {'form': form})
 
-    context = {'form': form}
-    return render(request, 'alumni/form.html', context)
+    return render(request, 'alumni/form.html', {'form':form})
 
+def FormViewSuccess(request):
+    form = AlumniForm(request.POST or None)
+    if request.method == 'POST':
+            if form.is_valid():
+                form.save()
+                return redirect('alumni/form_success')
+            else:
+                return render(request, 'alumni/form.html', {'form':form})
+    return render(request, 'alumni/form_success.html', {'form':form})
