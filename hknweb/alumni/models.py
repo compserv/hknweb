@@ -27,6 +27,9 @@ with open(os.path.join(BASE_DIR, 'hknweb/alumni/static/countries_states.txt')) a
 
 
 class Alumnus(models.Model):
+    class Meta:
+        verbose_name_plural = "alumni" # correct plural
+
     id              = models.AutoField(primary_key=True)
     first_name      = models.CharField(max_length=max_strlen, default='')
     last_name       = models.CharField(max_length=max_strlen, default='')
