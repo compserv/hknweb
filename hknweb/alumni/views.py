@@ -15,10 +15,10 @@ def FormView(request):
     if request.method == 'POST':
         if form.is_valid():
             form.save()
-            messages.info(request, 'Thanks for submitting')
-            return render(request, 'alumni/form.html', {'form': AlumniForm(None)})
+            messages.success(request, 'Thanks for submitting')
+            return redirect('/alumni/form')
         else:
-            return render(request, 'alumni/form.html', {'form': form})
+            return render(request, 'alumni/form.html', {'form': AlumniForm(None)})
 
     return render(request, 'alumni/form.html', {'form': AlumniForm(None)})
 
