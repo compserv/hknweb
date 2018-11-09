@@ -6,6 +6,7 @@ app_name = 'alumni'
 urlpatterns = [
     re_path(r'^$', views.IndexView.as_view(), name='index'),
     re_path(r'^search/$', views.SearchView.as_view(), name='search'),
-    re_path(r'^form/$', views.FormView, name='form'),
-    re_path(r'^form_success/$', views.FormViewSuccess, name='form_success'),
+    re_path(r'^search_type/$', views.search_type, name='search_type'),
+    re_path(r'^form/$', views.form, name='form'),
+    re_path(r'^form_success/$', views.form_success, name='form_success'),
 ]

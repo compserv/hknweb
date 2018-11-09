@@ -22,7 +22,7 @@ def max_value_current_year(value):
     return MaxValueValidator(current_year())(value)
 
 
-with open(os.path.join(BASE_DIR, 'hknweb/alumni/static/countries_states.txt')) as f:
+with open(os.path.join(BASE_DIR, 'hknweb/alumni/static/alumni/countries_states.txt')) as f:
     COUNTRIES = f.read().splitlines()
 
 
