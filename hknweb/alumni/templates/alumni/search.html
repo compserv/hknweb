@@ -21,28 +21,19 @@
 
         <form action="{% url 'alumni:search_type' %}" method="post">
         {% csrf_token %}
-            <input type="radio" name="search_by" id="name" value="name">
-            <label for="name">Search by name</label><br>
+            <select action="{% url 'alumni:search' %}" name="search_by" id="search_by">
+                <option value="name">Name</option><br>
+                <option value="city">City</label><br>
+                <option value="email">Email</label><br>
+                <option value="graduation semester">Graduation Semester</label><br>
+                <option value="grad school">Grad School</label><br>
+                <option value="company">Company</label><br>
+            </select>
 
-            <input type="radio" name="search_by" id="city" value="city">
-            <label for="name">Search by city</label><br>
-
-            <input type="radio" name="search_by" id="email" value="email">
-            <label for="email">Search by email</label><br>
-
-            <input type="radio" name="search_by" id="grad_semester" value="grad_semester">
-            <label for="grad_semester">Search by graduation semester</label><br>
-
-            <input type="radio" name="search_by" id="grad_school" value="grad_school">
-            <label for="grad_school">Search by grad school</label><br>
-
-            <input type="radio" name="search_by" id="company" value="company">
-            <label for="company">Search by company</label><br>
-
-        <br><input type="submit" value="Search by this please!">
+        <br><br><input type="submit" value="Search by this please!">
         </form>
 
-        <h3>You are searching by: {{ search_field }}</h3>
+        <h3>You are searching by {{ search_field }}</h3>
 
 
         <form id="searchform" action="{% url 'alumni:search' %}" method="get" accept-charset="utf-8">
@@ -51,6 +42,19 @@
           </button>
           <input class="searchfield" id="searchbox" name="q" type="text" placeholder="Search">
         </form>
+
+        {% if search_field == 'graduation semester' %}
+            <br>
+            <form method="post">
+                <select action="{% url 'alumni:search' %}" name="season">
+                    <option value="any" selected>Any Season</option>
+                    <option value="fall">Fall</option>
+                    <option value="spring">Spring</option>
+                    <option value="summer">Summer</option>
+                </select>
+            </form>
+            <br>
+        {% endif %}
 
         {% if status == 'sahai' %}
             <br><img src="{% static 'alumni/sahai.gif' %}" alt="Anant Sahai">
@@ -61,12 +65,29 @@
         {% elif status == 'stanford' %}
             <p>Sorry, no results found. Did you mean: worse-than-cal?</p>
         {% elif matching_alumni_list %}
-            <ul>
-            {% for alumnus in matching_alumni_list %}
-                <li><a href="{% url 'alumni:index' %}">{{ alumnus.name }}</a>
-                from {{ alumnus.city }}, graduated {{ alumnus.graduation_semester }}.</li>
-            {% endfor %}
-            </ul>
+            <br>
+            <table style="width:100%;">
+                <tr>
+                    <th>Name</th>
+                    <th>Graduated</th>
+                    <th>Country/State</th>
+                    <th>City</th>
+                    <th>Grad School</th>
+                    <th>Company</th>
+                </tr>
+
+                {% for alumnus in matching_alumni_list %}
+                    <tr>
+                        <td align="center"><a href="{% url 'alumni:index' %}">{{ alumnus.name }}</a></td>
+                        <td align="center">{{ alumnus.graduation_semester }}</td>
+                        <td align="center">{{ alumnus.country_state }}</td>
+                        <td align="center">{{ alumnus.city }}</td>
+                        <td align="center">{{ alumnus.grad_school }}</td>
+                        <td align="center">{{ alumnus.company }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+
         {% else %}
             <p>Sorry, no matching alumni found!</p>
         {% endif %}

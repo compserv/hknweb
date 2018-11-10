@@ -58,14 +58,17 @@ class SearchView(generic.ListView):
             return result.filter(
                 reduce(operator.and_, (Q(perm_email__icontains=q) for q in query_list))
             )
-        if SearchView.search_field == 'grad_semester':
+        if SearchView.search_field == 'graduation semester':
+            season = self.request.POST.get('season', None)
+            print(season)
+
             return result.filter(
-                reduce(operator.and_,  # both fields need to match
-                       (Q(grad_season__icontains=q) for q in query_list)) |
-                reduce(operator.or_,
+                # reduce(operator.and_,  # both fields need to match
+                #        (Q(grad_season__icontains=q) for q in query_list)) |
+                reduce(operator.and_,
                        (Q(grad_year__icontains=q) for q in query_list))
             )
-        if SearchView.search_field == 'grad_school':
+        if SearchView.search_field == 'grad school':
             if 'stanford' in [item.lower() for item in query_list]:
                 SearchView.status = 'stanford';
                 return []
