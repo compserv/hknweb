@@ -44,44 +44,40 @@ class SearchView(generic.ListView):
         if SearchView.search_field == 'name':
             if 'sahai' in [item.lower() for item in query_list]:
                 SearchView.status = 'sahai';
-            return result.filter(
+            result = result.filter(
                 reduce(operator.and_,  # first name narrows it down
                        (Q(first_name__icontains=q) for q in query_list)) |
                 reduce(operator.or_,  # the last name is more important
                        (Q(last_name__icontains=q) for q in query_list))
             )
-        if SearchView.search_field == 'city':
-            return result.filter(
+        elif SearchView.search_field == 'city':
+            result = result.filter(
                 reduce(operator.and_, (Q(city__icontains=q) for q in query_list))
             )
-        if SearchView.search_field == 'email':
-            return result.filter(
+        elif SearchView.search_field == 'email':
+            result = result.filter(
                 reduce(operator.and_, (Q(perm_email__icontains=q) for q in query_list))
             )
-        if SearchView.search_field == 'graduation semester':
-            season = self.request.POST.get('season', None)
-            print(season)
-
-            return result.filter(
-                # reduce(operator.and_,  # both fields need to match
-                #        (Q(grad_season__icontains=q) for q in query_list)) |
+        elif SearchView.search_field == 'graduation year':
+            result = result.filter(
                 reduce(operator.and_,
                        (Q(grad_year__icontains=q) for q in query_list))
             )
-        if SearchView.search_field == 'grad school':
+        elif SearchView.search_field == 'grad school':
             if 'stanford' in [item.lower() for item in query_list]:
                 SearchView.status = 'stanford';
                 return []
             query_list = ['stanford' if item == 'worse-than-cal' else item for item in query_list]
-            return result.filter(
+            result = result.filter(
                 reduce(operator.and_, (Q(grad_school__icontains=q) for q in query_list))
             )
-        if SearchView.search_field == 'company':
-            return result.filter(
+        elif SearchView.search_field == 'company':
+            result = result.filter(
                 reduce(operator.and_, (Q(company__icontains=q) for q in query_list))
             )
 
-        return []
+        result = result.order_by('-grad_year')
+        return result
 
 
 SearchView.search_field = None

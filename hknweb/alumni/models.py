@@ -10,8 +10,7 @@ max_strlen = 255
 
 FALL = 'Fall'
 SPRING = 'Spring'
-SUMMER = 'Summer'
-SEASONS = ((FALL, "Fall"), (SPRING, "Spring"), (SUMMER, "Summer"))
+SEASONS = ((FALL, "Fall"), (SPRING, "Spring"))
 
 
 def current_year():
@@ -39,8 +38,8 @@ class Alumnus(models.Model):
     grad_year       = models.IntegerField(validators=[MinValueValidator(1915), max_value_current_year],
                                           default=current_year(), verbose_name="graduation year")
     grad_school     = models.CharField(max_length=max_strlen, blank=True, default='')
-    job_title       = models.CharField(max_length=max_strlen, blank=True, default='')
     company         = models.CharField(max_length=max_strlen, blank=True, default='')
+    job_title       = models.CharField(max_length=max_strlen, blank=True, default='')
     salary          = models.IntegerField(default=0, validators=[MinValueValidator(0)])
     created_at      = models.DateTimeField(default=timezone.now)
     updated_at      = models.DateTimeField(default=timezone.now)
