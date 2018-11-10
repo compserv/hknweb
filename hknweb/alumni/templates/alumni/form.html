@@ -8,7 +8,6 @@
   <script src="http://unpkg.com/moment/min/moment.min.js"></script>
   <script src="http://unpkg.com/jquery/dist/jquery.slim.min.js"></script>
   <script src="http://unpkg.com/fullcalendar/dist/fullcalendar.min.js"></script>
-  <script src="{% static "calendar.js" %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -16,7 +15,7 @@
   <h1 class="font-title f3 f2-ns tc">Submit Your Alumni Information</h1>
 
   <form method="POST">
-	  <table class="tl dt dt--fixed w-100">
+	  <table class="tl dt dt--fixed w-100" font-family: Georgia;>
 		  {% csrf_token %}
     		  {{ form.as_table }}
 	  </table>
@@ -24,7 +23,7 @@
   </form>
 
   {% if messages %}
-  <ul class="messages">
+  <ul class="messages" font-family: Georgia;>
   	{% for message in messages %}
 	<li{% if messages.tags %} class="{{message.tags}}" {%endif%}>{{message}}</li>
 	{%endfor%}
