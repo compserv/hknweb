@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Alumni Form{% endblock %}
+
+{% block header %}
+  <link rel='stylesheet' href="http://unpkg.com/fullcalendar/dist/fullcalendar.min.css" />
+  <script src="http://unpkg.com/moment/min/moment.min.js"></script>
+  <script src="http://unpkg.com/jquery/dist/jquery.slim.min.js"></script>
+  <script src="http://unpkg.com/fullcalendar/dist/fullcalendar.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="center measure-very-wide pv4">
+  <h1 class="font-title f3 f2-ns tc">Submit Your Alumni Information</h1>
+
+  <form class="center" method="POST">
+          <table class="tl dt dt--fixed w-100" font-family: Georgia;>
+                  {% csrf_token %}
+		  First Name:<input text="text" value={{first_name}} readonly></input><br/>
+		  Last Name: <input text="text" value={{last_name}} readonly></input><br/>
+		  Email: <input text="text" value={{perm_email}} readonly></input><br/>
+		  Graduation Season: <input text="text" value={{grad_season}} readonly></input><br/>
+		  Graduation Year: <input text="text" value={{grad_year}} readonly></input><br/>
+		  Grad School: <input text="text" value={{grad_school}} readonly></input><br/>
+		  Company: <input text="text" readonly value={{company}}></input><br/>
+		  Job Title: <input text="text" readonly value={{job_title}}></input><br/>
+		  City: <input text="text" value={{city}} readonly></input><br/>
+		  Country State: <input text="text" value={{country_state}} readonly></input><br/>
+          </table>
+  </form>
+
+  <div class="center pv3"><a href="{% url 'alumni:search' %}">Go Back to Search</a></div>
+
+</div>
+
+{% endblock %}
+
