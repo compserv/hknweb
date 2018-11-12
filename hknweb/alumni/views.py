@@ -89,9 +89,10 @@ def search_type(request):
     return HttpResponseRedirect(reverse('alumni:search'))
 
 
-def alumniDetailView(request, oid):
+def alumni_detail_view(request, oid):
     alumni = Alumnus.objects.filter(id=oid).values()[0]
-    return render(request, "alumni/alumniDetail.html", alumni)
+    return render(request, "alumni/alumni_detail.html", alumni)
+
 
 def form(request):
     form = AlumniForm(request.POST or None)
