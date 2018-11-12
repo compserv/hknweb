@@ -80,7 +80,7 @@ class SearchView(generic.ListView):
         return result
 
 
-SearchView.search_field = None
+SearchView.search_field = 'name'
 SearchView.status = None
 
 
