@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Officers{% endblock %}
+{% block header %}
+  <link rel="stylesheet"  href="{% static 'css/index.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="center measure-very-wide pv4">
+  <h1 class="font-title f3 f2-ns tc">HKN Officers</h1>
+  <h2> Execs </h2>
+  <hr>
+  <div class="branch">
+    {% for exec in execs %}
+    {% for officer in exec.officer_set %}
+    <div class="member">
+      <h3>{{exec.name}}</h3>
+      <img style="max-width: 125px; height: 100px;" src= officer.profile.image alt = {{officer.profile.user.name}}>
+      <p>{{officer.name}}</p>
+    </div>
+    {% endfor %}
+    {% endfor %}
+  </div>
+  <h2> Committees </h2>
+  <hr>
+  {% for comm in committees %}
+  <h3>{{comm.name}} ({{comm.email}})</h3>
+  <div class="branch">
+    {% for officer in comm.officer_set %}
+    <div class="member">
+      <img style="max-width: 125px; height: 100px;" src= officer.profile.image alt = {{officer.profile.user.name}}>
+      <p>{{officer.profile.user.name}}</p>
+      <p>{{officer.title}}</p>
+    </div>
+    {% endfor %}
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}
