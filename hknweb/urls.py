@@ -18,19 +18,20 @@ from django.contrib.auth import views as auth_views
 from django.urls import include
 from django.urls import path
 
-from . import views
+from .views import officers as officer_views
+from .views import users as user_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path(
         'accounts/', include([
-            path('profile/', views.account_settings),
-            path('settings/', views.account_settings),
+            path('profile/', user_views.account_settings),
+            path('settings/', user_views.account_settings),
             path('login/', auth_views.LoginView.as_view(template_name='admin/login.html')),
             path('logout/', auth_views.LogoutView.as_view()),
         ]),
     ),
     path('events/', include('hknweb.events.urls')),
     path('tutoring/', include('hknweb.tutoring.urls')),
-    path('officers/', include('hknweb.officers.urls')),
+    path('officers/', officer_views.index),
 ]

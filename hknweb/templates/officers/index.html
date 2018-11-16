@@ -2,7 +2,17 @@
 {% load static %}
 {% block title %}Officers{% endblock %}
 {% block header %}
-  <link rel="stylesheet"  href="{% static 'css/index.css' %}" />
+<style>
+.branch {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+.branch .member {
+    /*float: left;*/
+    width: 33%;
+}
+</style>
 {% endblock %}
 
 {% block content %}

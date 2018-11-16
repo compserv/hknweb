@@ -1,4 +1,6 @@
+from .officer import Committee
+from .officer import Officer
 from .user import Profile
-from .officer import Officer, Committee
+from .user import User
 
-__all__ = ['Profile', 'Officer', 'Committee']
+__all__ = ['User', 'Profile', 'Officer', 'Committee']
