@@ -8,11 +8,11 @@ from django.core.validators import RegexValidator
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, editable=False)
     date_of_birth = models.DateField(null=True, blank=True)
-    picture = models.ImageField(blank=True)
+    image = models.ImageField(blank=True, upload_to='public/images/profile/')
     private = models.BooleanField(default=True, verbose_name="Private profile?")
-    phone_regex = RegexValidator(regex=r'^/([^\d]*\d){10}$/', message="Phone number must be ten digits.")
+    phone_regex = RegexValidator(regex=r'^([^\d]*\d){10}$', message="Phone number must be ten digits.")
     phone_number = models.CharField(validators=[phone_regex], max_length=15, blank=True)
-    resume = models.FileField(blank=True)
+    resume = models.FileField(blank=True, upload_to='private/resumes/')
     graduation_date = models.DateField(null=True, blank=True)
 
     @receiver(post_save, sender=User)

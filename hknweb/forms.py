@@ -1,6 +1,8 @@
 from django import forms
-from hknweb.models import User
-from hknweb.models import Profile
+
+from .models import Profile
+from .models import User
+
 
 class SettingsForm(forms.ModelForm):
 
@@ -8,8 +10,9 @@ class SettingsForm(forms.ModelForm):
         model = User
         fields = ('username', 'email', 'first_name', 'last_name', 'password')
 
+
 class ProfileForm(forms.ModelForm):
 
     class Meta:
         model = Profile
-        fields = ('picture', 'private', 'phone_number', 'date_of_birth', 'resume', 'graduation_date')
+        fields = ('image', 'private', 'phone_number', 'date_of_birth', 'resume', 'graduation_date')
