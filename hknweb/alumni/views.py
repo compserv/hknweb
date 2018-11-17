@@ -99,21 +99,10 @@ def form(request):
     if request.method == 'POST':
         if form.is_valid():
             form.save()
-            messages.success(request, 'Thanks for submitting')
+            messages.success(request, 'Thanks for submitting!')
             return redirect('/alumni/form')
         else:
             return render(request, 'alumni/form.html', {'form': AlumniForm(None)})
 
     return render(request, 'alumni/form.html', {'form': AlumniForm(None)})
-
-
-def form_success(request):
-    form = AlumniForm(request.POST or None)
-    if request.method == 'POST':
-            if form.is_valid():
-                form.save()
-                return redirect('alumni/form_success')
-            else:
-                return render(request, 'alumni/form.html', {'form':form})
-    return render(request, 'alumni/form_success.html', {'form':form})
 

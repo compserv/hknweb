@@ -12,23 +12,37 @@
 
 {% block content %}
 <div class="center measure-very-wide pv4">
-  <h1 class="font-title f3 f2-ns tc">Submit Your Alumni Information</h1>
+    <h1 class="font-title f3 f2-ns tc">Submit Your Alumni Information</h1>
 
-  <form method="POST">
-	  <table class="tl dt dt--fixed w-100" font-family: Georgia;>
-		  {% csrf_token %}
-    		  {{ form.as_table }}
-	  </table>
-	  <input class="f6 grow no-underline br-pill ph3 pv2 mb2 dib white bg-black" type="submit" value="Submit"/>
-  </form>
+    <div style="padding-left: 20px; font-family: Georgia;">
 
-  {% if messages %}
-  <ul class="messages" font-family: Georgia;>
-  	{% for message in messages %}
-	<li{% if messages.tags %} class="{{message.tags}}" {%endif%}>{{message}}</li>
-	{%endfor%}
-  </ul>
-  {%endif%}
+        {% if messages %}
+            {% for message in messages %}
+                <h3  {% if messages.tags %} class="{{ message.tags }}" {% endif %} style="color: #0000A0;">{{ message }}</h3>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST">{% csrf_token %}
+            {% for field in form %}
+                <br>
+                <span style="float: left;">{{ field.label }} {% if field.field.required %}
+                    <span style="color: red;">* </span>{% endif %}
+                </span>&nbsp
+                {{ field }}
+                {% if field.label == 'Mailing list' %}
+                <br><span style="color: #0000A0; font-size: 14px">
+                    If added to the mailing list, you'll receive periodic
+                    news/updates about HKN, including Alumni events.
+                </span>
+                {% endif %}
+                {{ field.errors }}
+                <br>
+            {% endfor %}
+
+            <input class="f6 grow no-underline br-pill ph3 pv2 mb2 dib white bg-black" type="submit" value="Submit"/>
+        </form>
+
+    </div>
 
 </div>
 
