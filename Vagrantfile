@@ -69,6 +69,7 @@ Vagrant.configure("2") do |config|
         git \
         libmysqlclient-dev \
         make \
+        sqlite3 \
         mariadb-server \
         python3 \
         python3-dev \
@@ -82,6 +83,8 @@ Vagrant.configure("2") do |config|
 
     #Set IP and PORT environment variables for `make dev`
     printf "\n\nexport IP='[::]'\nexport PORT='3000'\n" >> /home/vagrant/.bashrc
+
+    cat "export HKNWEB_MODE=dev" >> /home/vagrant/.bashrc
   SHELL
 
   # Setup pipenv and virtualenv
