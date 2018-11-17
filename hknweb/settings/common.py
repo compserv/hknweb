@@ -23,12 +23,14 @@ INSTALLED_APPS = [
     'hknweb',
     'hknweb.events',
     'hknweb.tutoring',
+    'hknweb.markdown_pages',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'markdownx',
 ]
 
 MIDDLEWARE = [

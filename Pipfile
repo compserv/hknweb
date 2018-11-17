@@ -8,6 +8,7 @@ django = ">=2.1.2"
 mysqlclient = "*"
 whitenoise = "*"
 pillow = "*"
+django-markdownx = ">=2.0"
 
 [dev-packages]
 pre-commit = "*"
@@ -19,4 +20,3 @@ livereload = "*"
 
 [requires]
 python_version=="3.6"
-
