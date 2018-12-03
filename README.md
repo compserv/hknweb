@@ -41,7 +41,7 @@ which will attempt to safely shutdown the virtual machine, or kill it otherwise.
 ## Setup (Manual)
 
 This approach requires less space, and is faster if your computer already has Python
-and GNU Make installed (i.e. most Linux machines.)
+and GNU Make installed (i.e. most GNU/Linux machines.)
 
 Developming `hknweb` requires [`pipenv`](https://docs.pipenv.org), which will
 manage the Python virtualenv, selecting the correct Python version, and
@@ -88,3 +88,4 @@ $ make dev-vagrant
 ```
 
 which will make the web site available at `http://localhost:3000`.
+

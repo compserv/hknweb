@@ -99,5 +99,8 @@ Vagrant.configure("2") do |config|
 
     # Setup pipenv and virtualenv
     su - vagrant -c 'cd ~/hknweb; make setup'
+    
+    #Set IP and PORT environment variables for `make dev`
+    printf "\n\nexport IP='[::]'\nexport PORT='3000'\n" >> /home/vagrant/.bashrc
   SHELL
 end
