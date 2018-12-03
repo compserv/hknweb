@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Elections{% endblock %}
+
+{% block header %}
+  <link rel='stylesheet' href="http://unpkg.com/fullcalendar/dist/fullcalendar.min.css" />
+  <script src="http://unpkg.com/moment/min/moment.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="center measure-very-wide pv4">
+  <h1 class="font-title f3 f2-ns tc">HKN Elections</h1>
+
+  <section id='newOfficers'>
+    <h2 class="font-title f4 f3-ns">Add New Officers</h2>
+    
+    {% if messages %}
+      <ul class="messages">
+      {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+      {% endfor %}
+      </ul>
+    {% endif %}
+
+    <span style="color: red;">* </span> = Required
+    <form method="POST">
+      {% csrf_token %}
+      {% for field in form %}
+        <br>
+        <span style="float: left;">{{ field.label }}
+        {% if field.field.required %}
+          <span style="color: red;">* </span>
+        {% endif %}
+        </span>
+        &nbsp
+        {{ field }}
+        <br>
+      {% endfor %}
+      <br>
+      <input type="submit" value="Submit">
+    </form>
+  </section>
+</div>
+{% endblock %}

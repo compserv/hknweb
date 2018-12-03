@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     'hknweb.events',
     'hknweb.tutoring',
     'hknweb.alumni',
+    'hknweb.elections',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
