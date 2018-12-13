@@ -34,4 +34,6 @@ urlpatterns = [
     path('tutoring/', include('hknweb.tutoring.urls')),
     path('pages/', include('hknweb.markdown_pages.urls')),
     path('markdownx/', include('markdownx.urls')),
+    path('s/', include('hknweb.shortlinks.urls')),
+    path('elections/', include('hknweb.elections.urls')),
 ]
