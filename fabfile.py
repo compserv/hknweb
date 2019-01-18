@@ -10,7 +10,7 @@ from deploy import path
 
 def timestamp(c: Connection) -> str:
     """
-    Returns the server date-time, encoded as YYYY-MM-SSTHH:MM:SS.
+    Returns the server date-time, encoded as YYYYMMSS_HHMMSS.
     """
     return c.run('date +%Y%m%d_%H%M%S').stdout.strip()
 
@@ -164,6 +164,7 @@ def deploy(c: Connection, target: str=None, commit: str=None):
     update(c)
     publish(c)
     finish(c)
+    c.close()
 
 
 @task
