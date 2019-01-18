@@ -1,107 +1,104 @@
 from django import forms
-from .models import User
-from .models import Group
+from hknweb.models import User, Group
+# from django.contrib.auth.models import Group
 
 class OfficerForm(forms.Form):
-
-    users = User.objects.all()
-    userChoices = [('', '-----------')] + [(x.username, (x.first_name + ' ' + x.last_name + ' ' + x.email)) for x in users]
     # Execs
-    execPresident = forms.ChoiceField(label = 'President', choices = userChoices);
-    execVicePresident = forms.ChoiceField(label = 'Vice President', choices = userChoices);
-    execRecordingSecretary = forms.ChoiceField(label = 'Recording Secretary', choices = userChoices);
-    execCorrespondingSecretary = forms.ChoiceField(label = 'Corresponding Secretary', choices = userChoices);
-    execTreasurer = forms.ChoiceField(label = 'Treasurer', choices = userChoices);
-    execDepartmentRelations = forms.ChoiceField(label = 'Department Relations', choices = userChoices);
-    execAluminiRelations = forms.ChoiceField(label = 'Alumini Relations', choices = userChoices);
+    execPresident = forms.ModelChoiceField(label = 'President', queryset=User.objects.all())
+    execVicePresident = forms.ModelChoiceField(label = 'Vice President', queryset=User.objects.all())
+    execRecordingSecretary = forms.ModelChoiceField(label = 'Recording Secretary', queryset=User.objects.all())
+    execCorrespondingSecretary = forms.ModelChoiceField(label = 'Corresponding Secretary', queryset=User.objects.all())
+    execTreasurer = forms.ModelChoiceField(label = 'Treasurer', queryset=User.objects.all())
+    execDepartmentRelations = forms.ModelChoiceField(label = 'Department Relations', queryset=User.objects.all())
+    execAluminiRelations = forms.ModelChoiceField(label = 'Alumini Relations', queryset=User.objects.all())
 
     #Activites Committee
-    actOfficer1 = forms.ChoiceField(label = 'Activites Officer', choices = userChoices);
-    actOfficer2 = forms.ChoiceField(label = 'Activites Officer', required=False, choices = userChoices);
-    actOfficer3 = forms.ChoiceField(label = 'Activites Officer', required=False, choices = userChoices);
-    actOfficer4 = forms.ChoiceField(label = 'Activites Officer', required=False, choices = userChoices);
-    actOfficer5 = forms.ChoiceField(label = 'Activites Officer', required=False, choices = userChoices);
-    actOfficer6 = forms.ChoiceField(label = 'Activites Officer', required=False, choices = userChoices);
-    actAssistantOfficer1 = forms.ChoiceField(label = 'Activites Assistant Officer', required=False, choices = userChoices);
-    actAssistantOfficer2 = forms.ChoiceField(label = 'Activites Assistant Officer', required=False, choices = userChoices);
-    actAssistantOfficer3 = forms.ChoiceField(label = 'Activites Assistant Officer', required=False, choices = userChoices);
+    actOfficer1 = forms.ModelChoiceField(label = 'Activites Officer', queryset=User.objects.all())
+    actOfficer2 = forms.ModelChoiceField(label = 'Activites Officer', required=False, queryset=User.objects.all())
+    actOfficer3 = forms.ModelChoiceField(label = 'Activites Officer', required=False, queryset=User.objects.all())
+    actOfficer4 = forms.ModelChoiceField(label = 'Activites Officer', required=False, queryset=User.objects.all())
+    actOfficer5 = forms.ModelChoiceField(label = 'Activites Officer', required=False, queryset=User.objects.all())
+    actOfficer6 = forms.ModelChoiceField(label = 'Activites Officer', required=False, queryset=User.objects.all())
+    actAssistantOfficer1 = forms.ModelChoiceField(label = 'Activites Assistant Officer', required=False, queryset=User.objects.all())
+    actAssistantOfficer2 = forms.ModelChoiceField(label = 'Activites Assistant Officer', required=False, queryset=User.objects.all())
+    actAssistantOfficer3 = forms.ModelChoiceField(label = 'Activites Assistant Officer', required=False, queryset=User.objects.all())
 
     #Bridge Committee
-    bridgeOfficer1 = forms.ChoiceField(label = 'Bridge Officer', choices = userChoices);
-    bridgeOfficer2 = forms.ChoiceField(label = 'Bridge Officer', required=False, choices = userChoices);
-    bridgeOfficer3 = forms.ChoiceField(label = 'Bridge Officer', required=False, choices = userChoices);
-    bridgeOfficer4 = forms.ChoiceField(label = 'Bridge Officer', required=False, choices = userChoices);
-    bridgeOfficer5 = forms.ChoiceField(label = 'Bridge Officer', required=False, choices = userChoices);
-    bridgeOfficer6 = forms.ChoiceField(label = 'Bridge Officer', required=False, choices = userChoices);
-    bridgeAssistantOfficer1 = forms.ChoiceField(label = 'Bridge Assistant Officer', required=False, choices = userChoices);
-    bridgeAssistantOfficer2 = forms.ChoiceField(label = 'Bridge Assistant Officer', required=False, choices = userChoices);
-    bridgeAssistantOfficer3 = forms.ChoiceField(label = 'Bridge Assistant Officer', required=False, choices = userChoices);
+    bridgeOfficer1 = forms.ModelChoiceField(label = 'Bridge Officer', queryset=User.objects.all())
+    bridgeOfficer2 = forms.ModelChoiceField(label = 'Bridge Officer', required=False, queryset=User.objects.all())
+    bridgeOfficer3 = forms.ModelChoiceField(label = 'Bridge Officer', required=False, queryset=User.objects.all())
+    bridgeOfficer4 = forms.ModelChoiceField(label = 'Bridge Officer', required=False, queryset=User.objects.all())
+    bridgeOfficer5 = forms.ModelChoiceField(label = 'Bridge Officer', required=False, queryset=User.objects.all())
+    bridgeOfficer6 = forms.ModelChoiceField(label = 'Bridge Officer', required=False, queryset=User.objects.all())
+    bridgeAssistantOfficer1 = forms.ModelChoiceField(label = 'Bridge Assistant Officer', required=False, queryset=User.objects.all())
+    bridgeAssistantOfficer2 = forms.ModelChoiceField(label = 'Bridge Assistant Officer', required=False, queryset=User.objects.all())
+    bridgeAssistantOfficer3 = forms.ModelChoiceField(label = 'Bridge Assistant Officer', required=False, queryset=User.objects.all())
 
     #Computing Services Committee
-    compservOfficer1 = forms.ChoiceField(label = 'Compserv Officer', choices = userChoices);
-    compservOfficer2 = forms.ChoiceField(label = 'Compserv Officer', required=False, choices = userChoices);
-    compservOfficer3 = forms.ChoiceField(label = 'Compserv Officer', required=False, choices = userChoices);
-    compservOfficer4 = forms.ChoiceField(label = 'Compserv Officer', required=False, choices = userChoices);
-    compservOfficer5 = forms.ChoiceField(label = 'Compserv Officer', required=False, choices = userChoices);
-    compservOfficer6 = forms.ChoiceField(label = 'Compserv Officer', required=False, choices = userChoices);
-    compservAssistantOfficer1 = forms.ChoiceField(label = 'Compserv Assistant Officer', required=False, choices = userChoices);
-    compservAssistantOfficer2 = forms.ChoiceField(label = 'Compserv Assistant Officer', required=False, choices = userChoices);
-    compservAssistantOfficer3 = forms.ChoiceField(label = 'Compserv Assistant Officer', required=False, choices = userChoices);
+    compservOfficer1 = forms.ModelChoiceField(label = 'Compserv Officer', queryset=User.objects.all())
+    compservOfficer2 = forms.ModelChoiceField(label = 'Compserv Officer', required=False, queryset=User.objects.all())
+    compservOfficer3 = forms.ModelChoiceField(label = 'Compserv Officer', required=False, queryset=User.objects.all())
+    compservOfficer4 = forms.ModelChoiceField(label = 'Compserv Officer', required=False, queryset=User.objects.all())
+    compservOfficer5 = forms.ModelChoiceField(label = 'Compserv Officer', required=False, queryset=User.objects.all())
+    compservOfficer6 = forms.ModelChoiceField(label = 'Compserv Officer', required=False, queryset=User.objects.all())
+    compservAssistantOfficer1 = forms.ModelChoiceField(label = 'Compserv Assistant Officer', required=False, queryset=User.objects.all())
+    compservAssistantOfficer2 = forms.ModelChoiceField(label = 'Compserv Assistant Officer', required=False, queryset=User.objects.all())
+    compservAssistantOfficer3 = forms.ModelChoiceField(label = 'Compserv Assistant Officer', required=False, queryset=User.objects.all())
 
     #Decal Committee
-    decalOfficer1 = forms.ChoiceField(label = 'Decal Officer', choices = userChoices);
-    decalOfficer2 = forms.ChoiceField(label = 'Decal Officer', required=False, choices = userChoices);
-    decalOfficer3 = forms.ChoiceField(label = 'Decal Officer', required=False, choices = userChoices);
-    decalOfficer4 = forms.ChoiceField(label = 'Decal Officer', required=False, choices = userChoices);
-    decalOfficer5 = forms.ChoiceField(label = 'Decal Officer', required=False, choices = userChoices);
-    decalOfficer6 = forms.ChoiceField(label = 'Decal Officer', required=False, choices = userChoices);
-    decalAssistantOfficer1 = forms.ChoiceField(label = 'Decal Assistant Officer', required=False, choices = userChoices);
-    decalAssistantOfficer2 = forms.ChoiceField(label = 'Decal Assistant Officer', required=False, choices = userChoices);
-    decalAssistantOfficer3 = forms.ChoiceField(label = 'Decal Assistant Officer', required=False, choices = userChoices);
+    decalOfficer1 = forms.ModelChoiceField(label = 'Decal Officer', queryset=User.objects.all())
+    decalOfficer2 = forms.ModelChoiceField(label = 'Decal Officer', required=False, queryset=User.objects.all())
+    decalOfficer3 = forms.ModelChoiceField(label = 'Decal Officer', required=False, queryset=User.objects.all())
+    decalOfficer4 = forms.ModelChoiceField(label = 'Decal Officer', required=False, queryset=User.objects.all())
+    decalOfficer5 = forms.ModelChoiceField(label = 'Decal Officer', required=False, queryset=User.objects.all())
+    decalOfficer6 = forms.ModelChoiceField(label = 'Decal Officer', required=False, queryset=User.objects.all())
+    decalAssistantOfficer1 = forms.ModelChoiceField(label = 'Decal Assistant Officer', required=False, queryset=User.objects.all())
+    decalAssistantOfficer2 = forms.ModelChoiceField(label = 'Decal Assistant Officer', required=False, queryset=User.objects.all())
+    decalAssistantOfficer3 = forms.ModelChoiceField(label = 'Decal Assistant Officer', required=False, queryset=User.objects.all())
 
     #Industrial Relations Committee
-    indrelOfficer1 = forms.ChoiceField(label = 'Indrel Officer', choices = userChoices);
-    indrelOfficer2 = forms.ChoiceField(label = 'Indrel Officer', required=False, choices = userChoices);
-    indrelOfficer3 = forms.ChoiceField(label = 'Indrel Officer', required=False, choices = userChoices);
-    indrelOfficer4 = forms.ChoiceField(label = 'Indrel Officer', required=False, choices = userChoices);
-    indrelOfficer5 = forms.ChoiceField(label = 'Indrel Officer', required=False, choices = userChoices);
-    indrelOfficer6 = forms.ChoiceField(label = 'Indrel Officer', required=False, choices = userChoices);
-    indrelAssistantOfficer1 = forms.ChoiceField(label = 'Indrel Assistant Officer', required=False, choices = userChoices);
-    indrelAssistantOfficer2 = forms.ChoiceField(label = 'Indrel Assistant Officer', required=False, choices = userChoices);
-    indrelAssistantOfficer3 = forms.ChoiceField(label = 'Indrel Assistant Officer', required=False, choices = userChoices);
+    indrelOfficer1 = forms.ModelChoiceField(label = 'Indrel Officer', queryset=User.objects.all())
+    indrelOfficer2 = forms.ModelChoiceField(label = 'Indrel Officer', required=False, queryset=User.objects.all())
+    indrelOfficer3 = forms.ModelChoiceField(label = 'Indrel Officer', required=False, queryset=User.objects.all())
+    indrelOfficer4 = forms.ModelChoiceField(label = 'Indrel Officer', required=False, queryset=User.objects.all())
+    indrelOfficer5 = forms.ModelChoiceField(label = 'Indrel Officer', required=False, queryset=User.objects.all())
+    indrelOfficer6 = forms.ModelChoiceField(label = 'Indrel Officer', required=False, queryset=User.objects.all())
+    indrelAssistantOfficer1 = forms.ModelChoiceField(label = 'Indrel Assistant Officer', required=False, queryset=User.objects.all())
+    indrelAssistantOfficer2 = forms.ModelChoiceField(label = 'Indrel Assistant Officer', required=False, queryset=User.objects.all())
+    indrelAssistantOfficer3 = forms.ModelChoiceField(label = 'Indrel Assistant Officer', required=False, queryset=User.objects.all())
 
     #Service Committee
-    servOfficer1 = forms.ChoiceField(label = 'Service Officer', choices = userChoices);
-    servOfficer2 = forms.ChoiceField(label = 'Service Officer', required=False, choices = userChoices);
-    servOfficer3 = forms.ChoiceField(label = 'Service Officer', required=False, choices = userChoices);
-    servOfficer4 = forms.ChoiceField(label = 'Service Officer', required=False, choices = userChoices);
-    servOfficer5 = forms.ChoiceField(label = 'Service Officer', required=False, choices = userChoices);
-    servOfficer6 = forms.ChoiceField(label = 'Service Officer', required=False, choices = userChoices);
-    servAssistantOfficer1 = forms.ChoiceField(label = 'Service Assistant Officer', required=False, choices = userChoices);
-    servAssistantOfficer2 = forms.ChoiceField(label = 'Service Assistant Officer', required=False, choices = userChoices);
-    servAssistantOfficer3 = forms.ChoiceField(label = 'Service Assistant Officer', required=False, choices = userChoices);
+    servOfficer1 = forms.ModelChoiceField(label = 'Service Officer', queryset=User.objects.all())
+    servOfficer2 = forms.ModelChoiceField(label = 'Service Officer', required=False, queryset=User.objects.all())
+    servOfficer3 = forms.ModelChoiceField(label = 'Service Officer', required=False, queryset=User.objects.all())
+    servOfficer4 = forms.ModelChoiceField(label = 'Service Officer', required=False, queryset=User.objects.all())
+    servOfficer5 = forms.ModelChoiceField(label = 'Service Officer', required=False, queryset=User.objects.all())
+    servOfficer6 = forms.ModelChoiceField(label = 'Service Officer', required=False, queryset=User.objects.all())
+    servAssistantOfficer1 = forms.ModelChoiceField(label = 'Service Assistant Officer', required=False, queryset=User.objects.all())
+    servAssistantOfficer2 = forms.ModelChoiceField(label = 'Service Assistant Officer', required=False, queryset=User.objects.all())
+    servAssistantOfficer3 = forms.ModelChoiceField(label = 'Service Assistant Officer', required=False, queryset=User.objects.all())
 
     #Student Relations Committee
-    studrelOfficer1 = forms.ChoiceField(label = 'Studrel Officer', choices = userChoices);
-    studrelOfficer2 = forms.ChoiceField(label = 'Studrel Officer', required=False, choices = userChoices);
-    studrelOfficer3 = forms.ChoiceField(label = 'Studrel Officer', required=False, choices = userChoices);
-    studrelOfficer4 = forms.ChoiceField(label = 'Studrel Officer', required=False, choices = userChoices);
-    studrelOfficer5 = forms.ChoiceField(label = 'Studrel Officer', required=False, choices = userChoices);
-    studrelOfficer6 = forms.ChoiceField(label = 'Studrel Officer', required=False, choices = userChoices);
-    studrelAssistantOfficer1 = forms.ChoiceField(label = 'Studrel Assistant Officer', required=False, choices = userChoices);
-    studrelAssistantOfficer2 = forms.ChoiceField(label = 'Studrel Assistant Officer', required=False, choices = userChoices);
-    studrelAssistantOfficer3 = forms.ChoiceField(label = 'Studrel Assistant Officer', required=False, choices = userChoices);
+    studrelOfficer1 = forms.ModelChoiceField(label = 'Studrel Officer', queryset=User.objects.all())
+    studrelOfficer2 = forms.ModelChoiceField(label = 'Studrel Officer', required=False, queryset=User.objects.all())
+    studrelOfficer3 = forms.ModelChoiceField(label = 'Studrel Officer', required=False, queryset=User.objects.all())
+    studrelOfficer4 = forms.ModelChoiceField(label = 'Studrel Officer', required=False, queryset=User.objects.all())
+    studrelOfficer5 = forms.ModelChoiceField(label = 'Studrel Officer', required=False, queryset=User.objects.all())
+    studrelOfficer6 = forms.ModelChoiceField(label = 'Studrel Officer', required=False, queryset=User.objects.all())
+    studrelAssistantOfficer1 = forms.ModelChoiceField(label = 'Studrel Assistant Officer', required=False, queryset=User.objects.all())
+    studrelAssistantOfficer2 = forms.ModelChoiceField(label = 'Studrel Assistant Officer', required=False, queryset=User.objects.all())
+    studrelAssistantOfficer3 = forms.ModelChoiceField(label = 'Studrel Assistant Officer', required=False, queryset=User.objects.all())
 
     #Tutoring Committee
-    tutorOfficer1 = forms.ChoiceField(label = 'Tutoring Officer', choices = userChoices);
-    tutorOfficer2 = forms.ChoiceField(label = 'Tutoring Officer', required=False, choices = userChoices);
-    tutorOfficer3 = forms.ChoiceField(label = 'Tutoring Officer', required=False, choices = userChoices);
-    tutorOfficer4 = forms.ChoiceField(label = 'Tutoring Officer', required=False, choices = userChoices);
-    tutorOfficer5 = forms.ChoiceField(label = 'Tutoring Officer', required=False, choices = userChoices);
-    tutorOfficer6 = forms.ChoiceField(label = 'Tutoring Officer', required=False, choices = userChoices);
-    tutorAssistantOfficer1 = forms.ChoiceField(label = 'Tutoring Assistant Officer', required=False, choices = userChoices);
-    tutorAssistantOfficer2 = forms.ChoiceField(label = 'Tutoring Assistant Officer', required=False, choices = userChoices);
-    tutorAssistantOfficer3 = forms.ChoiceField(label = 'Tutoring Assistant Officer', required=False, choices = userChoices);
+    tutorOfficer1 = forms.ModelChoiceField(label = 'Tutoring Officer', queryset=User.objects.all())
+    tutorOfficer2 = forms.ModelChoiceField(label = 'Tutoring Officer', required=False, queryset=User.objects.all())
+    tutorOfficer3 = forms.ModelChoiceField(label = 'Tutoring Officer', required=False, queryset=User.objects.all())
+    tutorOfficer4 = forms.ModelChoiceField(label = 'Tutoring Officer', required=False, queryset=User.objects.all())
+    tutorOfficer5 = forms.ModelChoiceField(label = 'Tutoring Officer', required=False, queryset=User.objects.all())
+    tutorOfficer6 = forms.ModelChoiceField(label = 'Tutoring Officer', required=False, queryset=User.objects.all())
+    tutorAssistantOfficer1 = forms.ModelChoiceField(label = 'Tutoring Assistant Officer', required=False, queryset=User.objects.all())
+    tutorAssistantOfficer2 = forms.ModelChoiceField(label = 'Tutoring Assistant Officer', required=False, queryset=User.objects.all())
+    tutorAssistantOfficer3 = forms.ModelChoiceField(label = 'Tutoring Assistant Officer', required=False, queryset=User.objects.all())
 
     def assignGroups(self):
         # General Officers
