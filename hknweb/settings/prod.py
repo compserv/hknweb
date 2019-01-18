@@ -9,4 +9,4 @@ from .secrets import *
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['hkn.eecs.berkeley.edu','hkn.mu']
+ALLOWED_HOSTS = ['hkn.eecs.berkeley.edu', 'hkn.mu', 'dev-hkn-eecs-berkeley-edu.apphost.ocf.berkeley.edu']
