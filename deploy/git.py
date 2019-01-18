@@ -16,7 +16,7 @@ def repo_exists(c: Connection) -> bool:
 
 def remote_reachable(c: Connection) -> bool:
     with c.cd(c.repo_path):
-        return c.run("git ls-remote {} HEAD".format(c.deploy.repo_url), warn=True).ok
+        return c.run("git ls-remote {} HEAD".format(c.deploy.repo_url), warn=True, echo=True).ok
 
 def clone(c: Connection):
     with c.cd(c.deploy_path):
@@ -30,8 +30,8 @@ def fetch(c: Connection):
 
 def revision_number(c: Connection, revision: str) -> str:
     with c.cd(c.repo_path):
-        return c.run("git rev-parse {}".format(revision)).stdout.strip()
+        return c.run("git rev-list --max-count=1 {} --".format(revision), echo=True).stdout.strip()
 
 def create_archive(c: Connection):
     with c.cd(c.repo_path):
-        c.run("git archive {} | tar -x -f - -C {}".format(c.commit, c.release))
+        c.run("git archive {} | tar -x -f - -C '{}'".format(c.commit, c.release_path), echo=True)
