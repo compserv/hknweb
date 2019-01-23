@@ -31,6 +31,7 @@ urlpatterns = [
         ]),
     ),
     path('events/', include('hknweb.events.urls')),
+    path('alumni/', include('hknweb.alumni.urls')),
     path('tutoring/', include('hknweb.tutoring.urls')),
     path('pages/', include('hknweb.markdown_pages.urls')),
     path('markdownx/', include('markdownx.urls')),
