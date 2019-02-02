@@ -33,6 +33,9 @@ urlpatterns = [
     path('events/', include('hknweb.events.urls')),
     path('alumni/', include('hknweb.alumni.urls')),
     path('tutoring/', include('hknweb.tutoring.urls')),
+    # added candidate app for the officer challenge feature;
+    # feel free rename or merge code when merging
+    path('cand/', include('hknweb.candidate.urls')),
     path('pages/', include('hknweb.markdown_pages.urls')),
     path('markdownx/', include('markdownx.urls')),
     path('s/', include('hknweb.shortlinks.urls')),
