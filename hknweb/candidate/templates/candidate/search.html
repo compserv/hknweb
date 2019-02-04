@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Search for Alumni{% endblock %}
+
+{% block header %}
+  <!--<link rel='stylesheet' href="http://unpkg.com/fullcalendar/dist/fullcalendar.min.css" />-->
+  <!--<script src="http://unpkg.com/moment/min/moment.min.js"></script>-->
+  <!--<script src="http://unpkg.com/jquery/dist/jquery.slim.min.js"></script>-->
+  <!--<script src="http://unpkg.com/fullcalendar/dist/fullcalendar.min.js"></script>-->
+  <!--<link rel='stylesheet' type="text/css" href="{% static 'alumni/style.css' %}" />-->
+{% endblock %}
+
+{% block content %}
+<div class="center measure-very-wide pv4">
+  <h1 class="font-title f3 f2-ns tc">Search for HKN Alumni</h1>
+
+    <div style="padding-left: 20px; font-family: Georgia;">
+
+        <h3>You can search by:</h3>
+
+        <form action="{% url 'alumni:search_type' %}" method="post">
+        {% csrf_token %}
+            <select action="{% url 'alumni:search' %}" name="search_by" id="search_by">
+                <option value="name">Name</option><br>
+                <option value="city">City</label><br>
+                <option value="email">Email</label><br>
+                <option value="graduation year">Graduation Year</label><br>
+                <option value="grad school">Grad School</label><br>
+                <option value="company">Company</label><br>
+            </select>
+
+        <br><br><input type="submit" value="Search by this please!">
+        </form>
+
+        <h3>You are searching by {{ search_field }}</h3>
+
+
+        <form id="searchform" action="{% url 'alumni:search' %}" method="get" accept-charset="utf-8">
+            <button class="searchbutton" type="submit">
+                <i class="fa fa-search"></i>
+            </button>
+            <input class="searchfield" id="searchbox" name="q" type="text" placeholder="Search">
+        </form>
+
+        {% if status == 'sahai' %}
+            <br><img src="{% static 'alumni/sahai.gif' %}" alt="Anant Sahai">
+        {% endif %}
+
+        {% if '\\' in matching_alumni_list %}
+            <p>Enter any keyword in the search bar.</p>
+        {% elif status == 'stanford' %}
+            <p>Sorry, no results found. Did you mean: worse-than-cal?</p>
+        {% elif matching_alumni_list %}
+            <br>
+            <table style="width: 100%;">
+                <thead>
+                    <th>Name</th>
+                    <th>Graduated</th>
+                    <th>Country/State</th>
+                    <th>City</th>
+                    <th>Grad School</th>
+                    <th>Company</th>
+                </thead>
+
+                <tbody>
+                {% for alumnus in matching_alumni_list %}
+                    <tr>
+                        <td align="center">
+				<a href="{% url 'alumni:detail' alumnus.id%}">
+					{{ alumnus.name }}
+				</a>
+			</td>
+                        <td align="center">{{ alumnus.graduation_semester }}</td>
+                        <td align="center">{{ alumnus.country_state }}</td>
+                        <td align="center">{{ alumnus.city }}</td>
+                        <td align="center">{{ alumnus.grad_school }}</td>
+                        <td align="center">{{ alumnus.company }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+        {% else %}
+            <p>Sorry, no matching alumni found!</p>
+        {% endif %}
+    </div>
+
+
+</div>
+
+{% endblock %}
