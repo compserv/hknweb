@@ -1,3 +1,14 @@
 from django.contrib import admin
+from .models import OffChallenge
+from hknweb.models import Profile
 
-# Register your models here.
+
+class OffChallengeAdmin(admin.ModelAdmin):
+
+    fields = ['requester', 'officer', 'name', 'description', 'proof']
+    list_display = ('name', 'requester', 'officer', 'description')
+    list_filter = ['requester', 'officer']
+    search_fields = ['requester', 'officer', 'name']
+
+
+admin.site.register(OffChallenge, OffChallengeAdmin)
