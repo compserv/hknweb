@@ -12,6 +12,3 @@ SECRET_KEY = 'v9lj^szduvr@a*31&r(l5ub+5q%ebszts70vlpzaiekt23s)gb'
 DEBUG = False
 
 ALLOWED_HOSTS = ['hkn.eecs.berkeley.edu','hkn.mu']
-
-
-
