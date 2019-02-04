@@ -8,4 +8,7 @@ from django.urls import reverse
 # Create your views here.
 
 class IndexView(generic.TemplateView):
-    template_name = 'alumni/index.html'
+    template_name = 'candidate/index.html'
+
+class CandRequestView(generic.TemplateView):
+    template_name = 'candidate/candreq.html'

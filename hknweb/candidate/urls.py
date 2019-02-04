@@ -2,11 +2,12 @@ from django.urls import path
 
 from . import views
 
-app_name = 'alumni'
+app_name = 'candidate'
 urlpatterns = [
     path('', views.IndexView.as_view(), name='index'),
     # candidate end of officer challenge requests
-    path('candrequests', views.IndexView.as_view(), name='candrequests'),
+    path('candreq', views.CandRequestView.as_view(), name='candrequests'),
     # officer end of officer challenge requests
-    path('offrequests', views.IndexView.as_view(), name='offrequests'),
+    # currently dummy page, goes to index
+    path('offreq', views.IndexView.as_view(), name='offrequests'),
 ]
