@@ -25,6 +25,7 @@ class OffChallenge(models.Model):
     description     = models.TextField(max_length=max_txtlen, blank=True, default='')
     # proof of completion is optional (if proof is a file, the candiate can send it to slack)
     proof           = models.TextField(max_length=max_txtlen, blank=True, default='')
+    confirmed       = models.BooleanField(default=False)
 
     # TODO not sure if I need a field for partners
 

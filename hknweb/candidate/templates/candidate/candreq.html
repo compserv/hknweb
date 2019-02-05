@@ -19,6 +19,7 @@
     <h1 class="font-title f3 f2-ns tc">Your Officer Challenges</h1>
 
     <!-- Feel free to replace this terrible styling! -->
+    <!-- Left side of page, form to request new challenges -->
     <div style="width: 40%; float: left; padding-left: 10px; font-family: Georgia; font-size: 10pt">
         <h3>Request Officer Challenge Confirmation</h3>
 
@@ -44,6 +45,7 @@
         </form>
     </div>
 
+    <!-- Right side of page, list of requested challenges -->
     <section id='agenda'  style="width: 59%; float: right; background-color: #D0D0D0; margin: 0.5%; padding-left: 20px; font-family: Georgia;">
         <h3><a href="{% url 'alumni:search' %}?q=\\">Look up Fellow Alumni Information</a></h3>
         <h3><a href="{% url 'alumni:form' %}">Submit Alumni Information</a></h3>
