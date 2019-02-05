@@ -5,9 +5,10 @@ from hknweb.models import Profile
 
 class OffChallengeAdmin(admin.ModelAdmin):
 
-    fields = ['requester', 'officer', 'name', 'confirmed', 'description', 'proof']
-    list_display = ('name', 'requester', 'officer', 'confirmed', 'description')
-    list_filter = ['requester', 'officer']
+    fields = ['requester', 'officer', 'name', 'confirmed', 'description', 'proof', 'request_date']
+    readonly_fields = ['request_date']
+    list_display = ('name', 'requester', 'officer', 'confirmed', 'request_date')
+    list_filter = ['requester', 'officer', 'request_date']
     search_fields = ['requester', 'officer', 'name']
 
 
