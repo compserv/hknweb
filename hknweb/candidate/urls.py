@@ -10,4 +10,6 @@ urlpatterns = [
     # officer end of officer challenge requests
     # currently dummy page, goes to index
     path('offreq', views.IndexView.as_view(), name='offrequests'),
+    # dummy url for now
+    path('dummy', views.IndexView.as_view(), name='dummy'),
 ]

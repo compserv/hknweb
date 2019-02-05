@@ -19,8 +19,9 @@
     <h1 class="font-title f3 f2-ns tc">Your Officer Challenges</h1>
 
     <!-- Feel free to replace this terrible styling! -->
-    <div style="width: 30%; float: left; padding-left: 10px; font-family: Georgia;">
-        <h4>Request Officer Challenge Confirmation</h4>
+    <div style="width: 40%; float: left; padding-left: 10px; font-family: Georgia; font-size: 10pt">
+        <h3>Request Officer Challenge Confirmation</h3>
+
         <form method="POST">{% csrf_token %}
             {% for field in form %}
                 <br>
@@ -28,10 +29,11 @@
                     <span style="color: red;">* </span>{% endif %}
                 </span>&nbsp
                 {{ field }}
-                {% if field.label == 'Mailing list' %}
-                <br><span style="color: #0000A0; font-size: 14px">
-                    If added to the mailing list, you'll receive periodic
-                    news/updates about HKN, including Alumni events.
+                {% if field.label == 'Proof' %}
+                <br><span style="color: #0000A0; font-size: 8pt">
+                    You can optionally include some proof that you've completed
+                    the challenge. If your proof is a file, you can send it to
+                    the Slack channel, or upload to Google Drive paste a link here.
                 </span>
                 {% endif %}
                 {{ field.errors }}
@@ -42,7 +44,7 @@
         </form>
     </div>
 
-    <section id='agenda'  style="width: 39%; float: right; background-color: #D0D0D0; margin: 0.5%; padding-left: 20px; font-family: Georgia;">
+    <section id='agenda'  style="width: 59%; float: right; background-color: #D0D0D0; margin: 0.5%; padding-left: 20px; font-family: Georgia;">
         <h3><a href="{% url 'alumni:search' %}?q=\\">Look up Fellow Alumni Information</a></h3>
         <h3><a href="{% url 'alumni:form' %}">Submit Alumni Information</a></h3>
     </div>
