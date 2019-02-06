@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, re_path
 
 from . import views
 
@@ -10,6 +10,7 @@ urlpatterns = [
     # officer end of officer challenge requests
     # currently dummy page, goes to index
     path('offreq', views.IndexView.as_view(), name='offrequests'),
+    re_path(r'^detail/(?P<oid>\d+)/$', views.ChallengeDetailView, name='detail'),
     # dummy url for now
     path('dummy', views.IndexView.as_view(), name='dummy'),
 ]

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Alumni Detail{% endblock %}
+
+<!-- TODO Currently contains gibberish -->
+
+{% block header %}
+  <link rel='stylesheet' href="http://unpkg.com/fullcalendar/dist/fullcalendar.min.css" />
+  <script src="http://unpkg.com/moment/min/moment.min.js"></script>
+  <script src="http://unpkg.com/jquery/dist/jquery.slim.min.js"></script>
+  <script src="http://unpkg.com/fullcalendar/dist/fullcalendar.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="center measure-very-wide pv4">
+  <h1 class="font-title f3 f2-ns tc">View Alumni: {{ first_name }} {{ last_name }}</h1>
+
+    <div style="padding-left: 20px; font-family: Georgia;">
+        <form class="center" method="POST">
+            <table class="tl dt dt--fixed w-100" font-family: Georgia;>
+                  {% csrf_token %}
+            First Name: <input text="text" value="{{ first_name }}" size="{{ first_name|length }}" readonly></input><br/>
+            Last Name: <input text="text" value="{{ last_name }}" size="{{ last_name|length }}" readonly></input><br/>
+            Email: <input text="text" value="{{ perm_email }}" size="{{ perm_email|length }}" readonly></input><br/>
+            Graduation Season: <input text="text" value="{{ grad_season }}" size="{{ grad_season|length }}" readonly></input><br/>
+            Graduation Year: <input text="text" value="{{ grad_year }}" size="{{ grad_year|length }}" readonly></input><br/>
+            Grad School: <input text="text" value="{{ grad_school }}" size="{{ grad_school|length }}" readonly></input><br/>
+            Company: <input text="text" value="{{ company }}" size="{{ company|length }}" readonly></input><br/>
+            Job Title: <input text="text" value="{{ job_title }}" size="{{ job_title|length }}" readonly></input><br/>
+            City: <input text="text" value="{{ city }}" size="{{ city|length }}" readonly></input><br/>
+            Country State: <input text="text" value="{{ country_state }}" size="{{ country_state|length }}" readonly></input><br/>
+            </table>
+        </form>
+
+  <div class="center pv3"><a href="{% url 'alumni:search' %}?q=\\">Go Back to Search</a></div>
+
+</div>
+
+{% endblock %}
