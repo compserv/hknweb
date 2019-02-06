@@ -73,18 +73,13 @@ Django will also require a working copy of MySQL (or MariaDB).
 
 To run the Django development server (which runs a web server locally), run
 ```sh
-$ make dev
-```
-
-or more simply,
-```sh
 $ make
 ```
 
 In a Vagrant box, run
 ```sh
-$ cd /vagrant
-$ make dev-vagrant
+$ cd ~/hknweb
+$ make
 ```
 
 which will make the web site available at `http://localhost:3000`.
