@@ -4,20 +4,55 @@
 {% block title %}Events{% endblock %}
 
 {% block header %}
+  <!-- random scripts which somehow make the calendar work: -->
   <link rel='stylesheet' href="http://unpkg.com/fullcalendar/dist/fullcalendar.min.css" />
   <script src="http://unpkg.com/moment/min/moment.min.js"></script>
   <script src="http://unpkg.com/jquery/dist/jquery.slim.min.js"></script>
   <script src="http://unpkg.com/fullcalendar/dist/fullcalendar.min.js"></script>
-  <script src="{% static "calendar.js" %}"></script>
+  <script type="text/javascript">
+    function renderDateCorrectly(dateStr) {
+      // input example: 'Feb. 2, 2019, 10:36 p.m.'
+      // Date() wants "pm" not "p.m."
+      dateStr = dateStr.replace("p.m.", "pm").replace("a.m.", "am");
+      // construct the Date and return it in ISO format
+      return (new Date(dateStr)).toISOString();
+      // output example: 2017-10-12T20:00:00 or 2017-10-12
+    }
+    
+    $(document).ready(function () {
+      $('#calendar').fullCalendar({
+        header: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'month,basicWeek,basicDay'
+        },
+        defaultDate: new Date(),
+        navLinks: true, // can click day/week names to navigate views
+        editable: false,
+        eventLimit: true, // allow "more" link when too many events
+        fixedWeekCount: false,
+        aspectRatio: 1.75,
+        events: [ {% for event in events %}
+          {
+            title: '{{ event.name }}',
+            start: renderDateCorrectly('{{ event.start_time }}'),
+            end: renderDateCorrectly('{{ event.end_time }}')
+            // TODO: add a URL attribute which allows user to RSVP?
+          },
+        {% endfor %}
+        ]
+      })
+    })
+  </script>
 {% endblock %}
 
 {% block content %}
 <div class="center measure-very-wide pv4">
-  <h1 class="font-title f3 f2-ns tc">HKN Events</h1>
+  <h1 class="font-title f3 f2-ns tc">Upcoming Events</h1>
 
   <section id='calendar'></section>
 
-  <section id='agenda'>
+  <!-- <section id='agenda'>
     <h2 class="font-title f4 f3-ns">Agenda</h2>
     {% for event in events %}
       <h3 class="f5 f4-l mv2">{{ event.name }}</h3>
@@ -27,8 +62,6 @@
       </blockquote>
       <br/>
     {% endfor %}
-  </section>
+  </section> -->
 </div>
-
-  <!-- TODO: add public event feed (ical) -->
 {% endblock %}
