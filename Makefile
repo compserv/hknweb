@@ -38,6 +38,10 @@ venv: Pipfile Pipfile.lock
 migrate:
 	pipenv run python ./manage.py migrate --settings=hknweb.settings.dev
 
+.PHONY: makemigrations
+makemigrations:
+	pipenv run python ./manage.py makemigrations --settings=hknweb.settings.dev
+
 .PHONY: test
 test: venv
 	pipenv run pytest -v tests/

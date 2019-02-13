@@ -1,23 +1,22 @@
 from django.db import models
 
 class Event(models.Model):
-    id          = models.IntegerField(primary_key=True)
     name        = models.CharField(max_length=255, null=False)
     slug        = models.CharField(max_length=255)
     location    = models.CharField(max_length=255)
     description = models.TextField()
     start_time  = models.DateTimeField(null=False)
     end_time    = models.DateTimeField(null=False)
-    event_type_id = models.IntegerField()
+    # event_type_id = models.IntegerField()
     # event_type_id  = models.ForeignKey()
-    need_transportation = models.BooleanField(default=False)
-    view_permission_group_id = models.IntegerField(null=True)
-    rsvp_permission_group_id = models.IntegerField(null=True)
+    # need_transportation = models.BooleanField(default=False)
+    # view_permission_group_id = models.IntegerField(null=True)
+    # rsvp_permission_group_id = models.IntegerField(null=True)
     # view_permission_group_id = models.ForeignKey('people.Group', on_delete=models.SET_NULL, null=True)
     # rsvp_permission_group_id = models.ForeignKey('people.Group', on_delete=models.SET_NULL, null=True)
-    markdown    = models.BooleanField(default=False)
-    created_at  = models.DateTimeField(auto_now_add=True)
-    updated_at  = models.DateTimeField(auto_now=True)
+    # markdown    = models.BooleanField(default=False)
+    # created_at  = models.DateTimeField(auto_now_add=True)
+    # updated_at  = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return "Event(name={}, location={})".format(self.name, self.location)
