@@ -1,6 +1,6 @@
 [Unit]
 Description=hknweb django app
-ConditionHost=werewolves
+ConditionHost=vampires
 
 [Install]
 WantedBy=default.target
