@@ -1,18 +1,22 @@
 from django.views import generic
-from django.views.generic.edit import CreateView
+# from django.views.generic.edit import CreateView
+from django.views.generic.edit import FormView
 from django.shortcuts import render
 
 from .models import OffChallenge
+from .forms import ChallengeRequestForm
 
 # Create your views here.
 
 class IndexView(generic.TemplateView):
     template_name = 'candidate/index.html'
 
-class CandRequestView(CreateView, generic.ListView):
+
+class CandRequestView(FormView, generic.ListView):
     template_name = 'candidate/candreq.html'
-    model = OffChallenge
-    fields = ['name', 'officer', 'description', 'proof']
+    # model = OffChallenge
+    # fields = ['name', 'officer', 'description', 'proof']
+    form_class = ChallengeRequestForm
     success_url = "/cand/candreq"
 
     context_object_name = 'challenge_list'
@@ -21,6 +25,7 @@ class CandRequestView(CreateView, generic.ListView):
         # This method is called when valid form data has been POSTed.
         # It should return an HttpResponse.
         form.instance.requester = self.request.user
+        form.save()
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
