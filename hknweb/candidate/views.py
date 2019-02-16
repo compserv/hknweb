@@ -30,8 +30,6 @@ class CandRequestView(FormView, generic.ListView):
 
     def get_context_data(self, **kwargs):
         context = super(CandRequestView, self).get_context_data(**kwargs)
-        # context['search_field'] = CandRequestView.search_field
-        # context['status'] = CandRequestView.status
         return context
 
     def get_queryset(self):
@@ -41,5 +39,12 @@ class CandRequestView(FormView, generic.ListView):
         return result
 
 def challenge_detail_view(request, pk):
-    challenge = OffChallenge.objects.filter(id=pk).values()[0]
-    return render(request, "candidate/challenge_detail.html", challenge)
+    challenge = OffChallenge.objects.get(id=pk)
+    officer_name = challenge.officer.get_full_name()
+    requester_name = challenge.requester.get_full_name()
+    context = {
+        "challenge" : challenge,
+        "officer_name" : officer_name,
+        "requester_name" : requester_name,
+    }
+    return render(request, "candidate/challenge_detail.html", context=context)

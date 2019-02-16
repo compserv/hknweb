@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Alumni Detail{% endblock %}
+{% block title %}Challenge Detail{% endblock %}
 
 <!-- TODO Currently contains gibberish -->
 
@@ -18,23 +18,16 @@
 
     <!-- I'm using a readonly form to display information. This is a bad idea.
          So if you wanna fix it, GO AHEAD. -->
-    <div style="padding-left: 20px; font-family: Georgia;">
-        <form class="center" method="GET">
-            <table class="tl dt dt--fixed w-100" font-family: Georgia;>
-                  {% csrf_token %}
-            Title: <input text="text" value="{{ name }}" size="{{ name|length }}" readonly></input><br/>
-            Officer: <input text="text" value="{{ officer }}" size="{{ officer|length }}" readonly></input><br/>
-            Requested by: <input text="text" value="{{ requester }}" size="{{ requester|length }}" readonly></input><br/>
-            Detailed Description: <input text="text" value="{{ description }}" size="{{ description|length }}" readonly></input><br/>
-            Proof: <input text="text" value="{{ proof }}" size="{{ proof|length }}" readonly></input><br/>
-            Confirmed: <input text="text" value=
-                "{% if confirmed %}Yes{% else %}No{% endif %}"
-                  size="1" readonly></input><br/>
-            Request Date: <input text="text" value="{{ request_date }}" size="{{ request_date|length }}" readonly></input><br/>
-            </table>
-        </form>
+    <div style="padding-left: 20px; font-family: Georgia; line-height:23px;">
+        Title: {{ challenge.name }}<br/>
+        Officer: {{ challenge.officer }} &nbsp;&nbsp; ({{ officer_name }})<br/>
+        Requested by: {{ challenge.requester }} &nbsp;&nbsp; ({{ requester_name }})<br/>
+        Detailed Description: {{ challenge.description }}<br/>
+        Proof: {{ challenge.proof }}<br/>
+        Confirmed: {% if challenge.confirmed %}Yes{% else %}No{% endif %}<br/>
+        Request Date: {{ challenge.request_date }}<br/>
 
-  <div class="center pv3"><a href="{% url 'candidate:candrequests' %}?q=\\">Go Back to All Challenges</a></div>
+    <div class="center pv3"><a href="{% url 'candidate:candrequests' %}?q=\\">Go Back to All Challenges</a></div>
 
 </div>
 
