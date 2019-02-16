@@ -10,7 +10,7 @@ urlpatterns = [
     # officer end of officer challenge requests
     # currently dummy page, goes to index
     path('offreq', views.IndexView.as_view(), name='offrequests'),
-    re_path(r'^detail/(?P<oid>\d+)/$', views.ChallengeDetailView, name='detail'),
+    re_path(r'^detail/(?P<pk>\d+)/$', views.challenge_detail_view, name='detail'),
     # dummy url for now
     path('dummy', views.IndexView.as_view(), name='dummy'),
 ]

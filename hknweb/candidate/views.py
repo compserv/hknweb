@@ -1,5 +1,6 @@
 from django.views import generic
 from django.views.generic.edit import CreateView
+from django.shortcuts import render
 
 from .models import OffChallenge
 
@@ -34,10 +35,6 @@ class CandRequestView(CreateView, generic.ListView):
         result = result.order_by('-request_date')
         return result
 
-class ChallengeDetailView(generic.DetailView):
-    model = OffChallenge
-    template_name = 'candidate/challenge_detail.html'
-
-    # (request, oid):
-    #     alumni = Alumnus.objects.filter(id=oid).values()[0]
-    #     return render(request, "alumni/alumni_detail.html", alumni)
+def challenge_detail_view(request, pk):
+    challenge = OffChallenge.objects.filter(id=pk).values()[0]
+    return render(request, "candidate/challenge_detail.html", challenge)
