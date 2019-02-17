@@ -1,10 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
 
-<!-- I just made this to have a place to put the officer stuff.
-     Feel free to delete this page later, as long as you still
-     keep the mechanism for making officer challenge requests. -->
-
 {% block title %}Candidate Officer Challenges{% endblock %}
 
 {% block header %}
@@ -54,7 +50,7 @@
                 <thead>
                     <th>Title</th>
                     <th>Officer</th>
-                    <th>Confirmed</th>
+                    <th>Status</th>
                 </thead>
 
                 <tbody>
@@ -67,10 +63,12 @@
             			</td>
                         <td align="center">{{ challenge.officer }}</td>
                         <td align="center">
-                            {% if challenge.confirmed %}
-                                <img src="{% static 'candidate/yes.png'%}" alt="yup" style="width: 20%;">
+                            {% if not challenge.reviewed %}
+                                <img src="{% static 'candidate/maybe.png'%}" alt="in progress" style="width: 20%;">
+                            {% elif challenge.confirmed %}
+                                <img src="{% static 'candidate/yes.png'%}" alt="confirmed" style="width: 20%;">
                             {% else %}
-                                <img src="{% static 'candidate/no.png'%}" alt="nope" style="width: 20%;">
+                                <img src="{% static 'candidate/no.png'%}" alt="declined" style="width: 20%;">
                             {% endif %}
                         </td>
                     </tr>
@@ -81,6 +79,14 @@
         {% else %}
             <p>No requests to show.</p>
         {% endif %}
+
+        <!-- Legend for status of challenge request -->
+        <p>
+        Confirmed <img src="{% static 'candidate/yes.png'%}" alt="confirmed" style="width: 5%; vertical-align: middle;">
+        Declined <img src="{% static 'candidate/no.png'%}" alt="declined" style="width: 5%; vertical-align: middle;">
+        Waiting for response <img src="{% static 'candidate/maybe.png'%}" alt="in progress" style="width: 5%; vertical-align: middle;">
+        </p>
+
         </div>
 
 </div>

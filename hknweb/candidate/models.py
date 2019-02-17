@@ -25,6 +25,13 @@ class OffChallenge(models.Model):
     description     = models.TextField(max_length=max_txtlen, blank=True, default='')
     # proof of completion is optional (if proof is a file, the candiate can send it to slack)
     proof           = models.TextField(max_length=max_txtlen, blank=True, default='')
+    # optional comment about, say, why the confirmation request was declined
+    officer_comment = models.TextField(max_length=max_txtlen, blank=True, default='')
+    # whether officer reviewed this request
+    reviewed        = models.BooleanField(default=False)
+    # whether officer confirmed this request
+    # if reviewed == True and confirmed == False, then officer declined request
+    # if reviewed == False, then challenge is not confirmed no matter what the field confirmed equals
     confirmed       = models.BooleanField(default=False)
     request_date    = models.DateTimeField(auto_now_add=True)
 

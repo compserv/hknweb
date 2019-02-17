@@ -5,9 +5,9 @@ from django.contrib.auth.models import User
 
 class OffChallengeAdmin(admin.ModelAdmin):
 
-    fields = ['requester', 'officer', 'name', 'confirmed', 'description', 'proof', 'request_date']
+    fields = ['requester', 'officer', 'name', 'reviewed', 'confirmed', 'description', 'proof', 'officer_comment', 'request_date']
     readonly_fields = ['request_date']
-    list_display = ('name', 'requester', 'officer', 'confirmed', 'request_date')
+    list_display = ('name', 'requester', 'officer', 'reviewed', 'confirmed', 'request_date')
     list_filter = ['requester', 'officer', 'request_date']
     search_fields = ['requester', 'officer', 'name']
 
