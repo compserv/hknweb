@@ -15,9 +15,12 @@
     <h1 class="font-title f3 f2-ns tc">Your Officer Challenges</h1>
 
     <!-- Feel free to replace this terrible styling! -->
+
     <!-- Left side of page, form to request new challenges -->
     <div style="width: 40%; float: left; padding-left: 50px; font-family: Georgia; font-size: 10pt">
         <h3>Request Officer Challenge Confirmation</h3>
+
+        {% load app_filters %}
 
         <form method="POST">{% csrf_token %}
             {% for field in form %}
@@ -25,24 +28,29 @@
                 <span style="float: left;">{{ field.label }} {% if field.field.required %}
                     <span style="color: red;">* </span>{% endif %}
                 </span>&nbsp
+                {% if field|field_type == 'Textarea' %}
+                    <br/>
+                {% endif %}
                 {{ field }}
                 {% if field.label == 'Proof' %}
-                <br><span style="color: #0000A0; font-size: 8pt">
+                <br/>
+                <span style="color: #0000A0; font-size: 8pt">
                     You can optionally include some proof that you've completed
                     the challenge. If your proof is a file, you can send it to
                     the Slack channel, or upload to Google Drive paste a link here.
                 </span>
                 {% endif %}
                 {{ field.errors }}
-                <br>
+                <br/>
             {% endfor %}
+            <br/>
 
             <input class="f6 grow no-underline br-pill ph3 pv2 mb2 dib white bg-black" type="submit" value="Submit"/>
         </form>
     </div>
 
     <!-- Right side of page, list of requested challenges -->
-    <section id='agenda'  style="width: 41%; float: right; padding-left: 20px; padding-right: 20px; font-family: Georgia; font-size: 10pt">
+    <section id='agenda'  style="width: 50%; float: right; padding-left: 20px; padding-right: 20px; font-family: Georgia; font-size: 10pt">
         <h3>Past Requests</h3>
 
         {% if challenge_list %}
@@ -64,11 +72,11 @@
                         <td align="center">{{ challenge.officer }}</td>
                         <td align="center">
                             {% if not challenge.reviewed %}
-                                <img src="{% static 'candidate/maybe.png'%}" alt="in progress" style="width: 20%;">
+                                <img src="{% static 'candidate/maybe.png'%}" alt="in progress" style="width: 12%;">
                             {% elif challenge.confirmed %}
-                                <img src="{% static 'candidate/yes.png'%}" alt="confirmed" style="width: 20%;">
+                                <img src="{% static 'candidate/yes.png'%}" alt="confirmed" style="width: 12%;">
                             {% else %}
-                                <img src="{% static 'candidate/no.png'%}" alt="declined" style="width: 20%;">
+                                <img src="{% static 'candidate/no.png'%}" alt="declined" style="width: 12%;">
                             {% endif %}
                         </td>
                     </tr>
@@ -82,9 +90,9 @@
 
         <!-- Legend for status of challenge request -->
         <p>
-        Confirmed <img src="{% static 'candidate/yes.png'%}" alt="confirmed" style="width: 5%; vertical-align: middle;">
-        Declined <img src="{% static 'candidate/no.png'%}" alt="declined" style="width: 5%; vertical-align: middle;">
-        Waiting for response <img src="{% static 'candidate/maybe.png'%}" alt="in progress" style="width: 5%; vertical-align: middle;">
+        Confirmed <img src="{% static 'candidate/yes.png'%}" alt="confirmed" style="width: 4%; vertical-align: middle;">
+        Declined <img src="{% static 'candidate/no.png'%}" alt="declined" style="width: 4%; vertical-align: middle;">
+        Waiting for response <img src="{% static 'candidate/maybe.png'%}" alt="in progress" style="width: 4%; vertical-align: middle;">
         </p>
 
         </div>

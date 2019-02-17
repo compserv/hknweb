@@ -1,5 +1,4 @@
 from django.views import generic
-# from django.views.generic.edit import CreateView
 from django.views.generic.edit import FormView
 from django.shortcuts import render
 

@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-max_strlen = 255 # default max length for char fields
+max_strlen = 85 # default max length for char fields
 max_txtlen = 2000 # default max length for text fields
 
 
