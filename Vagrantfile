@@ -86,7 +86,9 @@ Vagrant.configure("2") do |config|
         git \
         libmysqlclient-dev \
         make \
+        mariadb-client \
         mariadb-server \
+        sqlite3 \
         python3 \
         python3-dev \
         python3-pip \
@@ -94,13 +96,19 @@ Vagrant.configure("2") do |config|
         vim
 
     # Set up MySQL database and development user
-    mysql -e "CREATE DATABASE IF NOT EXISTS hkn;"
-    mysql -e "GRANT ALL PRIVILEGES ON hkn.* TO 'hkn'@'localhost' IDENTIFIED BY 'hknweb-dev';"
+    mysql -e "CREATE DATABASE IF NOT EXISTS hknweb;"
+    mysql -e "GRANT ALL PRIVILEGES ON hknweb.* TO 'hkn'@'localhost' IDENTIFIED BY 'hknweb-dev';"
 
     # Setup pipenv and virtualenv
     su - vagrant -c 'cd ~/hknweb; make setup'
     
     #Set IP and PORT environment variables for `make dev`
     printf "\n\nexport IP='[::]'\nexport PORT='3000'\n" >> /home/vagrant/.bashrc
+
+    cat <<EOF > ~/.my.cnf
+    [client]
+    user=hkn
+    password=hknweb-dev
+    EOF
   SHELL
 end
