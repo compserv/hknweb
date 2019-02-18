@@ -154,12 +154,12 @@ def publish(c: Connection):
     systemd_restart(c)
 
 
-def finish(c: Connection):
+def finish(c):
     pass
 
 
 @task
-def deploy(c: Connection, target: str=None, commit: str=None):
+def deploy(c, target=None, commit=None):
     setup(c, commit=commit)
     update(c)
     publish(c)
@@ -168,7 +168,7 @@ def deploy(c: Connection, target: str=None, commit: str=None):
 
 
 @task
-def rollback(c: Connection, release=None):
+def rollback(c, release=None):
     setup(c, release=release)
     update(c)
     publish(c)
