@@ -100,6 +100,12 @@ def django_migrate(c: Connection):
         c.run('source .venv/bin/activate && HKNWEB_MODE=prod python ./manage.py migrate')
 
 
+def django_collectstatic(c: Connection):
+    print('-- Collecting static files')
+    with c.cd(c.release_path):
+        c.run('source .venv/bin/activate && HKNWEB_MODE=prod python ./manage.py collectstatic')
+
+
 def symlink_release(c: Connection):
     print('-- Symlinking current@ to release')
     c.run('ln -sfn {} {}'.format(c.release_path, c.current_path), echo=True)
@@ -146,6 +152,7 @@ def update(c: Connection):
         create_venv(c)
     install_deps(c)
     django_migrate(c)
+    django_collectstatic(c)
 
 
 def publish(c: Connection):
