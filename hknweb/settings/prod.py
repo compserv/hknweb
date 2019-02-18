@@ -1,7 +1,6 @@
 from .common import *
-
+from .secrets import SECRET_KEY
 # In prod mode, rigidly enforce using real secrets and fail if unavailiable
-from .secrets import *
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECRET_KEY = 'v9lj^szduvr@a*31&r(l5ub+5q%ebszts70vlpzaiekt23s)gb'
@@ -15,3 +14,13 @@ ALLOWED_HOSTS = [
     'dev-hkn-eecs-berkeley-edu.apphost.ocf.berkeley.edu',
     'dev-hkn.eecs.berkeley.edu',
 ]
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/2.1/howto/static-files/
+STATIC_URL = 'https://ocf.berkeley.edu/~hkn/'
+STATIC_ROOT = '/home/h/hk/hkn/public_html/hknweb/static/'
+
+# Media files (user-uploaded files)
+# https://docs.djangoproject.com/en/2.1/topics/files/
+MEDIA_URL = 'https://ocf.berkeley.edu/~hkn/'
+MEDIA_ROOT = '/home/h/hk/hkn/public_html/hknweb/media/'
