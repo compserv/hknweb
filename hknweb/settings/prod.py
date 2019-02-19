@@ -17,10 +17,10 @@ ALLOWED_HOSTS = [
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
-STATIC_URL = 'https://www.ocf.berkeley.edu/~hkn/static/'
+STATIC_URL = 'https://www.ocf.berkeley.edu/~hkn/hknweb/static/'
 STATIC_ROOT = '/home/h/hk/hkn/public_html/hknweb/static/'
 
 # Media files (user-uploaded files)
 # https://docs.djangoproject.com/en/2.1/topics/files/
-MEDIA_URL = 'https://www.ocf.berkeley.edu/~hkn/media/'
+MEDIA_URL = 'https://www.ocf.berkeley.edu/~hkn/hknweb/media/'
 MEDIA_ROOT = '/home/h/hk/hkn/public_html/hknweb/media/'
