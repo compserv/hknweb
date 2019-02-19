@@ -97,13 +97,13 @@ def install_deps(c: Connection):
 def django_migrate(c: Connection):
     print('-- Migrating tables')
     with c.cd(c.release_path):
-        c.run('source .venv/bin/activate && HKNWEB_MODE=prod python ./manage.py migrate')
+        c.run('HKNWEB_MODE=prod .venv/bin/python ./manage.py migrate')
 
 
 def django_collectstatic(c: Connection):
     print('-- Collecting static files')
     with c.cd(c.release_path):
-        c.run('source .venv/bin/activate && HKNWEB_MODE=prod python ./manage.py collectstatic')
+        c.run('HKNWEB_MODE=prod .venv/bin/python ./manage.py collectstatic')
 
 
 def symlink_release(c: Connection):
