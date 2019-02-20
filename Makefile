@@ -1,5 +1,3 @@
-DEV_LISTEN_IP := localhost
-DEV_PORT := 3000
 PIP_HOME = $(shell python3 -c "import site; import os; print(os.path.join(site.USER_BASE, 'bin'))" \
 	|| python -c "import site; import os; print(os.path.join(site.USER_BASE, 'bin'))")
 
@@ -10,18 +8,9 @@ PORT ?= 3000
 dev:
 	HKNWEB_MODE='dev' pipenv run python ./manage.py runserver $(IP):$(PORT)
 
-.PHONY: dev-vagrant
-dev-vagrant:
-	HKNWEB_MODE='dev' pipenv run python ./manage.py runserver [::]:$(DEV_PORT)
-	
-.PHONY: dev-c9
-dev-c9:
-	HKNWEB_MODE='dev' pipenv run -- python manage.py runserver ${IP}:${PORT}
-
 .PHONY: livereload
 livereload:
-	pipenv run python ./manage.py livereload $(DEV_LISTEN_IP):$(DEV_PORT)
-
+	HKNWEB_MODE='dev' pipenv run python ./manage.py livereload $(IP):$(PORT)
 
 setup: pipenv venv migrate
 
@@ -34,9 +23,17 @@ pipenv:
 venv: Pipfile Pipfile.lock
 	pipenv install --dev
 
+.PHONY: createsuperuser
+createsuperuser:
+	HKNWEB_MODE='dev' pipenv run python ./manage.py createsuperuser
+
 .PHONY: migrate
 migrate:
-	pipenv run python ./manage.py migrate --settings=hknweb.settings.dev
+	HKNWEB_MODE='dev' pipenv run python ./manage.py migrate
+
+.PHONY: makemigrations
+makemigrations:
+	HKNWEB_MODE='dev' pipenv run python ./manage.py makemigrations
 
 .PHONY: test
 test: venv
@@ -50,3 +47,8 @@ clean:
 .PHONY: update
 update: venv
 	pipenv update
+
+.PHONY: mysql
+mysql:
+	mysql -e "CREATE DATABASE IF NOT EXISTS hkn;"
+	mysql -e "GRANT ALL PRIVILEGES ON hkn.* TO 'hkn'@'localhost' IDENTIFIED BY 'hknweb-dev';"

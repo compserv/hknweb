@@ -1,40 +1,25 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-# All Vagrant configuration is done below. The "2" in Vagrant.configure
-# configures the configuration version (we support older styles for
-# backwards compatibility). Please don't change it unless you know what
-# you're doing.
+# Specified configuration version 2 (backwards compatible)
+# Please don't change it unless you know what you're doing.
 Vagrant.configure("2") do |config|
-  # The most common configuration options are documented and commented below.
-  # For a complete reference, please see the online documentation at
-  # https://docs.vagrantup.com.
+  # Online documentation: https://docs.vagrantup.com.
+  # Boxes: https://vagrantcloud.com/search.
 
-  # Every Vagrant development environment requires a box. You can search for
-  # boxes at https://vagrantcloud.com/search.
-
-  # We use the ubuntu/xenial64 box instead of the debian/stretch64 one because
-  # the xenial one comes with guest additions installed by default, which means
-  # that it can sync the current hknweb directory between the host and guest
-  # using virtualbox instead of rsyncing, which doesn't update live without
-  # starting a daemon to update it continuously. Plus, both use systemd and
-  # have similar packages installed, so they should be essentially equivalent.
+  # ubuntu/xenial64 box used instead of debian/stretch64 because
+  # guest additions are installed by default, so the hknweb shared folder
+  # may be synced with virtualbox instead of rsync, and so updates live.
+  # Otherwise, both boxes use systemd and have similar packages.
   config.vm.box = "ubuntu/xenial64"
 
-  # Disable automatic box update checking. If you disable this, then
-  # boxes will only be checked for updates when the user runs
-  # `vagrant box outdated`. This is not recommended.
+  # Automatic box update checking.
+  # Disabling this causes boxes only to be checked when the user
+  # runs `vagrant box outdated`. This is not recommended.
   # config.vm.box_check_update = false
 
-  # Create a forwarded port mapping which allows access to a specific port
-  # within the machine from a port on the host machine. In the example below,
-  # accessing "localhost:8080" will access port 80 on the guest machine.
-  # NOTE: This will enable public access to the opened port
-  # config.vm.network "forwarded_port", guest: 80, host: 8080
-
-  # Create a forwarded port mapping which allows access to a specific port
-  # within the machine from a port on the host machine and only allow access
-  # via 127.0.0.1 to disable public access
+  # Forwarded port mapping, allowing port 3000 on the guest to only be accessed
+  # by "localhost:3000" on the host. Public access is disabled.
   config.vm.network "forwarded_port", guest: 3000, host: 3000, host_ip: "127.0.0.1"
 
   # Create a private network, which allows host-only access to the machine
@@ -46,10 +31,8 @@ Vagrant.configure("2") do |config|
   # your network.
   # config.vm.network "public_network"
 
-  # Share an additional folder to the guest VM. The first argument is
-  # the path on the host to the actual folder. The second argument is
-  # the path on the guest to mount the folder. And the optional third
-  # argument is a set of non-required options.
+  # Shares the host folder "." to the guest mount point "/home/vagrant/hknweb",
+  # with additional options.
   config.vm.synced_folder ".", "/home/vagrant/hknweb", type: "virtualbox", mount_options: ["dmode=755", "fmode=644"]
 
   # Provider-specific configuration so you can fine-tune various
@@ -86,9 +69,9 @@ Vagrant.configure("2") do |config|
         git \
         libmysqlclient-dev \
         make \
+        sqlite3 \
         mariadb-client \
         mariadb-server \
-        sqlite3 \
         python3 \
         python3-dev \
         python3-pip \
@@ -99,16 +82,18 @@ Vagrant.configure("2") do |config|
     mysql -e "CREATE DATABASE IF NOT EXISTS hknweb;"
     mysql -e "GRANT ALL PRIVILEGES ON hknweb.* TO 'hkn'@'localhost' IDENTIFIED BY 'hknweb-dev';"
 
-    # Setup pipenv and virtualenv
-    su - vagrant -c 'cd ~/hknweb; make setup'
-    
     #Set IP and PORT environment variables for `make dev`
     printf "\n\nexport IP='[::]'\nexport PORT='3000'\n" >> /home/vagrant/.bashrc
 
-    cat <<EOF > ~/.my.cnf
+    cat <<-EOF > ~/.my.cnf
     [client]
     user=hkn
     password=hknweb-dev
     EOF
+
+    cat "export HKNWEB_MODE=dev" >> /home/vagrant/.bashrc
   SHELL
+
+  # Setup pipenv and virtualenv
+  config.vm.provision "shell", privileged: false, inline: "cd ~/hknweb; make setup"
 end
