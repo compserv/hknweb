@@ -34,7 +34,7 @@ class CandRequestView(FormView, generic.ListView):
     def get_queryset(self):
         result = OffChallenge.objects
 
-        result = result.order_by('-request_date')
+        result = result.order_by('-request_date').filter(requester=self.request.user)
         return result
 
 def challenge_detail_view(request, pk):
