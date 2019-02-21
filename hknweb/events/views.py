@@ -2,11 +2,10 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.template import loader
 
-from .models import Event
+from .models import Event, Rsvp
 
 def index(request):
     events = Event.objects.order_by('-start_time')[:10]
-    print("This should not be printing.")
     context = {
         'events': events,
     }
@@ -19,6 +18,17 @@ def show_details(request, id):
         'event': event,
     }
     return render(request, 'events/show_details.html', context)
+
+
+def rsvp(request, id):
+    # If authenticated and event is under RSVP cap
+    event = Event.objects.get(pk=id)
+    print("rsvps:", event.rsvps)
+    if request.user.is_authenticated and event.rsvps < event.rsvp_limit:
+        event.rsvps += 1
+        event.save()
+        Rsvp.objects.create(event=event)
+    return HttpResponse("Hello, world. You're at the rsvp index.")
 
 
 def future(request):

@@ -1,4 +1,5 @@
 from django.db import models
+from hknweb.models import Profile
 
 class Event(models.Model):
     name        = models.CharField(max_length=255, null=False)
@@ -7,6 +8,8 @@ class Event(models.Model):
     description = models.TextField()
     start_time  = models.DateTimeField(null=False)
     end_time    = models.DateTimeField(null=False)
+    rsvp_limit  = models.PositiveIntegerField(null=True, default=999999) # I'm being rather pessimistic in assuming no HKN event will hit 1 million participants!
+    rsvps       = models.IntegerField(default=0)
     # event_type_id = models.IntegerField()
     # event_type_id  = models.ForeignKey()
     # need_transportation = models.BooleanField(default=False)
@@ -23,43 +26,28 @@ class Event(models.Model):
 
 
 class Rsvp(models.Model):
-    NEED_RIDE = -1
-    HAVE_RIDE = 0
-    SM_SEDAN = 3
-    SEDAN = 4
-    MINIVAN = 6
+    # CONFIRMED = 't'
+    # UNCONFIRMED = 'f'
+    # REJECTED = 'r'
 
-    TRANSPORT_ENUM = (
-        (NEED_RIDE, "I need a ride"),
-        (HAVE_RIDE, "Don't worry about me"),
-        (SM_SEDAN,  "I have a small sedan (4 seats)"),
-        (SEDAN,     "I have a sedan (5 seats)"),
-        (MINIVAN,   "I have a minivan (7 seats)"),
-    )
+    # CONFIRMATION = (
+    #     (CONFIRMED,     "Confirmed"),
+    #     (UNCONFIRMED,   "Unconfirmed"),
+    #     (REJECTED,      "Rejected"),
+    # )
 
-    CONFIRMED = 't'
-    UNCONFIRMED = 'f'
-    REJECTED = 'r'
-
-    CONFIRMATION = (
-        (CONFIRMED,     "Confirmed"),
-        (UNCONFIRMED,   "Unconfirmed"),
-        (REJECTED,      "Rejected"),
-    )
-
-    id              = models.IntegerField(primary_key=True)
-    confirmed       = models.CharField(max_length=1,
-                                       choices=CONFIRMATION,
-                                       default=UNCONFIRMED)
-    confirm_comment = models.TextField()
-    person_id       = models.IntegerField(null=True)
-    # person_id       = models.ForeignKey('people.Person', on_delete=models.CASCADE)
-    event_id        = models.ForeignKey(Event, on_delete=models.CASCADE)
-    comment         = models.TextField()
-    transportation  = models.IntegerField(choices=TRANSPORT_ENUM,
-                                          default=HAVE_RIDE)
-    created_at      = models.DateTimeField(auto_now_add=True)
-    updated_at      = models.DateTimeField(auto_now=True)
+    # user  = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    # id    = models.IntegerField(primary_key=True)
+    # confirmed       = models.CharField(max_length=1,
+    #                                    choices=CONFIRMATION,
+    #                                    default=UNCONFIRMED)
+    # confirm_comment = models.TextField()
+    # comment         = models.TextField()
+    # transportation  = models.IntegerField(choices=TRANSPORT_ENUM,
+    #                                       default=HAVE_RIDE)
+    # created_at      = models.DateTimeField(auto_now_add=True)
+    # updated_at      = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return "RSVP(person_id={}, event_id={})".format(self.person, self.event)
+        return "RSVP(event={})".format(self.event)
