@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+DJANGO_SETTINGS_MODULE=hknweb.settings
+DJANGO_WSGI_MODULE=hknweb.wsgi
+DJANGO_DIR=~/hknweb/prod/current
+VENV=~/hknweb/prod/shared/venv
+SOCKFILE=/srv/apps/$(whoami)/dev.sock
+NUM_WORKERS=4
+PYTHONPATH=$DJANGO_DIR:$PYTHONPATH
+
+export DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE
+export HKNWEB_MODE=prod
+
+cd $DJANGO_DIR
+
+source $VENV/bin/activate
+
+exec gunicorn $DJANGO_WSGI_MODULE \
+    -w $NUM_WORKERS \
+    --log-level debug \
+    --log-file - \
+    -b unix:$SOCKFILE

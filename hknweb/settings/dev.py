@@ -15,9 +15,7 @@ INSTALLED_APPS += [
     'livereload',
 ]
 
-
 ALLOWED_HOSTS = ['localhost','127.0.0.1','hkn.eecs.berkeley.edu','hkn.mu','hknweb-geohh.c9users.io']
-
 
 DATABASES = {
     'default': {

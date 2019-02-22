@@ -1,0 +1,15 @@
+[Unit]
+Description=hknweb django app
+ConditionHost=vampires
+
+[Install]
+WantedBy=default.target
+
+[Service]
+Type=simple
+Restart=always
+PIDFile=/home/h/hk/hkn/hknweb/prod/current/gunicorn.pid
+WorkingDirectory=/home/h/hk/hkn/hknweb/prod/current
+ExecStart=/home/h/hk/hkn/hknweb/prod/current/run
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
