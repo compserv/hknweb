@@ -9,14 +9,14 @@
   <script src="http://unpkg.com/moment/min/moment.min.js"></script>
   <script src="http://unpkg.com/jquery/dist/jquery.slim.min.js"></script>
   <script src="http://unpkg.com/fullcalendar/dist/fullcalendar.min.js"></script>
-  
+
   <script type="text/javascript">
     function renderDateInISO(dateStr) {
       // Transforms input such as 'Feb. 2, 2019, 10:36 p.m.' to an ISO string such as '2017-10-12T20:00:00' or '2017-10-12'
       dateStr = dateStr.replace("p.m.", "pm").replace("a.m.", "am"); // new Date() wants "pm" not "p.m."
       return (new Date(dateStr)).toISOString();
     }
-    
+
     $(document).ready(function () {
       $('#calendar').fullCalendar({
         header: {

@@ -36,7 +36,7 @@ class Rsvp(models.Model):
     #     (REJECTED,      "Rejected"),
     # )
 
-    # user  = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    user  = models.ForeignKey(Profile, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     # id    = models.IntegerField(primary_key=True)
     # confirmed       = models.CharField(max_length=1,

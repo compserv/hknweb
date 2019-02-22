@@ -6,9 +6,27 @@
 {% block content %}
 <div class="center measure-very-wide pv4">
   <h2 class="font-title f3 f2-ns tc">{{ event.name }}</h2>
-  
+
+  {% if messages %}
+      {% for message in messages %}
+          <h3  {% if messages.tags %} class="{{ message.tags }}" {% endif %} style="color: #B78727;">{{ message }}</h3>
+      {% endfor %}
+  {% endif %}
+
   <p>{{ event.description }}</p>
-  <a href="{{ event.id }}/rsvp">RSVP</a>
+
+  {% if rsvp %}
+    <form action="{{ event.id }}/unrsvp" method="post">
+    {% csrf_token %}
+        <input type="submit" value="un-RSVP" />
+    </form>
+  {% else %}
+    <form action="{{ event.id }}/rsvp" method="post">
+    {% csrf_token %}
+        <input type="submit" value="RSVP" />
+    </form>
+  {% endif %}
+
   <p><b>Location</b>: {{ event.location }}</p>
   <div id="date-and-time"></div>
   <script>
@@ -21,7 +39,7 @@
       // Extracts just time from dateStr
       return dateStr.slice(dateStr.search(/\d+:\d\d [ap].m./));
     }
-    
+
     var start = renderDateObj("{{ event.start_time }}");
     var end = renderDateObj("{{ event.end_time }}");
     if (start.getDate() === end.getDate() && start.getMonth() === end.getMonth()) {
