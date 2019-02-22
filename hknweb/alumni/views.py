@@ -105,4 +105,3 @@ def form(request):
             return render(request, 'alumni/form.html', {'form': AlumniForm(None)})
 
     return render(request, 'alumni/form.html', {'form': AlumniForm(None)})
-
