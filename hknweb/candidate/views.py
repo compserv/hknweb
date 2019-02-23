@@ -1,8 +1,8 @@
 from django.views import generic
 from django.views.generic.edit import FormView, UpdateView
-from django.shortcuts import render, redirect
-
-from django.core.mail import send_mail
+from django.shortcuts import render, redirect, reverse
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
 
 from .models import OffChallenge
 from .forms import ChallengeRequestForm, ChallengeConfirmationForm
@@ -25,17 +25,32 @@ class CandRequestView(FormView, generic.ListView):
         # It should return an HttpResponse.
         form.instance.requester = self.request.user
         form.save()
-        message = "Please confirm."
-        officer_email = form.instance.officer.email
-        send_mail(
-            'Confirm Officer Challenge',
-            message,
-            # 'no-reply@hkn.eecs.berkeley.edu',
-            'hknwebsite@hkn.eecs.berkeley.edu',
-            [officer_email],
-            fail_silently=False,
-        )
+        self.send_email(form)
         return super().form_valid(form)
+
+    def send_email(self, form):
+        subject = 'Confirm Officer Challenge'
+        officer_email = form.instance.officer.email
+        text_content = 'Confirm officer challenge'
+
+        candidate_name = form.instance.requester.get_full_name()
+        candidate_username = form.instance.requester.username
+        # host = self.request.get_host()
+        link = self.request.build_absolute_uri(
+                reverse("candidate:challengeconfirm", kwargs={ 'pk' : form.instance.id }))
+        html_content = render_to_string(
+            'candidate/email.html',
+            {
+                'pk': form.instance.id,
+                'candidate_name' : candidate_name,
+                'candidate_username' : candidate_username,
+                'link' : link,
+            }
+        )
+        msg = EmailMultiAlternatives(subject, text_content,
+                'no-reply@hkn.eecs.berkeley.edu', [officer_email])
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
 
     def get_context_data(self, **kwargs):
         context = super(CandRequestView, self).get_context_data(**kwargs)
