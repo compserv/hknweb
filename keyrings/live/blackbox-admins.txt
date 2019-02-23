@@ -1,4 +1,5 @@
 1F3CAA5F32F6483D
+alex.eecs@hkn.eecs.berkeley.edu
 compserv@hkn.eecs.berkeley.edu
 hutch@hkn.eecs.berkeley.edu
 jameszhu@berkeley.edu
