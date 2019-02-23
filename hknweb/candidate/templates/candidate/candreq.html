@@ -72,11 +72,11 @@
                         <td align="center">{{ challenge.officer }}</td>
                         <td align="center">
                             {% if not challenge.reviewed %}
-                                <img src="{% static 'candidate/maybe.png'%}" alt="in progress" style="width: 12%;">
+                                <img src="{% static 'candidate/maybe.png'%}" alt="in progress" style="width: 10%;">
                             {% elif challenge.confirmed %}
-                                <img src="{% static 'candidate/yes.png'%}" alt="confirmed" style="width: 12%;">
+                                <img src="{% static 'candidate/yes.png'%}" alt="confirmed" style="width: 10%;">
                             {% else %}
-                                <img src="{% static 'candidate/no.png'%}" alt="declined" style="width: 12%;">
+                                <img src="{% static 'candidate/no.png'%}" alt="declined" style="width: 10%;">
                             {% endif %}
                         </td>
                     </tr>
