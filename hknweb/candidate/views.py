@@ -2,6 +2,8 @@ from django.views import generic
 from django.views.generic.edit import FormView, UpdateView
 from django.shortcuts import render, redirect
 
+from django.core.mail import send_mail
+
 from .models import OffChallenge
 from .forms import ChallengeRequestForm, ChallengeConfirmationForm
 
@@ -23,6 +25,16 @@ class CandRequestView(FormView, generic.ListView):
         # It should return an HttpResponse.
         form.instance.requester = self.request.user
         form.save()
+        message = "Please confirm."
+        officer_email = form.instance.officer.email
+        send_mail(
+            'Confirm Officer Challenge',
+            message,
+            # 'no-reply@hkn.eecs.berkeley.edu',
+            'hknwebsite@hkn.eecs.berkeley.edu',
+            [officer_email],
+            fail_silently=False,
+        )
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
@@ -34,33 +46,6 @@ class CandRequestView(FormView, generic.ListView):
 
         result = result.order_by('-request_date').filter(requester=self.request.user)
         return result
-
-
-class OfficerConfirmView(FormView):
-    template_name = 'candidate/challenge_confirm.html'
-    form_class = ChallengeConfirmationForm
-    success_url = "/cand/dummy"
-
-    def form_valid(self, form):
-        form.instance = OffChallenge.objects.get(id=self.kwargs['pk'])
-        form.instance.reviewed = True
-        form.save()
-        return super().form_valid(form)
-
-    def get_context_data(self, **kwargs):
-        challenge = OffChallenge.objects.get(id=self.kwargs['pk'])
-
-        context = super(OfficerConfirmView, self).get_context_data(**kwargs)
-        context = {
-            'challenge' : challenge,
-        }
-        return context
-
-    # def get_queryset(self):
-    #     result = OffChallenge.objects
-    #
-    #     result = result.order_by('-request_date').filter(requester=self.request.user)
-    #     return result
 
 
 def officer_confirm_view(request, pk):
