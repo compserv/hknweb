@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt #doing this for now bc idk how to make csrf work
 
 from .models import Event, Rsvp
+from .forms import EventForm
 from hknweb.models import Profile
 
 def index(request):
@@ -76,14 +77,22 @@ def unrsvp(request, id):
         return redirect('/events/' + str(id))
     #return render(request, 'events/show_details.html')
 
+def add_event(request):
+    form = EventForm(request.POST or None)
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Event has been added!')
+            return redirect('/events')
+        else:
+            return render(request, 'events/add_event.html', {'form': EventForm(None)})
+    return render(request, 'events/add_event.html', {'form': EventForm(None)})
+
+def show_checklist(request):
+    return HttpResponse("Hello, world. You're at the attendance index.")
 
 def future(request):
     return HttpResponse("Hello, world. You're at the future index.")
 
-
 def past(request):
     return HttpResponse("Hello, world. You're at the past index.")
-
-
-def rsvps(request):
-    return HttpResponse("Hello, world. You're at the rsvps index.")
