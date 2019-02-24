@@ -34,9 +34,7 @@ def rsvp(request, id):
     event = Event.objects.get(pk=id)
 
     if request.method == 'POST':
-        rsvp = request.user.is_authenticated and event.rsvps < event.rsvp_limit
-        # If authenticated and event is under RSVP cap
-        if rsvp:
+        if request.user.is_authenticated and event.rsvps < event.rsvp_limit:
             event.rsvps = F("rsvps") + 1
             Rsvp.objects.create(user=request.user, event=event)
             messages.success(request, 'RSVP\'d!')
