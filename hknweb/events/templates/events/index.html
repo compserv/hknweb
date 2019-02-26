@@ -11,12 +11,6 @@
   <script src="http://unpkg.com/fullcalendar/dist/fullcalendar.min.js"></script>
 
   <script type="text/javascript">
-    function renderDateInISO(dateStr) {
-      // Transforms input such as 'Feb. 2, 2019, 10:36 p.m.' to an ISO string such as '2017-10-12T20:00:00' or '2017-10-12'
-      dateStr = dateStr.replace("p.m.", "pm").replace("a.m.", "am"); // new Date() wants "pm" not "p.m."
-      return (new Date(dateStr)).toISOString();
-    }
-
     $(document).ready(function () {
       $('#calendar').fullCalendar({
         header: {
@@ -33,8 +27,8 @@
         events: [ {% for event in events %}
           {
             title: '{{ event.name }}',
-            start: renderDateInISO('{{ event.start_time }}'),
-            end: renderDateInISO('{{ event.end_time }}'),
+            start: '{{ event.start_time|date:"c" }}', // date:"c" renders the dates in ISO format, as fullcalendar needs them
+            end: '{{ event.end_time|date:"c" }}',
             url: '{{ event.id }}'
           },
         {% endfor %}
