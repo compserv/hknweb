@@ -25,14 +25,16 @@
         <form method="POST">{% csrf_token %}
             {% for field in form %}
                 <br>
-                <span style="float: left;">{{ field.label }} {% if field.field.required %}
-                    <span style="color: red;">* </span>{% endif %}
+                <span style="float: left;">{{ field.label }}  {% if field.field.required %}
+                    <span style="color: red;">* </span>
+                    <br> {{ field.help_text }} {% endif %}
                 </span>&nbsp
+                <br>
                 {{ field }}
                 {{ field.errors }}
                 <br>
             {% endfor %}
-
+            <br>
             <input class="f6 grow no-underline br-pill ph3 pv2 mb2 dib white bg-black" type="submit" value="Submit"/>
         </form>
 

@@ -10,6 +10,7 @@ from hknweb.models import Profile
 
 def index(request):
     events = Event.objects.order_by('-start_time')[:10]
+    print(events)
     context = {
         'events': events,
     }
@@ -85,11 +86,13 @@ def add_event(request):
             messages.success(request, 'Event has been added!')
             return redirect('/events')
         else:
+            print(form.errors)
+            messages.success(request, 'Something went wrong oops')
             return render(request, 'events/add_event.html', {'form': EventForm(None)})
     return render(request, 'events/add_event.html', {'form': EventForm(None)})
 
 def show_checklist(request):
-    return HttpResponse("Hello, world. You're at the attendance index.")
+    return HttpResponse("Hello, world. You're at the checklist index.")
 
 def future(request):
     return HttpResponse("Hello, world. You're at the future index.")
