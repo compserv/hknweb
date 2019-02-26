@@ -8,27 +8,30 @@
   <h2 class="font-title f3 f2-ns tc">{{ event.name }}</h2>
 
   {% if messages %}
-      {% for message in messages %}
-          <h3  {% if messages.tags %} class="{{ message.tags }}" {% endif %} style="color: #B78727;">{{ message }}</h3>
-      {% endfor %}
+    {% for message in messages %}
+      <h3 {% if messages.tags %} class="{{ message.tags }}" {% endif %} style="color: #B78727;">{{ message }}</h3>
+    {% endfor %}
   {% endif %}
 
-  <p>{{ event.description }}</p>
-
+  <!-- RSVP/un-RSVP button -->
   {% if rsvp %}
     <form action="{{ event.id }}/unrsvp" method="post">
-    {% csrf_token %}
-        <input type="submit" value="un-RSVP" />
+      {% csrf_token %}
+      <input type="submit" value="un-RSVP" />
     </form>
   {% else %}
     <form action="{{ event.id }}/rsvp" method="post">
-    {% csrf_token %}
-        <input type="submit" value="RSVP" />
+      {% csrf_token %}
+      <input type="submit" value="RSVP" />
     </form>
   {% endif %}
+  
+  <p>{{ event.description }}</p>
 
   <p><b>Location</b>: {{ event.location }}</p>
+  
   <div id="date-and-time"></div>
+  <!-- Script to render dates prettily -->
   <script>
     function renderDateObj(dateStr) {
       // Transforms input such as 'Feb. 2, 2019, 10:36 p.m.' to a respective Date() object
