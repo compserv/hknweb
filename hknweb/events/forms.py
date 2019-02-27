@@ -25,10 +25,10 @@ class EventForm(forms.ModelForm):
             # 'start_time': forms.widgets.DateTimeInput(attrs={'type':'datetime-local'}),
         #     # 'end_time': forms.widgets.DateTimeInput(attrs={'type':'datetime-local'})
         # }
-        field_classes = {
-            'start_time': forms.widgets.DateTimeInput,
-            'end_time': forms.widgets.DateTimeInput,
-        }
+        # field_classes = {
+        #     'start_time': forms.widgets.DateTimeInput,
+        #     'end_time': forms.widgets.DateTimeInput,
+        # }
 
         help_texts = {
             'start_time': 'Format as mm/dd/yyyy hh:mm (24-hour time! ex. 1pm -> 13:00)',
