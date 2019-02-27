@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load static %}
+
+<!-- I just made this to have a place to put the officer stuff.
+     Feel free to delete this page later, as long as you still
+     keep the mechanism for making officer challenge requests. -->
+
+{% block title %}Candidate Portal{% endblock %}
+
+{% block header %}
+  <!--<link rel='stylesheet' href="http://unpkg.com/fullcalendar/dist/fullcalendar.min.css" />-->
+  <!--<script src="http://unpkg.com/moment/min/moment.min.js"></script>-->
+  <!--<script src="http://unpkg.com/jquery/dist/jquery.slim.min.js"></script>-->
+  <!--<script src="http://unpkg.com/fullcalendar/dist/fullcalendar.min.js"></script>-->
+{% endblock %}
+
+{% block content %}
+<div class="center measure-very-wide pv4">
+    <h1 class="font-title f3 f2-ns tc">Candidate Portal</h1>
+
+    <!-- Feel free to replace this terrible styling! -->
+    <!-- These are links to request officer challenges and confirm officer
+         challenges respectively. -->
+    <section id='agenda'  style="background-color: #D0D0D0; margin: 0.5%; padding-left: 20px; font-family: Georgia;">
+        <h3><a href="{% url 'candidate:candrequests' %}">(Candidate) View Officer Challenge Requests</a></h3>
+
+        <!-- Currently just leads to a particular officer challenge confirmation,
+             since the complete view is not yet implemented -->
+        <h3><a href="{% url 'candidate:candrequests' %}">(Officer) View Officer Challenge Requests</a></h3>
+    </div>
+
+</div>
+
+{% endblock %}

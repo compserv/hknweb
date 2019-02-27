@@ -1,12 +1,15 @@
-from django.urls import re_path
+from django.urls import path, re_path
 
 from . import views
 
 app_name = 'alumni'
 urlpatterns = [
-    re_path(r'^$', views.IndexView.as_view(), name='index'),
-    re_path(r'^search/$', views.SearchView.as_view(), name='search'),
-    re_path(r'^detail/(?P<oid>\d+)/$', views.alumni_detail_view, name='detail'),
-    re_path(r'^search_type/$', views.search_type, name='search_type'),
-    re_path(r'^form/$', views.form, name='form'),
+    # When doing the officer challenge feature, I changed all these from
+    # re_path to path, except detail/
+    path('', views.IndexView.as_view(), name='index'),
+    path('search/', views.SearchView.as_view(), name='search'),
+    # matches only valid ids
+    re_path(r'^detail/(?P<pk>\d+)/$', views.alumni_detail_view, name='detail'),
+    path('search_type/', views.search_type, name='search_type'),
+    path('form/', views.form, name='form'),
 ]
