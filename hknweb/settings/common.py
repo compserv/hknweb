@@ -111,7 +111,7 @@ LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
 
-DATETIME_INPUT_FORMATS += ('%m/%d/%Y %I:%M %P')
+DATETIME_INPUT_FORMATS += ('%m/%d/%Y %I:%M %p')
 
 USE_I18N = True
 

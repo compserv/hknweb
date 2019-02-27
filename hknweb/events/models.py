@@ -3,9 +3,12 @@ from django.contrib.auth.models import User
 
 class EventType(models.Model):
     type = models.CharField(max_length=255)
-    
-    def __str__(self):
+
+    def __repr__(self):
         return "EventType(type={})".format(self.type)
+
+    def __str__(self):
+        return str(self.type)
 
 class Event(models.Model):
     name        = models.CharField(max_length=255, null=False)

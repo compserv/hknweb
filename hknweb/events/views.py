@@ -24,13 +24,15 @@ def show_details(request, id):
         'event': event,
         'rsvp': rsvp,
     }
-    return render(request, 'events/show_details.html', context)
+    if request.user.is_authenticated:
+        return render(request, 'events/show_details.html', context)
+    return redirect('/events')
 
 @csrf_exempt  #doing this for now bc idk how to make csrf work
 def rsvp(request, id):
     if request.method != 'POST':
         raise Http404()
-    
+
     event = Event.objects.get(pk=id)
     if request.user.is_authenticated and event.rsvps < event.rsvp_limit:
         event.rsvps = F("rsvps") + 1
@@ -44,7 +46,7 @@ def rsvp(request, id):
 def unrsvp(request, id):
     if request.method != 'POST':
         raise Http404()
-    
+
     event = Event.objects.get(pk=id)
     if request.user.is_authenticated and event.rsvps < event.rsvp_limit:
         #check if rsvp for this event and this user already exists; if false, then set true

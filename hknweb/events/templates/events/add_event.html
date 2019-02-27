@@ -27,8 +27,11 @@
                 <br>
                 <span style="float: left;">{{ field.label }}  {% if field.field.required %}
                     <span style="color: red;">* </span>
-                    <br> {{ field.help_text }} {% endif %}
-                </span>&nbsp
+                    {% endif %}
+                </span>
+                {% if field.help_text %}
+                <br> {{ field.help_text }}
+                {% endif %}
                 <br>
                 {{ field }}
                 {{ field.errors }}

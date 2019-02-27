@@ -22,9 +22,13 @@ class EventForm(forms.ModelForm):
 
         #this makes formatting easier, but it shows as MM/DD/YYY HH:MM AM/PM which apparently is not valid for the datetimefield :(
         # widgets = {
-        #     'start_time': forms.widgets.DateTimeInput(attrs={'type':'datetime-local'}),
-        #     'end_time': forms.widgets.DateTimeInput(attrs={'type':'datetime-local'})
+            # 'start_time': forms.widgets.DateTimeInput(attrs={'type':'datetime-local'}),
+        #     # 'end_time': forms.widgets.DateTimeInput(attrs={'type':'datetime-local'})
         # }
+        field_classes = {
+            'start_time': forms.widgets.DateTimeInput,
+            'end_time': forms.widgets.DateTimeInput,
+        }
 
         help_texts = {
             'start_time': 'Format as mm/dd/yyyy hh:mm (24-hour time! ex. 1pm -> 13:00)',
