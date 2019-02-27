@@ -5,7 +5,7 @@ class EventType(models.Model):
     type = models.CharField(max_length=255)
     
     def __str__(self):
-        return self.type
+        return "EventType(type={})".format(self.type)
 
 class Event(models.Model):
     name        = models.CharField(max_length=255, null=False)

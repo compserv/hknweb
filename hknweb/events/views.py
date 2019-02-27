@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.template import loader
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt #doing this for now bc idk how to make csrf work
@@ -19,49 +19,41 @@ def index(request):
 
 def show_details(request, id):
     event = Event.objects.get(pk=id)
-    try:
-        Rsvp.objects.get(user=request.user, event=event)
-        rsvp = True
-    except Rsvp.DoesNotExist:
-        rsvp = False
-
+    rsvp = Rsvp.objects.filter(user=request.user, event=event).exists()
     context = {
         'event': event,
-        'rsvp': rsvp
+        'rsvp': rsvp,
     }
     return render(request, 'events/show_details.html', context)
 
 @csrf_exempt  #doing this for now bc idk how to make csrf work
 def rsvp(request, id):
+    if request.method != 'POST':
+        raise Http404()
+    
     event = Event.objects.get(pk=id)
-
-    if request.method == 'POST':
-        if request.user.is_authenticated and event.rsvps < event.rsvp_limit:
-            event.rsvps = F("rsvps") + 1
-            Rsvp.objects.create(user=request.user, event=event)
-            messages.success(request, 'RSVP\'d!')
-        else:
-            messages.error(request, 'Could not RSVP; the RSVP limit has been reached.')
-        return redirect('/events/' + str(id))
+    if request.user.is_authenticated and event.rsvps < event.rsvp_limit:
+        event.rsvps = F("rsvps") + 1
+        Rsvp.objects.create(user=request.user, event=event)
+        messages.success(request, 'RSVP\'d!')
     else:
-        return HttpResponse("For some reason, rsvp() was called with an HTTP request that wasn't a POST.")
+        messages.error(request, 'Could not RSVP; the RSVP limit has been reached.')
+    return redirect('/events/' + str(id))
 
 @csrf_exempt  #doing this for now bc idk how to make csrf work
 def unrsvp(request, id):
+    if request.method != 'POST':
+        raise Http404()
+    
     event = Event.objects.get(pk=id)
-
-    if request.method == 'POST':
-        if request.user.is_authenticated and event.rsvps < event.rsvp_limit:
-            #check if rsvp for this event and this user already exists; if false, then set true
-            event.rsvps = F("rsvps") - 1
-            Rsvp.objects.get(user=request.user, event=event).delete()
-            messages.success(request, 'un-RSVP\'d :(')
-        else:
-            messages.error(request, 'Something went wrong; could not un-RSVP.')
-        return redirect('/events/' + str(id))
-    #return render(request, 'events/show_details.html')
+    if request.user.is_authenticated and event.rsvps < event.rsvp_limit:
+        #check if rsvp for this event and this user already exists; if false, then set true
+        event.rsvps = F("rsvps") - 1
+        Rsvp.objects.get(user=request.user, event=event).delete()
+        messages.success(request, 'un-RSVP\'d :(')
     else:
-        return HttpResponse("For some reason, unrsvp() was called with an HTTP request that wasn't a POST.")
+        messages.error(request, 'Something went wrong; could not un-RSVP.')
+    return redirect('/events/' + str(id))
 
 def add_event(request):
     form = EventForm(request.POST or None)
@@ -78,9 +70,3 @@ def add_event(request):
 
 def show_checklist(request):
     return HttpResponse("Hello, world. You're at the checklist index.")
-
-def future(request):
-    return HttpResponse("Hello, world. You're at the future index.")
-
-def past(request):
-    return HttpResponse("Hello, world. You're at the past index.")

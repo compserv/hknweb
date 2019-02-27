@@ -33,23 +33,16 @@
   <div id="date-and-time"></div>
   <!-- Script to render dates prettily -->
   <script>
-    function renderDateObj(dateStr) {
-      // Transforms input such as 'Feb. 2, 2019, 10:36 p.m.' to a respective Date() object
-      dateStr = dateStr.replace("p.m.", "pm").replace("a.m.", "am"); // new Date() wants "pm" not "p.m."
-      return new Date(dateStr);
-    }
-    function trimDate(dateStr) {
-      // Extracts just time from dateStr
-      return dateStr.slice(dateStr.search(/\d+:\d\d [ap].m./));
-    }
-
-    var start = renderDateObj("{{ event.start_time }}");
-    var end = renderDateObj("{{ event.end_time }}");
-    if (start.getDate() === end.getDate() && start.getMonth() === end.getMonth()) {
-      document.getElementById("date-and-time").innerHTML = "<p><b>Date and time</b>: {{ event.start_time }} to " + trimDate("{{ event.end_time }}") + "</p>";
+    var start = new Date('{{ event.start_time|date:"c" }}');
+    var end = new Date('{{ event.end_time|date:"c" }}');
+    var sameDayEvent = start.getDate() === end.getDate() && start.getMonth() === end.getMonth() && start.getYear() === end.getYear();
+    
+    if (sameDayEvent) {
+      var HTMLtext = '<p><b>Date</b>: ' + start.toLocaleDateString() + '</p> <p><b>Time</b>: ' + start.toLocaleTimeString() + ' to ' + end.toLocaleTimeString();
     } else { // Event starts and ends on different days
-      document.getElementById("date-and-time").innerHTML = "<p><b>Date and time</b>: {{ event.start_time }}; to {{ event.end_time }}";
+      var HTMLtext = '<p><b>Starts</b>: ' + start.toLocaleString() + '</p> <p><b>Ends</b>: ' + start.toLocaleString();
     }
+    document.getElementById("date-and-time").innerHTML = HTMLtext;
   </script>
 </div>
 {% endblock %}
