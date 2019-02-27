@@ -17,7 +17,7 @@ class EventForm(forms.ModelForm):
     # )
     class Meta:
         model = Event
-        fields = ('name', 'slug', 'location', 'description', 'start_time', 'end_time', 'rsvp_limit')
+        fields = ('name', 'slug', 'location', 'description', 'event_type','start_time', 'end_time', 'rsvp_limit')
                   #'markdown', 'event_type', 'view_permission', 'rsvp_type', 'transportation')
 
         #this makes formatting easier, but it shows as MM/DD/YYY HH:MM AM/PM which apparently is not valid for the datetimefield :(
