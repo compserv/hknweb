@@ -18,16 +18,55 @@
 <div class="center measure-very-wide pv4">
     <h1 class="font-title f3 f2-ns tc">Candidate Portal</h1>
 
+    <section id='agenda' style="background-color: #F0F0F0; margin: 0.5%; padding-left: 20px; padding-top: 10px; padding-bottom: 10px;font-family: Georgia;">
+        <h3>Announcements</h3>
+    </section>
+
+    <section id='agenda' style="background-color: #F0F0F0; margin: 0.5%; padding-left: 20px; padding-top: 10px; padding-bottom: 10px; font-family: Georgia;">
+        <h3>Requirements</h3>
+        <ol type="1">
+            <li>Attend Candidate Meeting</li>
+            <li>Attend all 3 General Meetings</li>
+            <li>Attend 3+ Fun Events</li>
+            <li>Attend 1+ Big Fun Events</li>
+            <li>Attend 1+ Serv Events</li>
+            <li>Complete 3+ Interactivities</li>
+            <ul style="list-style-type:circle;">
+                <li>Officer Challenges</li>
+                <li>Officer Hangouts</li>
+            </ul>
+            <li>Attend 1+ Prodev Event</li>
+            <li>Administer 1-2 Course Surveys</li>
+            <li>Complete a Committee Project</li>
+            <li>Complete Bit-Byte Requirements</li>
+            <ul style="list-style-type:circle;">
+                <li>2 Adventures</li>
+                <li>1 Boba or Equivalent</li>
+            </ul>
+            <li>Pay all dues (2 sets)</li>
+            <li>Complete all required forms</li>
+            <ul style="list-style-type:circle;">
+                <li>Candidate Information Form</li>
+                <li>Committee Preference Form</li>
+                <li>Bit-Byte Pairing Survey</li>
+                <li>Resume Drop</li>
+                <li>Candidate Quiz</li>
+                <li>Candidate Feedback Form</li>
+                <li>Membership Application Form</li>
+            <ul>
+        </ol>
+    </section>
+
     <!-- Feel free to replace this terrible styling! -->
     <!-- These are links to request officer challenges and confirm officer
          challenges respectively. -->
-    <section id='agenda'  style="background-color: #D0D0D0; margin: 0.5%; padding-left: 20px; font-family: Georgia;">
+    <section id='agenda'  style="background-color: #F0F0F0; margin: 0.5%; padding-left: 20px; padding-top: 10px; padding-bottom: 10px; font-family: Georgia;">
         <h3><a href="{% url 'candidate:candrequests' %}">(Candidate) View Officer Challenge Requests</a></h3>
 
         <!-- Currently just leads to a particular officer challenge confirmation,
              since the complete view is not yet implemented -->
         <h3><a href="{% url 'candidate:candrequests' %}">(Officer) View Officer Challenge Requests</a></h3>
-    </div>
+    </section>
 
 </div>
 
