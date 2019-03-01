@@ -126,6 +126,7 @@ STATICFILES_DIRS = [
 
 # placeholder for now, replace with home page when it exists
 LOGIN_REDIRECT_URL = '/events/'
+LOGOUT_REDIRECT_URL = '/events/'
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
