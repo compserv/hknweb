@@ -1,6 +1,18 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
 <h1>Account Settings</h1>
 
-<form action="/account_settings/" method="post">
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<form method="post">
 	{% csrf_token %}
 	<h2>Account settings</h2>
 	{{ user_form.as_p }}
@@ -10,3 +22,4 @@
 	{{ profile_form.as_p}}
 	<button type="submit">Save</button>
 </form>
+{% endblock %}

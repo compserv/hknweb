@@ -10,10 +10,35 @@
         <!-- Fonts and CSS -->
         <link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro:300,400,600,700" rel="stylesheet">
         <link rel="stylesheet" href="{% static "css/base.css" %}">
+
+        <!-- Tachyon CSS - tachyons.io -->
+        <!-- <link rel="stylesheet" href="https://unpkg.com/tachyons/css/tachyons.min.css"> -->
       
         {% block header %}{% endblock %}
     </head>
     <body>
+    <!-- <header>
+        <nav class="dt border-box bg-dark-gray w-100 font-body pv1 pv0-ns">
+        <a class="dtc v-mid w-25 w-10-ns tc" href="#" title="Home">
+            <img class="w3 w3-ns h3 h3-ns" src="{% static "img/hkn-bear-golden.svg" %}" alt="HKN" />
+        </a>
+        <div class="f6 f5-l dtc w-50 w-70-l tc tl-ns v-mid">
+            <a class="dib b near-white link pv1 pv3-l mh2 hover-yellow" href="#" title="Students">Students</a>
+            <a class="dib b near-white link pv1 pv3-l mh2 hover-yellow" href="#" title="Industry">Industry</a>
+            <a class="dib b near-white link pv1 pv3-l mh2 hover-yellow" href="/events" title="Events">Events</a>
+            <a class="dib b near-white link pv1 pv3-l mh2 hover-yellow" href="#" title="Service">Service</a>
+            <a class="dib b near-white link pv1 pv3-l mh2 hover-yellow" href="/alumni" title="Alumni">Alumni</a>
+        </div>
+        <div class="f6 f5-l dtc w-25 w-20-l tc tr-ns pr4-ns v-mid">
+            {% if user.is_authenticated %}
+            <a class="dib b near-white link pv1 pv3-l ph2 hover-yellow" href="/accounts/settings" title="Settings">Settings</a>
+            {% else %}
+            <a class="dib b near-white link pv1 pv3-l ph2 hover-yellow" href="/accounts/create" title="Register">Register</a>
+            <a class="dib b bg-near-white near-black link pv1 pv2-ns ph2 ba b--near-white br2 hover-bg-yellow" href="/accounts/login" title="Login">Login</a>
+            {% endif %}
+        </div>
+        </nav>
+    </header> -->
         <div class="navi-container">
             <div class="navi">
                 <div class="navi-logo">
@@ -131,6 +156,17 @@
             {% block content %}{% endblock %}
         </div>
   
+        <!-- <footer class="w-100">
+            <nav class="dt border-box w-100 bg-dark-gray font-body">
+            <div class="dtc f6 f5-l w-50 w-80-l tl v-mid">
+                <a class="dib b near-white link pa3 hover-yellow" href="#">Contact</a>
+                <a class="dib b near-white link pa3 hover-yellow" href="#" title="About">About</a>
+            </div>
+            <a class="dtc tr v-mid w-50 w-20-l pa2" href="https://www.ocf.berkeley.edu">
+                <img src="{% static "img/ocf-hosted-penguin-dark.svg" %}" alt="Hosted by the OCF" />
+            </a>
+            </nav>
+        </footer> -->
         <div class="footer">
             <div class="footer-container">
                 <div class="footer-block">
