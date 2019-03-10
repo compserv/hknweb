@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'hknweb.candidate',
     'hknweb.elections',
     'hknweb.courses',
+    'hknweb.exams',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -122,6 +123,10 @@ USE_L10N = True
 
 USE_TZ = True
 
+# File uploads
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Email stuff
 

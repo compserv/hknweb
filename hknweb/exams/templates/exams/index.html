@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Courses{% endblock %}
+
+{% block content %}
+<div class="center measure-very-wide pv4">
+  <h1 class="font-title f3 f2-ns tc">Browse Exams by Department</h1>
+
+  <table>
+    <tbody>
+      <tr>Computer Science</tr>
+      {% for course in courses %}
+        {% if course.department == 'CS' %}
+        <tr>
+          <td>
+            <a href="/exams/course/CS/{{ course.number }}/">{{ course.department }} {{ course.number }}</a>
+          </td>
+        </tr>
+        {% endif %}
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <table>
+    <tbody>
+      <tr>Electrical Engineering</tr>
+      {% for course in courses %}
+        {% if course.department == 'EE' %}
+        <tr>
+          <td>
+            <a href="/exams/course/EE/{{ course.number }}/">{{ course.department }} {{ course.number }}</a>
+          </td>
+        </tr>
+        {% endif %}
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}
