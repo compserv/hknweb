@@ -19,6 +19,8 @@ from django.urls import include
 from django.urls import path
 
 from . import views
+from .views import landing
+
 
 urlpatterns = [
     path('events/', include('hknweb.events.urls')),
@@ -42,4 +44,5 @@ urlpatterns = [
     path('markdownx/', include('markdownx.urls')),
     path('s/', include('hknweb.shortlinks.urls')),
     path('elections/', include('hknweb.elections.urls')),
+    path('', landing.home),
 ]
