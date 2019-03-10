@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'hknweb.alumni',
     'hknweb.candidate',
     'hknweb.elections',
+    'hknweb.courses',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

@@ -21,6 +21,8 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    path('events/', include('hknweb.events.urls')),
+    path('courses/', include('hknweb.courses.urls')),
     path('admin/', admin.site.urls),
     path(
         'accounts/', include([
