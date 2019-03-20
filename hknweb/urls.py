@@ -25,9 +25,6 @@ from .views import landing
 
 
 urlpatterns = [
-    path('courses/', include('hknweb.courses.urls')),
-    path('events/', include('hknweb.events.urls')),
-    path('exams/', include('hknweb.exams.urls')),
     path('admin/', admin.site.urls),
     path(
         'accounts/', include([
@@ -37,7 +34,9 @@ urlpatterns = [
             path('logout/', auth_views.LogoutView.as_view()),
         ]),
     ),
+    path('courses/', include('hknweb.courses.urls')),
     path('events/', include('hknweb.events.urls')),
+    path('exams/', include('hknweb.exams.urls')),
     path('alumni/', include('hknweb.alumni.urls')),
     path('tutoring/', include('hknweb.tutoring.urls')),
     path('cand/', include('hknweb.candidate.urls')),
