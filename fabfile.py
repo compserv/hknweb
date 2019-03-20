@@ -33,6 +33,7 @@ class DeployConfig(Config):
         hkn_defaults = {
             'deploy': {
                 'name': 'default',
+                'user': 'hkn',
                 'host': 'apphost.ocf.berkeley.edu',
                 'path': {
                     'root': '/home/h/hk/hkn/hknweb',
@@ -167,19 +168,20 @@ def finish(c):
 
 @task
 def deploy(c, target=None, commit=None):
-    setup(c, commit=commit)
-    update(c)
-    publish(c)
-    finish(c)
-    c.close()
+    with Connection(c.deploy.host, user=c.deploy.user, config=c.config) as c:
+        setup(c, commit=commit)
+        update(c)
+        publish(c)
+        finish(c)
 
 
 @task
 def rollback(c, release=None):
-    setup(c, release=release)
-    update(c)
-    publish(c)
-    finish(c)
+    with Connection(c.deploy.host, user=c.deploy.user, config=c.config) as c:
+        setup(c, release=release)
+        update(c)
+        publish(c)
+        finish(c)
 
 
 ns = Collection(deploy, rollback)
