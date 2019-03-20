@@ -10,39 +10,37 @@
   <script src="http://unpkg.com/fullcalendar/dist/fullcalendar.min.js"></script>
 {% endblock %}
 
+{% block heading %}
+Add a calendar event
+{% endblock %}
+
 {% block content %}
 <div class="center measure-very-wide pv4">
-    <h1 class="font-title f3 f2-ns tc">Add an event to the candidate calendar</h1>
+    {% if messages %}
+        {% for message in messages %}
+            <h3  {% if messages.tags %} class="{{ message.tags }}" {% endif %} style="color: #0000A0;">{{ message }}</h3>
+        {% endfor %}
+    {% endif %}
 
-    <div style="padding-left: 20px; font-family: Georgia;">
-
-        {% if messages %}
-            {% for message in messages %}
-                <h3  {% if messages.tags %} class="{{ message.tags }}" {% endif %} style="color: #0000A0;">{{ message }}</h3>
-            {% endfor %}
-        {% endif %}
-
-        <form method="POST">{% csrf_token %}
-            {% for field in form %}
-                <br>
-                <span style="float: left;">{{ field.label }}  {% if field.field.required %}
-                    <span style="color: red;">* </span>
-                    {% endif %}
-                </span>
-                {% if field.help_text %}
-                <br> {{ field.help_text }}
-                {% endif %}
-                <br>
-                {{ field }}
-                {{ field.errors }}
-                <br>
-            {% endfor %}
+    <form method="POST">{% csrf_token %}
+        {% for field in form %}
             <br>
-            <input class="f6 grow no-underline br-pill ph3 pv2 mb2 dib white bg-black" type="submit" value="Submit"/>
-        </form>
-
-    </div>
-
+            <span style="float: left;">{{ field.label }}
+                {% if field.field.required %}
+                    <span style="color: red;">* </span>
+                {% endif %}
+                {% if field.help_text %}
+                ({{ field.help_text }})
+                {% endif %}
+                {{ field }}
+            </span>
+            <br>
+            {{ field.errors }}
+            <br>
+        {% endfor %}
+        <br>
+        <input class="f6 grow no-underline br-pill ph3 pv2 mb2 dib white bg-black" type="submit" value="Submit"/>
+    </form>
 </div>
 
 {% endblock %}

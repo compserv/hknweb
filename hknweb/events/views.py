@@ -69,6 +69,3 @@ def add_event(request):
             messages.success(request, 'Something went wrong oops')
             return render(request, 'events/add_event.html', {'form': EventForm(None)})
     return render(request, 'events/add_event.html', {'form': EventForm(None)})
-
-def show_checklist(request):
-    return HttpResponse("Hello, world. You're at the checklist index.")

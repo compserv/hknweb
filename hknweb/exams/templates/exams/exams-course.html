@@ -1,19 +1,31 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block content %}
-<div class="center measure-very-wide pv4">
-  <h1 class="font-title f3 f2-ns tc">{{ course.department }} {{ course.number }}</h1>
+{% block title %}{{ course.department }} {{ course.number }}{% endblock %}
 
+{% block heading %}{{ course.department }} {{ course.number }} Exams{% endblock %}
+
+{% block content %}
+<style>
+  table {
+    border: 2px solid gray;
+    align: center;
+  }
+  td {
+    border: 1px solid black;
+    padding: 5px;
+  }
+</style>
+<div class="table">
   <table>
     <tbody>
       <tr>
-        <td>Semester</td>
-        <td>Instructor</td>
-        <td>Midterm 1</td>
-        <td>Midterm 2</td>
-        <td>Midterm 3</td>
-        <td>Final</td>
+        <td><b>Semester</b></td>
+        <td><b>Instructor</b></td>
+        <td><b>Midterm 1</b></td>
+        <td><b>Midterm 2</b></td>
+        <td><b>Midterm 3</b></td>
+        <td><b>Final</b></td>
       </tr>
       {% for semester in semesters %}
       <tr>
