@@ -1,7 +1,7 @@
 body {
     margin: 0px;
     font-family: 'Source Sans Pro', sans-serif;
-    font-size: 18px;
+    font-size: 1em;
 }
 
 /* LINKS */
@@ -52,12 +52,12 @@ a:active {
 }
 .navi-logo-title {
     font-family: 'PT Sans', sans-serif;
-    font-size: 20px;
+    font-size: 1.1em;
     font-weight: 700;
 }
 .navi-logo-subtitle {
     font-family: 'Source Sans Pro', sans-serif;
-    font-size: 17px;
+    font-size: .95em;
     font-weight: 400;
 }
 @media screen and (min-width: 1070px) {
@@ -111,7 +111,6 @@ a:active {
 .navi-menu-item {
     text-align: center;
     padding: 0px auto;
-    font-size: 18px;
     font-weight: 700;
     font-family: 'PT Sans', sans-serif;
     cursor: pointer;
@@ -130,13 +129,11 @@ a:active {
 }
 .navi-extension-item {
     font-weight: 400;
-    font-size: 15px;
     padding-bottom: 5px;
     font-family: 'Source Sans Pro', sans-serif;
     color: inherit;
 }
 .navi-ext-item {
-    font-size: 15px;
     font-weight: 700;
     font-family: 'PT Sans', sans-serif;
 }
@@ -146,7 +143,7 @@ a:active {
     border-bottom: 1px solid black;
     padding-bottom: 10px;
     margin-bottom: 15px;
-    font-size: 18px;
+    font-size: 1.1em;
     text-align: center;
 }
 .navi-ext-logo {
@@ -158,18 +155,16 @@ a:active {
     margin-top: 10px;
 }
 .navi-ext-logo .navi-ext-logo-text .navi-logo-title{
-    font-size: 25px;
+    font-size: 1.4em;
 }
 .navi-ext-logo .navi-ext-logo-text .navi-logo-subtitle{
-    font-size: 20px;
+    font-size: 1.25em;
 }
 
 .exit-ext-menu {
     position: absolute;
-    right: 20px;
-    top: 20px;
-    width: 50px;
-    height: 50px;
+    right: 10px;
+    top: 10px;
 }
 .exit-ext-menu img {
     width: 50px;
@@ -199,7 +194,7 @@ label {
     padding: 75px;
     /* background-color: #EEEEEE; */
     font-family: 'PT Sans', sans-serif;
-    font-size: 50px;
+    font-size: 3em;
     font-weight: 500;
     text-align: center;
     background: url('/static/img/bg.png');
@@ -209,11 +204,6 @@ label {
     padding: 75px 10px;
     width: 1000px;
     margin: 0px auto;
-}
-
-label, input {
-    font-family: "Source Sans Pro", sans-serif;
-    font-size: 1.2rem;
 }
 
 /* FOOTER */
@@ -239,7 +229,7 @@ label, input {
     color: white;
 }
 .footer-block-title {
-    font-size: 21px;
+    font-size: 1.35em;
     font-family: "PT Sans", sans-serif;
 }
 .contact-text {
