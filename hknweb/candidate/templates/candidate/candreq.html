@@ -3,18 +3,12 @@
 
 {% block title %}Candidate Officer Challenges{% endblock %}
 
-{% block header %}
-  <!--<link rel='stylesheet' href="http://unpkg.com/fullcalendar/dist/fullcalendar.min.css" />-->
-  <!--<script src="http://unpkg.com/moment/min/moment.min.js"></script>-->
-  <!--<script src="http://unpkg.com/jquery/dist/jquery.slim.min.js"></script>-->
-  <!--<script src="http://unpkg.com/fullcalendar/dist/fullcalendar.min.js"></script>-->
+{% block heading %}
+Your Officer Challenges
 {% endblock %}
 
 {% block content %}
-<div class="center measure-very-wide pv4">
-    <h1 class="font-title f3 f2-ns tc">Your Officer Challenges</h1>
-
-    <!-- Feel free to replace this terrible styling! -->
+<div class="center measure-narrow measure-wide-m measure-very-wide-l pv4">
 
     <!-- Left side of page, form to request new challenges -->
     <div style="width: 40%; float: left; padding-left: 50px; font-family: Georgia; font-size: 10pt">
@@ -50,7 +44,7 @@
     </div>
 
     <!-- Right side of page, list of requested challenges -->
-    <section id='agenda'  style="width: 50%; float: right; padding-left: 20px; padding-right: 20px; font-family: Georgia; font-size: 10pt">
+    <div id='agenda'  style="width: 50%; float: right; padding-left: 20px; padding-right: 20px; font-family: Georgia; font-size: 10pt">
         <h3>Past Requests</h3>
 
         {% if challenge_list %}
@@ -95,7 +89,7 @@
         Waiting for response <img src="{% static 'candidate/maybe.png'%}" alt="in progress" style="width: 4%; vertical-align: middle;">
         </p>
 
-        </div>
+    </div>
 
 </div>
 

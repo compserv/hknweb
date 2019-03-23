@@ -1,22 +1,14 @@
 {% extends "base.html" %}
 {% load static %}
 
-<!-- I just made this to have a place to put the officer stuff.
-     Feel free to delete this page later, as long as you still
-     keep the mechanism for making officer challenge requests. -->
-
 {% block title %}Candidate Portal{% endblock %}
 
-{% block header %}
-  <!--<link rel='stylesheet' href="http://unpkg.com/fullcalendar/dist/fullcalendar.min.css" />-->
-  <!--<script src="http://unpkg.com/moment/min/moment.min.js"></script>-->
-  <!--<script src="http://unpkg.com/jquery/dist/jquery.slim.min.js"></script>-->
-  <!--<script src="http://unpkg.com/fullcalendar/dist/fullcalendar.min.js"></script>-->
+{% block heading %}
+Candidate Portal
 {% endblock %}
 
 {% block content %}
 <div class="center measure-very-wide pv4">
-    <h1 class="font-title f3 f2-ns tc">Candidate Portal</h1>
 
     <div style = "float:left; width: 800px">
         <section id='agenda' style="background-color: #EEEEEE; margin: 0.5%; padding-left: 20px; padding-right: 20px; padding-top: 5px; padding-bottom: 10px">
@@ -107,8 +99,7 @@
                     <li>Officer Challenges</li>
                     <ul>
                         <li><a href="{% url 'candidate:candrequests' %}">(Candidate) Request Confirmation</a></li>
-                        <!-- Currently just leads to a particular officer challenge confirmation, since the complete view is not yet implemented -->
-                        <li><a href="{% url 'candidate:candrequests' %}">(Officer) Confirm Challenge Requests</a></li>
+                        <li><a href="{% url 'candidate:dummy' %}">(Officer) Confirm Challenge Requests [coming soon]</a></li>
                     </ul>
                     <li>Officer Hangouts</li>
                     <ol type="1">

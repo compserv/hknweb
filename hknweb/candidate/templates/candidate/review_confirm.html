@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ challenge.name }}{% endblock %}
+
+{% block heading %}
+Confirm Officer Challenge
+{% endblock %}
+
+{% block content %}
+<style>
+.slider-container {
+    padding: 10px 15px;
+}
+
+/* Tooltip text */
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+    width: 120px;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -60px; /* Use half of the width (120/2 = 60), to center the tooltip */
+
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    z-index: 1;
+}
+
+li {
+    padding-bottom: 5px;
+}
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+}
+
+img {
+    width: 40%;
+    display: block; /* Center image */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#confirm-text {
+    font-size: 25px;
+}
+
+.links {
+    float: right;
+    width: 40%;
+    font-size: 20px;
+}
+
+</style>
+
+<div class="center measure-narrow measure-wide-m measure-very-wide-l pv4">
+    <span id="confirm-text">
+        You have successfully confirmed the challenge requested by {{ requester_name }}!
+    </span>
+    <br><br>
+    <img src="{% static 'candidate/seal_sunny.jpg'%}" alt="cute dog">
+
+    <br>
+    <div class="links">
+        <a href="{% url 'candidate:dummy' %}">Go to portal [coming soon]</a>
+    </div>
+
+    <div class="links">
+        <a href="{% url 'candidate:detail' challenge.id %}">View this challenge</a>
+    </div>
+
+    <!-- <strong>Jay Chou</strong><br>
+    <br>
+    Read a touching <a href="https://www.facebook.com/872077979472664/photos/the-touching-story-of-how-jay-chou-struggled-before-he-became-todays-pop-icon-__/1193876557292803/">story</a>
+    of him!<br>
+    <em> Here's an image to look at: </em><br>
+    <img src="http://img02.abroad.imgcdc.com/english/autograb/20170215/15261487121708.jpeg"><br>
+
+    <ul>
+        <li>Jay Chou is the best Chinese singer</li>
+        <li>Jay Chou is so freaking talented</li>
+        <li>Jay Chou is so cute and sometimes hot f</li>
+        <li>His movie <em> Secret </em> made me cry THREE times!</li>
+        <li>I've loved him for 8+ years!</li>
+        <li>I dreamed of dating (the 20 year-old) him last week. <br>
+            There was a hot blond but I still chose my shy Jay. </li>
+    </ul> -->
+</div>
+
+
+
+{% endblock %}

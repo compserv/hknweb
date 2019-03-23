@@ -76,8 +76,19 @@ def officer_confirm_view(request, pk):
     if form.is_valid():
         form.instance.reviewed = True
         form.save()
-        return redirect('/cand/dummy')
+        return redirect('/cand/reviewconfirm/' + pk)
     return render(request, "candidate/challenge_confirm.html", context=context)
+
+
+# the page displayed after officer reviews challenge and clicks "submit"
+def officer_review_confirmation(request, pk):
+    challenge = OffChallenge.objects.get(id=pk)
+    requester_name = challenge.requester.get_full_name()
+    context = {
+        'challenge' : challenge,
+        'requester_name' : requester_name,
+    }
+    return render(request, "candidate/review_confirm.html", context=context)
 
 
 def challenge_detail_view(request, pk):
