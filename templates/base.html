@@ -4,20 +4,23 @@
   <head>
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1">
-  
+
       <title>{% block title %}{% endblock %}</title>
-  
+
+      <!-- Favicon -->
+      <link rel="shortcut icon" href="{% static 'img/favicon.png' %}"/>
+
       <!-- CSS for Materialize -->
       <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"> -->
-  
+
       <!-- Fonts -->
       <link href="https://fonts.googleapis.com/css?family=Open+Sans|PT+Sans:700|Roboto:400,500,700,900|Source+Sans+Pro:300,400,600,700" rel="stylesheet">
-      
+
       <!-- CSS stylesheets -->
       <link rel="stylesheet" href="{% static "css/base.css" %}">
-      
-      
-      
+
+
+
       {% block header %}{% endblock %}
   </head>
   <body>
@@ -108,10 +111,10 @@
             </div>
         </div>
     </div>
-    
+
     <!-- <script>
         console.log("Running the navbar script");
-      
+
         // Horizontally align the menu items width their respective columns in the navigation extended view
         naviItems = document.getElementsByClassName('navi-menu-item');
         naviCols = document.getElementsByClassName('navi-ext-item');
@@ -131,17 +134,17 @@
             }
         }
     </script> -->
-    
+
     <div id="heading">
         {% block heading %}{% endblock %}
     </div>
-    
+
     <div class="min-vh-100 relative">
       <main id="content">
         {% block content %}{% endblock %}
       </main>
     </div>
-  
+
     <div class="footer">
         <div class="footer-container">
             <!-- <div class="footer-form">
@@ -188,7 +191,7 @@
                     Officer Contacts: refer to the <a href="" style="text-decoration: underline;">Officers page</a>.
                 </div>
             </div>
-            
+
             <div class="footer-block">
                 <div class="contact-text">
                     Created by the Computing Services (Compserv) committee.<br/>
@@ -200,7 +203,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- JavaScript for Materialize -->
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script> -->
   </body>
