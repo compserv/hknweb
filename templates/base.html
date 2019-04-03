@@ -7,14 +7,8 @@
   
         <title>{% block title %}{% endblock %} | Berkeley HKN</title>
   
-        <!-- CSS for Materialize -->
-        <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"> -->
-  
-        <!-- Fonts -->
-        <!-- Was <link href="https://fonts.googleapis.com/css?family=Open+Sans|PT+Sans:700|Roboto:400,500,700,900|Source+Sans+Pro:300,400,600,700" rel="stylesheet"> -->
+        <!-- Fonts and CSS -->
         <link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro:300,400,600,700" rel="stylesheet">
-      
-        <!-- CSS stylesheets -->
         <link rel="stylesheet" href="{% static "css/base.css" %}">
       
         {% block header %}{% endblock %}
@@ -143,7 +137,7 @@
                     <div class="footer-block-title">
                         Our Offices
                     </div>
-                    <div class="contact-text">
+                    <div class="footer-block-text">
                         290 Cory Hall | (510) 642-7346 <br/>
                         345 Soda Hall | (510) 642-9952
                     </div>
@@ -153,14 +147,14 @@
                     <div class="footer-block-title">
                         Email
                     </div>
-                    <div class="contact-text">
+                    <div class="footer-block-text">
                         General: hkn@hkn.eecs.berkeley.edu <br/>
                         Industrial Relations: indrel@hkn.eecs.berkeley.edu <br/>
                     </div>
                 </div>
             
                 <div class="footer-block">
-                    <div class="contact-text">
+                    <div class="footer-block-text">
                         Created by the Computing Services (Compserv) committee. <br/>
                         Copyright &copy; <script type="text/javascript">
                           var d = new Date()
@@ -170,8 +164,5 @@
                 </div>
             </div>
         </div>
-    
-        <!-- JavaScript for Materialize -->
-        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script> -->
     </body>
 </html>

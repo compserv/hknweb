@@ -6,30 +6,44 @@
 {% block heading %}Exam Archive{% endblock %}
 
 {% block content %}
-Browse by department:
+<style>
+    .content {
+        padding-top: 1em;
+        padding-bottom: 1em;
+        text-align: center;
+    }
+    #actual-contents {
+        display: inline-block;
+        margin: 0 auto;
+        text-align: left;
+    }
+</style>
+<div id="actual-contents">
+    Browse by department:
 
-<h1>Computer Science</h1>
+    <h1>Computer Science</h1>
 
-<ul>
-  {% for course in courses %}
-    {% if course.department == 'CS' %}
-      <li>
-        <a href="/exams/course/CS/{{ course.number }}/">CS {{ course.number }}</a>
-      </li>
-    {% endif %}
-  {% endfor %}
-</ul>
+    <ul>
+        {% for course in courses %}
+            {% if course.department == 'CS' %}
+                <li>
+                    <a href="/exams/course/CS/{{ course.number }}/">CS {{ course.number }}</a>
+                </li>
+            {% endif %}
+        {% endfor %}
+    </ul>
 
-<h1>Electrical Engineering</h1>
+    <h1>Electrical Engineering</h1>
 
-<ul>
-  {% for course in courses %}
-    {% if course.department == 'EE' %}
-      <li>
-        <a href="/exams/course/EE/{{ course.number }}/">EE {{ course.number }}</a>
-      </li>
-    {% endif %}
-  {% endfor %}
-</ul>
+    <ul>
+        {% for course in courses %}
+            {% if course.department == 'EE' %}
+                <li>
+                    <a href="/exams/course/EE/{{ course.number }}/">EE {{ course.number }}</a>
+                </li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+</div>
 
 {% endblock %}
