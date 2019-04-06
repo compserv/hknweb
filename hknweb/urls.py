@@ -24,6 +24,7 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/create/', users.account_create),
     path('accounts/settings/', users.account_settings),
+    path('accounts/activate/', users.activate),
     path('events/', include('hknweb.events.urls')),
     path('alumni/', include('hknweb.alumni.urls')),
     path('tutoring/', include('hknweb.tutoring.urls')),
