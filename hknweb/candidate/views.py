@@ -57,9 +57,11 @@ class CandRequestView(FormView, generic.ListView):
         return context
 
     def get_queryset(self):
-        result = OffChallenge.objects
-
-        result = result.order_by('-request_date').filter(requester=self.request.user)
+        if self.request.user.is_anonymous:
+            raise RuntimeError('User not logged in')
+        result = OffChallenge.objects \
+                .order_by('-request_date') \
+                .filter(requester__exact=self.request.user)
         return result
 
 
