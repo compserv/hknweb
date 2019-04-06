@@ -1,0 +1,20 @@
+.link {
+    font-family: 'Source Sans Pro', sans-serif;
+}
+
+.detail {
+    max-width: 700px;
+    margin: 0 auto;
+    font-size: 1.3em;
+    line-height: 1.5em;
+}
+
+.inline-icon {
+    width: 1.1em;
+    vertical-align: middle;
+}
+
+.table-icon {
+    width: 1.5em;
+    vertical-align: middle;
+}

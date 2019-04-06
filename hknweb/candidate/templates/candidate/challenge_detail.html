@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block header %}
+<link rel="stylesheet" href="{% static "candidate/styles.css" %}">
+{% endblock %}
+
 {% block title %}Challenge Detail{% endblock %}
 
 {% block heading %}
@@ -8,29 +12,27 @@ View Officer Challenge
 {% endblock %}
 
 {% block content %}
-<div class="center measure-very-wide pv4">
+<div class="detail">
+    <b>Title:</b> {{ challenge.name }}<br/>
+    <b>Officer:</b> {{ challenge.officer }} &nbsp;&nbsp; ({{ officer_name }})<br/>
+    <b>Requested by:</b> {{ challenge.requester }} &nbsp;&nbsp; ({{ requester_name }})<br/>
+    <b>Detailed Description:</b> {{ challenge.description }}<br/>
+    <b>Proof:</b> {{ challenge.proof }}<br/>
+    <b>Status:</b>
+    {% if not challenge.reviewed %}
+        <img src="{% static 'candidate/maybe.png'%}" alt="in progress" class="inline-icon">
+        Waiting for officer response
+    {% elif challenge.confirmed %}
+        <img src="{% static 'candidate/yes.png'%}" alt="confirmed" class="inline-icon">
+        Confirmed uwu
+    {% else %}
+        <img src="{% static 'candidate/no.png'%}" alt="declined" class="inline-icon">
+        Declined >:</b>
+    {% endif %}<br/>
+    <b>Comments from the Officer:</b> {{ challenge.officer_comment }}<br/>
+    <b>Request Date:</b> {{ challenge.request_date }}<br/>
 
-    <div style="padding-left: 20px; font-family: Georgia; line-height:23px;">
-        Title: {{ challenge.name }}<br/>
-        Officer: {{ challenge.officer }} &nbsp;&nbsp; ({{ officer_name }})<br/>
-        Requested by: {{ challenge.requester }} &nbsp;&nbsp; ({{ requester_name }})<br/>
-        Detailed Description: {{ challenge.description }}<br/>
-        Proof: {{ challenge.proof }}<br/>
-        Status:
-        {% if not challenge.reviewed %}
-            <img src="{% static 'candidate/maybe.png'%}" alt="in progress" style="width: 2%; vertical-align: middle;">
-            Waiting for officer response
-        {% elif challenge.confirmed %}
-            <img src="{% static 'candidate/yes.png'%}" alt="confirmed" style="width: 2%; vertical-align: middle;">
-            Confirmed uwu
-        {% else %}
-            <img src="{% static 'candidate/no.png'%}" alt="declined" style="width: 2%; vertical-align: middle;">
-            Declined >:
-        {% endif %}<br/>
-        Comments from the Officer: {{ challenge.officer_comment }}<br/>
-        Request Date: {{ challenge.request_date }}<br/>
-
-    <div class="center pv3"><a href="{% url 'candidate:candrequests' %}?q=\\">Go Back to All Challenges</a></div>
+    <p class="link"><a href="{% url 'candidate:candrequests' %}?q=\\">Go Back to All Challenges</a></p>
 
 </div>
 

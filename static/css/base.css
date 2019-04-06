@@ -10,7 +10,7 @@ body {
     padding-right: 13px;
 }
 
-/* NAVIGATION BAR 
+/* NAVIGATION BAR
  * If confused by the flexbox attributes, see https://css-tricks.com/snippets/css/a-guide-to-flexbox/ for a helpful tutorial
  */
 .navi-container {
@@ -39,7 +39,7 @@ body {
     .navi-menu-logo-text {
         margin-left: 7px;
     }
-    
+
     /* Menu */
     .navi-menu {
         display: flex;
@@ -67,7 +67,7 @@ body {
         background-color: black;
         color: white;
     }
-    
+
     /* Navi extension */
     .navi-extension-container {
         display: block;
@@ -120,7 +120,7 @@ body {
         text-align: center;
         vertical-align: middle;
     }
-    
+
     /* Media queries for responsive design */
     /* Desktop display: */
     @media screen and (min-width: 710px) {
@@ -155,7 +155,7 @@ body {
             width: 100%;
         }
     }
-    
+
     /* Toggle */
     #toggle {
         position: absolute;
@@ -166,7 +166,7 @@ body {
     #toggle:checked ~ .navi-extension-container{
         top: 0;
     }
-    
+
     /* Navbar link styling */
     .navi-extension-container a {
         color: inherit;
@@ -225,4 +225,10 @@ body {
 }
 .footer-block-text {
     color: rgba(255, 255, 255, 0.75);
+}
+
+/* Add this to out divs that evelope the body of a page.
+   Makes sure "float" doesn't mess up the css. */
+.parent {
+    overflow: hidden;
 }
