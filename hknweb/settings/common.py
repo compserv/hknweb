@@ -181,6 +181,4 @@ LOGOUT_REDIRECT_URL = '.'
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
 # STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-#SOCIAL_AUTH_GOOGLE_OAUTH2_KEY ='327315222066-ev2hs4s388ei08cfeb8b6oanbjc20hrp.apps.googleusercontent.com' #probably shouldn't just be here
-#SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'j9cX4VjaTohLsLRjZykVZwCy'#remove this eventually plz
 #SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = ['hkn.eecs.berkeley.edu']
