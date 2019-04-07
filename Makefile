@@ -1,4 +1,4 @@
-PIP_HOME = $(shell python3 -c "import site; import os; print(os.path.join(site.USER_BASE, 'bin'))" \
+PIP_HOME = $(shell python -c "import site; import os; print(os.path.join(site.USER_BASE, 'bin'))" \
 	|| python -c "import site; import os; print(os.path.join(site.USER_BASE, 'bin'))")
 
 IP ?= 127.0.0.1

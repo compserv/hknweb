@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'markdownx',
+    'social_django',
 ]
 
 MIDDLEWARE = [
@@ -54,6 +55,17 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'hknweb.urls'
 
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.auth_allowed',
+    'social_core.pipeline.social_auth.social_user',
+    'social_core.pipeline.social_auth.associate_by_email',
+    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.social_auth.load_extra_data',
+    'social_core.pipeline.user.user_details',
+)
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -65,13 +77,22 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'hknweb.wsgi.application'
+AUTHENTICATION_BACKENDS = (
+ 'social_core.backends.open_id.OpenIdAuth',  # for Google authentication
+ 'social_core.backends.google.GoogleOpenId',  # for Google authentication
+ 'social_core.backends.google.GoogleOAuth2',  # for Google authentication
+ 
+ 'django.contrib.auth.backends.ModelBackend',
+)
 
+WSGI_APPLICATION = 'hknweb.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
@@ -153,9 +174,13 @@ STATICFILES_DIRS = [
 ]
 
 # placeholder for now, replace with home page when it exists
-LOGIN_REDIRECT_URL = '/events/'
-LOGOUT_REDIRECT_URL = '/events/'
+LOGIN_URL = 'accounts/login' 
+LOGIN_REDIRECT_URL = '.'
+LOGOUT_REDIRECT_URL = '.'
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
 # STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+#SOCIAL_AUTH_GOOGLE_OAUTH2_KEY ='327315222066-ev2hs4s388ei08cfeb8b6oanbjc20hrp.apps.googleusercontent.com' #probably shouldn't just be here
+#SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'j9cX4VjaTohLsLRjZykVZwCy'#remove this eventually plz
+#SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = ['hkn.eecs.berkeley.edu']

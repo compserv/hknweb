@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import include
 from django.urls import path
 from django.conf import settings
+from django.conf.urls import url, include
 from django.conf.urls.static import static
 
 from . import views
@@ -37,6 +38,8 @@ urlpatterns = [
     path('markdownx/', include('markdownx.urls')),
     path('s/', include('hknweb.shortlinks.urls')),
     path('elections/', include('hknweb.elections.urls')),
+    path('auth/', include('social_django.urls', namespace='social')),
+    #url(r'^auth/', include('social_django.urls', namespace='social')),
     path('', landing.home),
 ]
 
