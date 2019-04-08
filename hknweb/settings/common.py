@@ -175,7 +175,7 @@ STATICFILES_DIRS = [
 
 # placeholder for now, replace with home page when it exists
 LOGIN_URL = 'accounts/login' 
-LOGIN_REDIRECT_URL = '.'
+LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = '.'
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'

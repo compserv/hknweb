@@ -41,7 +41,7 @@ urlpatterns = [
     path('auth/', include('social_django.urls', namespace='social')),
     path('', include('social_django.urls', namespace='social')),
     #url(r'^auth/', include('social_django.urls', namespace='social')),
-    path('', landing.home),
+    path('', landing.home, name='home'),
 ]
 
 if settings.DEBUG:
