@@ -36,7 +36,11 @@ urlpatterns = [
     path('markdownx/', include('markdownx.urls')),
     path('s/', include('hknweb.shortlinks.urls')),
     path('elections/', include('hknweb.elections.urls')),
-    path('', landing.home),
+    path('auth/', include('social_django.urls', namespace='social')),
+    path('', include('social_django.urls', namespace='social')),
+    #url(r'^auth/', include('social_django.urls', namespace='social')),
+    path('', landing.home, name='home'),
+    #path('', landing.home),
 ]
 
 if settings.DEBUG:
