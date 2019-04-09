@@ -4,31 +4,65 @@
 {% block title %}Events{% endblock %}
 
 {% block header %}
+  <!-- Random scripts which make the calendar work: -->
   <link rel='stylesheet' href="http://unpkg.com/fullcalendar/dist/fullcalendar.min.css" />
   <script src="http://unpkg.com/moment/min/moment.min.js"></script>
   <script src="http://unpkg.com/jquery/dist/jquery.slim.min.js"></script>
   <script src="http://unpkg.com/fullcalendar/dist/fullcalendar.min.js"></script>
-  <script src="{% static "calendar.js" %}"></script>
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $('#calendar').fullCalendar({
+        header: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'month,basicWeek,basicDay'
+        },
+        defaultDate: new Date(),
+        navLinks: true, // can click day/week names to navigate views
+        editable: false,
+        eventLimit: true, // allow "more" link when too many events
+        fixedWeekCount: false,
+        aspectRatio: 1.75,
+        events: [ {% for event in events %}
+          {
+            title: '{{ event.name }}',
+            start: '{{ event.start_time|date:"c" }}', // date:"c" renders the dates in ISO format, as fullcalendar needs them
+            end: '{{ event.end_time|date:"c" }}',
+            url: '{{ event.id }}'
+          },
+        {% endfor %}
+        ]
+      })
+    })
+  </script>
+{% endblock %}
+
+{% block heading %}
+Upcoming Events
 {% endblock %}
 
 {% block content %}
 <div class="center measure-very-wide pv4">
-  <h1 class="font-title f3 f2-ns tc">HKN Events</h1>
+    {% if messages %}
+        {% for message in messages %}
+            <h3  {% if messages.tags %} class="{{ message.tags }}" {% endif %} style="color: #0000A0;">{{ message }}</h3>
+        {% endfor %}
+    {% endif %}
 
-  <section id='calendar'></section>
-
-  <section id='agenda'>
-    <h2 class="font-title f4 f3-ns">Agenda</h2>
-    {% for event in events %}
-      <h3 class="f5 f4-l mv2">{{ event.name }}</h3>
-      <p class="f5 lh-copy mv2">{{ event.location }}</p>
-      <blockquote class="ml0 mt0 pl4 black-90 bl bw2 b--blue">
-        <p class="f5 lh-copy mt0">{{ event.description }}</p>
-      </blockquote>
-      <br/>
-    {% endfor %}
-  </section>
+    <section id='calendar'></section>
+    
+    <style>
+        .fc-center h2 {
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 30px;
+            font-weight: 400;
+        }
+    </style>
+    
+    <br>
+    <form action="new" method="GET">
+        <button type='submit'>New event</button>
+    </form>
 </div>
-
-  <!-- TODO: add public event feed (ical) -->
 {% endblock %}

@@ -10,6 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 import os
+from django.conf.global_settings import DATETIME_INPUT_FORMATS
+#from .secrets import EMAIL_HOST_PASSWORD
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -26,7 +28,10 @@ INSTALLED_APPS = [
     'hknweb.markdown_pages',
     'hknweb.shortlinks',
     'hknweb.alumni',
+    'hknweb.candidate',
     'hknweb.elections',
+    'hknweb.courses',
+    'hknweb.exams',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -74,9 +79,11 @@ WSGI_APPLICATION = 'hknweb.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'hknweb',
+        'HOST': 'mysql',
         'OPTIONS': {
-            'read_default_file': './db.cnf',
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            'read_default_file': "~/.my.cnf",
         },
     },
 }
@@ -108,11 +115,32 @@ LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
 
+DATETIME_INPUT_FORMATS += ('%m/%d/%Y %I:%M %p')
+
 USE_I18N = True
 
 USE_L10N = True
 
 USE_TZ = True
+
+# File uploads
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Email stuff
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+# Host for sending e-mail.
+EMAIL_HOST = 'smtp.gmail.com'
+
+# Port for sending e-mail.
+EMAIL_PORT = 587
+
+# Optional SMTP authentication information for EMAIL_HOST.
+EMAIL_HOST_USER = 'hknwebsite@hkn.eecs.berkeley.edu'
+EMAIL_USE_TLS = True
 
 
 # Static files (CSS, JavaScript, Images)

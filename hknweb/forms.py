@@ -2,7 +2,11 @@ from django import forms
 from hknweb.models import User
 from hknweb.models import Profile
 from hknweb.alumni.models import Alumnus
+<<<<<<< HEAD
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm, SetPasswordForm
+=======
+from django.contrib.auth.forms import UserCreationForm
+>>>>>>> 1a496a9436178b58f23cd49ff5643f10719ba4db
 
 class SettingsForm(forms.ModelForm):
 
@@ -24,6 +28,7 @@ class SignupForm(UserCreationForm):
      class Meta:
           model = User
           fields = ('first_name', 'last_name', 'username', 'email', 'password1', 'password2')
+<<<<<<< HEAD
 
 class UpdatePasswordForm(SetPasswordForm):
 
@@ -36,3 +41,5 @@ class ValidPasswordForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('password',)
+=======
+>>>>>>> 1a496a9436178b58f23cd49ff5643f10719ba4db

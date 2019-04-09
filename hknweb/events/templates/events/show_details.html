@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ event.name }}{% endblock %}
+
+{% block header %}
+{{ event.name }}
+{% endblock %}
+
+{% block content %}
+<div class="center measure-very-wide pv4">
+
+  {% if messages %}
+    {% for message in messages %}
+      <h3 {% if messages.tags %} class="{{ message.tags }}" {% endif %} style="color: #B78727;">{{ message }}</h3>
+    {% endfor %}
+  {% endif %}
+
+  <!-- RSVP/un-RSVP button -->
+  {% if rsvp %}
+    <form action="{{ event.id }}/unrsvp" method="post">
+      {% csrf_token %}
+      <input type="submit" value="un-RSVP" />
+    </form>
+  {% else %}
+    <form action="{{ event.id }}/rsvp" method="post">
+      {% csrf_token %}
+      <input type="submit" value="RSVP" />
+    </form>
+  {% endif %}
+  
+  <p>{{ event.description }}</p>
+
+  <p><b>Location</b>: {{ event.location }}</p>
+  
+  <div id="date-and-time"></div>
+  <!-- Script to render dates prettily -->
+  <script>
+    var start = new Date('{{ event.start_time|date:"c" }}');
+    var end = new Date('{{ event.end_time|date:"c" }}');
+    var sameDayEvent = start.getDate() === end.getDate() && start.getMonth() === end.getMonth() && start.getYear() === end.getYear();
+    
+    if (sameDayEvent) {
+      var HTMLtext = '<p><b>Date</b>: ' + start.toLocaleDateString() + '</p> <p><b>Time</b>: ' + start.toLocaleTimeString() + ' to ' + end.toLocaleTimeString();
+    } else { // Event starts and ends on different days
+      var HTMLtext = '<p><b>Starts</b>: ' + start.toLocaleString() + '</p> <p><b>Ends</b>: ' + start.toLocaleString();
+    }
+    document.getElementById("date-and-time").innerHTML = HTMLtext;
+  </script>
+</div>
+{% endblock %}

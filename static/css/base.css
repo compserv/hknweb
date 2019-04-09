@@ -1,33 +1,228 @@
- /* @import url('https://fonts.googleapis.com/css?family=Open+Sans'); */
-
-/* fonts */
-.font-body {
-  font-family: "Open Sans", Arial, Helvetica, sans-serif
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Source Sans Pro', sans-serif;
 }
 
-.font-title {
-  font-family: "Open Sans", Arial, Helvetica, sans-serif
+/* Minimum margins for all sections */
+.navi-container, .navi-extension-container, .heading, .content, .footer {
+    padding-left: 13px;
+    padding-right: 13px;
 }
 
-/* wide measure (max-width) */
-.measure-very-wide {
-  max-width: 72em;
+/* NAVIGATION BAR 
+ * If confused by the flexbox attributes, see https://css-tricks.com/snippets/css/a-guide-to-flexbox/ for a helpful tutorial
+ */
+.navi-container {
+    padding-top: 7px;
+    padding-bottom: 7px;
+    border-bottom: solid 3px rgba(166, 60, 68, 1); /* HKN scarlet; hex code: #A63C44 */
+}
+.navi {
+    min-height: 50px;
+    max-width: 1250px;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+    /* Logo */
+    .navi-logo {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        flex-basis: auto;
+    }
+    .navi-logo-img {
+        height: 45px;
+    }
+    .navi-menu-logo-text {
+        margin-left: 7px;
+    }
+    
+    /* Menu */
+    .navi-menu {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        flex-basis: auto;
+    }
+    .navi-menu > * {
+        cursor: pointer;
+        display: block;
+        white-space: nowrap;
+    }
+    .navi-menu > label {
+        padding-right: 24px;
+    }
+    .navi-menu-button {
+        padding-left: 24px;
+    }
+    .navi-menu > *:hover {
+        text-decoration: none;
+    }
+    .account-button {
+        display: inline-block;
+        padding: 9px;
+        background-color: black;
+        color: white;
+    }
+    
+    /* Navi extension */
+    .navi-extension-container {
+        display: block;
+        position: absolute;
+        background-color: #eeeeee;
+        width: 100%;
+        box-sizing: border-box;
+        top: -2000px;
+        z-index: 999999;
+        transition: all 500ms ease;
+        border-bottom: solid 3px #346F9E; /* HKN navy */
+    }
+    .navi-extension {
+        max-width: 1250px;
+        margin: 35px auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .navi-extension-columns {
+        display: flex;
+        align-items: flex-start;
+    }
+    .navi-ext-col-header {
+        padding-bottom: 2px;
+        border-bottom: 1px solid #252525;
+        margin-bottom: 10px;
+        text-align: center;
+        font-weight: 700;
+    }
+    .navi-ext-col-item {
+        padding-top: 2px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    .navi-ext-logo-text{
+        margin-top: 2%;
+    }
+    .navi-ext-logo .navi-ext-logo-text .navi-logo-title{
+        font-size: 1.4em;
+    }
+    .navi-ext-logo .navi-ext-logo-text .navi-logo-subtitle{
+        font-size: 1.25em;
+    }
+    .exit-extension-button {
+        position: absolute;
+        top: 3px;
+        right: 7px;
+        font-size: 25px;
+        text-align: center;
+        vertical-align: middle;
+    }
+    
+    /* Media queries for responsive design */
+    /* Desktop display: */
+    @media screen and (min-width: 710px) {
+        .navi-menu-button {
+            display: none;
+        }
+    }
+    /* Mobile display: */
+    @media screen and (max-width: 800px) {
+        .navi-extension {
+            flex-direction: column;
+        }
+        .navi-ext-logo {
+            text-align: center;
+        }
+        .navi-ext-logo {
+            padding-bottom: 15px;
+        }
+    }
+    @media screen and (max-width: 710px) {
+        .navi-menu > label {
+            display: none;
+        }
+        .navi-menu-button {
+            display: block;
+        }
+        .navi-extension-columns {
+            flex-direction: column;
+            width: 100%;
+        }
+        .navi-extension-columns > * {
+            width: 100%;
+        }
+    }
+    
+    /* Toggle */
+    #toggle {
+        position: absolute;
+        top: -100%;
+        left: -100%;
+        display: none;
+    }
+    #toggle:checked ~ .navi-extension-container{
+        top: 0;
+    }
+    
+    /* Navbar link styling */
+    .navi-extension-container a {
+        color: inherit;
+    }
+    .navi-container a:link, .navi-extension-container a:link {
+        text-decoration: none;
+    }
+    .navi-container a:visited, .navi-extension-container a:visited {
+        text-decoration: none;
+    }
+    .navi-container a:hover, .navi-extension-container a:hover {
+        text-decoration: underline;
+    }
+    .navi-menu a:hover {
+        text-decoration: none;
+    }
+    .navi-container a:active, .navi-extension-container a:active {
+        text-decoration: underline;
+    }
+
+/* HEADING (which has the page's title) */
+.heading {
+    font-size: 3em;
+    padding-top: 1em;
+    padding-bottom: 1em;
+    font-weight: 300;
+    text-align: center;
+    background-color: #EEEEEE;
+    background: url('../img/bg.png');
 }
 
-@media screen and (min-width:30em) {
-  .measure-very-wide-ns {
-    max-width: 72em;
-  }
+/* FOOTER */
+.footer {
+    background-color: #252525;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-right: 0; /* .footer-block element will provide 13px of padding-right */
+    font-family: "Source Sans Pro", sans-serif;
 }
-
-@media screen and (min-width:30em) and (max-width:60em) {
-  .measure-very-wide-m {
-    max-width: 72em;
-  }
+.footer-container {
+    max-width: 1250px;
+    margin: 0 auto;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
 }
-
-@media screen and (min-width:60em) {
-  .measure-very-wide-l {
-    max-width: 72em;
-  }
+.footer-block {
+    color: white;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    padding-right: 13px;
+}
+.footer-block-title {
+    font-size: 1.25em;
+}
+.footer-block-text {
+    color: rgba(255, 255, 255, 0.75);
 }

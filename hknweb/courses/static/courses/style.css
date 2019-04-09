@@ -1,0 +1,11 @@
+h1 {
+	text-transform: uppercase;
+	font-size: 32px;
+	text-align: center;
+}
+
+#main_format {
+	border: 1px solid black;
+	margin: 1em;
+	padding: 1em;
+}

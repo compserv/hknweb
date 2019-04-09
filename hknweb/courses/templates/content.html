@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Courses{% endblock %}
+
+{% block header %}
+
+<link rel="stylesheet" href="{% static 'courses/style.css'%}" />
+
+{% endblock %}
+
+{% block content %}
+
+<h1>{{Courses.department}} - {{Courses.course_number}} : {{Courses.name}}</h1>
+
+<div id="main_format">
+
+<h3>Description</h3>
+<p>{{Courses.description}}</p>
+
+<h3>Prerequisites</h3>
+<p>{{Courses.prerequisites}}</p>
+
+<h3>WorkLoad</h3>
+<p>{{Courses.workload}}</p>
+
+<h3>Topic Cover</h3>
+<p>{{Courses.topic_covered}}</p>
+
+</div>
+
+
+
+
+
+  <!-- TODO: add public event feed (ical) -->
+{% endblock %}

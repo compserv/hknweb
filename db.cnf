@@ -1,5 +1,0 @@
-[client]
-database = hkn
-user = hkn
-password = hknweb-dev
-default-character-set = utf8
