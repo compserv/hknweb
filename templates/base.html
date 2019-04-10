@@ -4,16 +4,16 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-  
         <title>{% block title %}{% endblock %} | Berkeley HKN</title>
   
         <!-- Fonts and CSS -->
         <link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro:300,400,600,700" rel="stylesheet">
         <link rel="stylesheet" href="{% static "css/base.css" %}">
-      
         {% block header %}{% endblock %}
     </head>
     <body>
+        <div class="white-above-navi">
+        </div>
         <div class="navi-container">
             <div class="navi">
                 <div class="navi-logo">
@@ -148,8 +148,9 @@
                         Email
                     </div>
                     <div class="footer-block-text">
-                        General: hkn@hkn.eecs.berkeley.edu <br/>
-                        Industrial Relations: indrel@hkn.eecs.berkeley.edu <br/>
+                        General: hkn[at]hkn.eecs.berkeley.edu <br/>
+                        Industrial Relations: indrel[at]hkn.eecs.berkeley.edu <br/>
+                        Service: serv[at]hkn.eecs.berkeley.edu
                     </div>
                 </div>
             
@@ -157,8 +158,8 @@
                     <div class="footer-block-text">
                         Created by the Computing Services (Compserv) committee. <br/>
                         Copyright &copy; <script type="text/javascript">
-                          var d = new Date()
-                          document.write(d.getFullYear())
+                            var d = new Date();
+                            document.write(d.getFullYear());
                         </script> Berkeley HKN
                     </div>
                 </div>
