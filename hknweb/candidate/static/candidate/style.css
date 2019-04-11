@@ -1,0 +1,57 @@
+.content {
+    padding-top: 1em;
+    padding-bottom: 1em;
+}
+.centered {
+    max-width: 1250px;
+    margin: 0 auto;
+}
+
+@media screen and (min-width: 1250px) {
+    .content {
+        padding-top: 3em;
+        padding-bottom: 3em;
+    }
+}
+@media screen and (min-width: 1000px) {
+    .left-column, .right-column {
+        width: 48%;
+    }
+    .right-column {
+        padding-left: 4%;
+        float: right;
+    }
+    #break {
+        display: none;
+    }
+}
+@media screen and (max-width: 999px) {
+    .left-column::before {
+        height: 10px;
+    }
+}
+
+@media screen and (min-width: 750px) {
+    .checklist-left-col, .checklist-right-col {
+        display: inline-block;
+        vertical-align: top;
+        width: 48%;
+    }
+    .checklist-right-col {
+        padding-left: 2%;
+    }
+}
+
+section {
+    background-color: #F2F2F2;
+    padding: 20px;
+}
+h2:first-child {
+    margin-top: 0;
+}
+/* Lastly, the clearfix hack to prevent floated elements overflowing container */
+.centered::after {
+    content: "";
+    clear: both;
+    display: table;
+}

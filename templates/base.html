@@ -9,6 +9,7 @@
         <!-- Fonts and CSS -->
         <link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro:300,400,600,700" rel="stylesheet">
         <link rel="stylesheet" href="{% static "css/base.css" %}">
+        <link rel="icon" href="{% static "img/hkn.svg" %}">
         {% block header %}{% endblock %}
     </head>
     <body>
@@ -33,7 +34,7 @@
                     <label for="toggle">Outreach</label>
                     <label for="toggle">Events</label>
                     <label for="toggle">About</label>
-                    <a class="account-button" href="">Account<!-- <i style="border: solid black; border-width: 0 3px 3px 0; display: inline-block; padding: 3px; transform: rotate(45deg); -webkit-transform: rotate(45deg);"></i> --></a>
+                    <a class="account-button" href="/cand">Account<!-- <i style="border: solid black; border-width: 0 3px 3px 0; display: inline-block; padding: 3px; transform: rotate(45deg); -webkit-transform: rotate(45deg);"></i> --></a>
                     <div class="navi-menu-button"><label for="toggle">Menu</label></div>
                 </div>
             </div>
@@ -100,29 +101,6 @@
             </div>
         </div>
     
-        <!-- <script>
-            console.log("Running the navbar script");
-      
-            // Horizontally align the menu items width their respective columns in the navigation extended view
-            naviItems = document.getElementsByClassName('navi-menu-item');
-            naviCols = document.getElementsByClassName('navi-ext-item');
-            if (naviItems.length !== naviCols.length) {
-                console.log("Different number of naviItems and naviCols! There must be an equal number.");
-            }
-            for (var i = 0; i < naviCols.length; i++) {
-                // Assume naviCols.length == naviItems.length, and naviCols in same order as naviItems
-                var naviColWidth = naviCols[i].offsetWidth;
-                var naviMenuItemWidth = naviItems[i].offsetWidth;
-                var maxWidth = Math.max(naviColWidth, naviMenuItemWidth);
-                console.log(maxWidth);
-                if (naviMenuItemWidth < maxWidth) {
-                    naviItems[i].style.width = maxWidth.toString() + 'px';
-                } else if (naviColWidth < maxWidth) {
-                    naviCols[i].style.width = maxWidth.toString() + 'px';
-                }
-            }
-        </script> -->
-    
         <div class="heading">
             {% block heading %}{% endblock %}
         </div>
@@ -130,19 +108,7 @@
         <div class="content">
             {% block content %}{% endblock %}
         </div>
-  
-        <!-- Old footer (black & gold):
-        <footer class="w-100">
-            <nav class="dt border-box w-100 bg-dark-gray font-body">
-            <div class="dtc f6 f5-l w-50 w-80-l tl v-mid">
-                <a class="dib b near-white link pa3 hover-yellow" href="#">Contact</a>
-                <a class="dib b near-white link pa3 hover-yellow" href="#" title="About">About</a>
-            </div>
-            <a class="dtc tr v-mid w-50 w-20-l pa2" href="https://www.ocf.berkeley.edu">
-                <img src="{% static "img/ocf-hosted-penguin-dark.svg" %}" alt="Hosted by the OCF" />
-            </a>
-            </nav>
-        </footer> -->
+
         <div class="footer">
             <div class="footer-container">
                 <div class="footer-block">
@@ -175,7 +141,49 @@
                         </script> Berkeley HKN
                     </div>
                 </div>
+                
+                <div class="footer-block">
+                    <a href="https://www.ocf.berkeley.edu">
+                        <img src="{% static "img/ocf-hosted-penguin-dark.svg" %}" alt="Hosted by the OCF" />
+                    </a>
+                </div>
             </div>
         </div>
+        
+        <!-- Old footer (black & gold):
+        <footer class="w-100">
+            <nav class="dt border-box w-100 bg-dark-gray font-body">
+            <div class="dtc f6 f5-l w-50 w-80-l tl v-mid">
+                <a class="dib b near-white link pa3 hover-yellow" href="#">Contact</a>
+                <a class="dib b near-white link pa3 hover-yellow" href="#" title="About">About</a>
+            </div>
+            <a class="dtc tr v-mid w-50 w-20-l pa2" href="https://www.ocf.berkeley.edu">
+                <img src="{% static "img/ocf-hosted-penguin-dark.svg" %}" alt="Hosted by the OCF" />
+            </a>
+            </nav>
+        </footer> -->
+        
+        <!-- <script>
+            console.log("Running the navbar script");
+      
+            // Horizontally align the menu items width their respective columns in the navigation extended view
+            naviItems = document.getElementsByClassName('navi-menu-item');
+            naviCols = document.getElementsByClassName('navi-ext-item');
+            if (naviItems.length !== naviCols.length) {
+                console.log("Different number of naviItems and naviCols! There must be an equal number.");
+            }
+            for (var i = 0; i < naviCols.length; i++) {
+                // Assume naviCols.length == naviItems.length, and naviCols in same order as naviItems
+                var naviColWidth = naviCols[i].offsetWidth;
+                var naviMenuItemWidth = naviItems[i].offsetWidth;
+                var maxWidth = Math.max(naviColWidth, naviMenuItemWidth);
+                console.log(maxWidth);
+                if (naviMenuItemWidth < maxWidth) {
+                    naviItems[i].style.width = maxWidth.toString() + 'px';
+                } else if (naviColWidth < maxWidth) {
+                    naviCols[i].style.width = maxWidth.toString() + 'px';
+                }
+            }
+        </script> -->
     </body>
 </html>
