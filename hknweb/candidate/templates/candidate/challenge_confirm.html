@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block header %}
+<link rel="stylesheet" href="{% static "candidate/styles.css" %}">
+{% endblock %}
+
 {% block title %}Officer Challenge Confirmation{% endblock %}
 
 {% block heading %}
@@ -8,12 +12,11 @@ Officer Challenge Confirmation
 {% endblock %}
 
 {% block content %}
-<div class="center measure-very-wide pv4">
-    <h1 class="font-title f3 f2-ns tc">Confirm Officer Challenges</h1>
+<div class="parent">
 
-    <!-- Feel free to replace this terrible styling! -->
+    <div style="padding-left: 50px; font-family: font-size: 12pt; line-height:23px;">
 
-    <div style="padding-left: 50px; font-family: Georgia; font-size: 12pt; line-height:23px;">
+        <h1>Confirm Officer Challenges</h1>
 
         <!-- Information about the challenge -->
         Title: {{ challenge.name }}<br/>
@@ -40,6 +43,8 @@ Officer Challenge Confirmation
             <input class="f6 grow no-underline br-pill ph3 pv2 mb2 dib white bg-black" type="submit" value="Submit"/>
 
         </form>
+        <br>
+        
     </div>
 
 
