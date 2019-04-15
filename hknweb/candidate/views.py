@@ -35,7 +35,6 @@ class CandRequestView(FormView, generic.ListView):
 
         candidate_name = form.instance.requester.get_full_name()
         candidate_username = form.instance.requester.username
-        # host = self.request.get_host()
         link = self.request.build_absolute_uri(
                 reverse("candidate:challengeconfirm", kwargs={ 'pk' : form.instance.id }))
         html_content = render_to_string(
@@ -52,16 +51,26 @@ class CandRequestView(FormView, generic.ListView):
         msg.attach_alternative(html_content, "text/html")
         msg.send()
 
-    def get_context_data(self, **kwargs):
-        context = super(CandRequestView, self).get_context_data(**kwargs)
-        return context
-
     def get_queryset(self):
         if self.request.user.is_anonymous:
             raise RuntimeError('User not logged in')
         result = OffChallenge.objects \
                 .order_by('-request_date') \
                 .filter(requester__exact=self.request.user)
+        return result
+
+
+class OffRequestView(generic.ListView):
+    template_name = 'candidate/offreq.html'
+
+    context_object_name = 'challenge_list'
+
+    def get_queryset(self):
+        if self.request.user.is_anonymous:
+            raise RuntimeError('User not logged in')
+        result = OffChallenge.objects \
+                .order_by('-request_date') \
+                .filter(officer__exact=self.request.user)
         return result
 
 
@@ -97,9 +106,20 @@ def challenge_detail_view(request, pk):
     challenge = OffChallenge.objects.get(id=pk)
     officer_name = challenge.officer.get_full_name()
     requester_name = challenge.requester.get_full_name()
+    # check whether the view of page is the officer who gave the challenge
+    if request.user.is_anonymous:
+        raise RuntimeError('User not logged in')
+    viewer_is_officer = challenge.officer == request.user
+    if viewer_is_officer:
+        review_link = request.build_absolute_uri(
+                reverse("candidate:challengeconfirm", kwargs={ 'pk' : pk }))
+    else:
+        review_link = None
     context = {
         "challenge" : challenge,
         "officer_name" : officer_name,
         "requester_name" : requester_name,
+        "viewer_is_officer" : viewer_is_officer,
+        "review_link" : review_link,
     }
     return render(request, "candidate/challenge_detail.html", context=context)
