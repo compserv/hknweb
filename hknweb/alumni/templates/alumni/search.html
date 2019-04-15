@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block header %}
+<link rel="stylesheet" href="{% static "alumni/styles.css" %}">
+{% endblock %}
+
 {% block title %}Search for Alumni{% endblock %}
 
 {% block heading %}
@@ -8,9 +12,9 @@ Search for HKN Alumni
 {% endblock %}
 
 {% block content %}
-<div class="center measure-very-wide pv4">
+<div class="parent">
 
-    <div style="padding-left: 20px; font-family: Georgia;">
+    <div class="left-pad">
 
         <h3>You can search by:</h3>
 
@@ -75,6 +79,7 @@ Search for HKN Alumni
                 {% endfor %}
                 </tbody>
             </table>
+            <br>
 
         {% else %}
             <p>Sorry, no matching alumni found!</p>

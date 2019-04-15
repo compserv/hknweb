@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block header %}
+<link rel="stylesheet" href="{% static "alumni/styles.css" %}">
+{% endblock %}
+
 {% block title %}Alumni Detail{% endblock %}
 
 {% block heading %}
@@ -8,21 +12,25 @@ View Alumni: {{ first_name }} {{ last_name }}
 {% endblock %}
 
 {% block content %}
-<div class="center measure-very-wide pv4">
+<div class="parent">
 
-    <div style="padding-left: 20px; font-family: Georgia; line-height:23px;">
-        First Name: {{ alumnus.first_name }}<br/>
-        Last Name: {{ alumnus.last_name }}<br/>
-        Email: {{ alumnus.perm_email }}<br/>
-        Graduation Season: {{ alumnus.grad_season }}<br/>
-        Graduation Year: {{ alumnus.grad_year }}<br/>
-        Grad School: {{ alumnus.grad_school }}<br/>
-        Company: {{ alumnus.company }}<br/>
-        Job Title: {{ alumnus.job_title }}<br/>
-        City: {{ alumnus.city }}<br/>
-        Country State: {{ alumnus.country_state }}<br/>
+    <div class="detail">
+        <b>First Name:</b> {{ alumnus.first_name }}<br/>
+        <b>Last Name:</b> {{ alumnus.last_name }}<br/>
+        <b>Email:</b> {{ alumnus.perm_email }}<br/>
+        <b>Graduation Season:</b> {{ alumnus.grad_season }}<br/>
+        <b>Graduation Year:</b> {{ alumnus.grad_year }}<br/>
+        <b>Grad School:</b> {{ alumnus.grad_school }}<br/>
+        <b>Company:</b> {{ alumnus.company }}<br/>
+        <b>Job Title:</b> {{ alumnus.job_title }}<br/>
+        <b>City:</b> {{ alumnus.city }}<br/>
+        <b>Country State:</b> {{ alumnus.country_state }}<br/>
+        <br>
 
-  <div class="center pv3"><a href="{% url 'alumni:search' %}?q=\\">Go Back to Search</a></div>
+        <a href="{% url 'alumni:search' %}?q=\\">Go Back to Search</a>
+        <br><br>
+
+    </div>
 
 </div>
 
