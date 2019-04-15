@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block header %}
+<link rel="stylesheet" href="{% static "candidate/styles.css" %}">
+{% endblock %}
+
 {% block title %}{{ challenge.name }}{% endblock %}
 
 {% block heading %}
@@ -8,72 +12,24 @@ Confirm Officer Challenge
 {% endblock %}
 
 {% block content %}
-<style>
-.slider-container {
-    padding: 10px 15px;
-}
 
-/* Tooltip text */
-.tooltip .tooltiptext {
-    visibility: hidden;
-    width: 120px;
-    background-color: black;
-    color: #fff;
-    text-align: center;
-    padding: 5px 0;
-    border-radius: 6px;
-    width: 120px;
-    bottom: 100%;
-    left: 50%;
-    margin-left: -60px; /* Use half of the width (120/2 = 60), to center the tooltip */
-
-    /* Position the tooltip text - see examples below! */
-    position: absolute;
-    z-index: 1;
-}
-
-li {
-    padding-bottom: 5px;
-}
-/* Show the tooltip text when you mouse over the tooltip container */
-.tooltip:hover .tooltiptext {
-    visibility: visible;
-}
-
-img {
-    width: 40%;
-    display: block; /* Center image */
-    margin-left: auto;
-    margin-right: auto;
-}
-
-#confirm-text {
-    font-size: 25px;
-}
-
-.links {
-    float: right;
-    width: 40%;
-    font-size: 20px;
-}
-
-</style>
-
-<div class="center measure-narrow measure-wide-m measure-very-wide-l pv4">
+<div class="parent">
     <span id="confirm-text">
-        You have successfully confirmed the challenge requested by {{ requester_name }}!
+        You have successfully reviewed the challenge requested by {{ requester_name }}!
     </span>
     <br><br>
-    <img src="{% static 'candidate/seal_sunny.jpg'%}" alt="cute dog">
+
+    <img id="sunny" src="{% static 'candidate/seal_sunny.jpg'%}" alt="cute dog">
 
     <br>
-    <div class="links">
-        <a href="{% url 'candidate:dummy' %}">Go to portal [coming soon]</a>
+    <div class="links-div link">
+        <a href="{% url 'candidate:offrequests' %}">Go to portal</a>
     </div>
 
-    <div class="links">
+    <div class="links-div link">
         <a href="{% url 'candidate:detail' challenge.id %}">View this challenge</a>
     </div>
+    <br><br>
 
     <!-- <strong>Jay Chou</strong><br>
     <br>

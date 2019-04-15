@@ -2,6 +2,12 @@
     font-family: 'Source Sans Pro', sans-serif;
 }
 
+.links-div {
+    float: right;
+    width: 40%;
+    font-size: 20px;
+}
+
 .detail {
     max-width: 700px;
     margin: 0 auto;
@@ -17,4 +23,16 @@
 .table-icon {
     width: 1.5em;
     vertical-align: middle;
+}
+
+#confirm-text {
+    font-size: 25px;
+    margin-left: 10%;
+}
+
+#sunny {
+    width: 40%;
+    display: block; /* Center image */
+    margin-left: auto;
+    margin-right: auto;
 }

@@ -27,12 +27,29 @@ View Officer Challenge
         Confirmed uwu
     {% else %}
         <img src="{% static 'candidate/no.png'%}" alt="declined" class="inline-icon">
-        Declined >:</b>
+        Declined :<</b>
     {% endif %}<br/>
     <b>Comments from the Officer:</b> {{ challenge.officer_comment }}<br/>
     <b>Request Date:</b> {{ challenge.request_date }}<br/>
 
-    <p class="link"><a href="{% url 'candidate:candrequests' %}?q=\\">Go Back to All Challenges</a></p>
+
+    {% if viewer_is_officer %}
+        <p class="link"><a href="{{ review_link }}">
+            Change My Review of This Challenge
+        </a></p>
+    {% endif %}
+
+
+    <!-- Link to go back depends on whether you're the candidate or officer -->
+    {% if viewer_is_officer %}
+        <p class="link"><a href="{% url 'candidate:offrequests' %}?q=\\">
+            Go Back to All Challenges from Me
+        </a></p>
+    {% else %}
+        <p class="link"><a href="{% url 'candidate:candrequests' %}?q=\\">
+            Go Back to All Requested Challenges
+        </a></p>
+    {% endif %}
 
 </div>
 
