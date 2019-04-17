@@ -44,6 +44,9 @@ body {
     align-items: center;
 }
     /* Logo */
+    .navi a:first-child {
+        color: inherit;
+    }
     .navi-logo {
         display: flex;
         justify-content: flex-start;
@@ -76,7 +79,7 @@ body {
         padding-left: 24px;
     }
     .navi-menu > *:hover {
-        text-decoration: none;
+        text-decoration: underline;
     }
     .account-button {
         display: inline-block;
@@ -221,7 +224,6 @@ body {
     padding-top: 20px;
     padding-bottom: 20px;
     padding-right: 0; /* .footer-block element will provide 13px of padding-right */
-    font-family: "Source Sans Pro", sans-serif;
 }
 .footer-container {
     max-width: 1250px;

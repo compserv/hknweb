@@ -5,185 +5,44 @@ body {
     color: #353535;
     margin: 0px;
     background-repeat: no-repeat;
-    font-family: 'Source Sans Pro', sans-serif;
 }
+
+/* Override base.css */
+.white-above-navi, .navi-container, .heading, .content {
+    background-color: transparent;
+}
+
+.heading {
+    display: none;
+}
+.content {
+    padding: 0;
+}
+.navi-container {
+    border-bottom: none;
+}
+
 
 .banner {
     max-width: 900px;
     margin: auto;
     color: #353535;
-    margin-top: 200px;
-    transition:all 500ms ease;
+    padding-top: 200px;
+    transition: all 500ms ease;
 }
-
 .banner-title {
-    font-family: 'Monteserrat', sans-serif;
     font-size: 80px;
     font-weight: 800;
 }
-
 .banner-subtitle {
-    font-family: 'Source Sans Pro', sans-serif;
     font-size: 60px;
     font-weight: 700;
 }
-
 .banner-text {
-    font-family: 'Source Sans Pro', sans-serif;
     font-size: 25px;
     font-weight: 400;
     margin-top: 50px;
 }
-
-.navi {
-    height: 60px;
-    width: 1300px;
-    margin: auto;
-    padding: 20px;
-    display: flex;
-    justify-content: space-between;;
-    align-items: flex-start;
-}
-
-.navi-logo {
-    display: flex;
-    justify-content: flex-start;;
-    align-items: center;
-}
-
-.navi-logo-img {
-    width: 80px;
-}
-
-.navi-logo-text {
-    margin-left: 15px;
-}
-
-.navi-logo-title {
-    font-family: 'PT Sans', sans-serif;
-    font-size: 20px;
-    font-weight: 700;
-}
-
-.navi-logo-subtitle {
-    font-family: 'Source Sans Pro', sans-serif;
-    font-size: 17px;
-    font-weight: 400;
-}
-
-.navi-extension {
-    position: absolute;
-    background-color: #111111;
-    width: 100%;
-    top: -400px;
-    padding: 50px 0px;
-    transition:all 500ms ease;
-}
-
-.navi-menu, .navi-extension-container {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-}
-
-.navi-menu-item {
-    padding: 15px;
-    font-size: 15px;
-    margin: 5px;
-    font-weight: 700;
-    font-family: 'Montserrat', sans-serif;
-}
- .navi-extension-container {
-    max-width: 1400px;
-    margin: auto;
-    height: 300px;
-    justify-content: space-between;
- }
-
- .navi-ext-container {
-    display: flex;
-    align-items: flex-start;
- }
- .navi-extension-item {
-    font-weight: 400;
-    font-size: 17px;
-    padding-bottom: 5px;
-    font-family: 'Source Sans Pro', sans-serif;
-}
-
-
-.navi-ext-item {
-    padding: 0px 25px;
-    font-size: 15px;
-    font-weight: 700;
-    color: #d1d1d1;
-    font-family: 'Montserrat', sans-serif;
-}
-
-.navi-menu-ext-item {
-    font-weight: 700;
-    font-family: 'Montserrat', sans-serif;
-    border-bottom: 1px solid white;
-    padding-bottom: 10px;
-    margin-bottom: 15px;
-    font-size: 17px;
-    color: #f7f7f7;
-}
-
-.navi-ext-logo {
-    color: #f7f7f7;
-    margin-right: 50px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-    margin-top: -20px;
-}
-
-.navi-ext-logo .navi-logo-text{
-    margin: 0px;
-    margin-top: 20px;
-}
-
-.navi-ext-logo .navi-logo-text .navi-logo-title{
-    font-size: 25px;
-}
-
-.navi-ext-logo .navi-logo-text .navi-logo-subtitle{
-    font-size: 20px;
-}
-
-.exit-ext-menu {
-    position: absolute;
-    right: 50px;
-    top: 50px;
-    width: 50px;
-    height: 50px;
-}
-.exit-ext-menu img {
-    width: 50px;
-    height: 50px;
-}
-
-#toggle {
-    position: absolute;
-    top: -100%;
-    left: -100%;
-    display: none;
-}
-
-label {
-    cursor: pointer;
-}
-
-#toggle:checked ~ .navi-extension{
-    top: 0;
-}
-
-#toggle:checked ~ .banner {
-    margin-top: 400px;
-}
-
 
 .boxes {
     max-width: 1200px;
@@ -192,7 +51,6 @@ label {
     justify-content: center;
     align-items: center;
 }
-
 .box {
     width: 340px;
     height: 420px;
@@ -208,26 +66,20 @@ label {
     margin: 20px;
     margin-top:  150px;
 }
-
 .box-img {
     height: 220px;
 }
-
 .box-title {
-    font-family: "Montserrat", sans-serif;
     font-size: 17px;
     font-weight: 700;
     margin-top: 20px;
 }
-
 .box-subtitle {
-    font-family: "Source Sans Pro", sans-serif;
     font-size: 17px;
     font-weight: 400;
     padding: 15px;
     text-align: center;
 }
-
 
 .tutoring {
     margin-top:150px;
@@ -237,7 +89,6 @@ label {
     background-size: 75% 100%;
     background-repeat: no-repeat;
 }
-
 .tutoring-container {
     max-width: 1400px;
     height: 800px;
@@ -246,32 +97,24 @@ label {
     align-items: center;
     justify-content: center;
 }
-
 .tutoring-text {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
 }
-
 .tutoring-title {
-    font-family: "PT Sans", sans-serif;
     font-size: 35px;
     font-weight: 600;
     color: white;
     margin-bottom: 30px;
 }
-
 .tutoring-subtitle {
-    font-family: "Source Sans Pro", sans-serif;
     font-size: 25px;
     font-weight: 300;
     color: rgba(255, 255, 255, 0.8);
 }
-
-
 .tutoring-seemore {
-    font-family: "Source Sans Pro", sans-serif;
     font-size: 20px;
     font-weight: 400;
     margin-top: 20px;
@@ -280,7 +123,6 @@ label {
 .tutoring-seemore a {
     color: white;
 }
-
 .tutoring-schedule {
     margin-left: 100px;
     min-width: 650px;
@@ -300,16 +142,13 @@ label {
     border-top-left-radius: 25px;
     border-top-right-radius: 25px;
 }
-
 .tutoring-day {
-    font-family: "Roboto", sans-serif;
     color: #ad00aa;
     font-weight: 900;
     font-size: 30px;
     margin-left: 50px;
     margin-top: 40px;
 }
-
 .tutoring-hr {
     margin: 10px 0px;
     margin-left: 50px;
@@ -317,10 +156,8 @@ label {
     width: 30px;
     background-color: #ad00aa;
 }
-
 .tutoring-office {
     margin-top: 10px;
-    font-family: "Roboto", sans-serif;
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -329,7 +166,6 @@ label {
     font-weight: 500;
     font-size: 15px;
 }
-
 .tutoring-bottom{
     display: flex;
     align-content: center;
@@ -348,16 +184,12 @@ label {
     align-items: center;
     padding: 10px 0px;
 }
-
-
 .tutoring-time-item {
-    font-family: "Source Sans Pro", sans-serif;
     font-size: 20px;
     width: 100%;
     padding: 15px 0px;
     text-align: center;
 }
-
 .time-selected {
     border-left: 8px solid #ad00aa;
     padding-right: 10px;
@@ -366,7 +198,6 @@ label {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
 }
-
 .tutoring-people {
     width: 100%;
     height: 100%;
@@ -376,9 +207,7 @@ label {
     align-items: center;
     padding: 10px 0px;
 }
-
 .tutoring-people-item {
-    font-family: "Source Sans Pro", sans-serif;
     font-size: 20px;
     width: 100%;
     text-align: center;
@@ -386,15 +215,12 @@ label {
     align-items: center;
     padding: 15px 0px;
 }
-
 .people {
     width: 50%;
 }
-
 .people-selected {
     font-weight: 600;
 }
-
 
 .what {
     margin: 50px 0px;
@@ -403,13 +229,11 @@ label {
     align-items: center;
     justify-content: space-between;
 }
-
 .whatpic {
     width: 350px;
     height: 500px;
     margin: 20px;
 }
-
 .what_1 {
     margin-left: 0px;
     background: url('/static/img/what1.jpg');
@@ -417,14 +241,12 @@ label {
     background-repeat: no-repeat;
     background-position: -200px 0px;
 }
-
 .what_2 {
     background: url('/static/img/what2.jpg');
     background-size: cover;
     background-repeat: no-repeat;
     background-position: -100px 0px;
 }
-
 .what_3 {
     background: url('/static/img/what3.jpg');
     background-size: cover;
@@ -432,7 +254,6 @@ label {
     background-position: 0px 0px;
     margin-right: 0px;
 }
-
 .what-about {
     flex-grow: 2;
     display: flex;
@@ -440,9 +261,7 @@ label {
     justify-content: flex-start;
     align-items: center;
 }
-
 .what-about-title {
-    font-family: "Montserrat", sans-serif;
     font-size: 25px;
     font-weight: 700;
     margin-bottom: 20px;
@@ -450,9 +269,7 @@ label {
     padding: 0px 50px;
     text-align: left;
 }
-
 .what-about-subtitle {
-    font-family: "Source Sans Pro", sans-serif;
     font-size: 20px;
     font-weight: 400;
     opacity: 0.4;
@@ -483,25 +300,18 @@ label {
     justify-content: space-between;
     align-items: center;
 }
-
 .events-title {
-    font-family: "PT Sans", sans-serif;
     font-size: 35px;
     font-weight: 600;
     color: #687ff8;
     margin-bottom: 30px;
 }
-
 .events-subtitle {
-    font-family: "Source Sans Pro", sans-serif;
     font-size: 25px;
     font-weight: 300;
     color:#aaafc4;
 }
-
-
 .events-seemore {
-    font-family: "Source Sans Pro", sans-serif;
     font-size: 20px;
     font-weight: 400;
     margin-top: 20px;
@@ -510,7 +320,6 @@ label {
 .events-seemore a {
     color: #848b96;
 }
-
 .events-card {
     width: 700px;
     margin-left: 100px;
@@ -520,7 +329,6 @@ label {
     justify-content: center;
     align-items: flex-start;
 }
-
 .events-card-item {
     width: 350px;
     height: 130px;
@@ -534,21 +342,17 @@ label {
     justify-content: center;
     align-items: flex-start;
 }
-
 .events-card-title {
-    font-family: "Roboto", sans-serif;
     color: rgba(0,0,0,0.6);
     font-weight: 500;
     font-size: 23px;
     margin-bottom: 10px;
 }
 .events-card-day {
-    font-family: "Roboto", sans-serif;
     color: rgba(0,0,0,0.3);
     font-weight: 400;
     font-size: 18px;
 }
-
 .events-card-time {
     margin-left: 20px;
     color: #687ff8;
@@ -562,35 +366,27 @@ label {
     align-items: center;
     margin-bottom: 100px;
 }
-
 .services-title {
-    font-family: "Montserrat", sans-serif;
     font-size: 35px;
     font-weight: 800;
     margin: 10px 20px;
 }
-
 .services-subtitle {
-    font-family: "Montserrat", sans-serif;
     font-size: 20px;
     opacity: 0.3;
     margin: 20px 20px;
     font-weight: 800;
 }
-
 .services-leftright {
     width: 50%;
     margin: 10px;
 }
-
 .servicespic {
     margin: 20px;
     color: white;
     font-weight: 800;
-    font-family: "Montserrat", sans-serif;
     font-size: 23px;
 }
-
 .services-1 {
     position: relative;
     width: 500px;
@@ -603,7 +399,6 @@ label {
     justify-content: flex-start;
     align-items: flex-end;
 }
-
 .services-2 {
     position: relative;
     width: 400px;
@@ -616,7 +411,6 @@ label {
     justify-content: flex-start;
     align-items: flex-end;
 }
-
 .services-3 {
     position: relative;
     width: 300px;
@@ -629,63 +423,32 @@ label {
     justify-content: flex-start;
     align-items: flex-end;
 }
-
 .services-text {
     color: white;
-    font-family: "Montserrat", sans-serif;
     font-size: 20px;
     margin:20px;
     font-weight: 600;
 }
 
 .footer {
-    background-color: #252525;
-    padding: 100px 0px;
+    padding-top: 35px;
+    padding-bottom: 35px;
 }
-
-.footer-container {
-    width: 1200px;
-    margin: auto;
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
+.help-form-container {
+    max-width: 700px;
+    text-align: center;
+    margin: 0 auto;
+    border-bottom: 1px solid white;
+    margin-bottom: 1em;
 }
-
-.footer-form {
-    width: 600px;
+.help-form {
+    display: inline-block;
+    text-align: left;
+    padding-bottom: 1em;
 }
-
 .form-title {
-    font-family: "Montserrat", sans-serif;
     font-size: 40px;
     color: white;
     font-weight: 800;
     margin-bottom: 30px;
-}
-
-label, input {
-    font-family: "Source Sans Pro", sans-serif;
-    color: rgba(255,255,255,0.48);
-    font-weight: 400;
-    font-size: 1.2rem !important;
-}
-
-.footer-contact {
-    font-family: "Source Sans Pro", sans-serif;
-    color: rgba(255,255,255,0.48);
-    font-weight: 300;
-    font-size: 18px;
-}
-
-.contact-block {
-    margin: 15px;
-}
-.contact-title {
-    color: white;
-    font-size: 25px;
-}
-
-.here {
-    opacity: 0.7;
-    border-bottom: 5px solid #516aff;
 }

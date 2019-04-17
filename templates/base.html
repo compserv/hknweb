@@ -4,30 +4,34 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>{% block title %}{% endblock %} | Berkeley HKN</title>
   
         <!-- Fonts and CSS -->
         <link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro:300,400,600,700" rel="stylesheet">
         <link rel="stylesheet" href="{% static "css/base.css" %}">
         <link rel="icon" href="{% static "img/hkn.svg" %}">
+        
         {% block header %}{% endblock %}
+        
+        <title>{% block title %}{% endblock %} | Berkeley HKN</title>
     </head>
     <body>
         <div class="white-above-navi">
         </div>
         <div class="navi-container">
             <div class="navi">
-                <div class="navi-logo">
-                    <img src="{% static "img/hkn-bear.svg" %}" class="navi-logo-img">
-                    <div class="navi-menu-logo-text">
-                        <div class="navi-logo-title">
-                            <b>Eta Kappa Nu</b>
-                        </div>
-                        <div class="navi-logo-subtitle">
-                            UC Berkeley
+                <a href="/">
+                    <div class="navi-logo">
+                        <img src="{% static "img/hkn-bear.svg" %}" class="navi-logo-img">
+                        <div class="navi-menu-logo-text">
+                            <div class="navi-logo-title">
+                                <b>Eta Kappa Nu</b>
+                            </div>
+                            <div class="navi-logo-subtitle">
+                                UC Berkeley
+                            </div>
                         </div>
                     </div>
-                </div>
+                </a>
                 <div class='navi-menu'>
                     <label for="toggle">Student Services</label>
                     <label for="toggle">Industry</label>
@@ -110,6 +114,7 @@
         </div>
 
         <div class="footer">
+            {% block extra-footer %}{% endblock %}
             <div class="footer-container">
                 <div class="footer-block">
                     <div class="footer-block-title">
