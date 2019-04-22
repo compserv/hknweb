@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}{{ course.department }} {{ course.number }}{% endblock %}
+{% block title %}{{ course.department.subject }} {{ course.number }}{% endblock %}
 
-{% block heading %}{{ course.department }} {{ course.number }} Exams{% endblock %}
+{% block heading %}{{ course.department.subject }} {{ course.number }} Exams{% endblock %}
 
 {% block content %}
 <style>
@@ -30,7 +30,7 @@
       {% for semester in semesters %}
       <tr>
         <td>{{ semester.semester }}</td>
-        <td>{{ semester.instructor }}</td>
+        <td>{{ semester.instructor.name }}</td>
         <td>
           {% if semester.midterm1 %}
           <a href="{{ semester.midterm1.url }}">[pdf]</a> 

@@ -22,10 +22,9 @@
     Browse by department:
 
     <h1>Computer Science</h1>
-
     <ul>
         {% for course in courses %}
-            {% if course.department == 'CS' %}
+            {% if course.department.name == 'CS' %}
                 <li>
                     <a href="/exams/course/CS/{{ course.number }}/">CS {{ course.number }}</a>
                 </li>
@@ -37,7 +36,7 @@
 
     <ul>
         {% for course in courses %}
-            {% if course.department == 'EE' %}
+            {% if course.department.name == 'EE' %}
                 <li>
                     <a href="/exams/course/EE/{{ course.number }}/">EE {{ course.number }}</a>
                 </li>
