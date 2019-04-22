@@ -29,6 +29,7 @@
       </tr>
       {% for semester in semesters %}
       <tr>
+        {% if semester.release %}
         <td>{{ semester.semester }}</td>
         <td>{{ semester.instructor.name }}</td>
         <td>
@@ -63,6 +64,22 @@
           <a href="{{ semester.final_sol.url }}">[solution]</a>
           {% endif %}
         </td>
+        {% else %}
+        <td>{{ semester.semester }}</td>
+        <td>{{ semester.instructor.name }}</td>
+        <td>
+          Unreleased
+        </td>
+        <td>
+          Unreleased
+        </td>
+        <td>
+          Unreleased
+        </td>
+        <td>
+          Unreleased
+        </td>
+        {% endif %}
       </tr>
       {% endfor %}
     </tbody>
