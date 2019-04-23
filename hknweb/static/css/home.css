@@ -1,10 +1,10 @@
 body {
-    background: url('/static/img/bg.png');
+    background: url('../img/bg.png');
     background-size: contain;
     background-position: 0px -50px;
-    color: #353535;
     margin: 0px;
     background-repeat: no-repeat;
+    background-size: inherit;
 }
 
 /* Override base.css */
@@ -22,121 +22,153 @@ body {
     border-bottom: none;
 }
 
-
 .banner {
-    max-width: 900px;
+    padding: 0 13px;
+    padding-top: 50px;
+    max-width: 1100px;
     margin: auto;
-    color: #353535;
-    padding-top: 200px;
     transition: all 500ms ease;
+    text-align: center;
+}
+.banner > * {
+    padding-bottom: 50px;
+}
+.banner-heading {
+    display: inline-block;
+    font-weight: 700;
+    padding-top: 100px;
+}
+@media screen and (min-width: 1100px) {
+    .banner-heading, .tutoring-column {
+        vertical-align: middle;
+    }
+    .banner-heading {
+        width: 69%;
+        box-sizing: border-box;
+        padding-right: 10%;
+    }
+    .tutoring-column {
+        width: 30%;
+    }
+}
+@media screen and (max-width: 700px) {
+    
 }
 .banner-title {
-    font-size: 80px;
-    font-weight: 800;
+    font-size: 4em;
 }
 .banner-subtitle {
-    font-size: 60px;
-    font-weight: 700;
+    font-size: 2.5em;
 }
 .banner-text {
-    font-size: 25px;
+    font-size: 1.5em;
     font-weight: 400;
     margin-top: 50px;
 }
 
 .boxes {
-    max-width: 1200px;
-    margin: auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display: none;
+    max-width: 100%;
+    text-align: center;
 }
 .box {
+    display: inline-block;
+    box-sizing: border-box;
     width: 340px;
-    height: 420px;
+    max-width: 100%;
     box-shadow: 0px 5px 10px 5px rgba(0,0,0,0.01);
     background-color: white;
     border-radius: 10px;
     padding: 30px;
-    padding-bottom: 10px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
     margin: 20px;
-    margin-top:  150px;
 }
 .box-img {
     height: 220px;
 }
 .box-title {
-    font-size: 17px;
+    font-size: 1.2em;
     font-weight: 700;
     margin-top: 20px;
 }
 .box-subtitle {
-    font-size: 17px;
     font-weight: 400;
     padding: 15px;
-    text-align: center;
+    padding-bottom: 0;
 }
 
 .tutoring {
-    margin-top:150px;
-    margin-bottom:150px;
-    height: 800px;
-    background: url('/static/img/bg-tutoring.png');
-    background-size: 75% 100%;
+    background: url('');
     background-repeat: no-repeat;
+    background-size: cover;
 }
 .tutoring-container {
     max-width: 1400px;
-    height: 800px;
+    padding-top: 100px;
+    padding-bottom: 100px;
     margin: auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+}
+.tutoring-column {
+    display: inline-block;
+    vertical-align: top;
+    max-width: 600px;
+    text-align: left;
+}
+@media screen and (max-width: 999px) {
+    .tutoring-column {
+        padding-bottom: 75px;
+    }
+    .tutoring-column:last-child {
+        padding-bottom: 0;
+    }
+}
+.plum-background {
+    background-color: #f9f5f7;
+}
+.tutoring-panel {
+    background-color: white;
+    border-radius: 15px;
+    padding: 15px;
+    box-shadow: 2px 3px 10px 4px rgba(0,0,0,0.1);
 }
 .tutoring-text {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
+    padding-bottom: 3em;
 }
 .tutoring-title {
-    font-size: 35px;
+    font-size: 1.5em;
     font-weight: 600;
-    color: white;
-    margin-bottom: 30px;
+    margin-bottom: 1em;
 }
 .tutoring-subtitle {
-    font-size: 25px;
+    font-size: 1.3em;
     font-weight: 300;
-    color: rgba(255, 255, 255, 0.8);
+    opacity: 0.8;
+}
+.tutoring-panel table {
+    border-spacing: 0;
+}
+.tutoring-date {
+    text-align: center;
+    font-size: 1.2em;
+}
+.tutoring-date div {
+    padding-bottom: .5em;
+}
+.tutoring-panel td {
+    padding: 10px;
 }
 .tutoring-seemore {
     font-size: 20px;
     font-weight: 400;
     margin-top: 20px;
-    color: white;
-}
-.tutoring-seemore a {
-    color: white;
 }
 .tutoring-schedule {
-    margin-left: 100px;
-    min-width: 650px;
-    height: 530px;
-    box-shadow: 0px 0px 20px 10px rgba(0,0,0,0.02);
-    background-color: #fefefe;
-    border-radius: 25px;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-content: center;
+    padding-bottom: 25px;
 }
 .tutoring-top {
-    box-shadow: 0px 10px 20px 10px rgba(0,0,0,0.02);
     padding-bottom: 15px;
     background-color: white;
     border-top-left-radius: 25px;
@@ -145,7 +177,7 @@ body {
 .tutoring-day {
     color: #ad00aa;
     font-weight: 900;
-    font-size: 30px;
+    font-size: 1.3em;
     margin-left: 50px;
     margin-top: 40px;
 }
@@ -157,35 +189,27 @@ body {
     background-color: #ad00aa;
 }
 .tutoring-office {
-    margin-top: 10px;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding-left: 100px;
     color: rgba(0,0,0,0.6);
     font-weight: 500;
-    font-size: 15px;
+    font-size: .9em;
+    text-align: center;
 }
-.tutoring-bottom{
+.tutoring-bottom {
     display: flex;
     align-content: center;
     overflow-y: hidden;
-    border-bottom-left-radius: 25px;
-    border-bottom-right-radius: 25px;
 }
 .tutoring-time {
     background-color: #f9f5f7;
     box-shadow: 0px 10px 20px 10px rgba(0,0,0,0.02) inset;
     width: 120px;
     height: 100%;
-    border-bottom-left-radius: 25px;
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 10px 0px;
 }
 .tutoring-time-item {
-    font-size: 20px;
     width: 100%;
     padding: 15px 0px;
     text-align: center;
@@ -208,7 +232,6 @@ body {
     padding: 10px 0px;
 }
 .tutoring-people-item {
-    font-size: 20px;
     width: 100%;
     text-align: center;
     display: flex;
@@ -223,7 +246,7 @@ body {
 }
 
 .what {
-    margin: 50px 0px;
+    margin-top: 100px;
     height: 500px;
     display: flex;
     align-items: center;
@@ -236,19 +259,19 @@ body {
 }
 .what_1 {
     margin-left: 0px;
-    background: url('/static/img/what1.jpg');
+    background: url('../img/what1.jpg');
     background-size: cover;
     background-repeat: no-repeat;
     background-position: -200px 0px;
 }
 .what_2 {
-    background: url('/static/img/what2.jpg');
+    background: url('../img/what2.jpg');
     background-size: cover;
     background-repeat: no-repeat;
     background-position: -100px 0px;
 }
 .what_3 {
-    background: url('/static/img/what3.jpg');
+    background: url('../img/what3.jpg');
     background-size: cover;
     background-repeat: no-repeat;
     background-position: 0px 0px;
@@ -283,22 +306,14 @@ body {
     margin-top:150px;
     margin-bottom:150px;
     height: 500px;
-    background: url('/static/img/bg-events.png');
+    background: url('../img/bg-events.png');
     background-size: 35% 100%;
     background-position:100% 0%;
     background-repeat: no-repeat;
 }
 
 .events-container {
-    max-width: 1000px;
-    height: 500px;
     margin: auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
 }
 .events-title {
     font-size: 35px;
@@ -321,9 +336,6 @@ body {
     color: #848b96;
 }
 .events-card {
-    width: 700px;
-    margin-left: 100px;
-    height: 400px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -331,12 +343,10 @@ body {
 }
 .events-card-item {
     width: 350px;
-    height: 130px;
     border-radius: 15px;
     background-color: white;
-    box-shadow: 0px 10px 20px 10px rgba(0,0,0,0.03);
-    padding: 20px 40px;
-    margin: 10px;
+    box-shadow: 2px 3px 10px 4px rgba(0,0,0,0.1);
+    padding: 30px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -360,11 +370,10 @@ body {
 
 .services {
     width: 1000px;
-    margin: auto;
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    margin-bottom: 100px;
+    margin: 100px auto;
 }
 .services-title {
     font-size: 35px;
@@ -391,7 +400,7 @@ body {
     position: relative;
     width: 500px;
     height: 350px;
-    background: url('/static/img/services1.png');
+    background: url('../img/services1.png');
     background-size: cover;
     background-repeat: no-repeat;
     background-position: 0px 0px;
@@ -403,7 +412,7 @@ body {
     position: relative;
     width: 400px;
     height: 400px;
-    background: url('/static/img/services2.png');
+    background: url('../img/services2.png');
     background-size: cover;
     background-repeat: no-repeat;
     background-position: 0px 0px;
@@ -415,7 +424,7 @@ body {
     position: relative;
     width: 300px;
     height: 200px;
-    background: url('/static/img/services3.png');
+    background: url('../img/services3.png');
     background-size: cover;
     background-repeat: no-repeat;
     background-position: 0px 0px;
@@ -439,12 +448,12 @@ body {
     text-align: center;
     margin: 0 auto;
     border-bottom: 1px solid white;
-    margin-bottom: 1em;
+    margin-bottom: 2em;
 }
 .help-form {
     display: inline-block;
     text-align: left;
-    padding-bottom: 1em;
+    padding-bottom: 2em;
 }
 .form-title {
     font-size: 40px;

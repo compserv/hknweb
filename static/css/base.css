@@ -6,6 +6,7 @@ body {
     margin: 0;
     padding: 0;
     font-family: 'Source Sans Pro', sans-serif;
+    color: #353535;
     background-color: #252525; /* If footer doesn't reach bottom of screen, this will "extend" the footer */
 }
 .white-above-navi, .navi-container, .heading, .content {

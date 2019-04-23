@@ -14,111 +14,165 @@
 
 {% block content %}
 <div class="banner">
-    <div class="banner-title">
-        Eta Kappa Nu
-    </div>
-    <div class="banner-subtitle">
-        Mu Chapter
-    </div>
-    <div class="banner-text">
-        Electrical Engineering and Computer Sciences <br/>
-        Honors Society in University California, Berkeley
-    </div>
-</div>
-
-<div class="boxes">
-    <div class="box">
-        <img src="{% static "img/box1.png" %}" class="box-img"/>
-        <div class="box-title">Tutoring Hours</div>
-        <div class="box-subtitle">
-            We are here to help you with homeworks and concepts.
+    <div class="banner-heading">
+        <div class="banner-title">
+            Eta Kappa Nu
+        </div>
+        <div class="banner-subtitle">
+            Mu Chapter
+        </div>
+        <div class="banner-text">
+            UC Berkeley's Electrical Engineering and Computer Sciences honor society
         </div>
     </div>
-
-    <div class="box">
-        <img src="{% static "img/box2.png" %}" class="box-img"/>
-        <div class="box-title">Exam Archives</div>
-        <div class="box-subtitle">
-                Find past exams and solutions from various EE and CS classes.
-        </div>
-    </div>
-
-    <div class="box">
-        <img src="{% static "img/box3.png" %}" class="box-img"/>
-        <div class="box-title">Course Guides</div>
-        <div class="box-subtitle">
-            Find related courses to help you plan your next classes.
-        </div>
-    </div>
-</div>
-
-<div class="tutoring">
-    <div class="tutoring-container">
-        <div class="tutoring-text">
-            <div class="tutoring-title">Tutoring Hours</div>
-            <div class="tutoring-subtitle">
-                Students who need advice or tutoring in
-                EE and CS courses are encouraged to
-                drop by for free assistance. Officers hold
-                office hours from 11am to 5pm
-                every weekday.
+    
+    <div class="tutoring-column">
+        <div class="tutoring-panel">
+            <div class="tutoring-title">
+                Today's Tutoring Hours
             </div>
-            <div class="tutoring-seemore">
-                <a href="/">See weekly schedule</a>
-            </div>
-        </div>
-        <div class="tutoring-schedule">
-            <div class="tutoring-top">
-                <div class="tutoring-day">Friday, Apr 4</div>
-                <hr class="tutoring-hr">
-                <div class="tutoring-office">
-                    <div class="tutoring-office-1">290 CORY</div>
-                    <div class="tutoring-office-1">345 SODA</div>
-                </div>
-            </div>
-
-            <div class="tutoring-bottom">
-                <div class="tutoring-time">
-                    <div class="tutoring-time-item">11:00</div>
-                    <div class="tutoring-time-item">12:00</div>
-                    <div class="tutoring-time-item">13:00</div>
-                    <div class="tutoring-time-item time-selected">14:00</div>
-                    <div class="tutoring-time-item">15:00</div>
-                    <div class="tutoring-time-item">16:00</div>
-                </div>
-
-                <div class="tutoring-people">
-                    <div class="tutoring-people-item">
-                        <div class="people">James Z</div>
-                        <div class="people">Jessie Y, Michael W</div>
-                    </div>
-                    <div class="tutoring-people-item">
-                        <div class="people">James Z</div>
-                        <div class="people">Jessie Y, Michael W</div>
-                    </div>
-                    <div class="tutoring-people-item">
-                        <div class="people">James Z</div>
-                        <div class="people">Jessie Y, Michael W</div>
-                    </div>
-                    <div class="tutoring-people-item people-selected">
-                        <div class="people">James Z</div>
-                        <div class="people">Jessie Y, Michael W</div>
-                    </div>
-                    <div class="tutoring-people-item">
-                        <div class="people">James Z</div>
-                        <div class="people">Jessie Y, Michael W</div>
-                    </div>
-                    <div class="tutoring-people-item">
-                        <div class="people">James Z</div>
-                        <div class="people">Jessie Y, Michael W</div>
+            <i class="tutoring-date"><div>April 22, 2019</div></i>
+            <table>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th class="tutoring-office">
+                            345 SODA
+                        </th>
+                        <th class="tutoring-office">
+                            290 CORY
+                        </th>
+                    </tr>
+                </thead>
+                <tr>
+                    <td class="plum-background">
+                        11:00
+                    </td>
+                    <td>James Z.</td>
+                    <td>Jessie Y., Michael W.</td>
+                </tr>
+                <tr>
+                    <td class="plum-background">
+                        12:00
+                    </td>
+                    <td>James Z.</td>
+                    <td>Jessie Y., Michael W.</td>
+                </tr>
+                <tr>
+                    <td class="plum-background">
+                        13:00
+                    </td>
+                    <td>James Z.</td>
+                    <td>Jessie Y., Michael W.</td>
+                </tr>
+                <tr style="border-left: 3px black;">
+                    <td class="plum-background">
+                        14:00
+                    </td>
+                    <td>James Z.</td>
+                    <td>Jessie Y., Michael W.</td>
+                </tr>
+                <tr>
+                    <td class="plum-background">
+                        15:00
+                    </td>
+                    <td>James Z.</td>
+                    <td>Jessie Y., Michael W.</td>
+                </tr>
+                <tr>
+                    <td class="plum-background">
+                        16:00
+                    </td>
+                    <td>James Z.</td>
+                    <td>Jessie Y., Michael W.</td>
+                </tr>
+            </table>
+            <!-- <div class="tutoring-schedule">
+                <div class="tutoring-top">
+                    <div class="tutoring-day">Friday, Apr 4</div>
+                    <hr class="tutoring-hr">
+                    <div class="tutoring-office">
+                        <div class="tutoring-office-1">290 CORY</div>
+                        <div class="tutoring-office-1">345 SODA</div>
                     </div>
                 </div>
-            </div>
 
+                <div class="tutoring-bottom">
+                    <div class="tutoring-time">
+                        <div class="tutoring-time-item">11:00</div>
+                        <div class="tutoring-time-item">12:00</div>
+                        <div class="tutoring-time-item">13:00</div>
+                        <div class="tutoring-time-item time-selected">14:00</div>
+                        <div class="tutoring-time-item">15:00</div>
+                        <div class="tutoring-time-item">16:00</div>
+                    </div>
+
+                    <div class="tutoring-people">
+                        <div class="tutoring-people-item">
+                            <div class="people">James Z</div>
+                            <div class="people">Jessie Y, Michael W</div>
+                        </div>
+                        <div class="tutoring-people-item">
+                            <div class="people">James Z</div>
+                            <div class="people">Jessie Y, Michael W</div>
+                        </div>
+                        <div class="tutoring-people-item">
+                            <div class="people">James Z</div>
+                            <div class="people">Jessie Y, Michael W</div>
+                        </div>
+                        <div class="tutoring-people-item people-selected">
+                            <div class="people">James Z</div>
+                            <div class="people">Jessie Y, Michael W</div>
+                        </div>
+                        <div class="tutoring-people-item">
+                            <div class="people">James Z</div>
+                            <div class="people">Jessie Y, Michael W</div>
+                        </div>
+                        <div class="tutoring-people-item">
+                            <div class="people">James Z</div>
+                            <div class="people">Jessie Y, Michael W</div>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+        </div>
+    
+        <br>
+    
+        <div class="tutoring-panel">
+            <div class="tutoring-title">
+                Upcoming Events
+            </div>
+            <ul>
+                <li>
+                    Nice formatting on this list is yet to do.
+                </li>
+                Date
+            </ul>
+            <!-- <div class="events-card">
+                <div class="events-card-item">
+                    <div class="events-card-title">
+                        Junior EECS Day
+                    </div>
+                    <div class="events-card-day">
+                        Sat 4/14
+                        <span class="events-card-time">10:00 - 15:00</span>
+                    </div>
+                </div>
+
+                <div class="events-card-item">
+                    <div class="events-card-title">
+                        Cal Day + Workshops
+                    </div>
+                    <div class="events-card-day">
+                        Sat 4/21
+                        <span class="events-card-time">10:00 - 15:00</span>
+                    </div>
+                </div>
+            </div> -->
         </div>
     </div>
 </div>
-
 
 <div class="what">
     <div class="whatpic what_1"></div>
@@ -126,63 +180,18 @@
     <div class="what-about">
         <div class="what-about-title">What is HKN?</div>
         <div class="what-about-subtitle">
-                Eta Kappa Nu (HKN) is the national Electrical
-                and Computer Engineering honor society.
-                The Berkeley chapter is among the most
-                active engineering societies at Berkeley,
-                providing academic services to fellow
-                undergraduates.
+                Eta Kappa Nu (HKN) is the national Electrical and Computer Engineering honor society. The Berkeley chapter is among the most active engineering societies at Berkeley, providing services to fellow undergraduates. Welcome to our website!
         </div>
     </div>
     <div class="whatpic what_3"></div>
-</div>
-
-
-<div class="events">
-    <div class="events-container">
-        <div class="events-text">
-            <div class="events-title">
-                Upcoming Events
-            </div>
-            <div class="events-subtitle">
-                    Students who need advice or tutoring in
-                    EE and CS courses are encouraged to
-                    drop by for free assistance. Officers hold
-                    office hours from 11am to 5pm
-                    every weekday.
-            </div>
-            <div class="events-seemore"><a href="/">See more events</a></div>
-        </div>
-        <div class="events-card">
-            <div class="events-card-item">
-                <div class="events-card-title">
-                    Junior EECS Day
-                </div>
-                <div class="events-card-day">
-                    Sat 4/14
-                    <span class="events-card-time">10:00 - 15:00</span>
-                </div>
-            </div>
-
-            <div class="events-card-item">
-                <div class="events-card-title">
-                    Cal Day + Workshops
-                </div>
-                <div class="events-card-day">
-                    Sat 4/21
-                    <span class="events-card-time">10:00 - 15:00</span>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 
 <div class="services">
     <div class="services-leftright">
         <div class="services-title">Our Services</div>
         <div class="services-subtitle">
-            We’re hosting various educative events
-                to help grow our EECS community</div>
+            We host a variety of acdemic, industry, and service events to help grow our EECS community. Here's a taste of some of what we do.
+        </div>
         <div class="servicespic services-1">
             <div class="services-text">
                 Maker Workshops
@@ -201,6 +210,32 @@
             <div class="services-text">
                 Course Surveys
             </div>
+        </div>
+    </div>
+</div>
+
+<div class="boxes">
+    <div class="box">
+        <img src="{% static "img/box1.png" %}" class="box-img"/>
+        <div class="box-title">Tutoring Hours</div>
+        <div class="box-subtitle">
+            Questions about your classes? We're here to help!
+        </div>
+    </div>
+
+    <div class="box">
+        <img src="{% static "img/box2.png" %}" class="box-img"/>
+        <div class="box-title">Exam Archives</div>
+        <div class="box-subtitle">
+            Find past exams and solutions from various EE and CS classes.
+        </div>
+    </div>
+
+    <div class="box">
+        <img src="{% static "img/box3.png" %}" class="box-img"/>
+        <div class="box-title">Course Guides</div>
+        <div class="box-subtitle">
+            Find related courses to help you plan your next classes.
         </div>
     </div>
 </div>
