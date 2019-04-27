@@ -45,42 +45,42 @@
                     </tr>
                 </thead>
                 <tr>
-                    <td class="plum-background">
+                    <td class="yellow-background">
                         11:00
                     </td>
                     <td>James Z.</td>
                     <td>Jessie Y., Michael W.</td>
                 </tr>
                 <tr>
-                    <td class="plum-background">
+                    <td class="yellow-background">
                         12:00
                     </td>
                     <td>James Z.</td>
                     <td>Jessie Y., Michael W.</td>
                 </tr>
                 <tr>
-                    <td class="plum-background">
+                    <td class="yellow-background">
                         13:00
                     </td>
                     <td>James Z.</td>
                     <td>Jessie Y., Michael W.</td>
                 </tr>
                 <tr style="border-left: 3px black;">
-                    <td class="plum-background">
+                    <td class="yellow-background">
                         14:00
                     </td>
                     <td>James Z.</td>
                     <td>Jessie Y., Michael W.</td>
                 </tr>
                 <tr>
-                    <td class="plum-background">
+                    <td class="yellow-background">
                         15:00
                     </td>
                     <td>James Z.</td>
                     <td>Jessie Y., Michael W.</td>
                 </tr>
                 <tr>
-                    <td class="plum-background">
+                    <td class="yellow-background">
                         16:00
                     </td>
                     <td>James Z.</td>
@@ -188,54 +188,64 @@
 
 <div class="services">
     <div class="services-leftright">
-        <div class="services-title">Our Services</div>
-        <div class="services-subtitle">
-            We host a variety of acdemic, industry, and service events to help grow our EECS community. Here's a taste of some of what we do.
+        <div class="services-heading">
+            <div class="services-title">Our Services</div>
+            <div class="services-subtitle">
+                We host a variety of acdemic, industry, and service events to help grow our EECS community. Here's a look at what we do.
+            </div>
         </div>
-        <div class="servicespic services-1">
+        <div class="servicespic" style="width: 100%;">
+            <img src="{% static "img/services1.png" %}" />
             <div class="services-text">
-                Maker Workshops
+                <b>Tutoring hours</b> <br>
+                Questions about your classes? We're here to help!
+            </div>
+        </div>
+        <div class="servicespic" style="width: 85%;">
+            <img src="{% static "img/services2.png" %}" />
+            <div class="services-text">
+                <b>Maker workshops</b> <br>
+                Students from around the Bay Area learn about EECS through hands-on projects.
+            </div>
+        </div>
+        <div class="servicespic" style="width: 75%;">
+            <img src="{% static "img/services3.png" %}" />
+            <div class="services-text">
+                <b>Course map</b> <br>
+                See what prerequisites you'll need to pursue a concentration.
             </div>
         </div>
     </div>
 
     <div class="services-leftright">
-        <div class="servicespic services-2">
+        <div class="servicespic"  style="width: 85%;">
+            <img src="{% static "img/services2.png" %}" />
             <div class="services-text">
-                EECS Stack Decal
+                <b>Exam archives</b> <br>
+                Find past exams and solutions from most EE and CS classes.
+            </div>
+        </div>
+        <div class="servicespic"  style="width: 100%;">
+            <img src="{% static "img/services1.png" %}" />
+            <div class="services-text">
+                <b>Course guides</b> <br>
+                Discover your future classes.
+            </div>
+        </div>
+        <div class="servicespic" style="width: 66%;">
+            <img src="{% static "img/services1.png" %}" />
+            <div class="services-text">
+                <b>EECS Stack DeCal</b> <br>
+                Our DeCal provides an overview of the EECS department.
             </div>
         </div>
 
-        <div class="servicespic services-3">
+        <div class="servicespic" style="width: 75%;">
+            <img src="{% static "img/services3.png" %}" />
             <div class="services-text">
-                Course Surveys
+                <b>Course surveys</b> <br>
+                Hear what your peers have to say about your courses.
             </div>
-        </div>
-    </div>
-</div>
-
-<div class="boxes">
-    <div class="box">
-        <img src="{% static "img/box1.png" %}" class="box-img"/>
-        <div class="box-title">Tutoring Hours</div>
-        <div class="box-subtitle">
-            Questions about your classes? We're here to help!
-        </div>
-    </div>
-
-    <div class="box">
-        <img src="{% static "img/box2.png" %}" class="box-img"/>
-        <div class="box-title">Exam Archives</div>
-        <div class="box-subtitle">
-            Find past exams and solutions from various EE and CS classes.
-        </div>
-    </div>
-
-    <div class="box">
-        <img src="{% static "img/box3.png" %}" class="box-img"/>
-        <div class="box-title">Course Guides</div>
-        <div class="box-subtitle">
-            Find related courses to help you plan your next classes.
         </div>
     </div>
 </div>
@@ -244,7 +254,7 @@
 {% block extra-footer %}
 <div class="help-form-container">
     <div class="help-form">
-        <div class="form-title">We're <span style="opacity: 0.8; border-bottom: 5px solid #346F9E; /* HKN navy */">here</span> to help.</div>
+        <div class="form-title">We're here for <span style="opacity: 0.85; border-bottom: 5px solid #fffbba;">you</span>.</div>
         <form class="footer-block-text">
             <input id="first_name" type="text" class="validate">
             <label for="first_name">Your name</label>
