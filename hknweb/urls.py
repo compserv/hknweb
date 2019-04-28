@@ -21,6 +21,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 from . import views
+from .shortlinks import views as viewsShortlink
 from .views import landing
 
 
@@ -42,9 +43,9 @@ urlpatterns = [
     path('cand/', include('hknweb.candidate.urls')),
     path('pages/', include('hknweb.markdown_pages.urls')),
     path('markdownx/', include('markdownx.urls')),
-    path('s/', include('hknweb.shortlinks.urls')),
     path('elections/', include('hknweb.elections.urls')),
     path('', landing.home),
+    path('<slug:temp>/', viewsShortlink.openLink),
 ]
 
 if settings.DEBUG:
