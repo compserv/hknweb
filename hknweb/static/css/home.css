@@ -57,6 +57,7 @@ body {
 }
 .banner-subtitle {
     font-size: 2.5em;
+    font-style: italic;
 }
 .banner-text {
     font-size: 1.5em;
@@ -107,11 +108,6 @@ body {
     font-weight: 600;
     margin-bottom: 1em;
 }
-.tutoring-subtitle {
-    font-size: 1.3em;
-    font-weight: 300;
-    opacity: 0.8;
-}
 .tutoring-panel table {
     border-spacing: 0;
 }
@@ -122,9 +118,14 @@ body {
 .tutoring-date div {
     padding-bottom: .5em;
 }
-.tutoring-panel td {
+.tutoring-panel th, td {
     padding: 10px;
     text-align: center;
+}
+.tutoring-panel th {
+    font-weight: 400;
+    opacity: 0.9;
+    font-size: .9em;
 }
 .tutoring-panel ul {
     margin: 0;
