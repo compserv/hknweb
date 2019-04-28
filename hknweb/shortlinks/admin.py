@@ -1,4 +1,4 @@
 from django.contrib import admin
-from .models import Links as Link
+from .models import Links
 
-admin.site.register(Link)
+admin.site.register(Links)
