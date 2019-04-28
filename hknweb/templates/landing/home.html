@@ -52,7 +52,7 @@
                     <td>Jessie Y., Michael W.</td>
                 </tr>
                 <tr>
-                    <td class="yellow-background">
+                    <td class="yellow-background" style="border-left: solid 5px #353535;">
                         12:00
                     </td>
                     <td>James Z.</td>
@@ -87,54 +87,6 @@
                     <td>Jessie Y., Michael W.</td>
                 </tr>
             </table>
-            <!-- <div class="tutoring-schedule">
-                <div class="tutoring-top">
-                    <div class="tutoring-day">Friday, Apr 4</div>
-                    <hr class="tutoring-hr">
-                    <div class="tutoring-office">
-                        <div class="tutoring-office-1">290 CORY</div>
-                        <div class="tutoring-office-1">345 SODA</div>
-                    </div>
-                </div>
-
-                <div class="tutoring-bottom">
-                    <div class="tutoring-time">
-                        <div class="tutoring-time-item">11:00</div>
-                        <div class="tutoring-time-item">12:00</div>
-                        <div class="tutoring-time-item">13:00</div>
-                        <div class="tutoring-time-item time-selected">14:00</div>
-                        <div class="tutoring-time-item">15:00</div>
-                        <div class="tutoring-time-item">16:00</div>
-                    </div>
-
-                    <div class="tutoring-people">
-                        <div class="tutoring-people-item">
-                            <div class="people">James Z</div>
-                            <div class="people">Jessie Y, Michael W</div>
-                        </div>
-                        <div class="tutoring-people-item">
-                            <div class="people">James Z</div>
-                            <div class="people">Jessie Y, Michael W</div>
-                        </div>
-                        <div class="tutoring-people-item">
-                            <div class="people">James Z</div>
-                            <div class="people">Jessie Y, Michael W</div>
-                        </div>
-                        <div class="tutoring-people-item people-selected">
-                            <div class="people">James Z</div>
-                            <div class="people">Jessie Y, Michael W</div>
-                        </div>
-                        <div class="tutoring-people-item">
-                            <div class="people">James Z</div>
-                            <div class="people">Jessie Y, Michael W</div>
-                        </div>
-                        <div class="tutoring-people-item">
-                            <div class="people">James Z</div>
-                            <div class="people">Jessie Y, Michael W</div>
-                        </div>
-                    </div>
-                </div>
-            </div> -->
         </div>
     
         <br>
@@ -145,31 +97,14 @@
             </div>
             <ul>
                 <li>
-                    Nice formatting on this list is yet to do.
+                    Junior EECS Day
                 </li>
-                Date
+                <i>Sat 4/14</i> <span class="events-card-time">10:00 - 15:00</span>
+                <li>
+                    Cal Day + Workshops
+                </li>
+                <i>Sat 4/21</i> <span class="events-card-time">10:00 - 15:00</span>
             </ul>
-            <!-- <div class="events-card">
-                <div class="events-card-item">
-                    <div class="events-card-title">
-                        Junior EECS Day
-                    </div>
-                    <div class="events-card-day">
-                        Sat 4/14
-                        <span class="events-card-time">10:00 - 15:00</span>
-                    </div>
-                </div>
-
-                <div class="events-card-item">
-                    <div class="events-card-title">
-                        Cal Day + Workshops
-                    </div>
-                    <div class="events-card-day">
-                        Sat 4/21
-                        <span class="events-card-time">10:00 - 15:00</span>
-                    </div>
-                </div>
-            </div> -->
         </div>
     </div>
 </div>
@@ -194,59 +129,63 @@
                 We host a variety of acdemic, industry, and service events to help grow our EECS community. Here's a look at what we do.
             </div>
         </div>
-        <div class="servicespic" style="width: 100%;">
-            <img src="{% static "img/services1.png" %}" />
-            <div class="services-text">
-                <b>Tutoring hours</b> <br>
-                Questions about your classes? We're here to help!
+        <a href="">
+            <div class="servicespic" style="width: 90%; background-image: url({% static "img/services-tutoring.png" %})">
+                <div class="servicespic-gradient" style="padding-bottom: 76.304023845%;"></div>
+                <div class="services-text">
+                    <b>Tutoring hours</b> <br>
+                    Questions about your classes? We're here to help!
+                </div>
             </div>
-        </div>
-        <div class="servicespic" style="width: 85%;">
-            <img src="{% static "img/services2.png" %}" />
-            <div class="services-text">
-                <b>Maker workshops</b> <br>
-                Students from around the Bay Area learn about EECS through hands-on projects.
+        </a>
+        <a href="">
+            <div class="servicespic" style="width: 100%; background-image: url({% static "img/services-maker-workshops.jpg" %});">
+                <div class="servicespic-gradient" style="padding-bottom: 66.25%;"></div>
+                <div class="services-text">
+                    <b>Maker workshops</b> <br>
+                    Students from around the Bay Area learn about EECS through hands-on projects.
+                </div>
             </div>
-        </div>
-        <div class="servicespic" style="width: 75%;">
-            <img src="{% static "img/services3.png" %}" />
-            <div class="services-text">
-                <b>Course map</b> <br>
-                See what prerequisites you'll need to pursue a concentration.
-            </div>
-        </div>
+        </a>
     </div>
 
     <div class="services-leftright">
-        <div class="servicespic"  style="width: 85%;">
-            <img src="{% static "img/services2.png" %}" />
-            <div class="services-text">
-                <b>Exam archives</b> <br>
-                Find past exams and solutions from most EE and CS classes.
+        <a href="">
+            <div class="servicespic" style="width: 90%; background-image: url({% static "img/services-decal.jpg" %});">
+                <div class="servicespic-gradient" style="padding-bottom: 66.25%;"></div>
+                <div class="services-text">
+                    <b>EECS Stack DeCal</b> <br>
+                    Our DeCal provides an overview of the EECS department.
+                </div>
             </div>
-        </div>
-        <div class="servicespic"  style="width: 100%;">
-            <img src="{% static "img/services1.png" %}" />
-            <div class="services-text">
-                <b>Course guides</b> <br>
-                Discover your future classes.
+        </a>
+        <a href="">
+            <div class="servicespic"  style="width: 85%; background-image: url({% static "img/services-exam-bank.png" %});">
+                <div class="servicespic-gradient" style="padding-bottom: 55.7515337423%;"></div>
+                <div class="services-text">
+                    <b>Exam archives</b> <br>
+                    Find past exams and solutions from EE and CS classes.
+                </div>
             </div>
-        </div>
-        <div class="servicespic" style="width: 66%;">
-            <img src="{% static "img/services1.png" %}" />
-            <div class="services-text">
-                <b>EECS Stack DeCal</b> <br>
-                Our DeCal provides an overview of the EECS department.
+        </a>
+        <a href="">
+            <div class="servicespic" style="width: 70%; background-image: url({% static "img/services-course-map.png" %});">
+                <div class="servicespic-gradient" style="padding-bottom: 102.1035598706%;"></div>
+                <div class="services-text">
+                    <b>Course map</b> <br>
+                    See what prerequisites you'll need to pursue a concentration.
+                </div>
             </div>
-        </div>
-
-        <div class="servicespic" style="width: 75%;">
-            <img src="{% static "img/services3.png" %}" />
-            <div class="services-text">
-                <b>Course surveys</b> <br>
-                Hear what your peers have to say about your courses.
+        </a>
+        <a href="">
+            <div class="servicespic"  style="width: 93%; background-image: url({% static "img/services-course-guides.png" %});">
+                <div class="servicespic-gradient" style="padding-bottom: 50.7030603805%;"></div>
+                <div class="services-text">
+                    <b>Course guides and surveys</b> <br>
+                    Discover your future classes, while hearing reviews of different courses by your peers.
+                </div>
             </div>
-        </div>
+        </a>
     </div>
 </div>
 {% endblock %}

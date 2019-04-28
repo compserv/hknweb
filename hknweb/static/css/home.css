@@ -64,6 +64,7 @@ body {
     margin-top: 50px;
 }
 
+/* QUICK VIEWS - TUTORING AND EVENTS */
 .tutoring {
     background: url('');
     background-repeat: no-repeat;
@@ -123,96 +124,20 @@ body {
 }
 .tutoring-panel td {
     padding: 10px;
-}
-.tutoring-seemore {
-    font-size: 20px;
-    font-weight: 400;
-    margin-top: 20px;
-}
-.tutoring-schedule {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-content: center;
-    padding-bottom: 25px;
-}
-.tutoring-top {
-    padding-bottom: 15px;
-    background-color: white;
-    border-top-left-radius: 25px;
-    border-top-right-radius: 25px;
-}
-.tutoring-day {
-    color: #ad00aa;
-    font-weight: 900;
-    font-size: 1.3em;
-    margin-left: 50px;
-    margin-top: 40px;
-}
-.tutoring-hr {
-    margin: 10px 0px;
-    margin-left: 50px;
-    height: 8px;
-    width: 30px;
-    background-color: #ad00aa;
-}
-.tutoring-office {
-    color: rgba(0,0,0,0.6);
-    font-weight: 500;
-    font-size: .9em;
     text-align: center;
 }
-.tutoring-bottom {
-    display: flex;
-    align-content: center;
-    overflow-y: hidden;
+.tutoring-panel ul {
+    margin: 0;
 }
-.tutoring-time {
-    background-color: #f9f5f7;
-    box-shadow: 0px 10px 20px 10px rgba(0,0,0,0.02) inset;
-    width: 120px;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 10px 0px;
+.tutoring-panel li {
+    margin-top: 10px;
 }
-.tutoring-time-item {
-    width: 100%;
-    padding: 15px 0px;
-    text-align: center;
-}
-.time-selected {
-    border-left: 8px solid #ad00aa;
-    padding-right: 10px;
-    font-weight: 600;
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-}
-.tutoring-people {
-    width: 100%;
-    height: 100%;
-    flex-grow: 2;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 10px 0px;
-}
-.tutoring-people-item {
-    width: 100%;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    padding: 15px 0px;
-}
-.people {
-    width: 50%;
-}
-.people-selected {
-    font-weight: 600;
+.events-card-time {
+    margin-left: 20px;
+    color: #687ff8;
 }
 
+/* ABOUT HKN SECTION */
 .what {
     margin-top: 100px;
     height: 500px;
@@ -282,72 +207,7 @@ body {
     }
 }
 
-.events {
-    margin-top:150px;
-    margin-bottom:150px;
-    height: 500px;
-    background: url('../img/bg-events.png');
-    background-size: 35% 100%;
-    background-position:100% 0%;
-    background-repeat: no-repeat;
-}
-
-.events-container {
-    margin: auto;
-}
-.events-title {
-    font-size: 35px;
-    font-weight: 600;
-    color: #687ff8;
-    margin-bottom: 30px;
-}
-.events-subtitle {
-    font-size: 25px;
-    font-weight: 300;
-    color:#aaafc4;
-}
-.events-seemore {
-    font-size: 20px;
-    font-weight: 400;
-    margin-top: 20px;
-    color: #848b96;
-}
-.events-seemore a {
-    color: #848b96;
-}
-.events-card {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-}
-.events-card-item {
-    width: 350px;
-    border-radius: 15px;
-    background-color: white;
-    box-shadow: 2px 3px 10px 4px rgba(0,0,0,0.1);
-    padding: 30px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-}
-.events-card-title {
-    color: rgba(0,0,0,0.6);
-    font-weight: 500;
-    font-size: 23px;
-    margin-bottom: 10px;
-}
-.events-card-day {
-    color: rgba(0,0,0,0.3);
-    font-weight: 400;
-    font-size: 18px;
-}
-.events-card-time {
-    margin-left: 20px;
-    color: #687ff8;
-}
-
+/* SERVICES SECTION */
 .services {
     max-width: 1000px;
     padding: 0 13px;
@@ -395,16 +255,21 @@ body {
     display: inline-block;
     text-align: left;
     position: relative;
-    margin: 10px 0;
+    margin: 4% 0;
     color: white;
     font-weight: 800;
-    background-size: contain;
+    background-size: cover;
+}
+.servicespic-gradient {
+    background-image: linear-gradient(0deg, rgba(0,0,0,.9) 0, transparent 75%, transparent);
+    background-size: 100%;
 }
 .servicespic:last-child {
     margin-bottom: 0;
 }
 .servicespic img {
     width: 100%;
+    z-index: -100000;
 }
 .services-1 {
     position: relative;
@@ -433,6 +298,7 @@ body {
     font-weight: 400;
 }
 
+/* CUSTOM FOOTER */
 .footer {
     padding-top: 35px;
     padding-bottom: 35px;

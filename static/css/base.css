@@ -9,7 +9,7 @@ body {
     color: #353535;
     background-color: #252525; /* If footer doesn't reach bottom of screen, this will "extend" the footer */
 }
-.white-above-navi, .navi-container, .heading, .content {
+.white-above-navi, .navi-container, .content {
     background-color: white; /* Override body's background color */
 }
 .white-above-navi {
@@ -23,7 +23,7 @@ body {
 }
 
 /* Minimum margins for all sections */
-.navi-container, .navi-extension-container, .heading, .content, .footer {
+.navi-container, .navi-extension-container, .content, .footer {
     padding-left: 13px;
     padding-right: 13px;
 }
@@ -80,14 +80,15 @@ body {
     .navi-menu-button {
         padding-left: 24px;
     }
-    .navi-menu > *:hover {
+    .navi-menu label:hover {
         text-decoration: underline;
     }
     .account-button {
         display: inline-block;
         padding: 9px;
-        background-color: #353535;
-        color: white;
+        background-color: #FFEE00;
+        border: solid 1px #353535;
+        border-radius: 5px;
     }
     
     /* Navi extension */
@@ -212,12 +213,10 @@ body {
 /* HEADING (which has the page's title) */
 .heading {
     font-size: 3em;
-    padding-top: 1em;
-    padding-bottom: 1em;
     font-weight: 300;
     text-align: center;
-    background-color: #EEEEEE;
-    background: url('../img/bg.png');
+    margin: 0;
+    margin-bottom: 2rem;
 }
 
 /* FOOTER */
