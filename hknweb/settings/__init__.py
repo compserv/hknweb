@@ -12,4 +12,3 @@ try:
         sys.exit()
 except KeyError:
     print("SETTINGS says: HKNWEB_MODE not supplied, so no data will be loaded into settings. You can still load of the subpackages manually.")
-
