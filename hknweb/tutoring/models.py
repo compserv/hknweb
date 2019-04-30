@@ -84,7 +84,7 @@ class CoursePreference(models.Model):
         (preferred, 'Preferred')
     ]
     id = models.AutoField(primary_key=True)
-    courses = models.ForeignKey(Course)
+    courses = models.ForeignKey(Course, on_delete=DO_NOTHING)
     level = models.IntegerField(choices=COURSE_PERFS)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
