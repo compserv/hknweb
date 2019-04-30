@@ -17,7 +17,7 @@ class Tutor(models.Model):
     name = models.CharField(max_length=255)
     courses = models.ManyToManyField(Course)
     adjacency = models.IntegerField()
-    user = models.OneToOneField(User, on_delete=DO_NOTHING, related_name="tutor")
+    user = models.OneToOneField(User, on_delete=CASCADE, related_name="tutor")
     # course_preferences = models.ManyToManyField()
 
 
@@ -84,11 +84,11 @@ class CoursePreference(models.Model):
         (preferred, 'Preferred')
     ]
     id = models.AutoField(primary_key=True)
-    courses = models.ForeignKey(Course, on_delete=DO_NOTHING)
+    courses = models.ForeignKey(Course, on_delete=CASCADE)
     level = models.IntegerField(choices=COURSE_PERFS)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    tutor = models.OneToOneField(Tutor, on_delete=DO_NOTHING, related_name="coursepreference")
+    tutor = models.OneToOneField(Tutor, on_delete=CASCADE, related_name="coursepreference")
 
 
 class Availability(models.Model):
@@ -102,7 +102,7 @@ class Availability(models.Model):
         (unavailable, 'Not Available')
     ]
     id = models.AutoField(primary_key=True)
-    tutor = models.OneToOneField(Tutor, on_delete=DO_NOTHING, related_name="availabilities")
+    tutor = models.OneToOneField(Tutor, on_delete=CASCADE, related_name="availabilities")
     slot = models.ManyToManyField(Slot)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
