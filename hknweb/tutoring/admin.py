@@ -323,5 +323,4 @@ def compute_stats(self):
 
 
 admin.site.register(CoursePreference)
-admin.site.register(Course)
 admin.site.register(Slot)
