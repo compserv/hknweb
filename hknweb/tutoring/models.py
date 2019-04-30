@@ -123,7 +123,7 @@ class Availability(models.Model):
         return self.slot.day
 
 
-class Properties:
+class Properties(models.Model):
     id = models.AutoField(primary_key=True)
     semester = models.CharField(max_length=max_strlen, blank=True, default='')
     created_at = models.DateTimeField(auto_now_add=True)
