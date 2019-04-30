@@ -14,7 +14,10 @@ from django.http import JsonResponse
 
 @admin.register(Availability)
 class AvailibityAdmin(admin.ModelAdmin):
-    list_display = ['tutor__name', 'slot_day', 'slot_hour', 'preference_level']
+    list_display = ['tutor_name', 'slot_day', 'slot_hour', 'preference_level']
+
+    def tutor_name(self, obj):
+        return obj.tutor.name
 
     def slot_day(self, obj):
         return obj.slot.day
@@ -34,7 +37,6 @@ class TutorAdmin(admin.ModelAdmin):
         # define security urls
         additonal_urls = [
             url(r'^update_preferences/$', self.admin_site.admin_view(self.update_preferences)),
-            url(r'^gen_course_list/$', self.admin_site.admin_view(self.gen_course_list)),
             url(r'^gen_tutor_course_prefs/$', self.admin_site.admin_view(self.gen_tutor_course_prefs)),
             url(r'^slot_id/$', self.admin_site.admin_view(self.slot_id)),
             url(r'^adj_slots/$', self.admin_site.admin_view(self.adj_slots))
