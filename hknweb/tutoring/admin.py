@@ -322,7 +322,6 @@ def compute_stats(self):
     return stats, happiness_total
 
 
-admin.site.register(Properties)
 admin.site.register(CoursePreference)
 admin.site.register(Course)
 admin.site.register(Slot)
