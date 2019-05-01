@@ -1,6 +1,6 @@
 from django.shortcuts import render
 
-from .models import Course, CourseSemester
+from .models import Course, CourseSemester, Department, Instructor
 
 def index(request):
 	courses = Course.objects.order_by('name')
@@ -12,7 +12,8 @@ def index(request):
 	return render(request, 'exams/index.html', context)
 
 def exams_for_course(request, department, number):
-	course = Course.objects.filter(department__exact=department).filter(number__exact=number).get()
+	department = Department.objects.filter(name__exact=department).get()
+	course = Course.objects.filter(department__exact=department.id).filter(number__exact=number).get()
 	semesters = CourseSemester.objects.filter(course__exact=course.id)
 
 	context = {
