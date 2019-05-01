@@ -34,7 +34,7 @@ body {
 .navi-container {
     padding-top: 7px;
     padding-bottom: 7px;
-    border-bottom: solid 3px #353535; /* rgba(166, 60, 68, 1); HKN scarlet; hex code: #A63C44 */
+    border-bottom: solid 3px #003262; /* rgba(166, 60, 68, 1); HKN scarlet; hex code: #A63C44 */
 }
 .navi {
     min-height: 50px;
@@ -86,9 +86,13 @@ body {
     .account-button {
         display: inline-block;
         padding: 9px;
-        background-color: #FFEE00;
-        border: solid 1px #353535;
-        border-radius: 5px;
+        background-color: #EEEEEE;
+        border: solid 1px #AAAAAA;
+        border-radius: 4px;
+        color: #353535;
+    }
+    .account-button:hover {
+        text-decoration: underline;
     }
     
     /* Navi extension */
@@ -101,7 +105,7 @@ body {
         top: -2000px;
         z-index: 999999;
         transition: all 500ms ease;
-        border-bottom: solid 3px #353535; /* #346F9E; /* HKN navy */
+        border-bottom: solid 3px #003262; /* #346F9E; /* HKN navy */
     }
     .navi-extension {
         max-width: 1250px;
@@ -196,6 +200,9 @@ body {
     }
     .navi-container a:link, .navi-extension-container a:link {
         text-decoration: none;
+    }
+    .account-button:hover {
+        text-decoration: underline;
     }
     .navi-container a:visited, .navi-extension-container a:visited {
         text-decoration: none;

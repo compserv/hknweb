@@ -24,6 +24,9 @@
         <div class="banner-text">
             UC Berkeley's Electrical Engineering and Computer Sciences honor society
         </div>
+        <div class="banner-text">
+            <a href="/exams">Exams</a> &#8226; <a href="">course guides and surveys</a> &#8226; <a href="">course map</a>
+        </div>
     </div>
     
     <div class="tutoring-column">
@@ -31,58 +34,46 @@
             <div class="tutoring-title">
                 Today's Tutoring Hours
             </div>
-            <i class="tutoring-date"><div>April 22, 2019</div></i>
+            <span class="tutoring-date"><div>April 22, 2019</div></span>
             <table>
                 <thead>
                     <tr>
                         <th></th>
                         <th class="tutoring-office">
-                            345 SODA
+                            345&nbsp;SODA
                         </th>
                         <th class="tutoring-office">
-                            290 CORY
+                            290&nbsp;CORY
                         </th>
                     </tr>
                 </thead>
                 <tr>
-                    <td class="yellow-background">
-                        11:00
-                    </td>
-                    <td>James Z.</td>
-                    <td>Jessie Y., Michael W.</td>
+                    <td>11:00</td>
+                    <td>James&nbsp;Z.</td>
+                    <td>Jessie Y. Michael W. Jessie Y. Michael W. Jessie Y. Michael W. Jessie Y. Michael W.</td>
                 </tr>
                 <tr>
-                    <td class="yellow-background" style="border-left: solid 5px #353535;">
-                        12:00
-                    </td>
+                    <td id="curr-hour">12:00</td>
                     <td>James Z.</td>
-                    <td>Jessie Y., Michael W.</td>
+                    <td>Jessie Y. <br> Michael W.</td>
                 </tr>
                 <tr>
-                    <td class="yellow-background">
-                        13:00
-                    </td>
+                    <td>1:00</td>
                     <td>James Z.</td>
                     <td>Michael W.</td>
                 </tr>
-                <tr style="border-left: 3px black;">
-                    <td class="yellow-background">
-                        14:00
-                    </td>
+                <tr>
+                    <td>2:00</td>
                     <td>James Z.</td>
                     <td>Dalton O.</td>
                 </tr>
                 <tr>
-                    <td class="yellow-background">
-                        15:00
-                    </td>
+                    <td>3:00</td>
                     <td>James Z.</td>
                     <td>James Z.</td>
                 </tr>
                 <tr>
-                    <td class="yellow-background">
-                        16:00
-                    </td>
+                    <td>4:00</td>
                     <td>James Z.</td>
                     <td>Alex.eecs</td>
                 </tr>
@@ -96,14 +87,10 @@
                 Upcoming Events
             </div>
             <ul>
-                <li>
-                    Junior EECS Day
-                </li>
-                <i>Sat 4/14</i> <span class="events-card-time">10:00 - 15:00</span>
-                <li>
-                    Cal Day + Workshops
-                </li>
-                <i>Sat 4/21</i> <span class="events-card-time">10:00 - 15:00</span>
+                {% for event in events %}
+                    <li>{{ event.name }}</li>
+                    <i>{{ event.day }}</i> <span class="events-card-time">{{ event.start }} - {{ event.end }}</span>
+                {% endfor %}
             </ul>
         </div>
     </div>
@@ -193,7 +180,7 @@
 {% block extra-footer %}
 <div class="help-form-container">
     <div class="help-form">
-        <div class="form-title">We're here for <span style="opacity: 0.85; border-bottom: 5px solid #fffbba;">you</span>.</div>
+        <div class="form-title">We're here for <span style="border-bottom: 5px solid #FDB515;">you</span>.</div>
         <form class="footer-block-text">
             <input id="first_name" type="text" class="validate">
             <label for="first_name">Your name</label>
