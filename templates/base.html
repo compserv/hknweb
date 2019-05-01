@@ -39,12 +39,7 @@
                     <label for="toggle">Events</label>
                     <label for="toggle">About</label>
                     <a class="account-button" href="/cand">Account<!-- <i style="border: solid black; border-width: 0 3px 3px 0; display: inline-block; padding: 3px; transform: rotate(45deg); -webkit-transform: rotate(45deg);"></i> --></a>
-                    <div class="navi-menu-button"><label for="toggle">
-                        <div style="height: 20px; width: 25px;">
-                            <div style="box-sizing: border-box; height: 50%; border-top: solid 4px #353535; border-bottom: solid 2px #353535;"></div>
-                            <div style="box-sizing: border-box; height: 50%; border-bottom: solid 4px #353535; border-top: solid 2px #353535;"></div>
-                        </div>
-                    </label></div>
+                    <div class="navi-menu-button"><label for="toggle">Menu</label></div>
                 </div>
             </div>
         </div>
@@ -96,23 +91,25 @@
                     <div>
                         <div class="navi-ext-col-header" href="">About</div>
                         <a class="navi-ext-col-item" href="">Contact Us</a><br>
-                        <a class="navi-ext-col-item"  href="">Committees</a><br>
+                        <a class="navi-ext-col-item"  href=""href="">Committees</a><br>
                         <a class="navi-ext-col-item" href="">Officers</a><br>
                         <a class="navi-ext-col-item" href="/alumni">Alumni</a><br>
                         <a class="navi-ext-col-item" href="">Yearbooks</a><br>
                     </div>
+                    <!-- <div>
+                    </div> -->
                 </div>
                 <div class="exit-extension-button">
-                    <label for="toggle">&times;</label>
+                    <label for="toggle">&times;</label> <!-- Did have <img src="/static/img/close.png"> -->
                 </div>
             </div>
         </div>
-
+    
+        <div class="heading">
+            {% block heading %}{% endblock %}
+        </div>
+    
         <div class="content">
-            <h1 class="heading">
-                <span>{% block heading %}{% endblock %}</span>
-            </h1>
-            
             {% block content %}{% endblock %}
         </div>
 
@@ -157,5 +154,41 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Old footer (black & gold):
+        <footer class="w-100">
+            <nav class="dt border-box w-100 bg-dark-gray font-body">
+            <div class="dtc f6 f5-l w-50 w-80-l tl v-mid">
+                <a class="dib b near-white link pa3 hover-yellow" href="#">Contact</a>
+                <a class="dib b near-white link pa3 hover-yellow" href="#" title="About">About</a>
+            </div>
+            <a class="dtc tr v-mid w-50 w-20-l pa2" href="https://www.ocf.berkeley.edu">
+                <img src="{% static "img/ocf-hosted-penguin-dark.svg" %}" alt="Hosted by the OCF" />
+            </a>
+            </nav>
+        </footer> -->
+        
+        <!-- <script>
+            console.log("Running the navbar script");
+      
+            // Horizontally align the menu items width their respective columns in the navigation extended view
+            naviItems = document.getElementsByClassName('navi-menu-item');
+            naviCols = document.getElementsByClassName('navi-ext-item');
+            if (naviItems.length !== naviCols.length) {
+                console.log("Different number of naviItems and naviCols! There must be an equal number.");
+            }
+            for (var i = 0; i < naviCols.length; i++) {
+                // Assume naviCols.length == naviItems.length, and naviCols in same order as naviItems
+                var naviColWidth = naviCols[i].offsetWidth;
+                var naviMenuItemWidth = naviItems[i].offsetWidth;
+                var maxWidth = Math.max(naviColWidth, naviMenuItemWidth);
+                console.log(maxWidth);
+                if (naviMenuItemWidth < maxWidth) {
+                    naviItems[i].style.width = maxWidth.toString() + 'px';
+                } else if (naviColWidth < maxWidth) {
+                    naviCols[i].style.width = maxWidth.toString() + 'px';
+                }
+            }
+        </script> -->
     </body>
 </html>

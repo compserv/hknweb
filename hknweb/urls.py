@@ -18,16 +18,15 @@ from django.urls import include
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
-
 from . import views
 from .views import landing
 from .views import users
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/create/', users.account_create),
     path('accounts/settings/', users.account_settings),
+    path('accounts/activate/', users.activate),
     path('events/', include('hknweb.events.urls')),
     path('exams/', include('hknweb.exams.urls')),
     path('alumni/', include('hknweb.alumni.urls')),
@@ -37,7 +36,11 @@ urlpatterns = [
     path('markdownx/', include('markdownx.urls')),
     path('s/', include('hknweb.shortlinks.urls')),
     path('elections/', include('hknweb.elections.urls')),
-    path('', landing.home),
+    path('auth/', include('social_django.urls', namespace='social')),
+    path('', include('social_django.urls', namespace='social')),
+    #url(r'^auth/', include('social_django.urls', namespace='social')),
+    path('', landing.home, name='home'),
+    #path('', landing.home),
 ]
 
 if settings.DEBUG:

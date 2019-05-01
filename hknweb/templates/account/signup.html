@@ -6,6 +6,8 @@
   <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Sign up</button>
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+    <div class="g-recaptcha" data-sitekey="6LeYTKAUAAAAADooVC_FG9ua47PnwP_gGWOSwauK"></div>
+    <button type="submit" class="btn btn-primary">Submit</button>
   </form>
 {% endblock %}
