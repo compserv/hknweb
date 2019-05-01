@@ -31,8 +31,8 @@ class EventForm(forms.ModelForm):
         # }
 
         help_texts = {
-            'start_time': 'Format as mm/dd/yyyy hh:mm (24-hour time! ex. 1pm -> 13:00)',
-            'end_time': 'Format as mm/dd/yyyy hh:mm (24-hour time! ex. 1pm -> 13:00)',
+            'start_time': 'mm/dd/yyyy hh:mm, 24-hour time',
+            'end_time': 'mm/dd/yyyy hh:mm, 24-hour time',
         }
 
         labels = {

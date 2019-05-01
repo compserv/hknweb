@@ -4,38 +4,57 @@
 {% block title %}Events{% endblock %}
 
 {% block header %}
-  <!-- Random scripts which make the calendar work: -->
-  <link rel='stylesheet' href="http://unpkg.com/fullcalendar/dist/fullcalendar.min.css" />
-  <script src="http://unpkg.com/moment/min/moment.min.js"></script>
-  <script src="http://unpkg.com/jquery/dist/jquery.slim.min.js"></script>
-  <script src="http://unpkg.com/fullcalendar/dist/fullcalendar.min.js"></script>
+<!-- Scripts which make the calendar work: -->
+<link rel='stylesheet' href="https://unpkg.com/fullcalendar/dist/fullcalendar.min.css" />
+<script src="https://unpkg.com/moment/min/moment.min.js"></script>
+<script src="https://unpkg.com/jquery/dist/jquery.slim.min.js"></script>
+<script src="https://unpkg.com/fullcalendar/dist/fullcalendar.min.js"></script>
 
-  <script type="text/javascript">
+<script type="text/javascript">
     $(document).ready(function () {
-      $('#calendar').fullCalendar({
-        header: {
-          left: 'prev,next today',
-          center: 'title',
-          right: 'month,basicWeek,basicDay'
-        },
-        defaultDate: new Date(),
-        navLinks: true, // can click day/week names to navigate views
-        editable: false,
-        eventLimit: true, // allow "more" link when too many events
-        fixedWeekCount: false,
-        aspectRatio: 1.75,
-        events: [ {% for event in events %}
-          {
-            title: '{{ event.name }}',
-            start: '{{ event.start_time|date:"c" }}', // date:"c" renders the dates in ISO format, as fullcalendar needs them
-            end: '{{ event.end_time|date:"c" }}',
-            url: '{{ event.id }}'
-          },
-        {% endfor %}
-        ]
-      })
+        $('#calendar').fullCalendar({
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'month,basicWeek,basicDay'
+            },
+            defaultDate: new Date(),
+            navLinks: true, // can click day/week names to navigate views
+            editable: false,
+            eventLimit: true, // allow "more" link when too many events
+            fixedWeekCount: false,
+            aspectRatio: 1.75,
+            events: [ {% for event in events %}
+                {
+                title: '{{ event.name }}',
+                start: '{{ event.start_time|date:"c" }}', // date:"c" renders the dates in ISO format, as fullcalendar needs them
+                end: '{{ event.end_time|date:"c" }}',
+                url: '{{ event.id }}'
+                },
+            {% endfor %}]
+        })
     })
-  </script>
+</script>
+<style>
+    .content {
+        padding-top: 1em;
+        padding-bottom: 1em;
+    }
+    @media screen and (min-width: 1250px) {
+        .content {
+            padding-top: 2.5em;
+            padding-bottom: 2.5em;
+        }
+    }
+    .centered {
+        max-width: 1250px;
+        margin: 0 auto;
+    }
+    #button {
+        width: 100%;
+        text-align: center;
+    }
+</style>
 {% endblock %}
 
 {% block heading %}
@@ -43,7 +62,7 @@ Upcoming Events
 {% endblock %}
 
 {% block content %}
-<div class="center measure-very-wide pv4">
+<div class="centered">
     {% if messages %}
         {% for message in messages %}
             <h3  {% if messages.tags %} class="{{ message.tags }}" {% endif %} style="color: #0000A0;">{{ message }}</h3>
@@ -61,8 +80,8 @@ Upcoming Events
     </style>
     
     <br>
-    <form action="new" method="GET">
-        <button type='submit'>New event</button>
+    <form action="new" method="GET" id="button">
+        <button type='submit'>Add an event</button>
     </form>
 </div>
 {% endblock %}

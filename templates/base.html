@@ -1,254 +1,194 @@
 {% load static from staticfiles %}
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-      <meta charset="UTF-8" />
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
   
-      <title>{% block title %}{% endblock %}</title>
-  
-      <!-- CSS for Materialize -->
-      <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"> -->
-  
-      <!-- Fonts -->
-      <link href="https://fonts.googleapis.com/css?family=Open+Sans|PT+Sans:700|Roboto:400,500,700,900|Source+Sans+Pro:300,400,600,700" rel="stylesheet">
-      
-      <!-- CSS stylesheets -->
-      <link rel="stylesheet" href="{% static "css/base.css" %}">
-      
-      {% block header %}{% endblock %}
-  </head>
-  <body>
-  
-  <!-- <header>
-    <nav class="dt border-box bg-dark-gray w-100 font-body pv1 pv0-ns">
-      <a class="dtc v-mid w-25 w-10-ns tc" href="#" title="Home">
-          <img class="w3 w3-ns h3 h3-ns" src="{% static "img/hkn-bear-golden.svg" %}" alt="HKN" />
-      </a>
-      <div class="f6 f5-l dtc w-50 w-70-l tc tl-ns v-mid">
-        <a class="dib b near-white link pv1 pv3-l mh2 hover-yellow" href="#" title="Students">Students</a>
-        <a class="dib b near-white link pv1 pv3-l mh2 hover-yellow" href="#" title="Industry">Industry</a>
-        <a class="dib b near-white link pv1 pv3-l mh2 hover-yellow" href="/events" title="Events">Events</a>
-        <a class="dib b near-white link pv1 pv3-l mh2 hover-yellow" href="#" title="Service">Service</a>
-        <a class="dib b near-white link pv1 pv3-l mh2 hover-yellow" href="/alumni" title="Alumni">Alumni</a>
-      </div>
-      <div class="f6 f5-l dtc w-25 w-20-l tc tr-ns pr4-ns v-mid">
-        {% if user.is_authenticated %}
-          <a class="dib b near-white link pv1 pv3-l ph2 hover-yellow" href="/accounts/settings" title="Settings">Settings</a>
-          <a class="dib b bg-near-white near-black link pv1 pv2-ns ph2 ba b--near-white br2 hover-bg-yellow" href="/accounts/logout" title="Logout">Logout</a>
-        {% else %}
-          <a class="dib b near-white link pv1 pv3-l ph2 hover-yellow" href="/accounts/create" title="Register">Register</a>
-          <a class="dib b bg-near-white near-black link pv1 pv2-ns ph2 ba b--near-white br2 hover-bg-yellow" href="/accounts/login" title="Login">Login</a>
-        {% endif %}
-<!--<<<<<<< HEAD
-      </div>
-    </nav>
-  </header>
-  <main id="content">
-  </main>
-  <footer class="w-100">
-    <nav class="dt border-box w-100 bg-dark-gray font-body">
-      <div class="dtc f6 f5-l w-50 w-80-l tl v-mid">
-        <a class="dib b near-white link pa3 hover-yellow" href="#">Contact</a>
-        <a class="dib b near-white link pa3 hover-yellow" href="#" title="About">About</a>
-=======
->>>>>>> 1a496a9436178b58f23cd49ff5643f10719ba4db -->
-      </div>
-    </nav>
-  </header> 
-
-    <div class="navi-container">
-        <div class="navi">
-            <div class="navi-logo">
-                <img src="{% static "img/hkn-bear.svg" %}" class="navi-logo-img">
-                <div class="navi-menu-logo-text">
-                    <div class="navi-logo-title">
-                        Eta Kappa Nu
+        <!-- Fonts and CSS -->
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro:300,400,600,700" rel="stylesheet">
+        <link rel="stylesheet" href="{% static "css/base.css" %}">
+        <link rel="icon" href="{% static "img/hkn.svg" %}">
+        
+        {% block header %}{% endblock %}
+        
+        <title>{% block title %}{% endblock %} | Berkeley HKN</title>
+    </head>
+    <body>
+        <div class="white-above-navi">
+        </div>
+        <div class="navi-container">
+            <div class="navi">
+                <a href="/">
+                    <div class="navi-logo">
+                        <img src="{% static "img/hkn-bear.svg" %}" class="navi-logo-img">
+                        <div class="navi-menu-logo-text">
+                            <div class="navi-logo-title">
+                                <b>Eta Kappa Nu</b>
+                            </div>
+                            <div class="navi-logo-subtitle">
+                                UC Berkeley
+                            </div>
+                        </div>
                     </div>
-                    <div class="navi-logo-subtitle">
-                        UC Berkeley
-                    </div>
-                </div>
-            </div>
-            <div class="navi-menu-container">
+                </a>
                 <div class='navi-menu'>
-                    <label for="toggle"><div class="navi-menu-item">Student Services</div></label>
-                    <label for="toggle"><div class="navi-menu-item">Industry</div></label>
-                    <label for="toggle"><div class="navi-menu-item">Outreach</div></label>
-                    <label for="toggle"><div class="navi-menu-item">Events</div></label>
-                    <label for="toggle"><div class="navi-menu-item">About</div></label>
-                    <label><div class="navi-menu-item"><a href="">Account <i style="border: solid black; border-width: 0 3px 3px 0; display: inline-block; padding: 3px; transform: rotate(45deg); -webkit-transform: rotate(45deg);"></i></a></div></label>
-                    <label for="toggle"><div class="navi-menu-button">Menu</div>
-                    </div>
+                    <label for="toggle">Student Services</label>
+                    <label for="toggle">Industry</label>
+                    <label for="toggle">Outreach</label>
+                    <label for="toggle">Events</label>
+                    <label for="toggle">About</label>
+                    <a class="account-button" href="/cand">Account<!-- <i style="border: solid black; border-width: 0 3px 3px 0; display: inline-block; padding: 3px; transform: rotate(45deg); -webkit-transform: rotate(45deg);"></i> --></a>
+                    <div class="navi-menu-button"><label for="toggle">Menu</label></div>
                 </div>
             </div>
-        </div><input type="checkbox" name="toggle" id="toggle" />
-        <div class="navi-extension">
-            <div class="navi-extension-container">
+        </div>
+        <input type="checkbox" name="toggle" id="toggle" />
+        <div class="navi-extension-container">
+            <div class="navi-extension">
                 <div class="navi-ext-logo">
                     <img src="{% static "img/hkn-bear.svg" %}" class="navi-logo-img">
                     <div class="navi-ext-logo-text">
                         <div class="navi-logo-title">
-                            Eta Kappa Nu
+                            Eta Kappa Nu (HKN)
                         </div>
                         <div class="navi-logo-subtitle">
                             UC Berkeley
                         </div>
                     </div>
                 </div>
-                <div class="navi-ext-container">
-                    <div class="navi-ext-item">
-                        <div class="navi-menu-ext-item">Student Services</div>
-                        <a class="navi-extension-item" href="">Tutoring Hours</a><br>
-                        <a class="navi-extension-item" href="">Review Sessions</a><br>
-                        <a class="navi-extension-item" href="/exams">Exam Archive</a><br>
-                        <a class="navi-extension-item" href="">Course Surveys</a><br>
-                        <a class="navi-extension-item" href="">Course Guide</a><br>
-                        <a class="navi-extension-item" href="">Department Tours</a>
+                <div class="navi-extension-columns">
+                    <div>
+                        <div class="navi-ext-col-header">Student Services</div>
+                        <a class="navi-ext-col-item" href="">Tutoring Hours</a><br>
+                        <a class="navi-ext-col-item" href="">Review Sessions</a><br>
+                        <a class="navi-ext-col-item" href="/exams">Exam Archive</a><br>
+                        <a class="navi-ext-col-item" href="">Course Surveys</a><br>
+                        <a class="navi-ext-col-item" href="">Course Guide</a><br>
+                        <a class="navi-ext-col-item" href="">Department Tours</a>
                     </div>
-                    <div class="navi-ext-item">
-                        <div class="navi-menu-ext-item" href="">Industry</div>
-                        <a class="navi-extension-item" href="">Why HKN?</a><br>
-                        <a class="navi-extension-item" href="">Resume Books</a><br>
-                        <a class="navi-extension-item" href="">Infosessions</a><br>
-                        <a class="navi-extension-item" href="">Career Fair</a><br>
-                        <a class="navi-extension-item" href="">Get in Touch</a>
+                    <div>
+                        <div class="navi-ext-col-header" href="">Industry</div>
+                        <a class="navi-ext-col-item" href="">Why HKN?</a><br>
+                        <a class="navi-ext-col-item" href="">Resume Books</a><br>
+                        <a class="navi-ext-col-item" href="">Infosessions</a><br>
+                        <a class="navi-ext-col-item" href="">Career Fair</a><br>
+                        <a class="navi-ext-col-item" href="">Get in Touch</a>
                     </div>
-                    <div class="navi-ext-item">
-                        <div class="navi-menu-ext-item" href="">Outreach</div>
-                        <a class="navi-extension-item" href="">EECS Day</a><br>
-                        <a class="navi-extension-item" href="">Junior EECS Day</a><br>
-                        <a class="navi-extension-item" href="">Maker Workshops</a><br>
-                        <a class="navi-extension-item" href="">Bear Hacks</a><br>
-                        <a class="navi-extension-item" href="">Cal Day</a>
+                    <div>
+                        <div class="navi-ext-col-header" href="">Outreach</div>
+                        <a class="navi-ext-col-item" href="">EECS Day</a><br>
+                        <a class="navi-ext-col-item" href="">Junior EECS Day</a><br>
+                        <a class="navi-ext-col-item" href="">Maker Workshops</a><br>
+                        <a class="navi-ext-col-item" href="">Bear Hacks</a><br>
+                        <a class="navi-ext-col-item" href="">Cal Day</a>
                     </div>
-                    <div class="navi-ext-item">
-                        <div class="navi-menu-ext-item" href="/events">Events</div>
-                        <a class="navi-extension-item" href="/events">Calendar</a><br>
-                        <a class="navi-extension-item" href="https://www.flickr.com/people/berkeley_hkn/">Photos</a>
+                    <div>
+                        <div class="navi-ext-col-header" href="/events">Events</div>
+                        <a class="navi-ext-col-item" href="/events">Calendar</a><br>
+                        <a class="navi-ext-col-item" href="https://www.flickr.com/people/berkeley_hkn/">Photos</a>
                     </div>
-                    <div class="navi-ext-item">
-                        <div class="navi-menu-ext-item" href="">About</div>
-                        <a class="navi-extension-item" href="">Contact Us</a><br>
-                        <a class="navi-extension-item"  href=""href="">Committees</a><br>
-                        <a class="navi-extension-item" href="">Officers</a><br>
-                        <a class="navi-extension-item" href="/alumni">Alumni</a><br>
-                        <a class="navi-extension-item" href="">Yearbooks</a><br>
+                    <div>
+                        <div class="navi-ext-col-header" href="">About</div>
+                        <a class="navi-ext-col-item" href="">Contact Us</a><br>
+                        <a class="navi-ext-col-item"  href=""href="">Committees</a><br>
+                        <a class="navi-ext-col-item" href="">Officers</a><br>
+                        <a class="navi-ext-col-item" href="/alumni">Alumni</a><br>
+                        <a class="navi-ext-col-item" href="">Yearbooks</a><br>
                     </div>
-                    <div class="navi-ext-item">
-                    </div>
+                    <!-- <div>
+                    </div> -->
                 </div>
-                <div class="exit-ext-menu" style="text-align: center;">
-                    <label for=toggle style="vertical-align: middle; font-size: 25px;">&times;</label> <!-- Did have <img src="{% static "img/close.png" %}"> -->
+                <div class="exit-extension-button">
+                    <label for="toggle">&times;</label> <!-- Did have <img src="/static/img/close.png"> -->
                 </div>
             </div>
         </div>
-    </div>
     
-    <!-- <script>
-        console.log("Running the navbar script");
-      
-        // Horizontally align the menu items width their respective columns in the navigation extended view
-        naviItems = document.getElementsByClassName('navi-menu-item');
-        naviCols = document.getElementsByClassName('navi-ext-item');
-        if (naviItems.length !== naviCols.length) {
-            console.log("Different number of naviItems and naviCols! There must be an equal number.");
-        }
-        for (var i = 0; i < naviCols.length; i++) {
-            // Assume naviCols.length == naviItems.length, and naviCols in same order as naviItems
-            var naviColWidth = naviCols[i].offsetWidth;
-            var naviMenuItemWidth = naviItems[i].offsetWidth;
-            var maxWidth = Math.max(naviColWidth, naviMenuItemWidth);
-            console.log(maxWidth);
-            if (naviMenuItemWidth < maxWidth) {
-                naviItems[i].style.width = maxWidth.toString() + 'px';
-            } else if (naviColWidth < maxWidth) {
-                naviCols[i].style.width = maxWidth.toString() + 'px';
-            }
-        }
-    </script> -->
-    
-    <div id="heading">
-        {% block heading %}{% endblock %}
-    </div>
-    
-    <div class="min-vh-100 relative">
-      <main id="content">
-        {% block content %}{% endblock %}
-      </main>
-    </div>
-  
-    <!-- Old footer (black & gold)
-    <footer class="w-100">
-        <nav class="dt border-box w-100 bg-dark-gray font-body">
-        <div class="dtc f6 f5-l w-50 w-80-l tl v-mid">
-            <a class="dib b near-white link pa3 hover-yellow" href="#">Contact</a>
-            <a class="dib b near-white link pa3 hover-yellow" href="#" title="About">About</a>
+        <div class="heading">
+            {% block heading %}{% endblock %}
         </div>
-        <a class="dtc tr v-mid w-50 w-20-l pa2" href="https://www.ocf.berkeley.edu">
-            <img src="{% static "img/ocf-hosted-penguin-dark.svg" %}" alt="Hosted by the OCF" />
-        </a>
-        </nav>
-    </footer> -->
-    <div class="footer">
-        <div class="footer-container">
-            <!-- <div class="footer-form">
-                <div class="form-title">We're <span style="opacity: 0.7; border-bottom: 5px solid #516aff;">here</span> to help.</div>
-                <form class="col s12">
-                    <div class="row">
-                        <div class="input-field col s6">
-                            <input id="first_name" type="text" class="validate">
-                            <label for="first_name">Your Name</label>
-                        </div>
-                        <div class="input-field col s6">
-                            <input id="last_name" type="text" class="validate">
-                            <label for="last_name">Your Email</label>
-                        </div>
+    
+        <div class="content">
+            {% block content %}{% endblock %}
+        </div>
+
+        <div class="footer">
+            {% block extra-footer %}{% endblock %}
+            <div class="footer-container">
+                <div class="footer-block">
+                    <div class="footer-block-title">
+                        Our Offices
                     </div>
-
-                    <div class="row">
-                        <div class="input-field col s12">
-                            <input id="last_name" type="text" class="validate">
-                            <label for="last_name">How can we help?</label>
-                        </div>
+                    <div class="footer-block-text">
+                        290 Cory Hall | (510) 642-7346 <br/>
+                        345 Soda Hall | (510) 642-9952
                     </div>
-                </form>
-            </div> -->
+                </div>
 
-            <div class="footer-block">
-                <div class="footer-block-title">
-                    Our Offices
+                <div class="footer-block">
+                    <div class="footer-block-title">
+                        Email
+                    </div>
+                    <div class="footer-block-text">
+                        General: hkn[at]hkn.eecs.berkeley.edu <br/>
+                        Industrial Relations: indrel[at]hkn.eecs.berkeley.edu <br/>
+                        Service: serv[at]hkn.eecs.berkeley.edu
+                    </div>
                 </div>
-                <div class="contact-text">
-                    290 Cory Hall | (510) 642-7346 <br/>
-                    345 Soda Hall | (510) 642-9952 <br/>
-                    Berkeley, CA 94720-1770
-                </div>
-            </div>
-
-            <div class="footer-block">
-                <div class="footer-block-title">
-                    Email
-                </div>
-                <div class="contact-text">
-                    General: hkn@hkn.eecs.berkeley.edu<br/>
-                    Industrial Relations: indrel@hkn.eecs.berkeley.edu<br/>
-                    Officer Contacts: refer to the <a href="" style="text-decoration: underline;">Officers page</a>.
-                </div>
-            </div>
             
-            <div class="footer-block">
-                <div class="contact-text">
-                    Created by the Computing Services (Compserv) committee.<br/>
-                    Copyright &copy; <script type="text/javascript">
-                      var d = new Date()
-                      document.write(d.getFullYear())
-                    </script> Berkeley HKN
+                <div class="footer-block">
+                    <div class="footer-block-text">
+                        Created by the Computing Services (Compserv) committee. <br/>
+                        Copyright &copy; <script type="text/javascript">
+                            var d = new Date();
+                            document.write(d.getFullYear());
+                        </script> Berkeley HKN
+                    </div>
+                </div>
+                
+                <div class="footer-block">
+                    <a href="https://www.ocf.berkeley.edu">
+                        <img src="{% static "img/ocf-hosted-penguin-dark.svg" %}" alt="Hosted by the OCF" />
+                    </a>
                 </div>
             </div>
         </div>
-    </div>
-    
-    <!-- JavaScript for Materialize -->
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script> -->
-  </body>
+        
+        <!-- Old footer (black & gold):
+        <footer class="w-100">
+            <nav class="dt border-box w-100 bg-dark-gray font-body">
+            <div class="dtc f6 f5-l w-50 w-80-l tl v-mid">
+                <a class="dib b near-white link pa3 hover-yellow" href="#">Contact</a>
+                <a class="dib b near-white link pa3 hover-yellow" href="#" title="About">About</a>
+            </div>
+            <a class="dtc tr v-mid w-50 w-20-l pa2" href="https://www.ocf.berkeley.edu">
+                <img src="{% static "img/ocf-hosted-penguin-dark.svg" %}" alt="Hosted by the OCF" />
+            </a>
+            </nav>
+        </footer> -->
+        
+        <!-- <script>
+            console.log("Running the navbar script");
+      
+            // Horizontally align the menu items width their respective columns in the navigation extended view
+            naviItems = document.getElementsByClassName('navi-menu-item');
+            naviCols = document.getElementsByClassName('navi-ext-item');
+            if (naviItems.length !== naviCols.length) {
+                console.log("Different number of naviItems and naviCols! There must be an equal number.");
+            }
+            for (var i = 0; i < naviCols.length; i++) {
+                // Assume naviCols.length == naviItems.length, and naviCols in same order as naviItems
+                var naviColWidth = naviCols[i].offsetWidth;
+                var naviMenuItemWidth = naviItems[i].offsetWidth;
+                var maxWidth = Math.max(naviColWidth, naviMenuItemWidth);
+                console.log(maxWidth);
+                if (naviMenuItemWidth < maxWidth) {
+                    naviItems[i].style.width = maxWidth.toString() + 'px';
+                } else if (naviColWidth < maxWidth) {
+                    naviCols[i].style.width = maxWidth.toString() + 'px';
+                }
+            }
+        </script> -->
+    </body>
 </html>
