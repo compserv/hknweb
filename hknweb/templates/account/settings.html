@@ -14,12 +14,14 @@
 
 <form method="post">
 	{% csrf_token %}
-	<h2>Account settings</h2>
-	{{ user_form.as_p }}
+	<!-- <h2>Account settings</h2> -->
+	<!-- {{ user_form.as_p }} -->
 	<h2>Change password</h2>
-	{{ password_form.as_p}}
+	{{ password_form.as_p }}
 	<h2>Edit profile</h2>
-	{{ profile_form.as_p}}
+	{{ profile_form.as_p }}
+  <h2>Confirm password</h2>
+  {{ verify_form.as_p }}
 	<button type="submit">Save</button>
 </form>
 {% endblock %}

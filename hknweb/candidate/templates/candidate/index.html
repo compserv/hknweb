@@ -5,38 +5,35 @@
      Feel free to delete this page later, as long as you still
      keep the mechanism for making officer challenge requests. -->
 
-{% block title %}Candidate Portal{% endblock %}
+{% block title %}Candidate portal{% endblock %}
 
 {% block header %}
-  <!--<link rel='stylesheet' href="http://unpkg.com/fullcalendar/dist/fullcalendar.min.css" />-->
-  <!--<script src="http://unpkg.com/moment/min/moment.min.js"></script>-->
-  <!--<script src="http://unpkg.com/jquery/dist/jquery.slim.min.js"></script>-->
-  <!--<script src="http://unpkg.com/fullcalendar/dist/fullcalendar.min.js"></script>-->
+<link rel="stylesheet" href="{% static "candidate/style.css" %}">
+{% endblock %}
+
+{% block heading %}
+Candidate Portal
 {% endblock %}
 
 {% block content %}
-<div class="center measure-very-wide pv4">
-    <h1 class="font-title f3 f2-ns tc">Candidate Portal</h1>
-
-    <div style = "float:left; width: 800px">
-        <section id='agenda' style="background-color: #EEEEEE; margin: 0.5%; padding-left: 20px; padding-right: 20px; padding-top: 5px; padding-bottom: 10px">
-            <h3>Announcements</h3>
-            <span style="font-weight: bold">Welcome to the Candidate Portal!</span> (Posted by placeholder for now) <br>
-            <span>This is where you can see your progress and RSVP for upcoming events. Check back here often to stay up-to-date with the candidate semester.</span>
+<div class="centered">
+    <div class="right-column">
+        <section>
+            <h2>Announcements</h2>
+            <strong>Welcome to the Candidate Portal!</strong> (Posted by [name link]) <br>
+            This is where you can see your progress and RSVP for upcoming events. Check back here often to stay up-to-date with the candidate semester.
         </section>
-
         <br>
-
-        <section id='agenda' style="background-color: #EEEEEE; margin: 0.5%; padding-left: 20px; padding-right: 20px; padding-top: 5px; padding-bottom: 10px">
-            <h3>Requirements</h3>
-            <ol type="1">
+        <section>
+            <h2>Candidate Requirements</h2>
+            <ol type="1" style="margin-bottom: 0;">
                 <li>Attend Candidate Meeting</li>
                 <li>Attend all 3 General Meetings</li>
                 <li>Attend 3+ Fun Events</li>
                 <li>Attend 1+ Big Fun Events</li>
                 <li>Attend 1+ Serv Events</li>
                 <li>Complete 3+ Interactivities</li>
-                <ul style="list-style-type:circle;">
+                <ul style="list-style-type: circle;">
                     <li>Officer Challenges</li>
                     <li>Officer Hangouts</li>
                 </ul>
@@ -44,40 +41,35 @@
                 <li>Administer 1-2 Course Surveys</li>
                 <li>Complete a Committee Project</li>
                 <li>Complete Bit-Byte Requirements</li>
-                <ul style="list-style-type:circle;">
+                <ul style="list-style-type: circle;">
                     <li>2 Adventures</li>
                     <li>1 Boba or Equivalent</li>
                 </ul>
                 <li>Pay all dues (2 sets)</li>
                 <li>Complete all required forms</li>
-                <ul style="list-style-type:circle;">
-                    <li>Candidate Information Form</li>
-                    <li>Committee Preference Form</li>
-                    <li>Bit-Byte Pairing Survey</li>
-                    <li>Resume Drop</li>
-                    <li>Candidate Quiz</li>
-                    <li>Candidate Feedback Form</li>
-                    <li>Membership Application Form</li>
+                <ul style="list-style-type: circle;">
+                    <li><a href="">Candidate Information Form</a></li>
+                    <li><a href="">Committee Preference Form</a></li>
+                    <li><a href="">Bit-Byte Pairing Survey</a></li>
+                    <li><a href="">Resume Drop</a></li>
+                    <li><a href="">Candidate Quiz</a></li>
+                    <li><a href="">Candidate Feedback Form</a></li>
+                    <li><a href="">Membership Application Form</a></li>
                 <ul>
             </ol>
         </section>
+    </div>
+    <div class="left-column">
+        <br id="break">
+        <section id="candidate-checklist">
+            <h2 style="margin-bottom: 0;">Checklist</h2>
 
-        <br>
-
-        <!-- Feel free to replace this terrible styling! -->
-        <!-- These are links to request officer challenges and confirm officer
-             challenges respectively. -->
-        <section id='agenda' style="background-color: #EEEEEE; margin: 0.5%; padding-left: 20px; padding-right: 20px; padding-top: 5px; padding-bottom: 10px">
-            <!-- font-family: Georgia; -->
-            <h3>Checklist</h3>
-
-            <div style="float: left">
-                <h4>Events</h4>
-                <ul>
-                    <li>Mandatory for Candidates</li>
+            <div class="checklist-left-col">
+                <ul style="margin-bottom: 0;">
+                    <li>Mandatory meetings</li>
                     <ol type="1">
-                        <li>CM</li>
-                        <li>GM 1</li>
+                        <li>Candidate Meeting</li>
+                        <li>GM (General Meeting) 1</li>
                         <li>GM 2</li>
                         <li>GM 3</li>
                     </ol>
@@ -88,26 +80,16 @@
                         <li>Thing 3</li>
                     </ol>
                     <li>Big Fun</li>
-                    <ol type="1">
-                        <li>Thing 1</li>
-                    </ol>
                     <li>Service</li>
-                    <ol type="1">
-                        <li>Thing 1</li>
-                    </ol>
                     <li>Prodev</li>
-                    <ol type="1">
-                        <li>Thing 1</li>
-                    </ol>
                 </ul>
             </div>
-            <div style="float: right">
+            <div class="checklist-right-col">
                 <h4>Interactivities</h4>
                 <ul>
                     <li>Officer Challenges</li>
                     <ul>
                         <li><a href="{% url 'candidate:candrequests' %}">(Candidate) Request Confirmation</a></li>
-                        <!-- Currently just leads to a particular officer challenge confirmation, since the complete view is not yet implemented -->
                         <li><a href="{% url 'candidate:candrequests' %}">(Officer) Confirm Challenge Requests</a></li>
                     </ul>
                     <li>Officer Hangouts</li>
@@ -117,7 +99,7 @@
                 </ul>
 
                 <h4>Bit-Byte</h4>
-                <ul>
+                <ul style="margin-bottom: 0;">
                     <li>Adventures</li>
                     <ol type="1">
                         <li>Thing 1</li>
@@ -130,23 +112,11 @@
                 </ul>
             </div>
         </section>
-
         <br>
-    </div>
-
-    <div style="float:right; width: 300px">
-        <section id='agenda' style="background-color: #EEEEEE; margin: 0.5%; padding-left: 20px; padding-right: 20px; padding-top: 5px; padding-bottom: 10px; width: 150">
-            <h3>Upcoming Events</h3>
+        <section>
+            <h2>Upcoming Events</h2>
             <p><a href="{% url 'events:index' %}">(see calendar)</a></p>
-
-            <h3>Important Information</h3>
-            [Coming Soon]
-
-            <h3>Additional Forms</h3>
-            [Coming Soon]
         </section>
     </div>
-
 </div>
-
 {% endblock %}

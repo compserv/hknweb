@@ -1,46 +1,83 @@
 {% extends "base.html" %}
 {% load static %}
-
-{% block title %}New Event{% endblock %}
+{% block title %}Add an event{% endblock %}
 
 {% block header %}
-  <link rel='stylesheet' href="http://unpkg.com/fullcalendar/dist/fullcalendar.min.css" />
-  <script src="http://unpkg.com/moment/min/moment.min.js"></script>
-  <script src="http://unpkg.com/jquery/dist/jquery.slim.min.js"></script>
-  <script src="http://unpkg.com/fullcalendar/dist/fullcalendar.min.js"></script>
+<style>
+    .heading {
+        display: none;
+    }
+    .content {
+        padding-top: 1em;
+        padding-bottom: 1em;
+    }
+    @media screen and (min-width: 1000px) {
+        .content {
+            padding-top: 2.5em;
+            padding-bottom: 2.5em;
+        }
+    }
+    .centered {
+        max-width: 700px;
+        margin: 0 auto;
+    }
+    h1 {
+        margin: 0;
+        margin-bottom: 1em;
+        font-weight: normal;
+        text-align: center;
+    }
+    #form {
+        position: relative;
+    }
+    .row {
+        margin-bottom: 1em;
+    }
+    @media screen and (min-width: 700px) {
+        .left-side {
+            display: inline-block;
+            width: 50%;
+            text-align: right;
+        }
+        #submit {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
 {% endblock %}
 
-{% block heading %}
-Add a calendar event
-{% endblock %}
+{% block heading %}{% endblock %}
 
 {% block content %}
-<div class="center measure-very-wide pv4">
-    {% if messages %}
-        {% for message in messages %}
-            <h3  {% if messages.tags %} class="{{ message.tags }}" {% endif %} style="color: #0000A0;">{{ message }}</h3>
-        {% endfor %}
-    {% endif %}
-
-    <form method="POST">{% csrf_token %}
+<h1> Add a calendar event </h1>
+<div class="centered">
+    <form method="POST" id="form">
+        {% csrf_token %}
         {% for field in form %}
-            <br>
-            <span style="float: left;">{{ field.label }}
-                {% if field.field.required %}
-                    <span style="color: red;">* </span>
-                {% endif %}
-                {% if field.help_text %}
-                ({{ field.help_text }})
-                {% endif %}
+            <div class="row">
+                <span class="left-side">
+                    {{ field.label }}
+                    {% if field.field.required %}
+                        <span style="color: rgba(166, 60, 68, 1);">*</span>
+                    {% endif %}
+                    {% if field.help_text %}
+                        <i>({{ field.help_text }})</i>
+                    {% endif %}
+                </span>
                 {{ field }}
-            </span>
-            <br>
-            {{ field.errors }}
-            <br>
+                {{ field.errors }}
+            </div>
         {% endfor %}
-        <br>
-        <input class="f6 grow no-underline br-pill ph3 pv2 mb2 dib white bg-black" type="submit" value="Submit"/>
+        <div id="submit">
+            <input type="submit" value="Submit" />
+            {% if messages %}
+                {% for message in messages %}
+                    <br>
+                    <span style="color: rgba(166, 60, 68, 1);">{{ message }}</span>
+                {% endfor %}
+            {% endif %}
+        </div>
     </form>
 </div>
-
 {% endblock %}
