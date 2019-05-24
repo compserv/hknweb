@@ -8,7 +8,7 @@ body {
 }
 
 /* Override base.css */
-.white-above-navi, .navi-container, .heading, .content {
+.white-above-navi, .heading, .content {
     background-color: transparent;
 }
 
@@ -22,13 +22,16 @@ body {
     border-bottom: none;
 }
 
+/* BANNER */
 .banner {
     padding: 0 13px;
     padding-top: 50px;
-    max-width: 1100px;
+    max-width: 1125px;
     margin: auto;
     transition: all 500ms ease;
-    text-align: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
 }
 .banner > * {
     padding-bottom: 50px;
@@ -38,19 +41,6 @@ body {
     font-weight: 700;
     padding-top: 100px;
     text-align: left;
-}
-@media screen and (min-width: 1100px) {
-    .banner-heading, .tutoring-column {
-        vertical-align: middle;
-    }
-    .banner-heading {
-        width: 69%;
-        box-sizing: border-box;
-        padding-right: 10%;
-    }
-    .tutoring-column {
-        width: 30%;
-    }
 }
 .banner-title {
     font-size: 4em;
@@ -64,26 +54,29 @@ body {
     font-weight: 400;
     margin-top: 50px;
 }
-
-/* QUICK VIEWS - TUTORING AND EVENTS */
-.tutoring {
-    background: url('');
-    background-repeat: no-repeat;
-    background-size: cover;
+.banner-text:last-child {
+    font-size: 1.3em;
+    margin-top: 1em;
 }
-.tutoring-container {
-    max-width: 1400px;
-    padding-top: 100px;
-    padding-bottom: 100px;
-    margin: auto;
+.banner-text a {
+    color: #C4820E;
+    text-decoration: none;
 }
-.tutoring-column {
-    display: inline-block;
-    vertical-align: top;
-    max-width: 600px;
-    text-align: left;
+.banner-text a:hover {
+    text-decoration: underline;
 }
-@media screen and (max-width: 999px) {
+@media screen and (min-width: 1150px) {
+    .banner-heading {
+        padding-right: 7%;
+    }
+}
+@media screen and (max-width: 1049.999px) {
+    .banner {
+        flex-direction: column;
+    }
+    .banner-heading {
+        padding-top: 0;
+    }
     .tutoring-column {
         padding-bottom: 75px;
     }
@@ -91,42 +84,41 @@ body {
         padding-bottom: 0;
     }
 }
-.yellow-background {
-    background-color: #fffbba;
-}
 .tutoring-panel {
     background-color: white;
     border-radius: 15px;
     padding: 15px;
     box-shadow: 2px 3px 10px 4px rgba(0,0,0,0.1);
 }
-.tutoring-text {
-    padding-bottom: 3em;
-}
 .tutoring-title {
     font-size: 1.5em;
     font-weight: 600;
-    margin-bottom: 1em;
+    margin-bottom: 0.5em;
 }
 .tutoring-panel table {
     border-spacing: 0;
+    text-align: center;
 }
 .tutoring-date {
-    text-align: center;
     font-size: 1.2em;
-}
-.tutoring-date div {
-    padding-bottom: .5em;
-}
-.tutoring-panel th, td {
-    padding: 10px;
     text-align: center;
 }
 .tutoring-panel th {
     font-weight: 400;
     opacity: 0.9;
     font-size: .9em;
+    text-align: center;
 }
+.tutoring-panel th, td {
+    padding: 4.5px;
+}
+.tutoring-panel tbody tr:nth-child(odd) {
+    background-color: #F5F5F5;
+}
+#curr-hour {
+    border-left: solid 5px #FDB515;
+}
+/* Events card */
 .tutoring-panel ul {
     margin: 0;
 }
@@ -135,12 +127,12 @@ body {
 }
 .events-card-time {
     margin-left: 20px;
-    color: #687ff8;
+    color: #3B7EA1;
 }
 
 /* ABOUT HKN SECTION */
 .what {
-    margin-top: 100px;
+    margin-top: 50px;
     height: 500px;
     display: flex;
     align-items: center;
@@ -250,6 +242,9 @@ body {
     .services-leftright {
         width: 100%;
         text-align: center;
+    }
+    .servicespic {
+        width: 100% !important;
     }
 }
 .servicespic {

@@ -10,8 +10,7 @@ from .forms import EventForm
 from hknweb.models import Profile
 
 def index(request):
-    events = Event.objects.order_by('-start_time')[:10]
-    print(events)
+    events = Event.objects.order_by('-start_time')
     context = {
         'events': events,
     }
