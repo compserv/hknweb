@@ -1,9 +1,8 @@
--i https://pypi.python.org/simple
+-i https://pypi.python.org/simple/
 aspy.yaml==1.3.0
 atomicwrites==1.3.0
 attrs==19.1.0
 cfgv==2.0.0
-colorama==0.4.1 ; sys_platform == 'win32'
 filelock==3.0.12
 identify==1.4.3
 importlib-metadata==0.17
