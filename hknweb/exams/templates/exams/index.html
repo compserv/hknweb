@@ -1,11 +1,8 @@
 {% extends "base.html" %}
 {% load static %}
+{% block title %}Exam archive{% endblock %}
 
-{% block title %}Exam Archive{% endblock %}
-
-{% block heading %}Exam Archive{% endblock %}
-
-{% block content %}
+{% block header %}
 <style>
     .content {
         padding-top: 1em;
@@ -18,14 +15,18 @@
         text-align: left;
     }
 </style>
+{% endblock %}
+
+{% block heading %}Exam Archive{% endblock %}
+
+{% block content %}
 <div id="actual-contents">
     Browse by department:
 
     <h1>Computer Science</h1>
-
     <ul>
         {% for course in courses %}
-            {% if course.department == 'CS' %}
+            {% if course.department.name == 'CS' %}
                 <li>
                     <a href="/exams/course/CS/{{ course.number }}/">CS {{ course.number }}</a>
                 </li>
@@ -37,7 +38,7 @@
 
     <ul>
         {% for course in courses %}
-            {% if course.department == 'EE' %}
+            {% if course.department.name == 'EE' %}
                 <li>
                     <a href="/exams/course/EE/{{ course.number }}/">EE {{ course.number }}</a>
                 </li>
@@ -45,5 +46,4 @@
         {% endfor %}
     </ul>
 </div>
-
 {% endblock %}

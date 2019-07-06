@@ -5,38 +5,44 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-        <title>{% block title %}{% endblock %} | Berkeley HKN</title>
-
         <!-- Fonts and CSS -->
         <link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro:300,400,600,700" rel="stylesheet">
         <link rel="stylesheet" href="{% static "css/base.css" %}">
+        <!-- Not sure what this is for? We already have a favicon -->
+        <link rel="icon" href="{% static "img/hkn.svg" %}">
 
         <!-- Favicon -->
         <link rel="shortcut icon" href="{% static 'img/favicon.png' %}"/>
 
         {% block header %}{% endblock %}
+
+        <title>{% block title %}{% endblock %} | Berkeley HKN</title>
     </head>
     <body>
+        <div class="white-above-navi">
+        </div>
         <div class="navi-container">
             <div class="navi">
-                <div class="navi-logo">
-                    <img src="{% static "img/hkn-bear.svg" %}" class="navi-logo-img">
-                    <div class="navi-menu-logo-text">
-                        <div class="navi-logo-title">
-                            <b>Eta Kappa Nu</b>
-                        </div>
-                        <div class="navi-logo-subtitle">
-                            UC Berkeley
+                <a href="/">
+                    <div class="navi-logo">
+                        <img src="{% static "img/hkn-bear.svg" %}" class="navi-logo-img">
+                        <div class="navi-menu-logo-text">
+                            <div class="navi-logo-title">
+                                <b>Eta Kappa Nu</b>
+                            </div>
+                            <div class="navi-logo-subtitle">
+                                UC Berkeley
+                            </div>
                         </div>
                     </div>
-                </div>
+                </a>
                 <div class='navi-menu'>
                     <label for="toggle">Student Services</label>
                     <label for="toggle">Industry</label>
                     <label for="toggle">Outreach</label>
                     <label for="toggle">Events</label>
                     <label for="toggle">About</label>
-                    <a class="account-button" href="">Account<!-- <i style="border: solid black; border-width: 0 3px 3px 0; display: inline-block; padding: 3px; transform: rotate(45deg); -webkit-transform: rotate(45deg);"></i> --></a>
+                    <a class="account-button" href="/cand">Account<!-- <i style="border: solid black; border-width: 0 3px 3px 0; display: inline-block; padding: 3px; transform: rotate(45deg); -webkit-transform: rotate(45deg);"></i> --></a>
                     <div class="navi-menu-button"><label for="toggle">Menu</label></div>
                 </div>
             </div>
@@ -98,10 +104,73 @@
                     </div> -->
                 </div>
                 <div class="exit-extension-button">
-                    <label for="toggle">&times;</label> <!-- Did have <img src="{% static "img/close.png" %}"> -->
+                    <label for="toggle">&times;</label> <!-- Did have <img src="/static/img/close.png"> -->
                 </div>
             </div>
         </div>
+
+        <div class="content">
+            <div class="heading">
+                {% block heading %}{% endblock %}
+            </div>
+
+            {% block content %}{% endblock %}
+        </div>
+
+        <div class="footer">
+            {% block extra-footer %}{% endblock %}
+            <div class="footer-container">
+                <div class="footer-block">
+                    <div class="footer-block-title">
+                        Our Offices
+                    </div>
+                    <div class="footer-block-text">
+                        290 Cory Hall | (510) 642-7346 <br/>
+                        345 Soda Hall | (510) 642-9952
+                    </div>
+                </div>
+
+                <div class="footer-block">
+                    <div class="footer-block-title">
+                        Email
+                    </div>
+                    <div class="footer-block-text">
+                        General: hkn[at]hkn.eecs.berkeley.edu <br/>
+                        Industrial Relations: indrel[at]hkn.eecs.berkeley.edu <br/>
+                        Service: serv[at]hkn.eecs.berkeley.edu
+                    </div>
+                </div>
+
+                <div class="footer-block">
+                    <div class="footer-block-text">
+                        Created by the Computing Services (Compserv) committee. <br/>
+                        Copyright &copy; <script type="text/javascript">
+                            var d = new Date();
+                            document.write(d.getFullYear());
+                        </script> Berkeley HKN
+                    </div>
+                </div>
+
+                <div class="footer-block">
+                    <a href="https://www.ocf.berkeley.edu">
+                        <img src="{% static "img/ocf-hosted-penguin-dark.svg" %}" alt="Hosted by the OCF" />
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Old footer (black & gold):
+        <footer class="w-100">
+            <nav class="dt border-box w-100 bg-dark-gray font-body">
+            <div class="dtc f6 f5-l w-50 w-80-l tl v-mid">
+                <a class="dib b near-white link pa3 hover-yellow" href="#">Contact</a>
+                <a class="dib b near-white link pa3 hover-yellow" href="#" title="About">About</a>
+            </div>
+            <a class="dtc tr v-mid w-50 w-20-l pa2" href="https://www.ocf.berkeley.edu">
+                <img src="{% static "img/ocf-hosted-penguin-dark.svg" %}" alt="Hosted by the OCF" />
+            </a>
+            </nav>
+        </footer> -->
 
         <!-- <script>
             console.log("Running the navbar script");
@@ -125,47 +194,5 @@
                 }
             }
         </script> -->
-
-        <div class="heading">
-            {% block heading %}{% endblock %}
-        </div>
-
-        <div class="content">
-            {% block content %}{% endblock %}
-        </div>
-
-        <div class="footer">
-            <div class="footer-container">
-                <div class="footer-block">
-                    <div class="footer-block-title">
-                        Our Offices
-                    </div>
-                    <div class="footer-block-text">
-                        290 Cory Hall | (510) 642-7346 <br/>
-                        345 Soda Hall | (510) 642-9952
-                    </div>
-                </div>
-
-                <div class="footer-block">
-                    <div class="footer-block-title">
-                        Email
-                    </div>
-                    <div class="footer-block-text">
-                        General: hkn@hkn.eecs.berkeley.edu <br/>
-                        Industrial Relations: indrel@hkn.eecs.berkeley.edu <br/>
-                    </div>
-                </div>
-
-                <div class="footer-block">
-                    <div class="footer-block-text">
-                        Created by the Computing Services (Compserv) committee. <br/>
-                        Copyright &copy; <script type="text/javascript">
-                          var d = new Date()
-                          document.write(d.getFullYear())
-                        </script> Berkeley HKN
-                    </div>
-                </div>
-            </div>
-        </div>
     </body>
 </html>
