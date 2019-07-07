@@ -63,7 +63,14 @@ h2:first-child {
 .links-div {
     float: right;
     width: 40%;
-    font-size: 20px;
+    font-size: 1.5em;
+}
+
+.link-home {
+    margin-left: 10%;
+    float: left;
+    width: 40%;
+    font-size: 1.5em;
 }
 
 .detail {
@@ -90,6 +97,13 @@ h2:first-child {
 
 #sunny {
     width: 40%;
+    display: block; /* Center image */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#hiding-cat {
+    width: 45%;
     display: block; /* Center image */
     margin-left: auto;
     margin-right: auto;

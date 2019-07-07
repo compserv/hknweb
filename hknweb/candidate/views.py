@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from django.views import generic
 from django.views.generic.edit import FormView, UpdateView
 from django.shortcuts import render, redirect, reverse
@@ -78,6 +79,9 @@ class OffRequestView(generic.ListView):
 @login_required(login_url='../../../accounts/login/')
 def officer_confirm_view(request, pk):
     challenge = OffChallenge.objects.get(id=pk)
+    if request.user.id != challenge.officer.id:
+        return render(request, "candidate/401.html", status=401)
+
     requester_name = challenge.requester.get_full_name()
     form = ChallengeConfirmationForm(request.POST or None, instance=challenge)
     context = {
@@ -104,13 +108,12 @@ def officer_review_confirmation(request, pk):
     return render(request, "candidate/review_confirm.html", context=context)
 
 
+@login_required(login_url='../../../accounts/login/')
 def challenge_detail_view(request, pk):
     challenge = OffChallenge.objects.get(id=pk)
     officer_name = challenge.officer.get_full_name()
     requester_name = challenge.requester.get_full_name()
     # check whether the view of page is the officer who gave the challenge
-    if request.user.is_anonymous:
-        raise RuntimeError('User not logged in')
     viewer_is_officer = challenge.officer == request.user
     if viewer_is_officer:
         review_link = request.build_absolute_uri(
