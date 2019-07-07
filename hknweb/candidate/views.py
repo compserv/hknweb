@@ -3,16 +3,20 @@ from django.views.generic.edit import FormView, UpdateView
 from django.shortcuts import render, redirect, reverse
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 
 from .models import OffChallenge
 from .forms import ChallengeRequestForm, ChallengeConfirmationForm
 
 # Create your views here.
 
+@method_decorator(login_required(login_url='../accounts/login/'), name='dispatch')
 class IndexView(generic.TemplateView):
     template_name = 'candidate/index.html'
 
 
+@method_decorator(login_required(login_url='../accounts/login/'), name='dispatch')
 class CandRequestView(FormView, generic.ListView):
     template_name = 'candidate/candreq.html'
     form_class = ChallengeRequestForm
@@ -52,28 +56,26 @@ class CandRequestView(FormView, generic.ListView):
         msg.send()
 
     def get_queryset(self):
-        if self.request.user.is_anonymous:
-            raise RuntimeError('User not logged in')
         result = OffChallenge.objects \
                 .order_by('-request_date') \
                 .filter(requester__exact=self.request.user)
         return result
 
 
+@method_decorator(login_required(login_url='../accounts/login/'), name='dispatch')
 class OffRequestView(generic.ListView):
     template_name = 'candidate/offreq.html'
 
     context_object_name = 'challenge_list'
 
     def get_queryset(self):
-        if self.request.user.is_anonymous:
-            raise RuntimeError('User not logged in')
         result = OffChallenge.objects \
                 .order_by('-request_date') \
                 .filter(officer__exact=self.request.user)
         return result
 
 
+@login_required(login_url='../../../accounts/login/')
 def officer_confirm_view(request, pk):
     challenge = OffChallenge.objects.get(id=pk)
     requester_name = challenge.requester.get_full_name()
