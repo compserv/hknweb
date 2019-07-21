@@ -254,6 +254,14 @@ body {
     color: rgba(255, 255, 255, 0.75);
 }
 
+.red-text {
+    color: #ff0020;
+}
+
+.small-margin {
+    margin-left: 4%
+}
+
 /* Add this to out divs that evelope the body of a page.
    Makes sure "float" doesn't mess up the css. */
 .parent {
