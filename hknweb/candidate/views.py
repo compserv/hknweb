@@ -9,14 +9,15 @@ from django.utils.decorators import method_decorator
 from .models import OffChallenge
 from .forms import ChallengeRequestForm, ChallengeConfirmationForm
 
-# Create your views here.
-
-@method_decorator(login_required(login_url='../accounts/login/'), name='dispatch')
+# Candidate portal home
+@method_decorator(login_required(login_url='/accounts/login/'), name='dispatch')
 class IndexView(generic.TemplateView):
     template_name = 'candidate/index.html'
 
 
-@method_decorator(login_required(login_url='../accounts/login/'), name='dispatch')
+# Form for submitting officer challenge requests
+# And list of past requests for candidate
+@method_decorator(login_required(login_url='/accounts/login/'), name='dispatch')
 class CandRequestView(FormView, generic.ListView):
     template_name = 'candidate/candreq.html'
     form_class = ChallengeRequestForm
@@ -62,7 +63,9 @@ class CandRequestView(FormView, generic.ListView):
         return result
 
 
-@method_decorator(login_required(login_url='../accounts/login/'), name='dispatch')
+# List of past challenge requests for officer
+# Non-officers can still visit this page but will not have any entries
+@method_decorator(login_required(login_url='/accounts/login/'), name='dispatch')
 class OffRequestView(generic.ListView):
     template_name = 'candidate/offreq.html'
 
@@ -75,7 +78,9 @@ class OffRequestView(generic.ListView):
         return result
 
 
-@login_required(login_url='../../../accounts/login/')
+# Officer views and confirms a challenge request after clicking email link
+# Only the officer who game the challenge can review it
+@login_required(login_url='/accounts/login/')
 def officer_confirm_view(request, pk):
     challenge = OffChallenge.objects.get(id=pk)
     if request.user.id != challenge.officer.id:
@@ -96,7 +101,7 @@ def officer_confirm_view(request, pk):
     return render(request, "candidate/challenge_confirm.html", context=context)
 
 
-# the page displayed after officer reviews challenge and clicks "submit"
+# The page displayed after officer reviews challenge and clicks "submit"
 def officer_review_confirmation(request, pk):
     challenge = OffChallenge.objects.get(id=pk)
     requester_name = challenge.requester.get_full_name()
@@ -107,7 +112,8 @@ def officer_review_confirmation(request, pk):
     return render(request, "candidate/review_confirm.html", context=context)
 
 
-@login_required(login_url='../../../accounts/login/')
+# Detail view of an officer challenge
+@login_required(login_url='/accounts/login/')
 def challenge_detail_view(request, pk):
     challenge = OffChallenge.objects.get(id=pk)
     officer_name = challenge.officer.get_full_name()
