@@ -13,6 +13,19 @@ from .forms import ChallengeRequestForm, ChallengeConfirmationForm
 @method_decorator(login_required(login_url='/accounts/login/'), name='dispatch')
 class IndexView(generic.TemplateView):
     template_name = 'candidate/index.html'
+    context_object_name = 'my_favorite_publishers'
+
+    def get_context_data(self):
+        challenges = OffChallenge.objects \
+                .order_by('-request_date') \
+                .filter(requester__exact=self.request.user)
+        reviewed_challenges = challenges.filter(reviewed=True)
+        context = {
+            'num_pending' : challenges.filter(reviewed=False).count(),
+            'num_rejected' : reviewed_challenges.filter(confirmed=False).count(),
+            'num_confirmed' : reviewed_challenges.filter(confirmed=True).count()
+        }
+        return context
 
 
 # Form for submitting officer challenge requests

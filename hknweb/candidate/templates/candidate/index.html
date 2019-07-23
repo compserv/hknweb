@@ -87,10 +87,13 @@ Candidate Portal
                 <h4>Interactivities</h4>
                 <ul>
                     <li>Officer Challenges</li>
-                    <ul>
-                        <li><a href="{% url 'candidate:candrequests' %}">(Candidate) Request Confirmation</a></li>
-                        <li><a href="{% url 'candidate:offrequests' %}">(Officer) Confirm Challenge Requests [coming soon]</a></li>
-                    </ul>
+                        <a href="{% url 'candidate:candrequests' %}">
+                            (View/Request Officer Challenge Confirmations)</a>
+                        <ul>
+                            <li>{{ num_pending }} pending</li>
+                            <li>{{ num_rejected }} rejected</li>
+                            <li>{{ num_confirmed }} confirmed</li>
+                        </ul>
                     <li>Officer Hangouts</li>
                     <ol type="1">
                         <li>Things</li>
