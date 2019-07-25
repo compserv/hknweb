@@ -5,6 +5,10 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from django.conf import settings
+from django.contrib.staticfiles.finders import find
+from django.contrib.staticfiles.templatetags.staticfiles import static
+from random import randint
 
 from .models import OffChallenge
 from .forms import ChallengeRequestForm, ChallengeConfirmationForm
@@ -43,24 +47,21 @@ class CandRequestView(FormView, generic.ListView):
         # It should return an HttpResponse.
         form.instance.requester = self.request.user
         form.save()
-        self.send_email(form)
+        self.send_request_email(form)
         return super().form_valid(form)
 
-    def send_email(self, form):
+    def send_request_email(self, form):
         subject = 'Confirm Officer Challenge'
         officer_email = form.instance.officer.email
         text_content = 'Confirm officer challenge'
 
-        candidate_name = form.instance.requester.get_full_name()
-        candidate_username = form.instance.requester.username
         link = self.request.build_absolute_uri(
                 reverse("candidate:challengeconfirm", kwargs={ 'pk' : form.instance.id }))
         html_content = render_to_string(
-            'candidate/email.html',
+            'candidate/request_email.html',
             {
-                'pk': form.instance.id,
-                'candidate_name' : candidate_name,
-                'candidate_username' : candidate_username,
+                'candidate_name' : form.instance.requester.get_full_name(),
+                'candidate_username' : form.instance.requester.username,
                 'link' : link,
             }
         )
@@ -75,9 +76,19 @@ class CandRequestView(FormView, generic.ListView):
                 .filter(requester__exact=self.request.user)
         return result
 
+def get_rand_message():
+    with open(get_static("candidate/messages.txt")) as f:
+        messages = f.readlines()
+    return messages[randint(0, len(messages) - 1)].strip()
+
+def get_static(path):
+    if settings.DEBUG:
+        return find(path)
+    else:
+        return static(path)
 
 # List of past challenge requests for officer
-# Non-officers can still visit this page but will not have any entries
+# Non-officers can still visit this page but it will not have any entries
 @method_decorator(login_required(login_url='/accounts/login/'), name='dispatch')
 class OffRequestView(generic.ListView):
     template_name = 'candidate/offreq.html'
@@ -95,6 +106,27 @@ class OffRequestView(generic.ListView):
 # Only the officer who game the challenge can review it
 @login_required(login_url='/accounts/login/')
 def officer_confirm_view(request, pk):
+    def send_cand_confirm_email(form):
+        subject = 'Your Officer Challenge Was Reviewed'
+        candidate_email = form.instance.requester.email
+        text_content = 'Your Officer Challenge Was Reviewed'
+
+        link = request.build_absolute_uri(
+                reverse("candidate:detail", kwargs={ 'pk' : form.instance.id }))
+        html_content = render_to_string(
+            'candidate/cand_confirm_email.html',
+            {
+                'confirmed' : form.instance.confirmed,
+                'officer_name' : form.instance.officer.get_full_name(),
+                'officer_username' : form.instance.officer.username,
+                'link' : link,
+            }
+        )
+        msg = EmailMultiAlternatives(subject, text_content,
+                'no-reply@hkn.eecs.berkeley.edu', [candidate_email])
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
+
     challenge = OffChallenge.objects.get(id=pk)
     if request.user.id != challenge.officer.id:
         return render(request, "candidate/401.html", status=401)
@@ -110,6 +142,7 @@ def officer_confirm_view(request, pk):
     if form.is_valid():
         form.instance.reviewed = True
         form.save()
+        send_cand_confirm_email(form)
         return redirect('/cand/reviewconfirm/' + pk)
     return render(request, "candidate/challenge_confirm.html", context=context)
 

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>title</title>
+</head>
+<body>
+
+    <p>
+        {% if confirmed %}
+            Congratulations! {{ officer_name }} ({{ officer_username }}) has
+            confirmed your officer challenge!
+        {% else %}
+            Oh no! {{ officer_name }} ({{ officer_username }}) has rejected
+            your officer challenge.
+        {% endif %}
+        Click
+        <a href="{{ link }}">here</a>
+        to view the officer's feedback.
+    </p>
+
+    <p>
+        Have a nice day!
+    </p>
+
+</body>
+</html>
