@@ -35,10 +35,6 @@ migrate:
 makemigrations:
 	HKNWEB_MODE='dev' pipenv run python ./manage.py makemigrations
 
-.PHONY: makemigrations
-makemigrations:
-	pipenv run python ./manage.py makemigrations --settings=hknweb.settings.dev
-
 .PHONY: test
 test: venv
 	pipenv run pytest -v tests/
@@ -56,3 +52,15 @@ update: venv
 mysql:
 	mysql -e "CREATE DATABASE IF NOT EXISTS hkn;"
 	mysql -e "GRANT ALL PRIVILEGES ON hkn.* TO 'hkn'@'localhost' IDENTIFIED BY 'hknweb-dev';"
+
+.PHONY: cronadd
+cronadd:
+	HKNWEB_MODE='dev' pipenv run python ./manage.py crontab add
+
+.PHONY: cronshow
+cronshow:
+	HKNWEB_MODE='dev' pipenv run python ./manage.py crontab show
+
+.PHONY: cronremove
+cronremove:
+	HKNWEB_MODE='dev' pipenv run python ./manage.py crontab remove

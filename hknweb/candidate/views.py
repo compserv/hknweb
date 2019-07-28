@@ -21,8 +21,8 @@ class IndexView(generic.TemplateView):
 
     def get_context_data(self):
         challenges = OffChallenge.objects \
-                .order_by('-request_date') \
-                .filter(requester__exact=self.request.user)
+                .filter(requester__exact=self.request.user) \
+                .order_by('-request_date')
         reviewed_challenges = challenges.filter(reviewed=True)
         context = {
             'num_pending' : challenges.filter(reviewed=False).count(),
@@ -72,8 +72,8 @@ class CandRequestView(FormView, generic.ListView):
 
     def get_queryset(self):
         result = OffChallenge.objects \
-                .order_by('-request_date') \
-                .filter(requester__exact=self.request.user)
+                .filter(requester__exact=self.request.user) \
+                .order_by('-request_date')
         return result
 
 def get_rand_message():
@@ -97,8 +97,8 @@ class OffRequestView(generic.ListView):
 
     def get_queryset(self):
         result = OffChallenge.objects \
-                .order_by('-request_date') \
-                .filter(officer__exact=self.request.user)
+                .filter(officer__exact=self.request.user) \
+                .order_by('-request_date')
         return result
 
 
