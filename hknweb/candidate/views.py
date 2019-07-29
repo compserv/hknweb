@@ -76,16 +76,6 @@ class CandRequestView(FormView, generic.ListView):
                 .order_by('-request_date')
         return result
 
-def get_rand_message():
-    with open(get_static("candidate/messages.txt")) as f:
-        messages = f.readlines()
-    return messages[randint(0, len(messages) - 1)].strip()
-
-def get_static(path):
-    if settings.DEBUG:
-        return find(path)
-    else:
-        return static(path)
 
 # List of past challenge requests for officer
 # Non-officers can still visit this page but it will not have any entries
@@ -164,9 +154,12 @@ def challenge_detail_view(request, pk):
     challenge = OffChallenge.objects.get(id=pk)
     officer_name = challenge.officer.get_full_name()
     requester_name = challenge.requester.get_full_name()
-    # check whether the view of page is the officer who gave the challenge
-    viewer_is_officer = challenge.officer == request.user
-    if viewer_is_officer:
+
+    # check whether the viewer of page is the officer who gave the challenge
+    viewer_is_the_officer = challenge.officer == request.user
+    # check whether the viewer of page is an officer
+    viewer_is_an_officer = is_officer(request.user)
+    if viewer_is_the_officer:
         review_link = request.build_absolute_uri(
                 reverse("candidate:challengeconfirm", kwargs={ 'pk' : pk }))
     else:
@@ -175,7 +168,32 @@ def challenge_detail_view(request, pk):
         "challenge" : challenge,
         "officer_name" : officer_name,
         "requester_name" : requester_name,
-        "viewer_is_officer" : viewer_is_officer,
+        "viewer_is_the_officer" : viewer_is_the_officer,
+        "viewer_is_an_officer" : viewer_is_an_officer,
         "review_link" : review_link,
     }
     return render(request, "candidate/challenge_detail.html", context=context)
+
+
+# HELPERS
+
+def is_officer(user):
+    return user.groups.filter(name="officer").exists()
+
+# This function is not used; it can be used to view all photos available
+def get_all_photos():
+    with open(get_static("candidate/animal_photo_urls.txt")) as f:
+        urls = f.readlines()
+    return [url.strip() + "?w=500" for url in urls]
+
+# images from pexels.com
+def get_rand_photo(width):
+    with open(get_static("candidate/animal_photo_urls.txt")) as f:
+        urls = f.readlines()
+    return urls[randint(0, len(messages) - 1)].strip() + "?w=" + str(width)
+
+def get_static(path):
+    if settings.DEBUG:
+        return find(path)
+    else:
+        return static(path)

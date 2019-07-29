@@ -33,7 +33,7 @@ View Officer Challenge
     <b>Request Date:</b> {{ challenge.request_date }}<br/>
 
 
-    {% if viewer_is_officer %}
+    {% if viewer_is_the_officer %}
         <p class="link"><a href="{{ review_link }}">
             Change My Review of This Challenge
         </a></p>
@@ -41,7 +41,7 @@ View Officer Challenge
 
 
     <!-- Link to go back depends on whether you're the candidate or officer -->
-    {% if viewer_is_officer %}
+    {% if viewer_is_an_officer %}
         <p class="link"><a href="{% url 'candidate:offrequests' %}?q=\\">
             Go Back to All Challenges from Me
         </a></p>
