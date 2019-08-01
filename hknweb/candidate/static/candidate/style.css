@@ -2,6 +2,7 @@
     padding-top: 1em;
     padding-bottom: 1em;
 }
+
 .centered {
     max-width: 1250px;
     margin: 0 auto;
@@ -30,7 +31,6 @@
         height: 10px;
     }
 }
-
 @media screen and (min-width: 750px) {
     .checklist-left-col, .checklist-right-col {
         display: inline-block;
@@ -46,9 +46,11 @@ section {
     background-color: #F2F2F2;
     padding: 20px;
 }
+
 h2:first-child {
     margin-top: 0;
 }
+
 /* Lastly, the clearfix hack to prevent floated elements overflowing container */
 .centered::after {
     content: "";
@@ -83,6 +85,10 @@ h2:first-child {
 .inline-icon {
     width: 1.1em;
     vertical-align: middle;
+}
+
+.blue {
+    color: #0000A0;
 }
 
 .table-icon {

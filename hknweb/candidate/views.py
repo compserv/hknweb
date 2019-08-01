@@ -3,6 +3,7 @@ from django.views.generic.edit import FormView, UpdateView
 from django.shortcuts import render, redirect, reverse
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.conf import settings
@@ -43,11 +44,10 @@ class CandRequestView(FormView, generic.ListView):
     context_object_name = 'challenge_list'
 
     def form_valid(self, form):
-        # This method is called when valid form data has been POSTed.
-        # It should return an HttpResponse.
         form.instance.requester = self.request.user
         form.save()
         self.send_request_email(form)
+        messages.success(self.request, 'Your request was submitted to the officer!')
         return super().form_valid(form)
 
     def send_request_email(self, form):
@@ -55,14 +55,15 @@ class CandRequestView(FormView, generic.ListView):
         officer_email = form.instance.officer.email
         text_content = 'Confirm officer challenge'
 
-        link = self.request.build_absolute_uri(
+        confirm_link = self.request.build_absolute_uri(
                 reverse("candidate:challengeconfirm", kwargs={ 'pk' : form.instance.id }))
         html_content = render_to_string(
             'candidate/request_email.html',
             {
                 'candidate_name' : form.instance.requester.get_full_name(),
                 'candidate_username' : form.instance.requester.username,
-                'link' : link,
+                'confirm_link' : confirm_link,
+                'img_link' : get_rand_photo(),
             }
         )
         msg = EmailMultiAlternatives(subject, text_content,
@@ -184,13 +185,13 @@ def is_officer(user):
 def get_all_photos():
     with open(get_static("candidate/animal_photo_urls.txt")) as f:
         urls = f.readlines()
-    return [url.strip() + "?w=500" for url in urls]
+    return [url.strip() + "?w=400" for url in urls]
 
 # images from pexels.com
-def get_rand_photo(width):
+def get_rand_photo(width=400):
     with open(get_static("candidate/animal_photo_urls.txt")) as f:
         urls = f.readlines()
-    return urls[randint(0, len(messages) - 1)].strip() + "?w=" + str(width)
+    return urls[randint(0, len(urls) - 1)].strip() + "?w=" + str(width)
 
 def get_static(path):
     if settings.DEBUG:
