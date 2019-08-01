@@ -61,6 +61,7 @@ class CandRequestView(FormView, generic.ListView):
             'candidate/request_email.html',
             {
                 'candidate_name' : form.instance.requester.get_full_name(),
+                # TODO: for some usernames such as catherine.hu, this becomes a link. Why??
                 'candidate_username' : form.instance.requester.username,
                 'confirm_link' : confirm_link,
                 'img_link' : get_rand_photo(),
@@ -102,7 +103,7 @@ def officer_confirm_view(request, pk):
         candidate_email = form.instance.requester.email
         text_content = 'Your Officer Challenge Was Reviewed'
 
-        link = request.build_absolute_uri(
+        challenge_link = request.build_absolute_uri(
                 reverse("candidate:detail", kwargs={ 'pk' : form.instance.id }))
         html_content = render_to_string(
             'candidate/cand_confirm_email.html',
@@ -110,7 +111,8 @@ def officer_confirm_view(request, pk):
                 'confirmed' : form.instance.confirmed,
                 'officer_name' : form.instance.officer.get_full_name(),
                 'officer_username' : form.instance.officer.username,
-                'link' : link,
+                'challenge_link' : challenge_link,
+                'img_link' : get_rand_photo(),
             }
         )
         msg = EmailMultiAlternatives(subject, text_content,
@@ -118,6 +120,7 @@ def officer_confirm_view(request, pk):
         msg.attach_alternative(html_content, "text/html")
         msg.send()
 
+    # TODO: gracefully handle when a challenge does not exist
     challenge = OffChallenge.objects.get(id=pk)
     if request.user.id != challenge.officer.id:
         return render(request, "candidate/401.html", status=401)
