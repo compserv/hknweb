@@ -52,15 +52,3 @@ update: venv
 mysql:
 	mysql -e "CREATE DATABASE IF NOT EXISTS hkn;"
 	mysql -e "GRANT ALL PRIVILEGES ON hkn.* TO 'hkn'@'localhost' IDENTIFIED BY 'hknweb-dev';"
-
-.PHONY: cronadd
-cronadd:
-	HKNWEB_MODE='dev' pipenv run python ./manage.py crontab add
-
-.PHONY: cronshow
-cronshow:
-	HKNWEB_MODE='dev' pipenv run python ./manage.py crontab show
-
-.PHONY: cronremove
-cronremove:
-	HKNWEB_MODE='dev' pipenv run python ./manage.py crontab remove

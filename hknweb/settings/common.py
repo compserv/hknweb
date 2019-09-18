@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'markdownx',
     'social_django',
-    'django_crontab',
 ]
 
 MIDDLEWARE = [
@@ -183,9 +182,3 @@ MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
 # STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 #SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = ['hkn.eecs.berkeley.edu']
-
-# Background tasks
-
-CRONJOBS = [
-    # TODO: Doesn't currently work
-]
