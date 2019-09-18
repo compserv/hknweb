@@ -35,7 +35,11 @@ View Officer Challenge
 
     {% if viewer_is_the_officer %}
         <p class="link"><a href="{{ review_link }}">
+        {% if challenge.reviewed %}
             Change My Review of This Challenge
+        {% else %}
+            Review This Challenge
+        {% endif %}
         </a></p>
     {% endif %}
 
