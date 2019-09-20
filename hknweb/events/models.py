@@ -29,8 +29,11 @@ class Event(models.Model):
     # created_at  = models.DateTimeField(auto_now_add=True)
     # updated_at  = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
+    def __repr__(self):
        return "Event(name={}, location={})".format(self.name, self.location)
+
+    def __str__(self):
+       return self.name
 
 class Rsvp(models.Model):
     user  = models.ForeignKey(User, models.CASCADE, null=True)
@@ -39,8 +42,11 @@ class Rsvp(models.Model):
     comment         = models.TextField(blank=True, default="")
     # transportation  = models.IntegerField(choices=TRANSPORT_ENUM,
     #                                       default=HAVE_RIDE)
-    # created_at      = models.DateTimeField(auto_now_add=True)
+    created_at      = models.DateTimeField(auto_now_add=True)
     # updated_at      = models.DateTimeField(auto_now=True)
 
+    def __repr__(self):
+       return "Rsvp(event={})".format(self.event)
+    
     def __str__(self):
-        return "RSVP(event={})".format(self.event)
+        return self.event.name
