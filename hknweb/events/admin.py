@@ -1,6 +1,25 @@
 from django.contrib import admin
 from .models import EventType, Event, Rsvp
 
+class RsvpAdmin(admin.ModelAdmin):
+
+    fields = ['event', 'user', 'confirmed', 'comment', 'created_at']
+    readonly_fields = ['created_at']
+    list_display = ('event', 'user', 'confirmed', 'created_at')
+    list_filter = ['confirmed', 'created_at', 'event', 'user']
+    search_fields = ['event__name', 'user__username', 'user__first_name', 'user__last_name']
+
+    actions = ["mark_confirmed", "mark_unconfirmed"]
+
+    def mark_confirmed(self, request, queryset):
+        queryset.update(confirmed=True)
+
+    def mark_unconfirmed(self, request, queryset):
+        queryset.update(confirmed=False)
+
+    mark_confirmed.short_description = "Mark selected as confirmed"
+    mark_unconfirmed.short_description = "Mark selected as unconfirmed"
+
 admin.site.register(EventType)
 admin.site.register(Event)
-admin.site.register(Rsvp)
+admin.site.register(Rsvp, RsvpAdmin)
