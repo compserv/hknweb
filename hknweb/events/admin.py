@@ -15,11 +15,14 @@ class RsvpAdmin(admin.ModelAdmin):
 
     fields = ['event', 'user', 'confirmed', 'comment', 'created_at']
     readonly_fields = ['created_at']
-    list_display = ('event', 'user', 'confirmed', 'created_at')
-    list_filter = ['confirmed', 'created_at', 'event', 'user']
+    list_display = ('event', 'user', 'full_name', 'confirmed', 'created_at')
+    list_filter = ['confirmed', 'created_at', 'event']
     search_fields = ['event__name', 'user__username', 'user__first_name', 'user__last_name']
 
     actions = ["mark_confirmed", "mark_unconfirmed"]
+
+    def full_name(self, rsvp):
+        return rsvp.user.get_full_name()
 
     def mark_confirmed(self, request, queryset):
         queryset.update(confirmed=True)
