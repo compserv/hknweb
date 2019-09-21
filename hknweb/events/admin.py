@@ -1,6 +1,16 @@
 from django.contrib import admin
 from .models import EventType, Event, Rsvp
 
+class EventAdmin(admin.ModelAdmin):
+
+    fields = ['name', 'slug', 'start_time', 'end_time', 'location', 'event_type', 'description', 'rsvp_limit', 'rsvps', 'created_by', 'created_at']
+    # NOTE: created_by should be read only, but I don't know how to set it to default to current user
+    readonly_fields = ['created_at']
+    list_display = ('name', 'start_time', 'location', 'event_type', 'rsvps', 'created_by', 'created_at')
+    list_filter = ['start_time', 'created_at', 'event_type', 'location', 'created_by']
+    search_fields = ['name', 'created_by__username', 'created_by__first_name', 'created_by__last_name']
+
+
 class RsvpAdmin(admin.ModelAdmin):
 
     fields = ['event', 'user', 'confirmed', 'comment', 'created_at']
@@ -21,5 +31,5 @@ class RsvpAdmin(admin.ModelAdmin):
     mark_unconfirmed.short_description = "Mark selected as unconfirmed"
 
 admin.site.register(EventType)
-admin.site.register(Event)
+admin.site.register(Event, EventAdmin)
 admin.site.register(Rsvp, RsvpAdmin)
