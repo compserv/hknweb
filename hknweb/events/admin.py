@@ -32,7 +32,7 @@ class RsvpAdmin(admin.ModelAdmin):
         queryset.update(confirmed=False)
 
     def cute_animal(self, request, queryset):
-        return redirect("http://stackoverflow.com/") # yes cute animals I swear
+        return redirect("https://www.google.com/search?q=cute+cats&tbm=isch")
 
     mark_confirmed.short_description = "Mark selected as confirmed"
     mark_unconfirmed.short_description = "Mark selected as unconfirmed"

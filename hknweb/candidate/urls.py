@@ -9,7 +9,7 @@ urlpatterns = [
     path('candreq', views.CandRequestView.as_view(), name='candrequests'),
     # officer end of officer challenge requests
     path('offreq', views.OffRequestView.as_view(), name='offrequests'),
-    re_path(r'^challengeconfirm/(?P<pk>\d+)/$', views.officer_confirm_view, name='challengeconfirm'),
-    re_path(r'^detail/(?P<pk>\d+)/$', views.challenge_detail_view, name='detail'),
-    re_path(r'^reviewconfirm/(?P<pk>\d+)/$', views.officer_review_confirmation, name='reviewconfirm'),
+    path('challengeconfirm/<int:pk>/', views.officer_confirm_view, name='challengeconfirm'),
+    path('detail/<int:pk>/', views.challenge_detail_view, name='detail'),
+    path('reviewconfirm/<int:pk>/', views.officer_review_confirmation, name='reviewconfirm'),
 ]

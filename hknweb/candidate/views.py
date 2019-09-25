@@ -141,7 +141,7 @@ def officer_confirm_view(request, pk):
         form.instance.reviewed = True
         form.save()
         send_cand_confirm_email(form)
-        return redirect('/cand/reviewconfirm/' + pk)
+        return redirect('/cand/reviewconfirm/' + str(pk))
     return render(request, "candidate/challenge_confirm.html", context=context)
 
 
