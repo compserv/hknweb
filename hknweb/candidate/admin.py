@@ -41,8 +41,9 @@ class OffChallengeAdmin(admin.ModelAdmin):
 
 class AnnouncementAdmin(admin.ModelAdmin):
 
+    # NOTE: release_date is not readonly because we can reuse announcements from past semesters
+    # The VP can just change the date and release it again
     fields = ['title', 'text', 'visible', 'release_date']
-    readonly_fields = ['release_date']
     list_display = ('title', 'visible', 'release_date')
     list_filter = ['visible', 'release_date']
     search_fields = ['title', 'text']

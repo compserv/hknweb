@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 from django.contrib.auth.models import User
 
 MAX_STRLEN = 85 # default max length for char fields
@@ -52,7 +53,7 @@ class Announcement(models.Model):
     text            = models.TextField(max_length=MAX_TXTLEN, blank=True, default='')
     # if visible == False, then admins can see announcement but it's not displayed on portal
     visible         = models.BooleanField(default=False)
-    release_date    = models.DateTimeField(auto_now_add=True)
+    release_date    = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return self.title if self.title != '' else self.text
