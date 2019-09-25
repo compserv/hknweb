@@ -2,6 +2,8 @@
 {% load static %}
 
 {% block content %}
+
+<div class="small-margin">
   <h2>Sign up</h2>
   <form method="post">
     {% csrf_token %}
@@ -10,4 +12,7 @@
     <div class="g-recaptcha" data-sitekey="6LeYTKAUAAAAADooVC_FG9ua47PnwP_gGWOSwauK"></div>
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>
+  <br>
+</div>
+
 {% endblock %}
