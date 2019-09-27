@@ -3,7 +3,12 @@ from hknweb.events.models import Event
 from hknweb.tutoring.models import Tutor
 import datetime
 
+
+
+import pprint
+
 def home(request):
+    pprint.pprint(request.__dict__["user"].__dict__)
     today = datetime.datetime.now()
     next_weekday = today
     # TODO: determine earliest weekday for which tutoring still has yet to complete, and query those tutors
