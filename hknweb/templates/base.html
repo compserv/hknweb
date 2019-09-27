@@ -42,7 +42,12 @@
                     <label for="toggle">Outreach</label>
                     <label for="toggle">Events</label>
                     <label for="toggle">About</label>
-                    <a class="account-button" href="/cand">Account<!-- <i style="border: solid black; border-width: 0 3px 3px 0; display: inline-block; padding: 3px; transform: rotate(45deg); -webkit-transform: rotate(45deg);"></i> --></a>
+                    <label>|</label>
+                    {% if user.is_authenticated %}
+                        Welcome, {{ user.first_name }} <i style="border: solid black; border-width: 0 3px 3px 0; display: inline-block; padding: 3px; margin-left: 5px; transform: rotate(45deg); -webkit-transform: rotate(45deg);"></i>
+                    {% else %}
+                        <a class="account-button" href="/accounts/login">Account</a>
+                    {% endif %}
                     <div class="navi-menu-button"><label for="toggle">Menu</label></div>
                 </div>
             </div>
