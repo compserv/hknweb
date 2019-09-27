@@ -127,7 +127,7 @@ def officer_confirm_view(request, pk):
     # TODO: gracefully handle when a challenge does not exist
     challenge = OffChallenge.objects.get(id=pk)
     if request.user.id != challenge.officer.id:
-        return render(request, "candidate/401.html", status=401)
+        return render(request, "errors/401.html", status=401)
 
     requester_name = challenge.requester.get_full_name()
     form = ChallengeConfirmationForm(request.POST or None, instance=challenge)
@@ -141,7 +141,7 @@ def officer_confirm_view(request, pk):
         form.instance.reviewed = True
         form.save()
         send_cand_confirm_email(form)
-        return redirect('/cand/reviewconfirm/' + str(pk))
+        return redirect('/cand/reviewconfirm/{}'.format(pk))
     return render(request, "candidate/challenge_confirm.html", context=context)
 
 

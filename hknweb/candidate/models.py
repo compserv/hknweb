@@ -17,7 +17,6 @@ class OffChallenge(models.Model):
     class Meta:
         verbose_name = "Officer challenge"
 
-    id              = models.AutoField(primary_key=True)
     requester       = models.ForeignKey('auth.User', limit_choices_to={'groups__name': "candidate"},
                         on_delete=models.CASCADE, default=None, related_name='requester')
     officer         = models.ForeignKey('auth.User', limit_choices_to={'groups__name': "officer"},
@@ -48,7 +47,6 @@ class Announcement(models.Model):
     and the text will follow that in normal font, with a space in between.
     """
 
-    id              = models.AutoField(primary_key=True)
     title           = models.CharField(max_length=MAX_STRLEN, default='')
     text            = models.TextField(max_length=MAX_TXTLEN, blank=True, default='')
     # if visible == False, then admins can see announcement but it's not displayed on portal

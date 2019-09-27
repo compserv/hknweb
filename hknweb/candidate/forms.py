@@ -11,7 +11,7 @@ class ChallengeRequestForm(forms.ModelForm):
         fields = ['name', 'officer', 'description', 'proof']
 
     # only officers can confirm challenges
-    officer = forms.ModelChoiceField(queryset=User.objects \
+    officer = forms.ModelChoiceField(queryset=User.objects
             .filter(groups__name="officer").order_by('username'))
 
 

@@ -32,7 +32,6 @@ class Alumnus(models.Model):
     class Meta:
         verbose_name_plural = 'alumni'  # correct plural
 
-    id = models.AutoField(primary_key=True)
     first_name = models.CharField(max_length=max_strlen, default='')
     last_name = models.CharField(max_length=max_strlen, default='')
     perm_email = models.EmailField(default='', verbose_name='permanent email')
