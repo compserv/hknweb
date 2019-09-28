@@ -1,3 +1,5 @@
+import urllib
+import json
 from django.shortcuts import redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.http import JsonResponse
@@ -12,12 +14,27 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib import messages
+from django.conf import settings
 
 def account_create(request):
     if request.method == 'POST':
         form = SignupForm(request.POST)
         if form.is_valid():
-            form.save()
+            recaptcha_response = request.POST.get('g-recaptcha-response')
+            print(type(recaptcha_response))
+            url = 'https://www.google.com/recaptcha/api/siteverify'
+            values = {
+                'secret': settings.RECAPTCHA_PRIVATE_KEY,
+                'response': recaptcha_response
+            }
+            data = urllib.parse.urlencode(values).encode()
+            req =  urllib.request.Request(url, data=data)
+            response = urllib.request.urlopen(req)
+            result = json.loads(response.read().decode())
+            if result['success']:
+                form.save()
+            else:
+                raise forms.ValidationError('Invalid reCAPTCHA. Please try again.', code='invalid')
             username = form.cleaned_data.get('username')
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username = username, password = raw_password)
