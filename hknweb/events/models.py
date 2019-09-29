@@ -36,7 +36,7 @@ class Event(models.Model):
     def __str__(self):
        return self.name
 
-class Rsvp(models.Model):
+class Rsvp(models.Model): # TODO: null should be false in some cases
     user  = models.ForeignKey(User, models.CASCADE, null=True, verbose_name="rsvp'd by")
     event = models.ForeignKey(Event, models.CASCADE, null=True)
     confirmed       = models.BooleanField(null=True)

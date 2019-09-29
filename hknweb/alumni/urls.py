@@ -1,4 +1,4 @@
-from django.urls import path, re_path
+from django.urls import path
 
 from . import views
 
@@ -9,7 +9,7 @@ urlpatterns = [
     path('', views.IndexView.as_view(), name='index'),
     path('search/', views.SearchView.as_view(), name='search'),
     # matches only valid ids
-    re_path(r'^detail/(?P<pk>\d+)/$', views.alumni_detail_view, name='detail'),
+    path('detail/<int:pk>/', views.alumni_detail_view, name='detail'),
     path('search_type/', views.search_type, name='search_type'),
     path('form/', views.form, name='form'),
 ]
