@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, reverse
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.utils.decorators import method_decorator
 from django.conf import settings
 from django.contrib.staticfiles.finders import find
@@ -14,8 +14,23 @@ from random import randint
 from .models import OffChallenge, Announcement
 from .forms import ChallengeRequestForm, ChallengeConfirmationForm
 
+# decorators
+
+# used for things only officers and candidates can access
+def check_account_access(func):
+    def check_then_call(request, *args, **kwargs):
+        if not is_cand_or_officer(request.user):
+            return render(request, "errors/401.html", status=401)
+        return func(request, *args, **kwargs)
+    return check_then_call
+
+
+# views
+
 # Candidate portal home
 @method_decorator(login_required(login_url='/accounts/login/'), name='dispatch')
+@method_decorator(check_account_access, name='dispatch')
+# @method_decorator(is_cand_or_officer)
 class IndexView(generic.TemplateView):
     template_name = 'candidate/index.html'
     context_object_name = 'my_favorite_publishers'
@@ -40,6 +55,7 @@ class IndexView(generic.TemplateView):
 # Form for submitting officer challenge requests
 # And list of past requests for candidate
 @method_decorator(login_required(login_url='/accounts/login/'), name='dispatch')
+@method_decorator(check_account_access, name='dispatch')
 class CandRequestView(FormView, generic.ListView):
     template_name = 'candidate/candreq.html'
     form_class = ChallengeRequestForm
@@ -86,6 +102,7 @@ class CandRequestView(FormView, generic.ListView):
 # List of past challenge requests for officer
 # Non-officers can still visit this page but it will not have any entries
 @method_decorator(login_required(login_url='/accounts/login/'), name='dispatch')
+@method_decorator(check_account_access, name='dispatch')
 class OffRequestView(generic.ListView):
     template_name = 'candidate/offreq.html'
 
@@ -101,6 +118,7 @@ class OffRequestView(generic.ListView):
 # Officer views and confirms a challenge request after clicking email link
 # Only the officer who game the challenge can review it
 @login_required(login_url='/accounts/login/')
+@check_account_access
 def officer_confirm_view(request, pk):
     def send_cand_confirm_email(form):
         subject = 'Your Officer Challenge Was Reviewed'
@@ -146,7 +164,11 @@ def officer_confirm_view(request, pk):
 
 
 # The page displayed after officer reviews challenge and clicks "submit"
+@login_required(login_url='/accounts/login/')
+@check_account_access
 def officer_review_confirmation(request, pk):
+    check_account_access(request)
+
     challenge = OffChallenge.objects.get(id=pk)
     requester_name = challenge.requester.get_full_name()
     context = {
@@ -158,7 +180,10 @@ def officer_review_confirmation(request, pk):
 
 # Detail view of an officer challenge
 @login_required(login_url='/accounts/login/')
+@check_account_access
 def challenge_detail_view(request, pk):
+    check_account_access(request)
+
     challenge = OffChallenge.objects.get(id=pk)
     officer_name = challenge.officer.get_full_name()
     requester_name = challenge.requester.get_full_name()
@@ -187,6 +212,10 @@ def challenge_detail_view(request, pk):
 
 def is_officer(user):
     return user.groups.filter(name="officer").exists()
+
+def is_cand_or_officer(user):
+    return user.groups.filter(name="candidate").exists() or \
+        user.groups.filter(name="officer").exists()
 
 # This function is not used; it can be used to view all photos available
 def get_all_photos():
