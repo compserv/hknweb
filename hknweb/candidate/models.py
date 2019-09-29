@@ -1,8 +1,9 @@
 from django.db import models
+from django.utils import timezone
 from django.contrib.auth.models import User
 
-max_strlen = 85 # default max length for char fields
-max_txtlen = 2000 # default max length for text fields
+MAX_STRLEN = 85 # default max length for char fields
+MAX_TXTLEN = 2000 # default max length for text fields
 
 
 class OffChallenge(models.Model):
@@ -16,17 +17,16 @@ class OffChallenge(models.Model):
     class Meta:
         verbose_name = "Officer challenge"
 
-    id              = models.AutoField(primary_key=True)
     requester       = models.ForeignKey('auth.User', limit_choices_to={'groups__name': "candidate"},
                         on_delete=models.CASCADE, default=None, related_name='requester')
     officer         = models.ForeignKey('auth.User', limit_choices_to={'groups__name': "officer"},
                         on_delete=models.CASCADE, default=None, related_name='officer')
-    name            = models.CharField(max_length=max_strlen, default='', verbose_name="title")
-    description     = models.TextField(max_length=max_txtlen, blank=True, default='')
+    name            = models.CharField(max_length=MAX_STRLEN, default='', verbose_name="title")
+    description     = models.TextField(max_length=MAX_TXTLEN, blank=True, default='')
     # proof of completion is optional (if proof is a file, the candiate can send it to slack)
-    proof           = models.TextField(max_length=max_txtlen, blank=True, default='')
+    proof           = models.TextField(max_length=MAX_TXTLEN, blank=True, default='')
     # optional comment about, say, why the confirmation request was declined
-    officer_comment = models.TextField(max_length=max_txtlen, blank=True, default='')
+    officer_comment = models.TextField(max_length=MAX_TXTLEN, blank=True, default='')
     # whether officer reviewed this request
     reviewed        = models.BooleanField(default=False)
     # whether officer confirmed this request
@@ -35,7 +35,24 @@ class OffChallenge(models.Model):
     confirmed       = models.BooleanField(default=False)
     request_date    = models.DateTimeField(auto_now_add=True)
 
-    # TODO not sure if I need a field for partners
-
     def __str__(self):
         return self.name
+
+
+# CS 61A LECTURE NUMBER 3141592653589793238462643383
+class Announcement(models.Model):
+    """
+    Model for an announcement. Created by VP or some other superuser.
+    Displayed on the candidate portal. The title will be displayed in bold,
+    and the text will follow that in normal font, with a space in between.
+    """
+
+    title           = models.CharField(max_length=MAX_STRLEN, default='')
+    text            = models.TextField(max_length=MAX_TXTLEN, blank=True, default='')
+    # if visible == False, then admins can see announcement but it's not displayed on portal
+    visible         = models.BooleanField(default=False)
+    release_date    = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.title if self.title != '' else self.text
+

@@ -1,5 +1,35 @@
 {% extends "base.html" %}
 {% load static from staticfiles %}
+<html>
+    <head>
+
+        <!-- Base CSS -->
+        <link rel="stylesheet" href="{% static "css/home.css" %}">
+
+        <!-- Fonts -->
+        <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,600,700,800,900|Open+Sans|PT+Sans:700|Roboto:400,500,700,900|Source+Sans+Pro:300,400,600,700" rel="stylesheet">
+
+        <!-- Materialize -->
+        <!-- Compiled and minified CSS -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+        <!-- Compiled and minified JavaScript -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    </head>
+    <body>
+        <div class="navi">
+            <div class="navi-logo">
+                <img src="{% static "img/hkn-bear.svg" %}" class="navi-logo-img">
+                <div class="navi-logo-text">
+                    <div class="navi-logo-title">
+                        Eta Kappa Nu
+                    </div>
+                    <div class="navi-logo-subtitle">
+                        UC Berkeley
+                    </div>
+                </div>
+            </div>
+            <div class="navi-menu-container">
+                <div class='navi-menu'>
 
 {% block header %}
 <link rel="stylesheet" href="{% static "css/home.css" %}">
@@ -28,7 +58,7 @@
             <a href="/exams">Exams</a> &#8226; <a href="">course guides and surveys</a> &#8226; <a href="">course map</a>
         </div>
     </div>
-    
+
     <div class="tutoring-column">
         <div class="tutoring-panel">
             <div class="tutoring-title">
@@ -79,9 +109,9 @@
                 </tr>
             </table>
         </div>
-    
+
         <br>
-    
+
         <div class="tutoring-panel">
             <div class="tutoring-title">
                 Upcoming Events
@@ -185,11 +215,11 @@
             <input id="first_name" type="text" class="validate">
             <label for="first_name">Your name</label>
             <br>
-            
+
             <input id="last_name" type="text" class="validate">
             <label for="last_name">Your email</label>
             <br>
-        
+
             <input id="last_name" type="text" class="validate">
             <label for="last_name">How can we help?</label>
         </form>

@@ -35,10 +35,6 @@ migrate:
 makemigrations:
 	HKNWEB_MODE='dev' pipenv run python ./manage.py makemigrations
 
-.PHONY: makemigrations
-makemigrations:
-	pipenv run python ./manage.py makemigrations --settings=hknweb.settings.dev
-
 .PHONY: test
 test: venv
 	pipenv run pytest -v tests/

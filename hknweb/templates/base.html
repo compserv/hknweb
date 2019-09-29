@@ -4,14 +4,18 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-  
+
         <!-- Fonts and CSS -->
         <link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro:300,400,600,700" rel="stylesheet">
         <link rel="stylesheet" href="{% static "css/base.css" %}">
+        <!-- Not sure what this is for? We already have a favicon -->
         <link rel="icon" href="{% static "img/hkn.svg" %}">
-        
+
+        <!-- Favicon -->
+        <link rel="shortcut icon" href="{% static 'img/favicon.png' %}"/>
+
         {% block header %}{% endblock %}
-        
+
         <title>{% block title %}{% endblock %} | Berkeley HKN</title>
     </head>
     <body>
@@ -114,7 +118,7 @@
             <div class="heading">
                 {% block heading %}{% endblock %}
             </div>
-            
+
             {% block content %}{% endblock %}
         </div>
 
@@ -141,7 +145,7 @@
                         Service: serv[at]hkn.eecs.berkeley.edu
                     </div>
                 </div>
-            
+
                 <div class="footer-block">
                     <div class="footer-block-text">
                         Created by the Computing Services (Compserv) committee. <br/>
@@ -151,7 +155,7 @@
                         </script> Berkeley HKN
                     </div>
                 </div>
-                
+
                 <div class="footer-block">
                     <a href="https://www.ocf.berkeley.edu">
                         <img src="{% static "img/ocf-hosted-penguin-dark.svg" %}" alt="Hosted by the OCF" />
@@ -159,7 +163,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Old footer (black & gold):
         <footer class="w-100">
             <nav class="dt border-box w-100 bg-dark-gray font-body">
@@ -172,10 +176,10 @@
             </a>
             </nav>
         </footer> -->
-        
+
         <!-- <script>
             console.log("Running the navbar script");
-      
+
             // Horizontally align the menu items width their respective columns in the navigation extended view
             naviItems = document.getElementsByClassName('navi-menu-item');
             naviCols = document.getElementsByClassName('navi-ext-item');

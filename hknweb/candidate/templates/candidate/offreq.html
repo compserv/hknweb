@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static "candidate/style.css" %}">
+{% endblock %}
+
+{% block title %}Officer's Officer Challenges{% endblock %}
+
+{% block heading %}
+Officer Challenges from You
+{% endblock %}
+
+{% block content %}
+<div class="parent">
+
+    <!-- list of requested challenges -->
+    <div id='agenda'  style="padding-left: 10%; padding-right: 40%;">
+        <h3>Past Officer Challenges</h3>
+
+        {% if challenge_list %}
+            <table style="width: 100%;">
+                <thead>
+                    <th>Title</th>
+                    <th>Requester</th>
+                    <th>Status</th>
+                </thead>
+
+                <tbody>
+                {% for challenge in challenge_list %}
+                    <tr>
+                        <td align="center">
+                            <a href="{% url 'candidate:detail' challenge.id%}">
+                                {{ challenge.name }}
+                            </a>
+                        </td>
+                        <td align="center">{{ challenge.requester }}</td>
+                        <td align="center">
+                            {% if not challenge.reviewed %}
+                                <img src="{% static 'candidate/maybe.png'%}" alt="in progress" class="table-icon">
+                            {% elif challenge.confirmed %}
+                                <img src="{% static 'candidate/yes.png'%}" alt="confirmed" class="table-icon">
+                            {% else %}
+                                <img src="{% static 'candidate/no.png'%}" alt="declined" class="table-icon">
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+        {% else %}
+            <p>No requests to show.</p>
+        {% endif %}
+
+        <!-- Legend for status of challenge request -->
+        <p>
+        Confirmed <img src="{% static 'candidate/yes.png'%}" alt="confirmed" class="inline-icon">
+        Declined <img src="{% static 'candidate/no.png'%}" alt="declined" class="inline-icon">
+        Waiting for response <img src="{% static 'candidate/maybe.png'%}" alt="in progress" class="inline-icon">
+        </p>
+
+        <!-- TODO: make officer portal and link here -->
+        <p class="link">
+            <a href="{% url 'home' %}">Back to officer portal [coming soon]</a>
+        </p>
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,27 +1,29 @@
 {% extends "base.html" %}
 {% load static %}
 
-<!-- I just made this to have a place to put the officer stuff.
-     Feel free to delete this page later, as long as you still
-     keep the mechanism for making officer challenge requests. -->
-
-{% block title %}Candidate portal{% endblock %}
-
 {% block header %}
 <link rel="stylesheet" href="{% static "candidate/style.css" %}">
 {% endblock %}
+
+{% block title %}Candidate portal{% endblock %}
 
 {% block heading %}
 Candidate Portal
 {% endblock %}
 
 {% block content %}
-<div class="centered">
+<div class="parent centered">
+
     <div class="right-column">
         <section>
             <h2>Announcements</h2>
-            <strong>Welcome to the Candidate Portal!</strong> (Posted by [name link]) <br>
-            This is where you can see your progress and RSVP for upcoming events. Check back here often to stay up-to-date with the candidate semester.
+            
+            {% for announcement in announcements %}
+                <p>
+                <strong>{{ announcement.title }}</strong> [{{ announcement.release_date|date:"m/d/Y" }}]<br>
+                {{ announcement.text }}
+                </p>
+            {% endfor %}
         </section>
         <br>
         <section>
@@ -88,10 +90,13 @@ Candidate Portal
                 <h4>Interactivities</h4>
                 <ul>
                     <li>Officer Challenges</li>
-                    <ul>
-                        <li><a href="{% url 'candidate:candrequests' %}">(Candidate) Request Confirmation</a></li>
-                        <li><a href="{% url 'candidate:candrequests' %}">(Officer) Confirm Challenge Requests</a></li>
-                    </ul>
+                        <a href="{% url 'candidate:candrequests' %}">
+                            (View/Request Officer Challenge Confirmations)</a>
+                        <ul>
+                            <li>{{ num_pending }} pending</li>
+                            <li>{{ num_rejected }} rejected</li>
+                            <li>{{ num_confirmed }} confirmed</li>
+                        </ul>
                     <li>Officer Hangouts</li>
                     <ol type="1">
                         <li>Things</li>

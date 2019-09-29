@@ -1,21 +1,20 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block header %}
+<link rel="stylesheet" href="{% static "alumni/styles.css" %}">
+{% endblock %}
+
 {% block title %}Search for Alumni{% endblock %}
 
-{% block header %}
-  <!--<link rel='stylesheet' href="http://unpkg.com/fullcalendar/dist/fullcalendar.min.css" />-->
-  <!--<script src="http://unpkg.com/moment/min/moment.min.js"></script>-->
-  <!--<script src="http://unpkg.com/jquery/dist/jquery.slim.min.js"></script>-->
-  <!--<script src="http://unpkg.com/fullcalendar/dist/fullcalendar.min.js"></script>-->
-  <!--<link rel='stylesheet' type="text/css" href="{% static 'alumni/style.css' %}" />-->
+{% block heading %}
+Search for HKN Alumni
 {% endblock %}
 
 {% block content %}
-<div class="center measure-very-wide pv4">
-  <h1 class="font-title f3 f2-ns tc">Search for HKN Alumni</h1>
+<div class="parent">
 
-    <div style="padding-left: 20px; font-family: Georgia;">
+    <div class="left-pad">
 
         <h3>You can search by:</h3>
 
@@ -80,6 +79,7 @@
                 {% endfor %}
                 </tbody>
             </table>
+            <br>
 
         {% else %}
             <p>Sorry, no matching alumni found!</p>

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import OffChallenge
+from .models import OffChallenge, Announcement
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 
@@ -39,4 +39,26 @@ class OffChallengeAdmin(admin.ModelAdmin):
     export_as_csv.short_description = "Export selected as csv"
 
 
+class AnnouncementAdmin(admin.ModelAdmin):
+
+    # NOTE: release_date is not readonly because we can reuse announcements from past semesters
+    # The VP can just change the date and release it again
+    fields = ['title', 'text', 'visible', 'release_date']
+    list_display = ('title', 'visible', 'release_date')
+    list_filter = ['visible', 'release_date']
+    search_fields = ['title', 'text']
+
+    actions = ["set_visible", "set_invisible"]
+
+    def set_visible(self, request, queryset):
+        queryset.update(visible=True)
+
+    def set_invisible(self, request, queryset):
+        queryset.update(visible=False)
+
+    set_visible.short_description = "Set selected as visible"
+    set_invisible.short_description = "Set selected as invisible"
+
+
 admin.site.register(OffChallenge, OffChallengeAdmin)
+admin.site.register(Announcement, AnnouncementAdmin)
