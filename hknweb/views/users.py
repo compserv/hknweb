@@ -20,11 +20,10 @@ def account_create(request):
     if request.method == 'POST':
         form = SignupForm(request.POST)
         if form.is_valid():
-            result = confirm_recaptcha(request)
-            if result['success']:
+            if confirm_recaptcha(request):
                 form.save()
             else:
-                raise forms.ValidationError('Invalid reCAPTCHA. Please try again.', code='invalid')
+                raise form.ValidationError('Invalid reCAPTCHA. Please try again.', code='invalid')
             username = form.cleaned_data.get('username')
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username = username, password = raw_password)
@@ -35,6 +34,8 @@ def account_create(request):
     return render(request, 'account/signup.html', {'form': form})
 
 def confirm_recaptcha(request):
+    if settings.DEBUG:
+        return True
     recaptcha_response = request.POST.get('g-recaptcha-response')
     url = 'https://www.google.com/recaptcha/api/siteverify'
     values = {
@@ -45,7 +46,7 @@ def confirm_recaptcha(request):
     req =  urllib.request.Request(url, data=data)
     response = urllib.request.urlopen(req)
     result = json.loads(response.read().decode())
-    return result    
+    return result['success']
  
 @login_required
 def account_settings(request):
