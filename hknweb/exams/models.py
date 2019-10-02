@@ -2,7 +2,7 @@ from django.db import models
 
 class Department(models.Model):
     name = models.CharField(unique=True, max_length=4, null=True) #short form (e.g. 'EE')
-    subject = models.CharField(unique=True, max_length=255) #long form (e.g. 'Electrical Engineering')
+    subject = models.CharField(max_length=255) #long form (e.g. 'Electrical Engineering')
 
     def __str__(self):
         return "{}".format(self.subject)

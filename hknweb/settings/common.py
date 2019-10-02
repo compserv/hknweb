@@ -182,6 +182,9 @@ MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 # STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 #SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = ['hkn.eecs.berkeley.edu']
 
+# Recaptcha: public and private key
+RECAPTCHA_PUBLIC_KEY = '6LeYTKAUAAAAADooVC_FG9ua47PnwP_gGWOSwauK'
+
 # Constants for backend code
 
 CAND_GROUP = 'candidate'

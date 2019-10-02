@@ -3,6 +3,7 @@ from hknweb.events.models import Event
 from hknweb.tutoring.models import Tutor
 import datetime
 
+
 def home(request):
     today = datetime.datetime.now()
     next_weekday = today
