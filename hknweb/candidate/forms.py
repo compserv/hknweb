@@ -1,5 +1,6 @@
 from django import forms
 
+from django.conf import settings
 from .models import OffChallenge
 from django.contrib.auth.models import User
 
@@ -12,7 +13,7 @@ class ChallengeRequestForm(forms.ModelForm):
 
     # only officers can confirm challenges
     officer = forms.ModelChoiceField(queryset=User.objects
-            .filter(groups__name="officer").order_by('username'))
+            .filter(groups__name=settings.OFFICER_GROUP).order_by('username'))
 
 
 class ChallengeConfirmationForm(forms.ModelForm):

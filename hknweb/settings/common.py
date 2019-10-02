@@ -181,3 +181,8 @@ MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
 # STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 #SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = ['hkn.eecs.berkeley.edu']
+
+# Constants for backend code
+
+CAND_GROUP = 'candidate'
+OFFICER_GROUP = 'officer'

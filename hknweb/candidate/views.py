@@ -9,6 +9,7 @@ from django.utils.decorators import method_decorator
 from django.conf import settings
 from django.contrib.staticfiles.finders import find
 from django.contrib.staticfiles.templatetags.staticfiles import static
+from django.conf import settings
 from random import randint
 
 from .models import OffChallenge, Announcement
@@ -211,11 +212,10 @@ def challenge_detail_view(request, pk):
 # HELPERS
 
 def is_officer(user):
-    return user.groups.filter(name="officer").exists()
+    return user.groups.filter(name=settings.OFFICER_GROUP).exists()
 
 def is_cand_or_officer(user):
-    return user.groups.filter(name="candidate").exists() or \
-        user.groups.filter(name="officer").exists()
+    return user.groups.filter(name=settings.CAND_GROUP).exists() or is_officer(user)
 
 # This function is not used; it can be used to view all photos available
 def get_all_photos():
