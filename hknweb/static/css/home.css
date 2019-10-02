@@ -318,13 +318,6 @@ body {
     margin-bottom: 30px;
 }
 
-label, input {
-    font-family: "Source Sans Pro", sans-serif;
-    color: rgba(255,255,255,0.48);
-    font-weight: 400;
-    font-size: 1.2rem !important;
-}
-
 .footer-contact {
     font-family: "Source Sans Pro", sans-serif;
     color: rgba(255,255,255,0.48);
