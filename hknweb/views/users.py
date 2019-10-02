@@ -20,17 +20,7 @@ def account_create(request):
     if request.method == 'POST':
         form = SignupForm(request.POST)
         if form.is_valid():
-            recaptcha_response = request.POST.get('g-recaptcha-response')
-            print(type(recaptcha_response))
-            url = 'https://www.google.com/recaptcha/api/siteverify'
-            values = {
-                'secret': settings.RECAPTCHA_PRIVATE_KEY,
-                'response': recaptcha_response
-            }
-            data = urllib.parse.urlencode(values).encode()
-            req =  urllib.request.Request(url, data=data)
-            response = urllib.request.urlopen(req)
-            result = json.loads(response.read().decode())
+            result = confirm_recaptcha(request)
             if result['success']:
                 form.save()
             else:
@@ -44,6 +34,19 @@ def account_create(request):
         form = SignupForm()
     return render(request, 'account/signup.html', {'form': form})
 
+def confirm_recaptcha(request):
+    recaptcha_response = request.POST.get('g-recaptcha-response')
+    url = 'https://www.google.com/recaptcha/api/siteverify'
+    values = {
+        'secret': settings.RECAPTCHA_PRIVATE_KEY,
+        'response': recaptcha_response
+    }
+    data = urllib.parse.urlencode(values).encode()
+    req =  urllib.request.Request(url, data=data)
+    response = urllib.request.urlopen(req)
+    result = json.loads(response.read().decode())
+    return result    
+ 
 @login_required
 def account_settings(request):
     current_user = request.user
