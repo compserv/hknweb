@@ -5,7 +5,6 @@ try:
     from .secrets import *
 except ImportError:
     from .dummy_secrets import *
-
 import os
 
 # SECURITY WARNING: don't run with debug turned on in production!

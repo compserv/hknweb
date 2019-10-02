@@ -36,7 +36,7 @@
                         </div>
                     </div>
                 </a>
-                <div class='navi-menu'>
+                <div class='navi-menu' style="position: relative;">
                     <label for="toggle">Student Services</label>
                     <label for="toggle">Industry</label>
                     <label for="toggle">Outreach</label>
@@ -45,6 +45,13 @@
                     <label>|</label>
                     {% if user.is_authenticated %}
                         Welcome, {{ user.first_name }} <i style="border: solid black; border-width: 0 3px 3px 0; display: inline-block; padding: 3px; margin-left: 5px; transform: rotate(45deg); -webkit-transform: rotate(45deg);"></i>
+                        <div style="position: absolute; top: 100%;">
+                            <a href="/cand">Profile</a>
+                            <br>
+                            <a href="/accounts/settings">Settings</a>
+                            <br>
+                            <a href="/accounts/logout">Log out</a>
+                        </div>
                     {% else %}
                         <a class="account-button" href="/accounts/login">Account</a>
                     {% endif %}
