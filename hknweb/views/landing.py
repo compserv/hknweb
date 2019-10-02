@@ -4,9 +4,6 @@ from hknweb.tutoring.models import Tutor
 import datetime
 
 
-
-import pprint
-
 def home(request):
     today = datetime.datetime.now()
     next_weekday = today
