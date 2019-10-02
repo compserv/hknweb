@@ -24,8 +24,8 @@ from .views import users
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
-    path('accounts/create/', users.account_create),
-    path('accounts/settings/', users.account_settings),
+    path('accounts/create/', users.account_create, name='account-create'),
+    path('accounts/settings/', users.account_settings, name='account-settings'),
     path('accounts/activate/', users.activate),
     path('events/', include('hknweb.events.urls')),
     path('exams/', include('hknweb.exams.urls')),
