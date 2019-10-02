@@ -169,7 +169,7 @@ EMAIL_USE_TLS = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'hknweb', 'static'),
 ]
 
 # placeholder for now, replace with home page when it exists
