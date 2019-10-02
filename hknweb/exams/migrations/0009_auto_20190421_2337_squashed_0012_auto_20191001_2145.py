@@ -19,11 +19,6 @@ class Migration(migrations.Migration):
             field=models.CharField(max_length=4, null=True, unique=True),
         ),
         migrations.AlterField(
-            model_name='department',
-            name='subject',
-            field=models.CharField(max_length=255, unique=True),
-        ),
-        migrations.AlterField(
             model_name='coursesemester',
             name='instructor',
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='exams.Instructor'),
