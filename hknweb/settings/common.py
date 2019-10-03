@@ -169,7 +169,7 @@ EMAIL_USE_TLS = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'hknweb', 'static'),
 ]
 
 # placeholder for now, replace with home page when it exists
@@ -184,6 +184,12 @@ MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
 # Recaptcha: public and private key
 RECAPTCHA_PUBLIC_KEY = '6LeYTKAUAAAAADooVC_FG9ua47PnwP_gGWOSwauK'
+
+# python-social-auth: MySQL InnoDB index limits
+# https://python-social-auth-docs.readthedocs.io/en/latest/configuration/settings.html#tweaking-some-fields-length
+SOCIAL_AUTH_UID_LENGTH = 223
+SOCIAL_AUTH_NONCE_SERVER_URL_LENGTH = 100
+SOCIAL_AUTH_ASSOCIATION_SERVER_URL_LENGTH  = 100
 
 # Constants for backend code
 

@@ -27,9 +27,8 @@ class SignupForm(UserCreationForm):
 
      def clean_email(self):
          email = self.cleaned_data.get('email')
-         if (email == None or email.split('@')[-1] != 'berkeley.edu'
-         or email.split('@')[1] != email.split('@')[-1]):
-             raise forms.ValidationError('Please use your Berkeley email', code='invalid')
+         if (email == None or not email.endswith(".berkeley.edu")):
+             raise forms.ValidationError('Please a berkeley.edu email to register!', code='invalid')
          else:
              return email
 

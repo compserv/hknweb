@@ -104,7 +104,7 @@ def django_migrate(c: Connection):
 def django_collectstatic(c: Connection):
     print('-- Collecting static files')
     with c.cd(c.release_path):
-        c.run('HKNWEB_MODE=prod .venv/bin/python ./manage.py collectstatic')
+        c.run('HKNWEB_MODE=prod .venv/bin/python ./manage.py collectstatic --noinput')
 
 
 def symlink_release(c: Connection):
