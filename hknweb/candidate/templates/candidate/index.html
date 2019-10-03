@@ -120,7 +120,27 @@ Candidate Portal
         <br>
         <section>
             <h2>Upcoming Events</h2>
-            <p><a href="{% url 'events:index' %}">(see calendar)</a></p>
+            {% if upcoming_events %}
+            <table style="width: 100%;">
+                <thead>
+                    <th>Event</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Location</th>
+                </thead>
+
+                <tbody>
+                {% for event in upcoming_events %}
+                    <tr>
+                        <td align="center"> {{ event.name }} </td>
+                        <td align="center"> {{ event.start_time }} </td>
+                        <td align="center"> {{ event.end_time}} </td>
+                        <td align="center"> {{ event.location}} </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
         </section>
     </div>
 </div>

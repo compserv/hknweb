@@ -10,8 +10,10 @@ from django.conf import settings
 from django.contrib.staticfiles.finders import find
 from django.contrib.staticfiles.templatetags.staticfiles import static
 from random import randint
+import datetime
 
 from .models import OffChallenge, Announcement
+from ..events.models import Event
 from .forms import ChallengeRequestForm, ChallengeConfirmationForm
 
 # Candidate portal home
@@ -28,11 +30,14 @@ class IndexView(generic.TemplateView):
         announcements = Announcement.objects \
                 .filter(visible=True) \
                 .order_by('-release_date')
+        today = datetime.date.today()
+        upcoming_events = Event.objects.filter(start_time__range=(today, today + datetime.timedelta(days=7))).order_by('start_time')
         context = {
             'num_pending' : challenges.filter(reviewed=False).count(),
             'num_rejected' : reviewed_challenges.filter(confirmed=False).count(),
             'num_confirmed' : reviewed_challenges.filter(confirmed=True).count(),
-            'announcements' : announcements
+            'announcements' : announcements,
+            'upcoming_events': upcoming_events
         }
         return context
 
