@@ -4,12 +4,11 @@ from django.shortcuts import render, redirect, reverse
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.conf import settings
 from django.contrib.staticfiles.finders import find
 from django.contrib.staticfiles.templatetags.staticfiles import static
-from django.conf import settings
 from random import randint
 
 from .models import OffChallenge, Announcement
@@ -168,8 +167,6 @@ def officer_confirm_view(request, pk):
 @login_required(login_url='/accounts/login/')
 @check_account_access
 def officer_review_confirmation(request, pk):
-    check_account_access(request)
-
     challenge = OffChallenge.objects.get(id=pk)
     requester_name = challenge.requester.get_full_name()
     context = {
@@ -183,8 +180,6 @@ def officer_review_confirmation(request, pk):
 @login_required(login_url='/accounts/login/')
 @check_account_access
 def challenge_detail_view(request, pk):
-    check_account_access(request)
-
     challenge = OffChallenge.objects.get(id=pk)
     officer_name = challenge.officer.get_full_name()
     requester_name = challenge.requester.get_full_name()

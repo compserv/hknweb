@@ -24,24 +24,28 @@ class CustomUserAdmin(UserAdmin):
         group = Group.objects.get(name=settings.CAND_GROUP)
         for u in queryset:
             group.user_set.add(u)
+    
+    add_cand.short_description = "Add selected as candidates"
 
     def add_officer(self, request, queryset):
         group = Group.objects.get(name=settings.OFFICER_GROUP)
         for u in queryset:
             group.user_set.add(u)
 
+    add_officer.short_description = "Add selected as officers"
+
     def remove_cand(self, request, queryset):
         group = Group.objects.get(name=settings.CAND_GROUP)
         for u in queryset:
             group.user_set.remove(u)
+
+    remove_cand.short_description = "Remove selected from candidates"
 
     def remove_officer(self, request, queryset):
         group = Group.objects.get(name=settings.OFFICER_GROUP)
         for u in queryset:
             group.user_set.remove(u)
 
-    add_cand.short_description = "Add selected as candidates"
-    add_officer.short_description = "Add selected as officers"
-    remove_cand.short_description = "Remove selected from candidates"
     remove_officer.short_description = "Remove selected from officers"
+
 

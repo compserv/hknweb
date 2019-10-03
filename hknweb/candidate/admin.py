@@ -53,10 +53,11 @@ class AnnouncementAdmin(admin.ModelAdmin):
     def set_visible(self, request, queryset):
         queryset.update(visible=True)
 
+    set_visible.short_description = "Set selected as visible"
+
     def set_invisible(self, request, queryset):
         queryset.update(visible=False)
-
-    set_visible.short_description = "Set selected as visible"
+        
     set_invisible.short_description = "Set selected as invisible"
 
 

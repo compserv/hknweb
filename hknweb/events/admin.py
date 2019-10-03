@@ -28,14 +28,16 @@ class RsvpAdmin(admin.ModelAdmin):
     def mark_confirmed(self, request, queryset):
         queryset.update(confirmed=True)
 
+    mark_confirmed.short_description = "Mark selected as confirmed"
+
     def mark_unconfirmed(self, request, queryset):
         queryset.update(confirmed=False)
+
+    mark_unconfirmed.short_description = "Mark selected as unconfirmed"
 
     def cute_animal(self, request, queryset):
         return redirect("https://www.google.com/search?q=cute+cats&tbm=isch")
 
-    mark_confirmed.short_description = "Mark selected as confirmed"
-    mark_unconfirmed.short_description = "Mark selected as unconfirmed"
     cute_animal.short_description = "I wanna see a cute animal"
 
 admin.site.register(EventType)
