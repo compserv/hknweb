@@ -37,7 +37,7 @@ class IndexView(generic.TemplateView):
             'num_rejected' : reviewed_challenges.filter(confirmed=False).count(),
             'num_confirmed' : reviewed_challenges.filter(confirmed=True).count(),
             'announcements' : announcements,
-            'upcoming_events': upcoming_events
+            'upcoming_events': upcoming_events,
         }
         return context
 
