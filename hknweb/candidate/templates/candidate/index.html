@@ -123,19 +123,19 @@ Candidate Portal
             {% if upcoming_events %}
             <table style="width: 100%;">
                 <thead>
-                    <th align="left">Event</th>
-                    <th align="left">Start Time</th>
-                    <th align="left">End Time</th>
-                    <th align="left">Location</th>
+                    <th>Event</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Location</th>
                 </thead>
 
                 <tbody>
                 {% for event in upcoming_events %}
                     <tr>
-                        <td align="left"> {{ event.name }} </td>
-                        <td align="left"> {{ event.start_time }} </td>
-                        <td align="left"> {{ event.end_time}} </td>
-                        <td align="left"> {{ event.location}} </td>
+                        <td> {{ event.name }} </td>
+                        <td> {{ event.start_time }} </td>
+                        <td> {{ event.end_time}} </td>
+                        <td> {{ event.location}} </td>
                     </tr>
                 {% endfor %}
                 </tbody>
