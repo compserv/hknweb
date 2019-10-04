@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, Http404
 from django.template import loader
 from django.contrib import messages
+from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt #doing this for now bc idk how to make csrf work
 from django.db.models import F # Avoids changing database values without risking a race condition
 
@@ -17,7 +18,9 @@ def index(request):
     return render(request, 'events/index.html', context)
 
 def show_details(request, id):
-    event = Event.objects.get(pk=id)
+    
+    event = get_object_or_404(Event, pk=id)
+
     rsvp = Rsvp.objects.filter(user=request.user, event=event).exists()
     context = {
         'event': event,
@@ -32,9 +35,10 @@ def rsvp(request, id):
     if request.method != 'POST':
         raise Http404()
 
-    event = Event.objects.get(pk=id)
-    if request.user.is_authenticated and event.rsvps < event.rsvp_limit:
-        event.rsvps = F("rsvps") + 1
+    event = get_object_or_404(Event, pk=id)
+    rsvps = event.rsvp_set.count()
+
+    if request.user.is_authenticated and (event.rsvp_limit is None or rsvps < event.rsvp_limit):
         Rsvp.objects.create(user=request.user, event=event)
         messages.success(request, 'RSVP\'d!')
     else:
@@ -46,11 +50,11 @@ def unrsvp(request, id):
     if request.method != 'POST':
         raise Http404()
 
-    event = Event.objects.get(pk=id)
-    if request.user.is_authenticated and event.rsvps < event.rsvp_limit:
-        #check if rsvp for this event and this user already exists; if false, then set true
-        event.rsvps = F("rsvps") - 1
-        Rsvp.objects.get(user=request.user, event=event).delete()
+    event = get_object_or_404(Event, pk=id)
+
+    if request.user.is_authenticated:
+        rsvp = get_object_or_404(Rsvp, user=request.user, event=event)
+        rsvp.delete()
         messages.success(request, 'un-RSVP\'d :(')
     else:
         messages.error(request, 'Something went wrong; could not un-RSVP.')

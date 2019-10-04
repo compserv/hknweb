@@ -18,12 +18,12 @@
 
   <!-- RSVP/un-RSVP button -->
   {% if rsvp %}
-    <form action="{{ event.id }}/unrsvp" method="post">
+    <form action={% url 'events:unrsvp' event.id %} method="post">
       {% csrf_token %}
       <input type="submit" value="un-RSVP" />
     </form>
   {% else %}
-    <form action="{{ event.id }}/rsvp" method="post">
+    <form action={% url 'events:rsvp' event.id %} method="post">
       {% csrf_token %}
       <input type="submit" value="RSVP" />
     </form>
