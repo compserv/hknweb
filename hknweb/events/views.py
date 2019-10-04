@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, Http404
 from django.template import loader
 from django.contrib import messages
-from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt #doing this for now bc idk how to make csrf work
 from django.db.models import F # Avoids changing database values without risking a race condition
