@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, Http404
-from django.template import loader
+from django.template import loader, RequestContext
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt #doing this for now bc idk how to make csrf work
 from django.db.models import F # Avoids changing database values without risking a race condition
+from django.contrib.auth.decorators import login_required, permission_required
 
 from .models import Event, Rsvp
 from .forms import EventForm
@@ -11,10 +12,11 @@ from hknweb.models import Profile
 
 def index(request):
     events = Event.objects.order_by('-start_time')
+    
     context = {
         'events': events,
     }
-    return render(request, 'events/index.html', context)
+    return render(request, 'events/index.html', context, RequestContext(request, context))
 
 def show_details(request, id):
     event = Event.objects.get(pk=id)
@@ -56,11 +58,14 @@ def unrsvp(request, id):
         messages.error(request, 'Something went wrong; could not un-RSVP.')
     return redirect('/events/' + str(id))
 
+@permission_required('events.add_event', login_url = '/accounts/login/')
 def add_event(request):
     form = EventForm(request.POST or None)
     if request.method == 'POST':
         if form.is_valid():
-            form.save()
+            event = form.save(commit=False)
+            event.created_by = request.user
+            event.save()
             messages.success(request, 'Event has been added!')
             return redirect('/events')
         else:
