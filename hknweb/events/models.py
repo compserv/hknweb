@@ -19,7 +19,6 @@ class Event(models.Model):
     event_type  = models.ForeignKey(EventType, models.CASCADE, null=True)
     description = models.TextField()
     rsvp_limit  = models.PositiveIntegerField(null=True, blank=True)
-    rsvps       = models.PositiveIntegerField(default=0)
     # need_transportation = models.BooleanField(default=False)
     # view_permission_group_id = models.IntegerField(null=True)
     # rsvp_permission_group_id = models.IntegerField(null=True)

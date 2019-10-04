@@ -33,8 +33,9 @@ def rsvp(request, id):
         raise Http404()
 
     event = Event.objects.get(pk=id)
-    if request.user.is_authenticated and event.rsvps < event.rsvp_limit:
-        event.rsvps = F("rsvps") + 1
+    rsvps = len(event.rsvp_set.all())
+
+    if request.user.is_authenticated or not event.rsvp_limit and rsvps < event.rsvp_limit:
         Rsvp.objects.create(user=request.user, event=event)
         messages.success(request, 'RSVP\'d!')
     else:
@@ -47,9 +48,7 @@ def unrsvp(request, id):
         raise Http404()
 
     event = Event.objects.get(pk=id)
-    if request.user.is_authenticated and event.rsvps < event.rsvp_limit:
-        #check if rsvp for this event and this user already exists; if false, then set true
-        event.rsvps = F("rsvps") - 1
+    if request.user.is_authenticated:
         Rsvp.objects.get(user=request.user, event=event).delete()
         messages.success(request, 'un-RSVP\'d :(')
     else:
