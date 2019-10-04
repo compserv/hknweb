@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
+from django.conf import settings
 
 MAX_STRLEN = 85 # default max length for char fields
 MAX_TXTLEN = 2000 # default max length for text fields
@@ -11,15 +12,15 @@ class OffChallenge(models.Model):
     Model for an officer challenge submitted by a candidate.
     Each candidate who did the challenge must submit a separate request
     (May be changed in the future).
-    Assumes the existence of two groups, "candidate" and "officer".
+    Assumes the existence of two groups, "candidate" and "officer" (defined in common.py).
     """
 
     class Meta:
         verbose_name = "Officer challenge"
 
-    requester       = models.ForeignKey('auth.User', limit_choices_to={'groups__name': "candidate"},
+    requester       = models.ForeignKey('auth.User', limit_choices_to={'groups__name': settings.CAND_GROUP},
                         on_delete=models.CASCADE, default=None, related_name='requester')
-    officer         = models.ForeignKey('auth.User', limit_choices_to={'groups__name': "officer"},
+    officer         = models.ForeignKey('auth.User', limit_choices_to={'groups__name': settings.OFFICER_GROUP},
                         on_delete=models.CASCADE, default=None, related_name='officer')
     name            = models.CharField(max_length=MAX_STRLEN, default='', verbose_name="title")
     description     = models.TextField(max_length=MAX_TXTLEN, blank=True, default='')
