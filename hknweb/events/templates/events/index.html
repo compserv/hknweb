@@ -26,7 +26,7 @@
             aspectRatio: 1.75,
             events: [ {% for event in events %}
                 {
-                title: '{{ event.name }}',
+                title: "{{event.name | safe}}",
                 start: '{{ event.start_time|date:"c" }}', // date:"c" renders the dates in ISO format, as fullcalendar needs them
                 end: '{{ event.end_time|date:"c" }}',
                 url: '{{ event.id }}'
