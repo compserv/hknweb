@@ -29,7 +29,6 @@ class EventForm(forms.ModelForm):
         #     'start_time': forms.widgets.DateTimeInput,
         #     'end_time': forms.widgets.DateTimeInput,
         # }
-
         help_texts = {
             'start_time': 'mm/dd/yyyy hh:mm, 24-hour time',
             'end_time': 'mm/dd/yyyy hh:mm, 24-hour time',

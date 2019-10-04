@@ -80,8 +80,10 @@ Upcoming Events
     </style>
     
     <br>
+    {% if perms.events.add_event %}
     <form action="new" method="GET" id="button">
         <button type='submit'>Add an event</button>
     </form>
+    {% endif %}
 </div>
 {% endblock %}
