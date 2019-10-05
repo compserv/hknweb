@@ -9,17 +9,8 @@ body {
     color: #353535;
     background-color: #252525; /* If footer doesn't reach bottom of screen, this will "extend" the footer */
 }
-.white-above-navi, .navi-container, .content {
+.navi-container, .content {
     background-color: white; /* Override body's background color */
-}
-.white-above-navi {
-    /* In case someone drags down from the top, want to see the navi's color */
-    position: fixed;
-    z-index: -1;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100px;
 }
 
 /* Minimum margins for all sections */
@@ -34,7 +25,7 @@ body {
 .navi-container {
     padding-top: 7px;
     padding-bottom: 7px;
-    border-bottom: solid 3px #003262; /* rgba(166, 60, 68, 1); HKN scarlet; hex code: #A63C44 */
+    /* border-bottom: solid 3px #003262; /* rgba(166, 60, 68, 1); HKN scarlet; hex code: #A63C44 */
 }
 .navi {
     min-height: 50px;
@@ -77,6 +68,13 @@ body {
     .navi-menu > label {
         padding-right: 24px;
     }
+    .navi-menu > span:last-of-type {
+        margin-left: 24px;
+    }
+    .navi-menu > label:last-child {
+        padding-right: 0;
+        padding-left: 24px;
+    }
     .navi-menu-button {
         padding-left: 24px;
     }
@@ -93,59 +91,6 @@ body {
     }
     .account-button:hover {
         text-decoration: underline;
-    }
-
-    /* Navi extension */
-    .navi-extension-container {
-        display: block;
-        position: absolute;
-        background-color: #f3f3f3;
-        width: 100%;
-        box-sizing: border-box;
-        top: -2000px;
-        z-index: 999999;
-        transition: all 500ms ease;
-        border-bottom: solid 3px #003262; /* #346F9E; /* HKN navy */
-    }
-    .navi-extension {
-        max-width: 1250px;
-        margin: 35px auto;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    .navi-extension-columns {
-        display: flex;
-        align-items: flex-start;
-    }
-    .navi-ext-col-header {
-        padding-bottom: 2px;
-        border-bottom: 1px solid #353535;
-        margin-bottom: 10px;
-        text-align: center;
-        font-weight: 700;
-    }
-    .navi-ext-col-item {
-        padding-top: 2px;
-        padding-left: 10px;
-        padding-right: 10px;
-    }
-    .navi-ext-logo-text{
-        margin-top: 2%;
-    }
-    .navi-ext-logo .navi-ext-logo-text .navi-logo-title{
-        font-size: 1.4em;
-    }
-    .navi-ext-logo .navi-ext-logo-text .navi-logo-subtitle{
-        font-size: 1.25em;
-    }
-    .exit-extension-button {
-        position: absolute;
-        top: 6px;
-        right: 15px;
-        font-size: 1.5em;
-        text-align: center;
-        vertical-align: middle;
     }
 
     /* Media queries for responsive design */
@@ -183,16 +128,96 @@ body {
         }
     }
 
-    /* Toggle */
-    #toggle {
+    /* Toggle system */
+    .toggle {
         position: absolute;
         top: -100%;
         left: -100%;
         display: none;
     }
-    #toggle:checked ~ .navi-extension-container{
-        top: 0;
+    .sub-nav-bar {
+        position: absolute;
+        opacity: 0;
+        text-align: center;
+        background-color: #252525;
+        transition: opacity 0.5s ease-out;
+        width: 100%;
     }
+    .sub-nav-bar * {
+        color: white;
+        display: none;
+    }
+    #toggle-account:not(:checked) ~ #toggle-student:checked ~ .navi-container label[for="toggle-student"] {
+        text-decoration: underline;
+    }
+    #toggle-account:not(:checked) ~ #toggle-student:checked ~ #student-nav-bar {
+        opacity: 1;
+    }
+    #toggle-account:not(:checked) ~ #toggle-student:checked ~ #student-nav-bar * {
+        display: inline;
+    }
+    #toggle-account:not(:checked) ~ #toggle-industry:checked ~ .navi-container label[for="toggle-industry"] {
+        text-decoration: underline;
+    }
+    #toggle-account:not(:checked) ~ #toggle-industry:checked ~ #industry-nav-bar {
+        opacity: 1;
+    }
+    #toggle-industry:checked ~ #industry-nav-bar * {
+        display: inline;
+    }
+    #toggle-account:not(:checked) ~ #toggle-outreach:checked ~ .navi-container label[for="toggle-outreach"] {
+        text-decoration: underline;
+    }
+    #toggle-account:not(:checked) ~ #toggle-outreach:checked ~ #outreach-nav-bar {
+        opacity: 1;
+    }
+    #toggle-account:not(:checked) ~ #toggle-outreach:checked ~ #outreach-nav-bar * {
+        display: inline;
+    }
+    #toggle-account:not(:checked) ~ #toggle-events:checked ~ .navi-container label[for="toggle-events"] {
+        text-decoration: underline;
+    }
+    #toggle-account:not(:checked) ~ #toggle-events:checked ~ #events-nav-bar {
+        opacity: 1;
+    }
+    #toggle-account:not(:checked) ~ #toggle-events:checked ~ #events-nav-bar * {
+        display: inline;
+    }
+    #toggle-account:not(:checked) ~ #toggle-about:checked ~ .navi-container label[for="toggle-about"] {
+        text-decoration: underline;
+    }
+    #toggle-account:not(:checked) ~ #toggle-about:checked ~ #about-nav-bar {
+        opacity: 1;
+    }
+    #toggle-account:not(:checked) ~ #toggle-about:checked ~ #about-nav-bar * {
+        display: inline;
+    }
+    #toggle-account:checked ~ #account-nav-bar {
+        opacity: 1;
+    }
+    #toggle-account:checked ~ #account-nav-bar * {
+        display: inline;
+    }
+    #carrot {
+        position: relative;
+        border: solid black;
+        border-width: 0 3px 3px 0;
+        display: inline-block;
+        padding: 3px;
+        margin-left: 5px;
+        transform: rotate(45deg);
+        transition: transform 0.4s ease-out;
+    }
+    #toggle-account:checked ~ .navi-container #carrot {
+        transform: rotate(225deg);
+        transition: transform 0.4s ease-out;
+    }
+    .slash {
+        padding-left: 1em;
+        padding-right: 1em;
+        color: #FDB515;
+    }
+    #toggle-account:checked ~ 
 
     /* Navbar link styling */
     .navi-extension-container a {
