@@ -1,197 +1,252 @@
 {% load static from staticfiles %}
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        
-        <!-- Fonts and CSS -->
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro:300,400,600,700" rel="stylesheet">
-        <link rel="stylesheet" href="{% static "css/base.css" %}">
-        <!-- Not sure what this is for? We already have a favicon -->
-        <link rel="icon" href="{% static "img/hkn.svg" %}">
-        
-        <!-- Favicon -->
-        <link rel="shortcut icon" href="{% static 'img/favicon.png' %}"/>
-        
-        {% block header %}{% endblock %}
-        
-        <title>{% block title %}{% endblock %} | Berkeley HKN</title>
-    </head>
-    <body>
-        <input type="checkbox" name="not-toggles" class="toggle" id="toggle-account">
-        <input type="radio" name="toggles" class="toggle" id="toggle-student" onclick="untoggleAccounts()" checked="checked">
-        <input type="radio" name="toggles" class="toggle" id="toggle-industry" onclick="untoggleAccounts()">
-        <input type="radio" name="toggles" class="toggle" id="toggle-outreach" onclick="untoggleAccounts()">
-        <input type="radio" name="toggles" class="toggle" id="toggle-events" onclick="untoggleAccounts()">
-        <input type="radio" name="toggles" class="toggle" id="toggle-about" onclick="untoggleAccounts()">
-        <script>
-            function untoggleAccounts() {
-                var input = document.getElementById("toggle-account");
-                console.log(input);
-                console.log(input.type == "checkbox");
-                input.checked = false;
-            }
-        </script>
-        
-        <div class="navi-container">
-            <div class="navi">
-                <a href="/">
-                    <div class="navi-logo">
-                        <img src="{% static "img/hkn-bear.svg" %}" class="navi-logo-img">
-                        <div class="navi-menu-logo-text">
-                            <div class="navi-logo-title">
-                                <b>Eta Kappa Nu</b>
-                            </div>
-                            <div class="navi-logo-subtitle">
-                                UC Berkeley
-                            </div>
-                        </div>
-                    </div>
-                </a>
-                <div class="navi-menu">
-                    <label for="toggle-student">Student Services</label>
-                    <label for="toggle-industry">Industry</label>
-                    <label for="toggle-outreach">Outreach</label>
-                    <label for="toggle-events">Events</label>
-                    <label for="toggle-about">About</label>
-                    {% if user.is_authenticated %}
-                        <span style="height: 1.8em; width: 1px; border-left: 1px black solid;"></span>
-                    {% endif %}
-                    {% if user.is_authenticated %}
-                        <span style="position: relative;">
-                            Welcome, {{ user.first_name }}
-                            <label for="toggle-account">
-                                <i id="carrot"></i>
-                            </label>
-                        </span>
-                    {% else %}
-                        <a class="account-button" href="/accounts/login">Account</a>
-                    {% endif %}
-                    <div class="navi-menu-button"><label for="toggle">Menu</label></div>
-                </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Fonts and CSS -->
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro:300,400,600,700"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="{% static "css/base.css" %}">
+    <!-- Not sure what this is for? We already have a favicon -->
+    <link rel="icon" href="{% static "img/hkn.svg" %}">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="{% static 'img/favicon.png' %}" />
+
+    {% block header %}{% endblock %}
+
+    <title>{% block title %}{% endblock %} | Berkeley HKN</title>
+  </head>
+  <body>
+    <input
+      type="checkbox"
+      name="not-toggles"
+      class="toggle"
+      id="toggle-account"
+    />
+    <input
+      type="radio"
+      name="toggles"
+      class="toggle"
+      id="toggle-student"
+      onclick="untoggleAccounts()"
+      checked="checked"
+    />
+    <input
+      type="radio"
+      name="toggles"
+      class="toggle"
+      id="toggle-industry"
+      onclick="untoggleAccounts()"
+    />
+    <input
+      type="radio"
+      name="toggles"
+      class="toggle"
+      id="toggle-outreach"
+      onclick="untoggleAccounts()"
+    />
+    <input
+      type="radio"
+      name="toggles"
+      class="toggle"
+      id="toggle-events"
+      onclick="untoggleAccounts()"
+    />
+    <input
+      type="radio"
+      name="toggles"
+      class="toggle"
+      id="toggle-about"
+      onclick="untoggleAccounts()"
+    />
+    <script>
+      function untoggleAccounts() {
+        var input = document.getElementById("toggle-account");
+        console.log(input);
+        console.log(input.type == "checkbox");
+        input.checked = false;
+      }
+    </script>
+
+    <div class="navi-container">
+      <div class="navi">
+        <a href="/">
+          <div class="navi-logo">
+            <img src="{% static "img/hkn-bear.svg" %}" class="navi-logo-img">
+            <div class="navi-menu-logo-text">
+              <div class="navi-logo-title">
+                <b>Eta Kappa Nu</b>
+              </div>
+              <div class="navi-logo-subtitle">
+                UC Berkeley
+              </div>
             </div>
-        </div>
-        
-        <div id="student-nav-bar" class="sub-nav-bar navi-container">
-            <a class="navi-ext-col-item" href="/exams">Exam Archive</a>
-            <span class="slash">/</span>
-            <a class="navi-ext-col-item" href="">Tutoring Hours</a>
-            <span class="slash">/</span>
-            <a class="navi-ext-col-item" href="">Review Sessions</a>
-            <span class="slash">/</span>
-            <a class="navi-ext-col-item" href="">Course Surveys</a>
-            <span class="slash">/</span>
-            <a class="navi-ext-col-item" href="">Course Guide</a>
-            <span class="slash">/</span>
-            <a class="navi-ext-col-item" href="">Department Tours</a>
-        </div>
-        <div id="industry-nav-bar" class="sub-nav-bar navi-container">
-            <a class="navi-ext-col-item" href="">Why HKN?</a>
-            <span class="slash">/</span>
-            <a class="navi-ext-col-item" href="">Resume Books</a>
-            <span class="slash">/</span>
-            <a class="navi-ext-col-item" href="">Infosessions</a>
-            <span class="slash">/</span>
-            <a class="navi-ext-col-item" href="">Career Fair</a>
-            <span class="slash">/</span>
-            <a class="navi-ext-col-item" href="">Get in Touch</a>
-        </div>
-        <div id="outreach-nav-bar" class="sub-nav-bar navi-container">
-            <a class="navi-ext-col-item" href="">EECS Day</a>
-            <span class="slash">/</span>
-            <a class="navi-ext-col-item" href="">Junior EECS Day</a>
-            <span class="slash">/</span>
-            <a class="navi-ext-col-item" href="">Maker Workshops</a>
-            <span class="slash">/</span>
-            <a class="navi-ext-col-item" href="">Bear Hacks</a>
-            <span class="slash">/</span>
-            <a class="navi-ext-col-item" href="">Cal Day</a>
-        </div>
-        <div id="events-nav-bar" class="sub-nav-bar navi-container">
-            <a class="navi-ext-col-item" href="/events">Calendar</a>
-            <span class="slash">/</span>
-            <a class="navi-ext-col-item" href="https://www.flickr.com/people/berkeley_hkn/">Photos</a>
-        </div>
-        <div id="about-nav-bar" class="sub-nav-bar navi-container">
-            <a class="navi-ext-col-item" href="">Contact Us</a>
-            <span class="slash">/</span>
-            <a class="navi-ext-col-item" href="">Committees</a>
-            <span class="slash">/</span>
-            <a class="navi-ext-col-item" href="">Officers</a>
-            <span class="slash">/</span>
-            <a class="navi-ext-col-item" href="/alumni">Alumni</a>
-            <span class="slash">/</span>
-            <a class="navi-ext-col-item" href="">Yearbooks</a>
-        </div>
-        {% if user.is_authenticated %}
-          <div id="account-nav-bar" class="sub-nav-bar navi-container">
-              <a class="navi-ext-col-item" href="/cand">Profile</a>
-              <span class="slash">/</span>
-              <a class="navi-ext-col-item" href="/accounts/settings">Settings</a>
-              <span class="slash">/</span>
-              <a class="navi-ext-col-item" href="/accounts/logout">Log out</a>
           </div>
-        {% endif %}
+        </a>
+        <div class="navi-menu">
+          <label for="toggle-student">Student Services</label>
+          <label for="toggle-industry">Industry</label>
+          <label for="toggle-outreach">Outreach</label>
+          <label for="toggle-events">Events</label>
+          <label for="toggle-about">About</label>
+          {% if user.is_authenticated %}
+          <span
+            style="height: 1.8em; width: 1px; border-left: 1px black solid;"
+          ></span>
+          <span style="position: relative;">
+            <label for="toggle-account">
+              Welcome, {{ user.first_name }}
+              <i id="carrot"></i>
+            </label>
+          </span>
+          {% else %}
+          <a class="account-button" href="/accounts/login">Account</a>
+          {% endif %}
+          <div class="navi-menu-button"><label for="toggle">Menu</label></div>
+        </div>
+      </div>
+    </div>
 
-        <div class="content">
-            <!-- Dummy nav section, to push the rest of the page's content down appropriately -->
-            <div id="student-nav-bar" class="sub-nav-bar navi-container" style="opacity: 0; position: static;">
-                <a class="navi-ext-col-item" href="/exams">Exam Archive</a><span class="slash">/</span>
-                <a class="navi-ext-col-item" href="">Tutoring Hours</a><span class="slash">/</span>
-                <a class="navi-ext-col-item" href="">Review Sessions</a><span class="slash">/</span>
-                <a class="navi-ext-col-item" href="">Course Surveys</a><span class="slash">/</span>
-                <a class="navi-ext-col-item" href="">Course Guide</a><span class="slash">/</span>
-                <a class="navi-ext-col-item" href="">Department Tours</a>
-            </div>
-            
-            <div class="heading">
-                {% block heading %}{% endblock %}
-            </div>
+    <div id="student-nav-bar" class="sub-nav-bar navi-container">
+      <a class="navi-ext-col-item" href="/exams">Exam Archive</a>
+      <span class="slash">/</span>
+      <a class="navi-ext-col-item" href="">Tutoring Hours</a>
+      <span class="slash">/</span>
+      <a class="navi-ext-col-item" href="">Review Sessions</a>
+      <span class="slash">/</span>
+      <a class="navi-ext-col-item" href="">Course Surveys</a>
+      <span class="slash">/</span>
+      <a class="navi-ext-col-item" href="">Course Guide</a>
+      <span class="slash">/</span>
+      <a class="navi-ext-col-item" href="">Department Tours</a>
+    </div>
+    <div id="industry-nav-bar" class="sub-nav-bar navi-container">
+      <a class="navi-ext-col-item" href="">Why HKN?</a>
+      <span class="slash">/</span>
+      <a class="navi-ext-col-item" href="">Resume Books</a>
+      <span class="slash">/</span>
+      <a class="navi-ext-col-item" href="">Infosessions</a>
+      <span class="slash">/</span>
+      <a class="navi-ext-col-item" href="">Career Fair</a>
+      <span class="slash">/</span>
+      <a class="navi-ext-col-item" href="">Get in Touch</a>
+    </div>
+    <div id="outreach-nav-bar" class="sub-nav-bar navi-container">
+      <a class="navi-ext-col-item" href="">EECS Day</a>
+      <span class="slash">/</span>
+      <a class="navi-ext-col-item" href="">Junior EECS Day</a>
+      <span class="slash">/</span>
+      <a class="navi-ext-col-item" href="">Maker Workshops</a>
+      <span class="slash">/</span>
+      <a class="navi-ext-col-item" href="">Bear Hacks</a>
+      <span class="slash">/</span>
+      <a class="navi-ext-col-item" href="">Cal Day</a>
+    </div>
+    <div id="events-nav-bar" class="sub-nav-bar navi-container">
+      <a class="navi-ext-col-item" href="/events">Calendar</a>
+      <span class="slash">/</span>
+      <a
+        class="navi-ext-col-item"
+        href="https://www.flickr.com/people/berkeley_hkn/"
+        >Photos</a
+      >
+    </div>
+    <div id="about-nav-bar" class="sub-nav-bar navi-container">
+      <a class="navi-ext-col-item" href="">Contact Us</a>
+      <span class="slash">/</span>
+      <a class="navi-ext-col-item" href="">Committees</a>
+      <span class="slash">/</span>
+      <a class="navi-ext-col-item" href="">Officers</a>
+      <span class="slash">/</span>
+      <a class="navi-ext-col-item" href="/alumni">Alumni</a>
+      <span class="slash">/</span>
+      <a class="navi-ext-col-item" href="">Yearbooks</a>
+    </div>
+    {% if user.is_authenticated %}
+    <div id="account-nav-bar" class="sub-nav-bar navi-container">
+      <a class="navi-ext-col-item" href="/cand">Profile</a>
+      <span class="slash">/</span>
+      <a class="navi-ext-col-item" href="/accounts/settings">Settings</a>
+      <span class="slash">/</span>
+      <a class="navi-ext-col-item" href="/accounts/logout">Log out</a>
+    </div>
+    {% endif %}
 
-            {% block content %}{% endblock %}
+    <div class="content">
+      <!-- Dummy nav section, to push the rest of the page's content down appropriately -->
+      <div
+        id="student-nav-bar"
+        class="sub-nav-bar navi-container"
+        style="opacity: 0; position: static;"
+      >
+        <a class="navi-ext-col-item" href="/exams">Exam Archive</a
+        ><span class="slash">/</span>
+        <a class="navi-ext-col-item" href="">Tutoring Hours</a
+        ><span class="slash">/</span>
+        <a class="navi-ext-col-item" href="">Review Sessions</a
+        ><span class="slash">/</span>
+        <a class="navi-ext-col-item" href="">Course Surveys</a
+        ><span class="slash">/</span>
+        <a class="navi-ext-col-item" href="">Course Guide</a
+        ><span class="slash">/</span>
+        <a class="navi-ext-col-item" href="">Department Tours</a>
+      </div>
+
+      <div class="heading">
+        {% block heading %}{% endblock %}
+      </div>
+
+      {% block content %}{% endblock %}
+    </div>
+
+    <div class="footer">
+      {% block extra-footer %}{% endblock %}
+      <div class="footer-container">
+        <div class="footer-block">
+          <div class="footer-block-title">
+            Our Offices
+          </div>
+          <div class="footer-block-text">
+            290 Cory Hall | (510) 642-7346 <br />
+            345 Soda Hall | (510) 642-9952
+          </div>
         </div>
 
-        <div class="footer">
-            {% block extra-footer %}{% endblock %}
-            <div class="footer-container">
-                <div class="footer-block">
-                    <div class="footer-block-title">
-                        Our Offices
-                    </div>
-                    <div class="footer-block-text">
-                        290 Cory Hall | (510) 642-7346 <br/>
-                        345 Soda Hall | (510) 642-9952
-                    </div>
-                </div>
-
-                <div class="footer-block">
-                    <div class="footer-block-title">
-                        Email
-                    </div>
-                    <div class="footer-block-text">
-                        General: hkn[at]hkn.eecs.berkeley.edu <br/>
-                        Industrial Relations: indrel[at]hkn.eecs.berkeley.edu <br/>
-                        Service: serv[at]hkn.eecs.berkeley.edu
-                    </div>
-                </div>
-
-                <div class="footer-block">
-                    <div class="footer-block-text">
-                        Created by the Computing Services (Compserv) committee. <br/>
-                        Copyright &copy; <script type="text/javascript">
-                            var d = new Date();
-                            document.write(d.getFullYear());
-                        </script> Berkeley HKN
-                    </div>
-                </div>
-
-                <div class="footer-block">
-                    <a href="https://www.ocf.berkeley.edu">
-                        <img src="{% static "img/ocf-hosted-penguin-dark.svg" %}" alt="Hosted by the OCF" />
-                    </a>
-                </div>
-            </div>
+        <div class="footer-block">
+          <div class="footer-block-title">
+            Email
+          </div>
+          <div class="footer-block-text">
+            General: hkn[at]hkn.eecs.berkeley.edu <br />
+            Industrial Relations: indrel[at]hkn.eecs.berkeley.edu <br />
+            Service: serv[at]hkn.eecs.berkeley.edu
+          </div>
         </div>
-    </body>
+
+        <div class="footer-block">
+          <div class="footer-block-text">
+            Created by the Computing Services (Compserv) committee. <br />
+            Copyright &copy;
+            <script type="text/javascript">
+              var d = new Date();
+              document.write(d.getFullYear());
+            </script>
+            Berkeley HKN
+          </div>
+        </div>
+
+        <div class="footer-block">
+          <a href="https://www.ocf.berkeley.edu">
+            <img src="{% static "img/ocf-hosted-penguin-dark.svg" %}"
+            alt="Hosted by the OCF" />
+          </a>
+        </div>
+      </div>
+    </div>
+  </body>
 </html>
