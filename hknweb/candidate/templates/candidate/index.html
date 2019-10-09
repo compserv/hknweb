@@ -17,6 +17,10 @@ Candidate Portal
     <div class="right-column">
         <section>
             <h2>Announcements</h2>
+
+            {% if not announcements %}
+                No announcements at this time.
+            {% endif %}
             
             {% for announcement in announcements %}
                 <p>
