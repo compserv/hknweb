@@ -65,14 +65,14 @@ h2:first-child {
 .links-div {
     float: right;
     width: 40%;
-    font-size: 1.5em;
+    font-size: 1.3em;
 }
 
 .link-home {
     margin-left: 10%;
     float: left;
     width: 40%;
-    font-size: 1.5em;
+    font-size: 1.3em;
 }
 
 .detail {
@@ -97,7 +97,7 @@ h2:first-child {
 }
 
 #confirm-text {
-    font-size: 1.6em;
+    font-size: 1.4em;
     margin-left: 10%;
 }
 
