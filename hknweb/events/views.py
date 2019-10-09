@@ -77,12 +77,17 @@ def unrsvp(request, id):
     event = get_object_or_404(Event, pk=id)
 
     if request.user.is_authenticated:
-        rsvp = get_object_or_404(Rsvp, user=request.user, event=event)
-        rsvp.delete()
-        messages.success(request, 'un-RSVP\'d :(')
+        # check if rsvp for this event and this user already exists; if false, then set true
+        if datetime.datetime.now().replace(tzinfo=pytz.UTC) > event.end_time.replace(tzinfo=pytz.UTC):
+            messages.error(request, 'Could not un-RSVP: the event has already ended.')
+        else:
+            rsvp = get_object_or_404(Rsvp, user=request.user, event=event)
+            rsvp.delete()
+            messages.success(request, 'un-RSVP\'d :(')
     else:
         messages.error(request, 'Something went wrong; could not un-RSVP.')
     return redirect('/events/' + str(id))
+
 
 @permission_required('events.add_event', login_url = '/accounts/login/')
 def add_event(request):
