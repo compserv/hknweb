@@ -39,6 +39,7 @@ def index(request):
     return render(request, 'events/index.html', context, RequestContext(request, context))
 
 @login_required(login_url='/accounts/login/')
+@check_account_access
 def show_details(request, id):
     
     event = get_object_or_404(Event, pk=id)
