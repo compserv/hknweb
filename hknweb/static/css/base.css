@@ -1,269 +1,298 @@
 html {
-    min-height: 100vh;
+  min-height: 100vh;
 }
 body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    font-family: 'Source Sans Pro', sans-serif;
-    color: #353535;
-    background-color: #252525; /* If footer doesn't reach bottom of screen, this will "extend" the footer */
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: "Source Sans Pro", sans-serif;
+  color: #353535;
+  background-color: #252525; /* If footer doesn't reach bottom of screen, this will "extend" the footer */
 }
-.white-above-navi, .navi-container, .content {
-    background-color: white; /* Override body's background color */
-}
-.white-above-navi {
-    /* In case someone drags down from the top, want to see the navi's color */
-    position: fixed;
-    z-index: -1;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100px;
+.navi-container,
+.content {
+  background-color: white; /* Override body's background color */
 }
 
 /* Minimum margins for all sections */
-.navi-container, .navi-extension-container, .content, .footer {
-    padding-left: 13px;
-    padding-right: 13px;
+.navi-container,
+.content,
+.footer {
+  padding-left: 13px;
+  padding-right: 13px;
 }
 
 /* NAVIGATION BAR
  * If confused by the flexbox attributes, see https://css-tricks.com/snippets/css/a-guide-to-flexbox/ for a helpful tutorial
  */
 .navi-container {
-    padding-top: 7px;
-    padding-bottom: 7px;
-    border-bottom: solid 3px #003262; /* rgba(166, 60, 68, 1); HKN scarlet; hex code: #A63C44 */
+  padding-top: 7px;
+  padding-bottom: 7px;
+  /* border-bottom: solid 3px #003262; /* rgba(166, 60, 68, 1); HKN scarlet; hex code: #A63C44 */
 }
 .navi {
-    min-height: 50px;
-    max-width: 1250px;
-    margin: auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  min-height: 50px;
+  max-width: 1250px;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
-    /* Logo */
-    .navi a:first-child {
-        color: inherit;
-    }
-    .navi-logo {
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
-        flex-basis: auto;
-    }
-    .navi-logo-img {
-        height: 45px;
-        color: yellow;
-    }
-    .navi-menu-logo-text {
-        margin-left: 7px;
-    }
+/* Logo */
+.navi a:first-child {
+  color: inherit;
+}
+.navi-logo {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-basis: auto;
+}
+.navi-logo-img {
+  height: 45px;
+  color: yellow;
+}
+.navi-menu-logo-text {
+  margin-left: 7px;
+}
 
-    /* Menu */
-    .navi-menu {
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        flex-basis: auto;
-    }
-    .navi-menu > * {
-        cursor: pointer;
-        display: block;
-        white-space: nowrap;
-    }
-    .navi-menu > label {
-        padding-right: 24px;
-    }
-    .navi-menu-button {
-        padding-left: 24px;
-    }
-    .navi-menu label:hover {
-        text-decoration: underline;
-    }
-    .account-button {
-        display: inline-block;
-        padding: 9px;
-        background-color: #EEEEEE;
-        border: solid 1px #AAAAAA;
-        border-radius: 4px;
-        color: #353535;
-    }
-    .account-button:hover {
-        text-decoration: underline;
-    }
+/* Menu */
+.navi-menu {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex-basis: auto;
+}
+.navi-menu > * {
+  display: block;
+  white-space: nowrap;
+}
+.navi-menu label {
+  cursor: pointer;
+}
+.navi-menu > label {
+  padding-right: 24px;
+}
+.navi-menu > label:last-of-type {
+  padding-right: 0;
+  padding-left: 24px;
+}
+.navi-menu-button {
+  padding-left: 24px;
+}
+.navi-menu label:hover {
+  text-decoration: underline;
+}
+.account-button {
+  display: inline-block;
+  padding: 9px;
+  background-color: #eeeeee;
+  border: solid 1px #aaaaaa;
+  border-radius: 4px;
+  color: #353535;
+}
+.account-button:hover {
+  text-decoration: underline;
+}
 
-    /* Navi extension */
-    .navi-extension-container {
-        display: block;
-        position: absolute;
-        background-color: #f3f3f3;
-        width: 100%;
-        box-sizing: border-box;
-        top: -2000px;
-        z-index: 999999;
-        transition: all 500ms ease;
-        border-bottom: solid 3px #003262; /* #346F9E; /* HKN navy */
-    }
-    .navi-extension {
-        max-width: 1250px;
-        margin: 35px auto;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    .navi-extension-columns {
-        display: flex;
-        align-items: flex-start;
-    }
-    .navi-ext-col-header {
-        padding-bottom: 2px;
-        border-bottom: 1px solid #353535;
-        margin-bottom: 10px;
-        text-align: center;
-        font-weight: 700;
-    }
-    .navi-ext-col-item {
-        padding-top: 2px;
-        padding-left: 10px;
-        padding-right: 10px;
-    }
-    .navi-ext-logo-text{
-        margin-top: 2%;
-    }
-    .navi-ext-logo .navi-ext-logo-text .navi-logo-title{
-        font-size: 1.4em;
-    }
-    .navi-ext-logo .navi-ext-logo-text .navi-logo-subtitle{
-        font-size: 1.25em;
-    }
-    .exit-extension-button {
-        position: absolute;
-        top: 6px;
-        right: 15px;
-        font-size: 1.5em;
-        text-align: center;
-        vertical-align: middle;
-    }
+/* Media queries for responsive design */
+/* Desktop display: */
+@media screen and (min-width: 710px) {
+  .navi-menu-button {
+    display: none;
+  }
+}
+/* Mobile display: */
+@media screen and (max-width: 710px) {
+  .navi-menu > label {
+    display: none;
+  }
+  .navi-menu-button {
+    display: block;
+  }
+}
 
-    /* Media queries for responsive design */
-    /* Desktop display: */
-    @media screen and (min-width: 710px) {
-        .navi-menu-button {
-            display: none;
-        }
-    }
-    /* Mobile display: */
-    @media screen and (max-width: 800px) {
-        .navi-extension {
-            flex-direction: column;
-        }
-        .navi-ext-logo {
-            text-align: center;
-        }
-        .navi-ext-logo {
-            padding-bottom: 15px;
-        }
-    }
-    @media screen and (max-width: 710px) {
-        .navi-menu > label {
-            display: none;
-        }
-        .navi-menu-button {
-            display: block;
-        }
-        .navi-extension-columns {
-            flex-direction: column;
-            width: 100%;
-        }
-        .navi-extension-columns > * {
-            width: 100%;
-        }
-    }
+/* Toggle system */
+.toggle {
+  position: absolute;
+  top: -100%;
+  left: -100%;
+  display: none;
+}
+.sub-nav-bar {
+  position: absolute;
+  opacity: 0;
+  text-align: center;
+  background-color: #252525;
+  transition: opacity 0.5s ease-out;
+  box-sizing: border-box;
+  width: 100%;
+}
+.sub-nav-bar * {
+  color: white;
+  display: none;
+}
+#dummy-nav-bar {
+  opacity: 0;
+  position: static;  
+}
+#dummy-nav-bar * {
+  display: inline;
+}
+#toggle-account:not(:checked)
+  ~ #toggle-student:checked
+  ~ .navi-container
+  label[for="toggle-student"] {
+  text-decoration: underline;
+}
+#toggle-account:not(:checked) ~ #toggle-student:checked ~ #student-nav-bar {
+  opacity: 1;
+  z-index: 1;
+}
+#toggle-account:not(:checked) ~ #toggle-student:checked ~ #student-nav-bar * {
+  display: inline;
+}
+#toggle-account:not(:checked)
+  ~ #toggle-industry:checked
+  ~ .navi-container
+  label[for="toggle-industry"] {
+  text-decoration: underline;
+}
+#toggle-account:not(:checked) ~ #toggle-industry:checked ~ #industry-nav-bar {
+  opacity: 1;
+  z-index: 1;
+}
+#toggle-industry:checked ~ #industry-nav-bar * {
+  display: inline;
+}
+#toggle-account:not(:checked)
+  ~ #toggle-outreach:checked
+  ~ .navi-container
+  label[for="toggle-outreach"] {
+  text-decoration: underline;
+}
+#toggle-account:not(:checked) ~ #toggle-outreach:checked ~ #outreach-nav-bar {
+  opacity: 1;
+  z-index: 1;
+}
+#toggle-account:not(:checked) ~ #toggle-outreach:checked ~ #outreach-nav-bar * {
+  display: inline;
+}
+#toggle-account:not(:checked)
+  ~ #toggle-events:checked
+  ~ .navi-container
+  label[for="toggle-events"] {
+  text-decoration: underline;
+}
+#toggle-account:not(:checked) ~ #toggle-events:checked ~ #events-nav-bar {
+  opacity: 1;
+  z-index: 1;
+}
+#toggle-account:not(:checked) ~ #toggle-events:checked ~ #events-nav-bar * {
+  display: inline;
+}
+#toggle-account:not(:checked)
+  ~ #toggle-about:checked
+  ~ .navi-container
+  label[for="toggle-about"] {
+  text-decoration: underline;
+}
+#toggle-account:not(:checked) ~ #toggle-about:checked ~ #about-nav-bar {
+  opacity: 1;
+  z-index: 1;
+}
+#toggle-account:not(:checked) ~ #toggle-about:checked ~ #about-nav-bar * {
+  display: inline;
+}
+#toggle-account:checked ~ #account-nav-bar {
+  opacity: 1;
+  z-index: 1;
+}
+#toggle-account:checked ~ #account-nav-bar * {
+  display: inline;
+}
+#toggle-account:checked ~ .navi-container label[for="toggle-account"] {
+  text-decoration: underline;
+}
+#carrot {
+  position: relative;
+  border: solid black;
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  padding: 3px;
+  margin-left: 5px;
+  transform: rotate(45deg);
+  transition: transform 0.4s ease-out;
+}
+#toggle-account:checked ~ .navi-container #carrot {
+  transform: rotate(225deg);
+  transition: transform 0.4s ease-out;
+}
+.slash {
+  padding-left: 1em;
+  padding-right: 1em;
+  color: #fdb515;
+}
 
-    /* Toggle */
-    #toggle {
-        position: absolute;
-        top: -100%;
-        left: -100%;
-        display: none;
-    }
-    #toggle:checked ~ .navi-extension-container{
-        top: 0;
-    }
-
-    /* Navbar link styling */
-    .navi-extension-container a {
-        color: inherit;
-    }
-    .navi-container a:link, .navi-extension-container a:link {
-        text-decoration: none;
-    }
-    .account-button:hover {
-        text-decoration: underline;
-    }
-    .navi-container a:visited, .navi-extension-container a:visited {
-        text-decoration: none;
-    }
-    .navi-container a:hover, .navi-extension-container a:hover {
-        text-decoration: underline;
-    }
-    .navi-menu a:hover {
-        text-decoration: none;
-    }
-    .navi-container a:active, .navi-extension-container a:active {
-        text-decoration: underline;
-    }
+/* Navbar link styling */
+.navi-container a:link {
+  text-decoration: none;
+}
+.account-button:hover {
+  text-decoration: underline;
+}
+.navi-container a:visited {
+  text-decoration: none;
+}
+.navi-container a:hover {
+  text-decoration: underline;
+}
+.navi-menu a:hover {
+  text-decoration: none;
+}
+.navi-container a:active {
+  text-decoration: underline;
+}
 
 /* HEADING (which has the page's title) */
 .heading {
-    font-size: 3em;
-    font-weight: 300;
-    text-align: center;
-    margin: 0;
-    margin-bottom: 2rem;
+  font-size: 3em;
+  font-weight: 300;
+  text-align: center;
+  margin: 0;
+  margin-bottom: 2rem;
 }
 
 /* FOOTER */
 .footer {
-    background-color: #252525;
-    padding-top: 20px;
-    padding-bottom: 20px;
-    padding-right: 0; /* .footer-block element will provide 13px of padding-right */
+  background-color: #252525;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-right: 0; /* .footer-block element will provide 13px of padding-right */
 }
 .footer-container {
-    max-width: 1250px;
-    margin: 0 auto;
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    flex-wrap: wrap;
+  max-width: 1250px;
+  margin: 0 auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
 }
 .footer-block {
-    color: white;
-    padding-top: 7px;
-    padding-bottom: 7px;
-    padding-right: 13px;
+  color: white;
+  padding-top: 7px;
+  padding-bottom: 7px;
+  padding-right: 13px;
 }
 .footer-block-title {
-    font-size: 1.25em;
+  font-size: 1.25em;
 }
 .footer-block-text {
-    color: rgba(255, 255, 255, 0.75);
-}
-
-.red-text {
-    color: #ff0020;
-}
-
-.small-margin {
-    margin-left: 4%
+  color: rgba(255, 255, 255, 0.75);
 }
 
 /* Add this to out divs that evelope the body of a page.
    Makes sure "float" doesn't mess up the css. */
 .parent {
-    overflow: hidden;
+  overflow: hidden;
 }
