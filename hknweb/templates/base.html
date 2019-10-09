@@ -55,7 +55,9 @@
                     <label for="toggle-outreach">Outreach</label>
                     <label for="toggle-events">Events</label>
                     <label for="toggle-about">About</label>
-                    <span style="height: 1.8em; width: 1px; border-left: 1px black solid;"></span>
+                    {% if user.is_authenticated %}
+                        <span style="height: 1.8em; width: 1px; border-left: 1px black solid;"></span>
+                    {% endif %}
                     {% if user.is_authenticated %}
                         <span style="position: relative;">
                             Welcome, {{ user.first_name }}
