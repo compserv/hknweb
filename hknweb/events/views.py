@@ -17,7 +17,7 @@ def index(request):
     context = {
         'events': events,
     }
-    return render(request, 'events/index.html', context, RequestContext(request, context))
+    return render(request, 'events/index.html', context)
 
 def show_details(request, id):
     
