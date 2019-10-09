@@ -16,7 +16,6 @@ body {
 
 /* Minimum margins for all sections */
 .navi-container,
-.navi-extension-container,
 .content,
 .footer {
   padding-left: 13px;
@@ -74,10 +73,7 @@ body {
 .navi-menu > label {
   padding-right: 24px;
 }
-.navi-menu > span:last-of-type {
-  margin-left: 24px;
-}
-.navi-menu > label:last-child {
+.navi-menu > label:last-of-type {
   padding-right: 0;
   padding-left: 24px;
 }
@@ -107,30 +103,12 @@ body {
   }
 }
 /* Mobile display: */
-@media screen and (max-width: 800px) {
-  .navi-extension {
-    flex-direction: column;
-  }
-  .navi-ext-logo {
-    text-align: center;
-  }
-  .navi-ext-logo {
-    padding-bottom: 15px;
-  }
-}
 @media screen and (max-width: 710px) {
   .navi-menu > label {
     display: none;
   }
   .navi-menu-button {
     display: block;
-  }
-  .navi-extension-columns {
-    flex-direction: column;
-    width: 100%;
-  }
-  .navi-extension-columns > * {
-    width: 100%;
   }
 }
 
@@ -147,11 +125,19 @@ body {
   text-align: center;
   background-color: #252525;
   transition: opacity 0.5s ease-out;
+  box-sizing: border-box;
   width: 100%;
 }
 .sub-nav-bar * {
   color: white;
   display: none;
+}
+#dummy-nav-bar {
+  opacity: 0;
+  position: static;  
+}
+#dummy-nav-bar * {
+  display: inline;
 }
 #toggle-account:not(:checked)
   ~ #toggle-student:checked
@@ -161,6 +147,7 @@ body {
 }
 #toggle-account:not(:checked) ~ #toggle-student:checked ~ #student-nav-bar {
   opacity: 1;
+  z-index: 1;
 }
 #toggle-account:not(:checked) ~ #toggle-student:checked ~ #student-nav-bar * {
   display: inline;
@@ -173,6 +160,7 @@ body {
 }
 #toggle-account:not(:checked) ~ #toggle-industry:checked ~ #industry-nav-bar {
   opacity: 1;
+  z-index: 1;
 }
 #toggle-industry:checked ~ #industry-nav-bar * {
   display: inline;
@@ -185,6 +173,7 @@ body {
 }
 #toggle-account:not(:checked) ~ #toggle-outreach:checked ~ #outreach-nav-bar {
   opacity: 1;
+  z-index: 1;
 }
 #toggle-account:not(:checked) ~ #toggle-outreach:checked ~ #outreach-nav-bar * {
   display: inline;
@@ -197,6 +186,7 @@ body {
 }
 #toggle-account:not(:checked) ~ #toggle-events:checked ~ #events-nav-bar {
   opacity: 1;
+  z-index: 1;
 }
 #toggle-account:not(:checked) ~ #toggle-events:checked ~ #events-nav-bar * {
   display: inline;
@@ -209,12 +199,14 @@ body {
 }
 #toggle-account:not(:checked) ~ #toggle-about:checked ~ #about-nav-bar {
   opacity: 1;
+  z-index: 1;
 }
 #toggle-account:not(:checked) ~ #toggle-about:checked ~ #about-nav-bar * {
   display: inline;
 }
 #toggle-account:checked ~ #account-nav-bar {
   opacity: 1;
+  z-index: 1;
 }
 #toggle-account:checked ~ #account-nav-bar * {
   display: inline;
@@ -243,29 +235,22 @@ body {
 }
 
 /* Navbar link styling */
-.navi-extension-container a {
-  color: inherit;
-}
-.navi-container a:link,
-.navi-extension-container a:link {
+.navi-container a:link {
   text-decoration: none;
 }
 .account-button:hover {
   text-decoration: underline;
 }
-.navi-container a:visited,
-.navi-extension-container a:visited {
+.navi-container a:visited {
   text-decoration: none;
 }
-.navi-container a:hover,
-.navi-extension-container a:hover {
+.navi-container a:hover {
   text-decoration: underline;
 }
 .navi-menu a:hover {
   text-decoration: none;
 }
-.navi-container a:active,
-.navi-extension-container a:active {
+.navi-container a:active {
   text-decoration: underline;
 }
 
@@ -304,14 +289,6 @@ body {
 }
 .footer-block-text {
   color: rgba(255, 255, 255, 0.75);
-}
-
-.red-text {
-  color: #ff0020;
-}
-
-.small-margin {
-  margin-left: 4%;
 }
 
 /* Add this to out divs that evelope the body of a page.

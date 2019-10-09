@@ -22,48 +22,12 @@
     <title>{% block title %}{% endblock %} | Berkeley HKN</title>
   </head>
   <body>
-    <input
-      type="checkbox"
-      name="not-toggles"
-      class="toggle"
-      id="toggle-account"
-    />
-    <input
-      type="radio"
-      name="toggles"
-      class="toggle"
-      id="toggle-student"
-      onclick="untoggleAccounts()"
-      checked="checked"
-    />
-    <input
-      type="radio"
-      name="toggles"
-      class="toggle"
-      id="toggle-industry"
-      onclick="untoggleAccounts()"
-    />
-    <input
-      type="radio"
-      name="toggles"
-      class="toggle"
-      id="toggle-outreach"
-      onclick="untoggleAccounts()"
-    />
-    <input
-      type="radio"
-      name="toggles"
-      class="toggle"
-      id="toggle-events"
-      onclick="untoggleAccounts()"
-    />
-    <input
-      type="radio"
-      name="toggles"
-      class="toggle"
-      id="toggle-about"
-      onclick="untoggleAccounts()"
-    />
+    <input type="checkbox" name="not-toggles" class="toggle" id="toggle-account" />
+    <input type="radio" name="toggles" class="toggle" id="toggle-student" onclick="untoggleAccounts()" checked="checked" />
+    <input type="radio" name="toggles" class="toggle" id="toggle-industry" onclick="untoggleAccounts()" />
+    <input type="radio" name="toggles" class="toggle" id="toggle-outreach" onclick="untoggleAccounts()" />
+    <input type="radio" name="toggles" class="toggle" id="toggle-events" onclick="untoggleAccounts()" />
+    <input type="radio" name="toggles" class="toggle" id="toggle-about" onclick="untoggleAccounts()" />
     <script>
       function untoggleAccounts() {
         var input = document.getElementById("toggle-account");
@@ -95,15 +59,11 @@
           <label for="toggle-events">Events</label>
           <label for="toggle-about">About</label>
           {% if user.is_authenticated %}
-          <span
-            style="height: 1.8em; width: 1px; border-left: 1px black solid;"
-          ></span>
-          <span style="position: relative;">
-            <label for="toggle-account">
-              Welcome, {{ user.first_name }}
-              <i id="carrot"></i>
-            </label>
-          </span>
+          <span style="height: 1.8em; width: 1px; border-left: 1px black solid;"></span>
+          <label for="toggle-account">
+            Welcome, {{ user.first_name }}
+            <i id="carrot"></i>
+          </label>
           {% else %}
           <a class="account-button" href="/accounts/login">Account</a>
           {% endif %}
@@ -113,88 +73,80 @@
     </div>
 
     <div id="student-nav-bar" class="sub-nav-bar navi-container">
-      <a class="navi-ext-col-item" href="/exams">Exam Archive</a>
+      <a href="/exams">Exam Archive</a>
       <span class="slash">/</span>
-      <a class="navi-ext-col-item" href="">Tutoring Hours</a>
+      <a href="">Tutoring Hours</a>
       <span class="slash">/</span>
-      <a class="navi-ext-col-item" href="">Review Sessions</a>
+      <a href="">Review Sessions</a>
       <span class="slash">/</span>
-      <a class="navi-ext-col-item" href="">Course Surveys</a>
+      <a href="">Course Surveys</a>
       <span class="slash">/</span>
-      <a class="navi-ext-col-item" href="">Course Guide</a>
+      <a href="">Course Guide</a>
       <span class="slash">/</span>
-      <a class="navi-ext-col-item" href="">Department Tours</a>
+      <a href="">Department Tours</a>
     </div>
     <div id="industry-nav-bar" class="sub-nav-bar navi-container">
-      <a class="navi-ext-col-item" href="">Why HKN?</a>
+      <a href="">Why HKN?</a>
       <span class="slash">/</span>
-      <a class="navi-ext-col-item" href="">Resume Books</a>
+      <a href="">Resume Books</a>
       <span class="slash">/</span>
-      <a class="navi-ext-col-item" href="">Infosessions</a>
+      <a href="">Infosessions</a>
       <span class="slash">/</span>
-      <a class="navi-ext-col-item" href="">Career Fair</a>
+      <a href="">Career Fair</a>
       <span class="slash">/</span>
-      <a class="navi-ext-col-item" href="">Get in Touch</a>
+      <a href="">Get in Touch</a>
     </div>
     <div id="outreach-nav-bar" class="sub-nav-bar navi-container">
-      <a class="navi-ext-col-item" href="">EECS Day</a>
+      <a href="">EECS Day</a>
       <span class="slash">/</span>
-      <a class="navi-ext-col-item" href="">Junior EECS Day</a>
+      <a href="">Junior EECS Day</a>
       <span class="slash">/</span>
-      <a class="navi-ext-col-item" href="">Maker Workshops</a>
+      <a href="">Maker Workshops</a>
       <span class="slash">/</span>
-      <a class="navi-ext-col-item" href="">Bear Hacks</a>
+      <a href="">Bear Hacks</a>
       <span class="slash">/</span>
-      <a class="navi-ext-col-item" href="">Cal Day</a>
+      <a href="">Cal Day</a>
     </div>
     <div id="events-nav-bar" class="sub-nav-bar navi-container">
-      <a class="navi-ext-col-item" href="/events">Calendar</a>
+      <a href="/events">Calendar</a>
       <span class="slash">/</span>
-      <a
-        class="navi-ext-col-item"
-        href="https://www.flickr.com/people/berkeley_hkn/"
-        >Photos</a
-      >
+      <a href="https://www.flickr.com/people/berkeley_hkn/">Photos</a>
     </div>
     <div id="about-nav-bar" class="sub-nav-bar navi-container">
-      <a class="navi-ext-col-item" href="">Contact Us</a>
+      <a href="">Contact Us</a>
       <span class="slash">/</span>
-      <a class="navi-ext-col-item" href="">Committees</a>
+      <a href="">Committees</a>
       <span class="slash">/</span>
-      <a class="navi-ext-col-item" href="">Officers</a>
+      <a href="">Officers</a>
       <span class="slash">/</span>
-      <a class="navi-ext-col-item" href="/alumni">Alumni</a>
+      <a href="/alumni">Alumni</a>
       <span class="slash">/</span>
-      <a class="navi-ext-col-item" href="">Yearbooks</a>
+      <a href="">Yearbooks</a>
     </div>
     {% if user.is_authenticated %}
     <div id="account-nav-bar" class="sub-nav-bar navi-container">
-      <a class="navi-ext-col-item" href="/cand">Profile</a>
+      <a href="/cand">Profile</a>
       <span class="slash">/</span>
-      <a class="navi-ext-col-item" href="/accounts/settings">Settings</a>
+      <a href="/accounts/settings">Settings</a>
       <span class="slash">/</span>
-      <a class="navi-ext-col-item" href="/accounts/logout">Log out</a>
+      <a href="/accounts/logout">Log out</a>
     </div>
     {% endif %}
 
     <div class="content">
-      <!-- Dummy nav section, to push the rest of the page's content down appropriately -->
-      <div
-        id="student-nav-bar"
-        class="sub-nav-bar navi-container"
-        style="opacity: 0; position: static;"
-      >
-        <a class="navi-ext-col-item" href="/exams">Exam Archive</a
-        ><span class="slash">/</span>
-        <a class="navi-ext-col-item" href="">Tutoring Hours</a
-        ><span class="slash">/</span>
-        <a class="navi-ext-col-item" href="">Review Sessions</a
-        ><span class="slash">/</span>
-        <a class="navi-ext-col-item" href="">Course Surveys</a
-        ><span class="slash">/</span>
-        <a class="navi-ext-col-item" href="">Course Guide</a
-        ><span class="slash">/</span>
-        <a class="navi-ext-col-item" href="">Department Tours</a>
+      <!-- Dummy nav section, to push the rest of the page's content down appropriately. This should be a copy of the drop-down nav bar with the most words. -->
+      <div id="dummy-nav-bar" class="sub-nav-bar navi-container">
+        Exam Archive
+        <span class="slash">/</span>
+        Tutoring Hours
+        <span class="slash">/</span>
+        Review Sessions
+        <span class="slash">/</span>
+        Course Surveys
+        <span class="slash">/</span>
+        Course Guide
+        <span class="slash">/</span>
+        Department Tours
       </div>
 
       <div class="heading">
