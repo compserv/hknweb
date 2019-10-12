@@ -6,12 +6,10 @@ from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt #doing this for now bc idk how to make csrf work
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
-import datetime
-import pytz
+from django.utils import timezone
 
 from .models import Event, Rsvp
 from .forms import EventForm
-from hknweb.models import Profile
 
 # decorators
 
@@ -51,7 +49,7 @@ def show_details(request, id):
     }
     return render(request, 'events/show_details.html', context)
 
-@csrf_exempt  #doing this for now bc idk how to make csrf work
+@csrf_exempt  # doing this for now bc idk how to make csrf work
 @login_required(login_url='/accounts/login/')
 @check_account_access
 def rsvp(request, id):
@@ -68,7 +66,7 @@ def rsvp(request, id):
         messages.error(request, 'Could not RSVP; the RSVP limit has been reached.')
     return redirect('/events/' + str(id))
 
-@csrf_exempt  #doing this for now bc idk how to make csrf work
+@csrf_exempt  # doing this for now bc idk how to make csrf work
 @login_required(login_url='/accounts/login/')
 @check_account_access
 def unrsvp(request, id):
@@ -77,17 +75,13 @@ def unrsvp(request, id):
 
     event = get_object_or_404(Event, pk=id)
 
-    if request.user.is_authenticated:
-        # check if rsvp for this event and this user already exists; if false, then set true
-        if datetime.datetime.now().replace(tzinfo=pytz.UTC) > event.end_time.replace(tzinfo=pytz.UTC):
-            messages.error(request, 'Could not un-RSVP: the event has already ended.')
-        else:
-            rsvp = get_object_or_404(Rsvp, user=request.user, event=event)
-            rsvp.delete()
-            messages.success(request, 'un-RSVP\'d :(')
+    if timezone.now() > event.end_time:
+        messages.error(request, 'Could not un-RSVP: the event has already ended.')
     else:
-        messages.error(request, 'Something went wrong; could not un-RSVP.')
-    return redirect('/events/' + str(id))
+        rsvp = get_object_or_404(Rsvp, user=request.user, event=event)
+        rsvp.delete()
+        messages.success(request, 'un-RSVP\'d :(')
+    return redirect(event)
 
 
 @permission_required('events.add_event', login_url = '/accounts/login/')

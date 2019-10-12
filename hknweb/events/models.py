@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 class EventType(models.Model):
     type = models.CharField(max_length=255)
 
@@ -9,6 +10,7 @@ class EventType(models.Model):
 
     def __str__(self):
         return str(self.type)
+
 
 class Event(models.Model):
     name        = models.CharField(max_length=255, null=False)
@@ -29,11 +31,15 @@ class Event(models.Model):
     created_at  = models.DateTimeField(auto_now_add=True)
     # updated_at  = models.DateTimeField(auto_now=True)
 
+    def get_absolute_url(self):
+        return '/events/{}'.format(self.id)
+
     def __repr__(self):
-       return "Event(name={}, location={})".format(self.name, self.location)
+        return "Event(name={}, location={})".format(self.name, self.location)
 
     def __str__(self):
-       return self.name
+        return self.name
+
 
 class Rsvp(models.Model): # TODO: null should be false in some cases
     user  = models.ForeignKey(User, models.CASCADE, null=False, verbose_name="rsvp'd by")
@@ -46,7 +52,7 @@ class Rsvp(models.Model): # TODO: null should be false in some cases
     # updated_at      = models.DateTimeField(auto_now=True)
 
     def __repr__(self):
-       return "Rsvp(event={})".format(self.event)
+        return "Rsvp(event={})".format(self.event)
     
     def __str__(self):
         return self.event.name
