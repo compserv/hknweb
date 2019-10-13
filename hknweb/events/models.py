@@ -13,12 +13,12 @@ class EventType(models.Model):
 
 
 class Event(models.Model):
-    name        = models.CharField(max_length=255, null=False)
+    name        = models.CharField(max_length=255)
     slug        = models.CharField(max_length=255)
-    start_time  = models.DateTimeField(null=False)
-    end_time    = models.DateTimeField(null=False)
+    start_time  = models.DateTimeField()
+    end_time    = models.DateTimeField()
     location    = models.CharField(max_length=255)
-    event_type  = models.ForeignKey(EventType, models.CASCADE, null=False)
+    event_type  = models.ForeignKey(EventType, models.CASCADE)
     description = models.TextField()
     rsvp_limit  = models.PositiveIntegerField(null=True, blank=True)
     # need_transportation = models.BooleanField(default=False)
@@ -41,10 +41,10 @@ class Event(models.Model):
         return self.name
 
 
-class Rsvp(models.Model): # TODO: null should be false in some cases
-    user  = models.ForeignKey(User, models.CASCADE, null=False, verbose_name="rsvp'd by")
-    event = models.ForeignKey(Event, models.CASCADE, null=False)
-    confirmed       = models.BooleanField(null=False, default=False)
+class Rsvp(models.Model):
+    user  = models.ForeignKey(User, models.CASCADE, verbose_name="rsvp'd by")
+    event = models.ForeignKey(Event, models.CASCADE)
+    confirmed       = models.BooleanField(default=False)
     comment         = models.TextField(blank=True, default="")
     # transportation  = models.IntegerField(choices=TRANSPORT_ENUM,
     #                                       default=HAVE_RIDE)
