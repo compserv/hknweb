@@ -1,5 +1,5 @@
 from django.views import generic
-from django.views.generic.edit import FormView, UpdateView
+from django.views.generic.edit import FormView
 from django.shortcuts import render, redirect, reverse
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
@@ -18,6 +18,7 @@ from .forms import ChallengeRequestForm, ChallengeConfirmationForm
 # decorators
 
 # used for things only officers and candidates can access
+# TODO: use permissions instead of just the groups
 def check_account_access(func):
     def check_then_call(request, *args, **kwargs):
         if not is_cand_or_officer(request.user):
@@ -199,7 +200,6 @@ def challenge_detail_view(request, pk):
     # check whether the viewer of page is the officer who gave the challenge
     viewer_is_the_officer = challenge.officer == request.user
     # check whether the viewer of page is an officer
-    viewer_is_an_officer = is_officer(request.user)
     if viewer_is_the_officer:
         review_link = request.build_absolute_uri(
                 reverse("candidate:challengeconfirm", kwargs={ 'pk' : pk }))
@@ -210,7 +210,7 @@ def challenge_detail_view(request, pk):
         "officer_name" : officer_name,
         "requester_name" : requester_name,
         "viewer_is_the_officer" : viewer_is_the_officer,
-        "viewer_is_an_officer" : viewer_is_an_officer,
+        # viewer_is_an_officer is already added as a context variable with a context processor
         "review_link" : review_link,
     }
     return render(request, "candidate/challenge_detail.html", context=context)
@@ -218,11 +218,9 @@ def challenge_detail_view(request, pk):
 
 # HELPERS
 
-def is_officer(user):
-    return user.groups.filter(name=settings.OFFICER_GROUP).exists()
-
 def is_cand_or_officer(user):
-    return user.groups.filter(name=settings.CAND_GROUP).exists() or is_officer(user)
+    return user.groups.filter(name=settings.CAND_GROUP).exists() or \
+            user.groups.filter(name=settings.OFFICER_GROUP).exists()
 
 # This function is not used; it can be used to view all photos available
 def get_all_photos():
