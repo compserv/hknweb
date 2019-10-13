@@ -8,6 +8,27 @@
     margin: 0 auto;
 }
 
+ul {
+    list-style: none;
+}
+.req {
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    position: relative;
+    vertical-align: middle;
+}
+
+.done {
+    background-image: url('yes.png');
+    background-size: 20px 20px;
+}
+
+.not-done {
+    background-image: url('maybe.png');
+    background-size: 20px 20px;
+}
+
 @media screen and (min-width: 1250px) {
     .content {
         padding-top: 3em;

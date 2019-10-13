@@ -72,22 +72,57 @@ Candidate Portal
 
             <div class="checklist-left-col">
                 <ul style="margin-bottom: 0;">
-                    <li>Mandatory meetings</li>
+                    <li>
+                    {% if req_statuses.mandatory_meetings %}
+                        <span class="req done"></span>
+                    {% else %}
+                        <span class="req not-done"></span>
+                    {% endif %}
+                    Mandatory Meetings
+                    </li>
                     <ol type="1">
                         <li>Candidate Meeting</li>
                         <li>GM (General Meeting) 1</li>
                         <li>GM 2</li>
                         <li>GM 3</li>
                     </ol>
-                    <li>Fun</li>
+                    <li>
+                        {% if req_statuses.fun %}
+                            <span class="req done"></span>
+                        {% else %}
+                            <span class="req not-done"></span>
+                        {% endif %}
+                        Fun
+                        </li>
                     <ol type="1">
                         <li>Thing 1</li>
                         <li>Thing 2</li>
                         <li>Thing 3</li>
                     </ol>
-                    <li>Big Fun</li>
-                    <li>Service</li>
-                    <li>Prodev</li>
+                    <li>
+                        {% if req_statuses.big_fun %}
+                            <span class="req done"></span>
+                        {% else %}
+                            <span class="req not-done"></span>
+                        {% endif %}
+                        Big Fun
+                        </li>
+                        <li>
+                            {% if req_statuses.service %}
+                                <span class="req done"></span>
+                            {% else %}
+                                <span class="req not-done"></span>
+                            {% endif %}
+                            Service
+                            </li>
+                            <li>
+                                {% if req_statuses.prodev %}
+                                    <span class="req done"></span>
+                                {% else %}
+                                    <span class="req not-done"></span>
+                                {% endif %}
+                                ProDev
+                                </li>
                 </ul>
             </div>
             <div class="checklist-right-col">
@@ -101,7 +136,14 @@ Candidate Portal
                             <li>{{ num_rejected }} rejected</li>
                             <li>{{ num_confirmed }} confirmed</li>
                         </ul>
-                    <li>Officer Hangouts</li>
+                        <li>
+                            {% if req_statuses.officer_hangouts %}
+                                <span class="req done"></span>
+                            {% else %}
+                                <span class="req not-done"></span>
+                            {% endif %}
+                            Officer Hangouts
+                            </li>
                     <ol type="1">
                         <li>Things</li>
                     </ol>
@@ -109,12 +151,26 @@ Candidate Portal
 
                 <h4>Bit-Byte</h4>
                 <ul style="margin-bottom: 0;">
-                    <li>Adventures</li>
+                    <li>
+                        {% if req_statuses.adventures %}
+                            <span class="req done"></span>
+                        {% else %}
+                            <span class="req not-done"></span>
+                        {% endif %}
+                        Adventures
+                        </li>
                     <ol type="1">
                         <li>Thing 1</li>
                         <li>Thing 2</li>
                     </ol>
-                    <li>Boba or Equivalent</li>
+                    <li>
+                        {% if req_statuses.boba %}
+                            <span class="req done"></span>
+                        {% else %}
+                            <span class="req not-done"></span>
+                        {% endif %}
+                        Boba
+                        </li>
                     <ol type="1">
                         <li>Thing 1</li>
                     </ol>

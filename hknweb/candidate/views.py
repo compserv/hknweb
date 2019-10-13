@@ -13,7 +13,7 @@ from random import randint
 import datetime
 
 from .models import OffChallenge, Announcement
-from ..events.models import Event
+from ..events.models import Event, Rsvp
 from .forms import ChallengeRequestForm, ChallengeConfirmationForm
 
 # decorators
@@ -46,12 +46,15 @@ class IndexView(generic.TemplateView):
                 .filter(visible=True) \
                 .order_by('-release_date')
         today = datetime.date.today()
+        rsvps = Rsvp.objects.filter(user__exact=self.request.user)
+        req_statuses = check_requirements(rsvps.filter(confirmed=True), reviewed_challenges.filter(confirmed=True).count())
         upcoming_events = Event.objects.filter(start_time__range=(today, today + datetime.timedelta(days=7))).order_by('start_time')
         context = {
             'num_pending' : challenges.filter(reviewed=False).count(),
             'num_rejected' : reviewed_challenges.filter(confirmed=False).count(),
             'num_confirmed' : reviewed_challenges.filter(confirmed=True).count(),
             'announcements' : announcements,
+            'req_statuses' : req_statuses,
             'upcoming_events': upcoming_events,
         }
         return context
@@ -228,6 +231,25 @@ def get_rand_photo(width=400):
     with open(get_static("candidate/animal_photo_urls.txt")) as f:
         urls = f.readlines()
     return urls[randint(0, len(urls) - 1)].strip() + "?w=" + str(width)
+
+# Checks which requirements have been fulfilled by a candidate
+def check_requirements(confirmed_rsvps, challenge_count):
+    req_list = {
+        'mandatory_meetings': 3, 
+        'big_fun': 1,
+        'fun': 3,
+        'service': 1,
+        'prodev': 1,
+        'officer_hangouts': 3 - challenge_count, 
+        'adventures': 2,
+        'boba': 1,
+        }
+    req_statuses = dict.fromkeys(req_list.keys(), False)
+    for req_type, minimum in req_list.items():
+        check = confirmed_rsvps.filter(event__event_type__type=req_type).count()
+        if check >= minimum:
+            req_statuses[req_type] = True
+    return req_statuses
 
 def get_static(path):
     if settings.DEBUG:
