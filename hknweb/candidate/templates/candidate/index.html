@@ -72,21 +72,26 @@ Candidate Portal
 
             <div class="checklist-left-col">
                 <ul class="checkboxes" style="margin-bottom: 0;">
+                    <br/>
                     <li>
-                    {% if req_statuses.mandatory_meetings %}
-                        <span class="req done"></span>
-                    {% else %}
-                        <span class="req not-done"></span>
-                    {% endif %}
-                    Mandatory Meetings
+                        {% if req_statuses.mandatory_meetings %}
+                            <span class="req done"></span>
+                        {% else %}
+                            <span class="req not-done"></span>
+                        {% endif %}
+                        Mandatory Meetings
                     </li>
-                    <table>
-                        <tbody>
+                    <ul class="conf-events">
                         {% for event in confirmed_events.mandatory_meetings %} 
-                            <tr>{{ event.name }}</tr>
+                            <li>{{ event.name }}<br/></li>
                         {% endfor %}
-                        </tbody>
-                    </table>
+                    </ul>
+                    <ul class="unconf-events">
+                        {% for event in unconfirmed_events.mandatory_meetings %} 
+                            <li>{{ event.name }}<br/></li>
+                        {% endfor %}
+                    </ul>
+                    <br/>
                     <li>
                         {% if req_statuses.fun %}
                             <span class="req done"></span>
@@ -95,6 +100,17 @@ Candidate Portal
                         {% endif %}
                         Fun
                     </li>
+                    <ul class="conf-events">
+                        {% for event in confirmed_events.fun %} 
+                            <li>{{ event.name }}<br/></li>
+                        {% endfor %}
+                    </ul>
+                    <ul class="unconf-events">
+                        {% for event in unconfirmed_events.fun %} 
+                            <li>{{ event.name }}<br/></li>
+                        {% endfor %}
+                    </ul>
+                    <br/>
                     <li>
                         {% if req_statuses.big_fun %}
                             <span class="req done"></span>
@@ -103,6 +119,17 @@ Candidate Portal
                         {% endif %}
                         Big Fun
                     </li>
+                    <ul class="conf-events">
+                        {% for event in confirmed_events.big_fun %} 
+                            <li>{{ event.name }}<br/></li>
+                        {% endfor %}
+                    </ul>
+                    <ul class="unconf-events">
+                        {% for event in unconfirmed_events.big_fun %} 
+                            <li>{{ event.name }}<br/></li>
+                        {% endfor %}
+                    </ul>
+                    <br/>
                     <li>
                         {% if req_statuses.service %}
                             <span class="req done"></span>
@@ -111,6 +138,17 @@ Candidate Portal
                         {% endif %}
                         Service
                     </li>
+                    <ul class="conf-events">
+                        {% for event in confirmed_events.service %} 
+                            <li>{{ event.name }}<br/></li>
+                        {% endfor %}
+                    </ul>
+                    <ul class="unconf-events">
+                        {% for event in unconfirmed_events.service %} 
+                            <li>{{ event.name }}<br/></li>
+                        {% endfor %}
+                    </ul>
+                    <br/>
                     <li>
                         {% if req_statuses.prodev %}
                             <span class="req done"></span>
@@ -119,13 +157,16 @@ Candidate Portal
                         {% endif %}
                         Prodev
                     </li>
-                    <table>
-                            <tbody>
-                            {% for event in confirmed_events.prodev %} 
-                                <tr>{{ event.name }}</tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
+                    <ul class="conf-events">
+                        {% for event in confirmed_events.prodev %} 
+                            <li>{{ event.name }}<br/></li>
+                        {% endfor %}
+                    </ul>
+                    <ul class="unconf-events">
+                        {% for event in unconfirmed_events.prodev %} 
+                            <li>{{ event.name }}<br/></li>
+                        {% endfor %}
+                    </ul>
                 </ul>
             </div>
             <div class="checklist-right-col">

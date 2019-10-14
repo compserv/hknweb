@@ -34,6 +34,27 @@
     background-size: 20px 20px;
 }
 
+.conf-events, .unconf-events {
+    list-style: none;
+    font-size: 0.8em;
+}
+
+.conf-events li::before {
+    content: "\2022";
+    color: green;
+    display: inline-block;
+    width: 10px;
+    margin-left: -20px;
+}
+
+.unconf-events li::before {
+    content: "\2022";
+    color: red;
+    display: inline-block;
+    width: 10px;
+    margin-left: -20px;
+}
+
 @media screen and (min-width: 1250px) {
     .content {
         padding-top: 3em;

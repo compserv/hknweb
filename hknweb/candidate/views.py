@@ -248,10 +248,12 @@ def sort_rsvps_into_events(rsvps):
         'service': 'Service',
         'prodev': 'Prodev',
     }
-    sorted_events = dict.fromkeys(map_event_vars.keys(), [])
+    sorted_events = dict.fromkeys(map_event_vars.keys())
     for event_key, event_type in map_event_vars.items():
+        temp = []
         for rsvp in rsvps.filter(event__event_type__type=event_type):
-            sorted_events[event_key].append(rsvp.event)
+            temp.append(rsvp.event)
+        sorted_events[event_key] = temp
     return sorted_events
 
 # Checks which requirements have been fulfilled by a candidate
