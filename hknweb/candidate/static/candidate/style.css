@@ -36,22 +36,22 @@
 
 .conf-events, .unconf-events {
     list-style: none;
-    font-size: 0.8em;
+    font-size: 0.9em;
 }
 
 .conf-events li::before {
-    content: "\2022";
+    content: "\25CF";
     color: green;
     display: inline-block;
-    width: 10px;
+    width: 15px;
     margin-left: -20px;
 }
 
 .unconf-events li::before {
-    content: "\2022";
+    content: "\25CF";
     color: red;
     display: inline-block;
-    width: 10px;
+    width: 15px;
     margin-left: -20px;
 }
 
