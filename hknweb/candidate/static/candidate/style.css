@@ -8,9 +8,14 @@
     margin: 0 auto;
 }
 
-ul {
+.checkboxes {
     list-style: none;
 }
+
+.checkboxes li {
+    height: 20px;
+}
+
 .req {
     width: 20px;
     height: 20px;

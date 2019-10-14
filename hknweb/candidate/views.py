@@ -47,13 +47,18 @@ class IndexView(generic.TemplateView):
                 .order_by('-release_date')
         today = datetime.date.today()
         rsvps = Rsvp.objects.filter(user__exact=self.request.user)
-        req_statuses = check_requirements(rsvps.filter(confirmed=True), reviewed_challenges.filter(confirmed=True).count())
+        #Both confirmed and unconfirmed rsvps have been sorted into event types
+        confirmed_events = sort_rsvps_into_events(rsvps.filter(confirmed=True))
+        unconfirmed_events = sort_rsvps_into_events(rsvps.filter(confirmed=False))
+        req_statuses = check_requirements(confirmed_events)
         upcoming_events = Event.objects.filter(start_time__range=(today, today + datetime.timedelta(days=7))).order_by('start_time')
         context = {
             'num_pending' : challenges.filter(reviewed=False).count(),
             'num_rejected' : reviewed_challenges.filter(confirmed=False).count(),
             'num_confirmed' : reviewed_challenges.filter(confirmed=True).count(),
             'announcements' : announcements,
+            'confirmed_events': confirmed_events,
+            'unconfirmed_events': unconfirmed_events,
             'req_statuses' : req_statuses,
             'upcoming_events': upcoming_events,
         }
@@ -232,22 +237,36 @@ def get_rand_photo(width=400):
         urls = f.readlines()
     return urls[randint(0, len(urls) - 1)].strip() + "?w=" + str(width)
 
+#Takes in all confirmed rsvps and sorts them into types, current hard coded 
+# TODO: support more flexible typing and string-to-var parsing/conversion 
+def sort_rsvps_into_events(rsvps):
+    #Events in admin are currently in a readable format, must convert them to callable keys for Django template
+    map_event_vars = {
+        'mandatory_meetings': 'Mandatory', 
+        'big_fun': 'Big Fun', 
+        'fun': 'Fun',
+        'service': 'Service',
+        'prodev': 'Prodev',
+    }
+    sorted_events = dict.fromkeys(map_event_vars.keys(), [])
+    for event_key, event_type in map_event_vars.items():
+        for rsvp in rsvps.filter(event__event_type__type=event_type):
+            sorted_events[event_key].append(rsvp.event)
+    return sorted_events
+
 # Checks which requirements have been fulfilled by a candidate
-def check_requirements(confirmed_rsvps, challenge_count):
+def check_requirements(sorted_rsvps):
+    #TODO: increase flexibility by fetching event requirement count from database
     req_list = {
         'mandatory_meetings': 3, 
         'big_fun': 1,
         'fun': 3,
         'service': 1,
         'prodev': 1,
-        'officer_hangouts': 3 - challenge_count, 
-        'adventures': 2,
-        'boba': 1,
-        }
+    }
     req_statuses = dict.fromkeys(req_list.keys(), False)
     for req_type, minimum in req_list.items():
-        check = confirmed_rsvps.filter(event__event_type__type=req_type).count()
-        if check >= minimum:
+        if len(sorted_rsvps[req_type])>= minimum:
             req_statuses[req_type] = True
     return req_statuses
 
