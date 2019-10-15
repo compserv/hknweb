@@ -71,53 +71,122 @@ Candidate Portal
             <h2 style="margin-bottom: 0;">Checklist</h2>
 
             <div class="checklist-left-col">
-                <ul style="margin-bottom: 0;">
-                    <li>Mandatory meetings</li>
-                    <ol type="1">
-                        <li>Candidate Meeting</li>
-                        <li>GM (General Meeting) 1</li>
-                        <li>GM 2</li>
-                        <li>GM 3</li>
-                    </ol>
-                    <li>Fun</li>
-                    <ol type="1">
-                        <li>Thing 1</li>
-                        <li>Thing 2</li>
-                        <li>Thing 3</li>
-                    </ol>
-                    <li>Big Fun</li>
-                    <li>Service</li>
-                    <li>Prodev</li>
+                <ul class="checkboxes" style="margin-bottom: 0;">
+                    <br/>
+                    <li>
+                        {% if req_statuses.mandatory_meetings %}
+                            <span class="req done"></span>
+                        {% else %}
+                            <span class="req not-done"></span>
+                        {% endif %}
+                        Mandatory Meetings
+                    </li>
+                    <ul class="conf-events">
+                        {% for event in confirmed_events.mandatory_meetings %} 
+                            <li>{{ event.name }}<br/></li>
+                        {% endfor %}
+                    </ul>
+                    <ul class="unconf-events">
+                        {% for event in unconfirmed_events.mandatory_meetings %} 
+                            <li>{{ event.name }}<br/></li>
+                        {% endfor %}
+                    </ul>
+                    <br/>
+                    <li>
+                        {% if req_statuses.fun %}
+                            <span class="req done"></span>
+                        {% else %}
+                            <span class="req not-done"></span>
+                        {% endif %}
+                        Fun
+                    </li>
+                    <ul class="conf-events">
+                        {% for event in confirmed_events.fun %} 
+                            <li>{{ event.name }}<br/></li>
+                        {% endfor %}
+                    </ul>
+                    <ul class="unconf-events">
+                        {% for event in unconfirmed_events.fun %} 
+                            <li>{{ event.name }}<br/></li>
+                        {% endfor %}
+                    </ul>
+                    <br/>
+                    <li>
+                        {% if req_statuses.big_fun %}
+                            <span class="req done"></span>
+                        {% else %}
+                            <span class="req not-done"></span>
+                        {% endif %}
+                        Big Fun
+                    </li>
+                    <ul class="conf-events">
+                        {% for event in confirmed_events.big_fun %} 
+                            <li>{{ event.name }}<br/></li>
+                        {% endfor %}
+                    </ul>
+                    <ul class="unconf-events">
+                        {% for event in unconfirmed_events.big_fun %} 
+                            <li>{{ event.name }}<br/></li>
+                        {% endfor %}
+                    </ul>
+                    <br/>
+                    <li>
+                        {% if req_statuses.service %}
+                            <span class="req done"></span>
+                        {% else %}
+                            <span class="req not-done"></span>
+                        {% endif %}
+                        Service
+                    </li>
+                    <ul class="conf-events">
+                        {% for event in confirmed_events.service %} 
+                            <li>{{ event.name }}<br/></li>
+                        {% endfor %}
+                    </ul>
+                    <ul class="unconf-events">
+                        {% for event in unconfirmed_events.service %} 
+                            <li>{{ event.name }}<br/></li>
+                        {% endfor %}
+                    </ul>
+                    <br/>
+                    <li>
+                        {% if req_statuses.prodev %}
+                            <span class="req done"></span>
+                        {% else %}
+                            <span class="req not-done"></span>
+                        {% endif %}
+                        Prodev
+                    </li>
+                    <ul class="conf-events">
+                        {% for event in confirmed_events.prodev %} 
+                            <li>{{ event.name }}<br/></li>
+                        {% endfor %}
+                    </ul>
+                    <ul class="unconf-events">
+                        {% for event in unconfirmed_events.prodev %} 
+                            <li>{{ event.name }}<br/></li>
+                        {% endfor %}
+                    </ul>
                 </ul>
             </div>
             <div class="checklist-right-col">
                 <h4>Interactivities</h4>
                 <ul>
                     <li>Officer Challenges</li>
-                        <a href="{% url 'candidate:candrequests' %}">
-                            (View/Request Officer Challenge Confirmations)</a>
-                        <ul>
-                            <li>{{ num_pending }} pending</li>
-                            <li>{{ num_rejected }} rejected</li>
-                            <li>{{ num_confirmed }} confirmed</li>
-                        </ul>
+                    <a href="{% url 'candidate:candrequests' %}">
+                        (View/Request Officer Challenge Confirmations)</a>
+                    <ul>
+                        <li>{{ num_pending }} pending</li>
+                        <li>{{ num_rejected }} rejected</li>
+                        <li>{{ num_confirmed }} confirmed</li>
+                    </ul>
                     <li>Officer Hangouts</li>
-                    <ol type="1">
-                        <li>Things</li>
-                    </ol>
                 </ul>
 
                 <h4>Bit-Byte</h4>
                 <ul style="margin-bottom: 0;">
                     <li>Adventures</li>
-                    <ol type="1">
-                        <li>Thing 1</li>
-                        <li>Thing 2</li>
-                    </ol>
-                    <li>Boba or Equivalent</li>
-                    <ol type="1">
-                        <li>Thing 1</li>
-                    </ol>
+                    <li>Boba</li>
                 </ul>
             </div>
         </section>

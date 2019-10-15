@@ -8,6 +8,53 @@
     margin: 0 auto;
 }
 
+.checkboxes {
+    list-style: none;
+}
+
+.checkboxes li {
+    height: 20px;
+}
+
+.req {
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    position: relative;
+    vertical-align: middle;
+}
+
+.done {
+    background-image: url('yes.png');
+    background-size: 20px 20px;
+}
+
+.not-done {
+    background-image: url('maybe.png');
+    background-size: 20px 20px;
+}
+
+.conf-events, .unconf-events {
+    list-style: none;
+    font-size: 0.9em;
+}
+
+.conf-events li::before {
+    content: "\25CF";
+    color: green;
+    display: inline-block;
+    width: 15px;
+    margin-left: -20px;
+}
+
+.unconf-events li::before {
+    content: "\25CF";
+    color: red;
+    display: inline-block;
+    width: 15px;
+    margin-left: -20px;
+}
+
 @media screen and (min-width: 1250px) {
     .content {
         padding-top: 3em;
