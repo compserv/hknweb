@@ -23,24 +23,14 @@ def home(request):
         tz = pytz.timezone('America/Los_Angeles')
         start = tz.normalize(event.start_time.astimezone(tz))
         end = tz.normalize(event.end_time.astimezone(tz))
-        
-        
-        # start, end = event.start_time, event.end_time
-        print(type(start.tzinfo), type(end.tzinfo))
-        print(start, end)
         start_timetuple, end_timetuple = start.timetuple(), end.timetuple()
         start_day = weekdays[start_timetuple[6]] + '  ' + str(start_timetuple[1]) + '/' + str(start_timetuple[2])
         end_day = weekdays[end_timetuple[6]] + '  ' + str(end_timetuple[1]) + '/' + str(end_timetuple[2])
         start_time = start_day + '  ' + format_time(start_timetuple[3], start_timetuple[4])
-        # if start_timetuple[2] == end_timetuple[2]:
-        #     end_time = str(end_timetuple[3]) + ':' + two_digits(str(end_timetuple[4]))
-        # else:
-        #     end_time = 'overnight'
         if (start_day == end_day):
             end_time = '  ' + format_time(end_timetuple[3], end_timetuple[4])
         else:
             end_time = '  ' + end_day + '  ' + format_time(end_timetuple[3], end_timetuple[4])
-        # return {'start_day': day, 'start': start_time, 'end_day': day, 'end': end_time}
         return {'start': start_time, 'end': end_time}
 
     def format_time(hour, min):
@@ -54,8 +44,6 @@ def home(request):
             return str(hour) + ":" + two_digits(min) + " AM  "
 
     upcoming_events = Event.objects.filter(start_time__gte=today).order_by('start_time')[:4]
-    # if len(upcoming_events) > 4:
-    #     upcoming_events = upcoming_events[:4]
     events = []
     for event in upcoming_events:
         temp_dict = parse_date(event)

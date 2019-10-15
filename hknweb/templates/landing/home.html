@@ -120,9 +120,6 @@
                 {% for event in events %}
                     <li>{{ event.name }}
                     <div id="date-and-time"></div>
-                      <!-- Script to render dates prettily -->
-                        <!-- <i>{{ event.day }}</i> <span class="events-card-time">{{ event.start_time }} - {{ event.end_time }}</span> -->
-                        {%load tz%}
                         <span class="events-card-time">{{ event.start}} - {{ event.end}}</span> 
                     </li>
                 {% endfor %}
