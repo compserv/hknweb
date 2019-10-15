@@ -1,5 +1,5 @@
 from .common import *
-from .secrets import SECRET_KEY, RECAPTCHA_PRIVATE_KEY
+from .secrets import *
 # In prod mode, rigidly enforce using real secrets and fail if unavailiable
 
 # SECURITY WARNING: keep the secret key used in production secret!
