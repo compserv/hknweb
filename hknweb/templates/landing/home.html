@@ -121,26 +121,10 @@
                     <li>{{ event.name }}
                     <div id="date-and-time"></div>
                       <!-- Script to render dates prettily -->
-                        <script>
-                            var start = new Date('{{ event.start_time|date:"c" }}');
-                            var end = new Date('{{ event.end_time|date:"c" }}');
-                            var sameDayEvent = start.getDate() === end.getDate() && start.getMonth() === end.getMonth() && 
-                                start.getYear() === end.getYear();
-                            if (sameDayEvent) {
-                                var HTMLtext = start.toLocaleDateString([], {month: "numeric", day: "numeric"}) + "  from  " + 
-                                               start.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) + ' to ' + 
-                                               end.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                            } else { // Event starts and ends on different days
-                                var HTMLtext = start.toLocaleDateString([], {month: "numeric", day: "numeric"}) + "  at " + 
-                                               start.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) + ' to ' + 
-                                               end.toLocaleDateString([], {month: "numeric", day: "numeric"}) + "  at  " + 
-                                               end.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                            }
-                            document.getElementById("date-and-time").innerHTML = HTMLtext;
-                        </script>
+                        <!-- <i>{{ event.day }}</i> <span class="events-card-time">{{ event.start_time }} - {{ event.end_time }}</span> -->
+                        {%load tz%}
+                        <span class="events-card-time">{{ event.start}} - {{ event.end}}</span> 
                     </li>
-                    <!-- <i>{{ event.day }}</i> <span class="events-card-time">{{ event.start_time }} - {{ event.end_time }}</span>
-                    <i>{{ event.day }}</i> <span class="events-card-time">{{ event.start }} - {{ event.end }}</span>  -->
                 {% endfor %}
             </ul>
         </div>
