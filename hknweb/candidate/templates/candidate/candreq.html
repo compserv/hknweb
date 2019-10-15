@@ -18,12 +18,10 @@ Your Officer Challenges
     <div style="width: 40%; float: left; padding-left: 50px;">
         <h3>Request Officer Challenge Confirmation</h3>
 
-        {% if messages %}
-            {% for message in messages %}
-                <span {% if messages.tags %} class="{{ message.tags }}" {% endif %}
-                    class="blue">{{ message }}</span>
-            {% endfor %}
-        {% endif %}
+        {% for message in messages %}
+            <span {% if messages.tags %} class="{{ message.tags }}" {% endif %}
+                class="blue">{{ message }}</span>
+        {% endfor %}
 
         {% load app_filters %}
 

@@ -8,7 +8,6 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.conf import settings
 from django.contrib.staticfiles.finders import find
-from django.contrib.staticfiles.templatetags.staticfiles import static
 from random import randint
 import datetime
 
@@ -227,17 +226,17 @@ def is_cand_or_officer(user):
 
 # This function is not used; it can be used to view all photos available
 def get_all_photos():
-    with open(get_static("candidate/animal_photo_urls.txt")) as f:
+    with open(find("candidate/animal_photo_urls.txt")) as f:
         urls = f.readlines()
     return [url.strip() + "?w=400" for url in urls]
 
 # images from pexels.com
 def get_rand_photo(width=400):
-    with open(get_static("candidate/animal_photo_urls.txt")) as f:
+    with open(find("candidate/animal_photo_urls.txt")) as f:
         urls = f.readlines()
     return urls[randint(0, len(urls) - 1)].strip() + "?w=" + str(width)
 
-#Takes in all confirmed rsvps and sorts them into types, current hard coded 
+#Takes in all confirmed rsvps and sorts them into types, current hard coded
 # TODO: support more flexible typing and string-to-var parsing/conversion 
 def sort_rsvps_into_events(rsvps):
     #Events in admin are currently in a readable format, must convert them to callable keys for Django template
@@ -272,8 +271,3 @@ def check_requirements(sorted_rsvps):
             req_statuses[req_type] = True
     return req_statuses
 
-def get_static(path):
-    if settings.DEBUG:
-        return find(path)
-    else:
-        return static(path)
