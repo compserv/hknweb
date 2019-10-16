@@ -244,7 +244,7 @@ def sort_rsvps_into_events(rsvps):
         'mandatory_meetings': 'Mandatory', 
         'big_fun': 'Big Fun', 
         'fun': 'Fun',
-        'service': 'Service',
+        'serv': 'Serv',
         'prodev': 'Prodev',
     }
     sorted_events = dict.fromkeys(map_event_vars.keys())
@@ -262,7 +262,7 @@ def check_requirements(sorted_rsvps):
         'mandatory_meetings': 3, 
         'big_fun': 1,
         'fun': 3,
-        'service': 1,
+        'serv': 1,
         'prodev': 1,
     }
     req_statuses = dict.fromkeys(req_list.keys(), False)
