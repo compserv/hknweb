@@ -131,7 +131,7 @@ Candidate Portal
                     </ul>
                     <br/>
                     <li>
-                        {% if req_statuses.service %}
+                        {% if req_statuses.serv %}
                             <span class="req done"></span>
                         {% else %}
                             <span class="req not-done"></span>
@@ -139,12 +139,12 @@ Candidate Portal
                         Service
                     </li>
                     <ul class="conf-events">
-                        {% for event in confirmed_events.service %} 
+                        {% for event in confirmed_events.serv %} 
                             <li>{{ event.name }}<br/></li>
                         {% endfor %}
                     </ul>
                     <ul class="unconf-events">
-                        {% for event in unconfirmed_events.service %} 
+                        {% for event in unconfirmed_events.serv %} 
                             <li>{{ event.name }}<br/></li>
                         {% endfor %}
                     </ul>

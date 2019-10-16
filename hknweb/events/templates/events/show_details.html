@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="center measure-very-wide pv4 parent">
+<div class="center measure-very-wide pv4">
 
   {% if messages %}
     {% for message in messages %}
@@ -41,9 +41,13 @@
     var sameDayEvent = start.getDate() === end.getDate() && start.getMonth() === end.getMonth() && start.getYear() === end.getYear();
     
     if (sameDayEvent) {
-      var HTMLtext = '<p><b>Date</b>: ' + start.toLocaleDateString() + '</p> <p><b>Time</b>: ' + start.toLocaleTimeString() + ' to ' + end.toLocaleTimeString();
+      var HTMLtext = '<p><b>Date</b>: ' + start.toLocaleDateString() + 
+                     '</p> <p><b>Time</b>: ' + start.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) + ' to ' + 
+                     end.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
     } else { // Event starts and ends on different days
-      var HTMLtext = '<p><b>Starts</b>: ' + start.toLocaleString() + '</p> <p><b>Ends</b>: ' + start.toLocaleString();
+      var HTMLtext = '<p><b>Starts</b>: ' + start.toLocaleDateString() + ' at ' + 
+                     start.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) + '</p> <p><b>Ends</b>: ' + 
+                     end.toLocaleDateString() + ' at ' + end.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
     }
     document.getElementById("date-and-time").innerHTML = HTMLtext;
   </script>

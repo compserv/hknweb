@@ -118,8 +118,10 @@
             </div>
             <ul>
                 {% for event in events %}
-                    <li>{{ event.name }}</li>
-                    <i>{{ event.day }}</i> <span class="events-card-time">{{ event.start }} - {{ event.end }}</span>
+                    <li>{{ event.name }}
+                    <div id="date-and-time"></div>
+                        <span class="events-card-time">{{ event.start}} - {{ event.end}}</span> 
+                    </li>
                 {% endfor %}
             </ul>
         </div>

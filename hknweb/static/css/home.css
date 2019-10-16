@@ -127,7 +127,8 @@ body {
 }
 .events-card-time {
     margin-left: 20px;
-    color: #3B7EA1;
+    color: black;
+    white-space: pre;
 }
 
 /* ABOUT HKN SECTION */
