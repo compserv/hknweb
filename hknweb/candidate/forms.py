@@ -23,9 +23,9 @@ class ChallengeConfirmationForm(forms.ModelForm):
 
     class Meta:
         model = OffChallenge
-        fields = ['confirmed', 'officer_comment']
+        fields = ['officer_confirmed', 'officer_comment']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['confirmed'].label = "Check to confirm challenge (if not checked, request will be declined)"
+        self.fields['officer_confirmed'].label = "Choose \"Yes\" to confirm challenge, \"No\" to decline"
         self.fields['officer_comment'].label = "Optionally add a comment"

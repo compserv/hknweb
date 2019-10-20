@@ -8,10 +8,10 @@ import csv
 
 class OffChallengeAdmin(admin.ModelAdmin):
 
-    fields = ['requester', 'officer', 'name', 'reviewed', 'confirmed', 'description', 'proof', 'officer_comment', 'request_date']
+    fields = ['requester', 'officer', 'name', 'officer_confirmed', 'csec_confirmed', 'description', 'proof', 'officer_comment', 'request_date']
     readonly_fields = ['request_date']
-    list_display = ('name', 'requester', 'officer', 'reviewed', 'confirmed', 'request_date')
-    list_filter = ['requester', 'officer', 'request_date']
+    list_display = ('name', 'requester', 'officer', 'officer_confirmed', 'csec_confirmed', 'request_date')
+    list_filter = ['requester', 'officer', 'officer_confirmed', 'csec_confirmed', 'request_date']
     search_fields = ['requester', 'officer', 'name']
 
     actions = ["export_as_csv"]
@@ -20,6 +20,11 @@ class OffChallengeAdmin(admin.ModelAdmin):
         if db_field.name == "officer":
             kwargs["queryset"] = User.objects.all().order_by('username')
         return super(OffChallengeAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+
+    # TODO
+    def save_model(self, request, obj, form, change):
+        obj.user = request.user
+        super().save_model(request, obj, form, change)
 
     # @source: http://books.agiliq.com/projects/django-admin-cookbook/en/latest/export.html
     def export_as_csv(self, request, queryset):
