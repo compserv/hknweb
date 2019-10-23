@@ -1,6 +1,5 @@
 from django.db import models
 from django.utils import timezone
-from django.contrib.auth.models import User
 from django.conf import settings
 
 MAX_STRLEN = 85 # default max length for char fields
@@ -22,7 +21,9 @@ class OffChallenge(models.Model):
     class Meta:
         verbose_name = "Officer challenge"
 
-    requester         = models.ForeignKey('auth.User', limit_choices_to={'groups__name': settings.CAND_GROUP},
+    # the requester needs permission to add officer challenges. This limits the choices in a dropdown,
+    # but the view CandRequestView is still able to set requesters regardless of their permissions
+    requester         = models.ForeignKey('auth.User', limit_choices_to={'groups__permissions__codename': 'add_offchallenge'},
                             on_delete=models.CASCADE, default=None, related_name='requester')
     officer           = models.ForeignKey('auth.User', limit_choices_to={'groups__name': settings.OFFICER_GROUP},
                             on_delete=models.CASCADE, default=None, related_name='officer')
