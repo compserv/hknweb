@@ -196,3 +196,5 @@ SOCIAL_AUTH_ASSOCIATION_SERVER_URL_LENGTH  = 100
 
 CAND_GROUP = 'candidate'
 OFFICER_GROUP = 'officer'
+
+# Note: both candidate and officer group should have permission to add officer challenges

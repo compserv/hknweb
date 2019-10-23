@@ -19,23 +19,23 @@ View Officer Challenge
     <b>Detailed Description:</b> {{ challenge.description }}<br/>
     <b>Proof:</b> {{ challenge.proof }}<br/>
     <b>Status:</b>
-    {% if not challenge.reviewed %}
+    {% if challenge.officer_confirmed is None or challenge.csec_confirmed is None %}
         <img src="{% static 'candidate/maybe.png'%}" alt="in progress" class="inline-icon">
-        Waiting for officer response
-    {% elif challenge.confirmed %}
+        Waiting for officer/csec response</br>
+    {% elif challenge.officer_confirmed is True and challenge.csec_confirmed is True %}
         <img src="{% static 'candidate/yes.png'%}" alt="confirmed" class="inline-icon">
-        Confirmed uwu
+        Confirmed uwu</br>
     {% else %}
         <img src="{% static 'candidate/no.png'%}" alt="declined" class="inline-icon">
-        Declined :<</b>
-    {% endif %}<br/>
+        Declined :<</br>
+    {% endif %}
     <b>Comments from the Officer:</b> {{ challenge.officer_comment }}<br/>
     <b>Request Date:</b> {{ challenge.request_date }}<br/>
 
 
     {% if viewer_is_the_officer %}
         <p class="link"><a href="{{ review_link }}">
-        {% if challenge.reviewed %}
+        {% if challenge.officer_confirmed is not None %}
             Change My Review of This Challenge
         {% else %}
             Review This Challenge
