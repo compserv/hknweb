@@ -78,12 +78,12 @@ Your Officer Challenges
             			</td>
                         <td align="center">{{ challenge.officer }}</td>
                         <td align="center">
-                            {% if challenge.officer_confirmed is None or challenge.csec_confirmed is None %}
-                                <img src="{% static 'candidate/maybe.png'%}" alt="in progress" class="table-icon">
+                            {% if challenge.officer_confirmed is False or challenge.csec_confirmed is False %}
+                                <img src="{% static 'candidate/no.png'%}" alt="declined" class="table-icon">
                             {% elif challenge.officer_confirmed is True and challenge.csec_confirmed is True %}
                                 <img src="{% static 'candidate/yes.png'%}" alt="confirmed" class="table-icon">
                             {% else %}
-                                <img src="{% static 'candidate/no.png'%}" alt="declined" class="table-icon">
+                                <img src="{% static 'candidate/maybe.png'%}" alt="in progress" class="table-icon">
                             {% endif %}
                         </td>
                     </tr>

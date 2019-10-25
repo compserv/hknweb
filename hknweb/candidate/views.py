@@ -162,11 +162,14 @@ def officer_confirm_view(request, pk):
     if form.is_valid():
         form.instance.reviewed = True
         form.save()
+        # csec has already confirmed, and now officer confirms
         if challenge.officer_confirmed is True and challenge.csec_confirmed is True:
             send_cand_confirm_email(request, form.instance, True)
-        elif challenge.officer_confirmed is False:
+        # csec has not already rejected, and now officer rejects
+        elif challenge.officer_confirmed is False and challenge.csec_confirmed is not False:
             send_cand_confirm_email(request, form.instance, False)
-        # if neither is true, need to wait for csec to review before sending email
+        # if neither is true, either need to wait for csec to review,
+        # or csec has already rejected
         return redirect('/cand/reviewconfirm/{}'.format(pk))
     return render(request, "candidate/challenge_confirm.html", context=context)
 
