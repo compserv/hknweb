@@ -28,6 +28,7 @@ class OffChallengeAdmin(admin.ModelAdmin):
         if 'csec_confirmed' in form.changed_data:
             OffChallengeAdmin.check_send_email(request, obj)
 
+    @staticmethod
     def check_send_email(request, obj):
         # officer has already confirmed, and now csec confirms
         if obj.csec_confirmed is True and obj.officer_confirmed is True:

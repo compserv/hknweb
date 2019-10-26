@@ -89,6 +89,10 @@ class CandRequestView(FormView, generic.ListView):
 
     context_object_name = 'challenge_list'
 
+    # resolve conflicting inheritance
+    def get(self, request, *args, **kwargs):
+        return generic.ListView.get(self, request, *args, **kwargs)
+
     def form_valid(self, form):
         form.instance.requester = self.request.user
         form.save()
