@@ -27,5 +27,6 @@ class ChallengeConfirmationForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['officer_confirmed'].label = "Choose \"Yes\" to confirm challenge, \"No\" to decline"
+        self.fields['officer_confirmed'].label = "Choose \"Yes\" to confirm challenge, \"No\" to decline" \
+                                                 " (after you confirm, csec still has to confirm as well)"
         self.fields['officer_comment'].label = "Optionally add a comment"
