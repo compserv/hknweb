@@ -45,8 +45,9 @@
     var sameDayEvent = start.getDate() === end.getDate() && start.getMonth() === end.getMonth() && start.getYear() === end.getYear();
     
     if (sameDayEvent) {
-      var HTMLtext = '<p><b>Date</b>: ' + start.toLocaleDateString() + 
-                     '</p> <p><b>Time</b>: ' + start.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) + ' to ' + 
+      var weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+      var HTMLtext = '<p><b>Date</b>: ' + start.toLocaleDateString() + "&nbsp;&nbsp;" + weekdays[start.getDay()] +
+                     '</p> <p><b>Time</b>: ' + start.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) + ' to ' +
                      end.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
     } else { // Event starts and ends on different days
       var HTMLtext = '<p><b>Starts</b>: ' + start.toLocaleDateString() + ' at ' + 
