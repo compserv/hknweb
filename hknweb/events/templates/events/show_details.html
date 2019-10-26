@@ -10,6 +10,8 @@
 {% block content %}
 <div class="center measure-very-wide pv4">
 
+  <h1> {{ event.name }} </h1>
+
   {% if messages %}
     {% for message in messages %}
       <h3 {% if messages.tags %} class="{{ message.tags }}" {% endif %} style="color: #B78727;">{{ message }}</h3>
@@ -31,6 +33,8 @@
   
   <p>{{ event.description }}</p>
 
+  <p><b>Event Type</b>: {{ event.event_type }}</p>
+
   <p><b>Location</b>: {{ event.location }}</p>
   
   <div id="date-and-time"></div>
@@ -51,5 +55,11 @@
     }
     document.getElementById("date-and-time").innerHTML = HTMLtext;
   </script>
+
+  <p><a href="{% url 'events:index' %}">
+      Go Back to Calendar
+  </a></p>
+
+  <br>
 </div>
 {% endblock %}
