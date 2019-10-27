@@ -7,6 +7,10 @@ body {
     background-size: inherit;
 }
 
+.darkgold {
+    color: #C4820E;
+}
+
 /* Override base.css */
 .white-above-navi, .heading, .content {
     background-color: transparent;
@@ -33,48 +37,19 @@ body {
     justify-content: space-between;
     align-items: flex-start;
 }
-/* .banner > * {
-    padding-bottom: 50px;
-} */
-/* .banner-heading {
-    display: inline-block;
-    font-weight: 700;
-} */
-/* .banner-title {
-    font-size: 4em;
-} */
-.banner-subtitle {
-    font-size: 2.5em;
-    font-style: italic;
-}
-.banner-text {
-    font-size: 1.5em;
-    font-weight: 400;
-    margin-top: 50px;
-}
-.banner-text:last-child {
-    font-size: 1.3em;
-    margin-top: 1em;
-}
-.banner-text a {
-    color: #C4820E;
-    text-decoration: none;
-}
-.banner-text a:hover {
-    text-decoration: underline;
-}
-@media screen and (min-width: 1150px) {
+
+/* @media screen and (min-width: 1150px) {
     .banner-heading {
         padding-right: 7%;
     }
-}
+} */
 @media screen and (max-width: 1049.999px) {
-    .banner {
+    /* .banner {
         flex-direction: column;
-    }
-    .banner-heading {
+    } */
+    /* .banner-heading {
         padding-top: 0;
-    }
+    } */
     .tutoring-column {
         padding-bottom: 75px;
     }

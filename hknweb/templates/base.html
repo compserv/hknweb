@@ -10,8 +10,8 @@
       href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro:300,400,600,700"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="{% static 'css/tachyons.css' %}">
     <link rel="stylesheet" href="{% static 'css/tachyons-verbose.css' %}">
+    <link rel="stylesheet" href="{% static 'css/tachyons.css' %}">
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
 
     <!-- Favicon -->
@@ -28,8 +28,8 @@
     <input type="radio" name="toggles" class="display-none" id="toggle-outreach" onclick="untoggleAccounts()" />
     <input type="radio" name="toggles" class="display-none" id="toggle-events" onclick="untoggleAccounts()" />
     <input type="radio" name="toggles" class="display-none" id="toggle-about" onclick="untoggleAccounts()" />
-    <div class="bg-white paddinghorizontal-medium">
-      <div class="navi">
+    <div class="bg-white ph3">
+      <nav class="h3 pv2 mw-100 flex justify-between content-center">
         <a href="/" class="link black flex justify-start items-center">
           <img src="{% static "img/hkn-bear.svg" %}" class="h2 h3-l pa2">
           <p>
@@ -54,7 +54,7 @@
           {% endif %}
           <div class="navi-menu-button"><label for="toggle">Menu</label></div>
         </div>
-      </div>
+      </nav>
     </div>
 
     <div id="student-nav-bar" class="sub-nav-bar navi-container">
