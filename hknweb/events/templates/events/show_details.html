@@ -30,32 +30,12 @@
       <input type="submit" value="RSVP" />
     </form>
   {% endif %}
-  
+
   <p>{{ event.description }}</p>
-
   <p><b>Event Type</b>: {{ event.event_type }}</p>
-
   <p><b>Location</b>: {{ event.location }}</p>
-  
-  <div id="date-and-time"></div>
-  <!-- Script to render dates prettily -->
-  <script>
-    var start = new Date('{{ event.start_time|date:"c" }}');
-    var end = new Date('{{ event.end_time|date:"c" }}');
-    var sameDayEvent = start.getDate() === end.getDate() && start.getMonth() === end.getMonth() && start.getYear() === end.getYear();
-    
-    if (sameDayEvent) {
-      var HTMLtext = '<p><b>Date</b>: ' + start.toLocaleDateString() + 
-                     '</p> <p><b>Time</b>: ' + start.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) + ' to ' + 
-                     end.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-    } else { // Event starts and ends on different days
-      var HTMLtext = '<p><b>Starts</b>: ' + start.toLocaleDateString() + ' at ' + 
-                     start.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) + '</p> <p><b>Ends</b>: ' + 
-                     end.toLocaleDateString() + ' at ' + end.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-    }
-    document.getElementById("date-and-time").innerHTML = HTMLtext;
-  </script>
-
+  <p><b>Date</b>: {{event.start_time|date:"SHORT_DATE_FORMAT"}}</p>
+  <p><b>Time</b>: {{event.start_time|time}} to {{event.end_time|time}}</p>
   <p><a href="{% url 'events:index' %}">
       Go Back to Calendar
   </a></p>
