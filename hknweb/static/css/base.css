@@ -9,13 +9,13 @@ body {
   color: #353535;
   background-color: #252525; /* If footer doesn't reach bottom of screen, this will "extend" the footer */
 }
-.navi-container,
+/* .navi-container, */
 .content {
   background-color: white; /* Override body's background color */
 }
 
 /* Minimum margins for all sections */
-.navi-container,
+/* .navi-container, */
 .content,
 .footer {
   padding-left: 13px;
@@ -39,22 +39,21 @@ body {
   align-items: center;
 }
 /* Logo */
-.navi a:first-child {
+/* .navi a:first-child {
   color: inherit;
-}
-.navi-logo {
+} */
+/* .navi-logo {
   display: flex;
   justify-content: flex-start;
   align-items: center;
   flex-basis: auto;
-}
+} */
 .navi-logo-img {
   height: 45px;
-  color: yellow;
 }
-.navi-menu-logo-text {
+/* .navi-menu-logo-text {
   margin-left: 7px;
-}
+} */
 
 /* Menu */
 .navi-menu {
@@ -134,7 +133,7 @@ body {
 }
 #dummy-nav-bar {
   opacity: 0;
-  position: static;  
+  position: static;
 }
 #dummy-nav-bar * {
   display: inline;

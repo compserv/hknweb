@@ -1,62 +1,23 @@
 {% extends "base.html" %}
 {% load static from staticfiles %}
-<html>
-    <head>
-
-        <!-- Base CSS -->
-        <link rel="stylesheet" href="{% static "css/home.css" %}">
-
-        <!-- Fonts -->
-        <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,600,700,800,900|Open+Sans|PT+Sans:700|Roboto:400,500,700,900|Source+Sans+Pro:300,400,600,700" rel="stylesheet">
-
-        <!-- Materialize -->
-        <!-- Compiled and minified CSS -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-        <!-- Compiled and minified JavaScript -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    </head>
-    <body>
-        <div class="navi">
-            <div class="navi-logo">
-                <img src="{% static "img/hkn-bear.svg" %}" class="navi-logo-img">
-                <div class="navi-logo-text">
-                    <div class="navi-logo-title">
-                        Eta Kappa Nu
-                    </div>
-                    <div class="navi-logo-subtitle">
-                        UC Berkeley
-                    </div>
-                </div>
-            </div>
-            <div class="navi-menu-container">
-                <div class='navi-menu'>
 
 {% block header %}
 <link rel="stylesheet" href="{% static "css/home.css" %}">
-<!-- Materialize -->
-<!-- Compiled and minified CSS -->
-<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"> -->
-<!-- Compiled and minified JavaScript -->
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script> -->
-
-<title>Berkeley HKN</title>
 {% endblock %}
 
 {% block content %}
-<div class="banner">
-    <div class="banner-heading">
-        <div class="banner-title">
+<div class="banner measure-wide">
+    <div class="banner-heading ph4">
+        <h1 class="banner-title f1 lh-title">
             Eta Kappa Nu
-        </div>
-        <div class="banner-subtitle">
-            Mu Chapter
-        </div>
-        <div class="banner-text">
+        </h1>
+        <h2 class="banner-subtitle f2 lh-title">Mu Chapter</h2>
+        <p class="banner-text">
             UC Berkeley's Electrical Engineering and Computer Sciences honor society
-        </div>
-        <div class="banner-text">
+        </p>
+        <p class="banner-text">
             <a href="/exams">Exams</a> &#8226; <a href="">course guides and surveys</a> &#8226; <a href="">course map</a>
-        </div>
+        </p>
     </div>
 
     <div class="tutoring-column">
@@ -120,7 +81,7 @@
                 {% for event in events %}
                     <li>{{ event.name }}
                     <div id="date-and-time"></div>
-                        <span class="events-card-time">{{ event.start}} - {{ event.end}}</span> 
+                        <span class="events-card-time">{{ event.start}} - {{ event.end}}</span>
                     </li>
                 {% endfor %}
             </ul>

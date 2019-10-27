@@ -24,27 +24,25 @@ body {
 
 /* BANNER */
 .banner {
-    padding: 0 13px;
-    padding-top: 50px;
-    max-width: 1125px;
-    margin: auto;
+    /* padding: 0 13px; */
+    /* padding-top: 50px; */
+    /* max-width: 1125px; */
+    /* margin: auto; */
     transition: all 500ms ease;
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
 }
-.banner > * {
+/* .banner > * {
     padding-bottom: 50px;
-}
-.banner-heading {
+} */
+/* .banner-heading {
     display: inline-block;
     font-weight: 700;
-    padding-top: 100px;
-    text-align: left;
-}
-.banner-title {
+} */
+/* .banner-title {
     font-size: 4em;
-}
+} */
 .banner-subtitle {
     font-size: 2.5em;
     font-style: italic;
