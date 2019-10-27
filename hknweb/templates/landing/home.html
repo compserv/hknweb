@@ -1,70 +1,32 @@
 {% extends "base.html" %}
 {% load static from staticfiles %}
-<html>
-    <head>
-
-        <!-- Base CSS -->
-        <link rel="stylesheet" href="{% static "css/home.css" %}">
-
-        <!-- Fonts -->
-        <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,600,700,800,900|Open+Sans|PT+Sans:700|Roboto:400,500,700,900|Source+Sans+Pro:300,400,600,700" rel="stylesheet">
-
-        <!-- Materialize -->
-        <!-- Compiled and minified CSS -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-        <!-- Compiled and minified JavaScript -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    </head>
-    <body>
-        <div class="navi">
-            <div class="navi-logo">
-                <img src="{% static "img/hkn-bear.svg" %}" class="navi-logo-img">
-                <div class="navi-logo-text">
-                    <div class="navi-logo-title">
-                        Eta Kappa Nu
-                    </div>
-                    <div class="navi-logo-subtitle">
-                        UC Berkeley
-                    </div>
-                </div>
-            </div>
-            <div class="navi-menu-container">
-                <div class='navi-menu'>
 
 {% block header %}
 <link rel="stylesheet" href="{% static "css/home.css" %}">
-<!-- Materialize -->
-<!-- Compiled and minified CSS -->
-<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"> -->
-<!-- Compiled and minified JavaScript -->
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script> -->
-
-<title>Berkeley HKN</title>
 {% endblock %}
 
 {% block content %}
-<div class="banner">
-    <div class="banner-heading">
-        <div class="banner-title">
-            Eta Kappa Nu
-        </div>
-        <div class="banner-subtitle">
-            Mu Chapter
-        </div>
-        <div class="banner-text">
-            UC Berkeley's Electrical Engineering and Computer Sciences honor society
-        </div>
-        <div class="banner-text">
-            <a href="/exams">Exams</a> &#8226; <a href="">course guides and surveys</a> &#8226; <a href="">course map</a>
+<div class="flex flex-wrap center pa3 pa4-ns measure measure-verywide-ns">
+    <div class="db center pv4 ph4">
+        <h1 class="f1 mv3 lh-title">Eta Kappa Nu</h1>
+        <h2 class="f2 mv3 lh-title i">Mu Chapter</h2>
+        <div class="f4 lh-copy">
+            <p>
+                UC Berkeley's Electrical Engineering and Computer Sciences
+                honor society
+            </p>
+            <a class="link dim darkgold" href="/exams">Exams</a> &bull;
+            <a class="link dim darkgold" href="">course guides and surveys</a> &bull;
+            <a class="link dim darkgold" href="">course map</a>
         </div>
     </div>
 
-    <div class="tutoring-column">
+    <div class="db tutoring-column center measure">
         <div class="tutoring-panel">
             <div class="tutoring-title">
                 Today's Tutoring Hours
             </div>
-            <span class="tutoring-date"><div>April 22, 2019</div></span>
+            <span class="tutoring-date">{% now "DATE_FORMAT" %}</span>
             <table>
                 <thead>
                     <tr>
@@ -120,7 +82,7 @@
                 {% for event in events %}
                     <li>{{ event.name }}
                     <div id="date-and-time"></div>
-                        <span class="events-card-time">{{ event.start}} - {{ event.end}}</span> 
+                        <span class="events-card-time">{{ event.start}} - {{ event.end}}</span>
                     </li>
                 {% endfor %}
             </ul>

@@ -10,81 +10,66 @@
       href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro:300,400,600,700"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="{% static "css/base.css" %}">
-    <!-- Not sure what this is for? We already have a favicon -->
-    <link rel="icon" href="{% static "img/hkn.svg" %}">
+    <link rel="stylesheet" href="{% static 'css/tachyons-verbose.css' %}">
+    <link rel="stylesheet" href="{% static 'css/tachyons.css' %}">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
 
     <!-- Favicon -->
     <link rel="shortcut icon" href="{% static 'img/favicon.png' %}" />
 
     {% block header %}{% endblock %}
 
-    <title>{% block title %}{% endblock %} | Berkeley HKN</title>
+    <title>{% block title %}{% endblock %} | HKN</title>
   </head>
   <body>
-    <input type="checkbox" name="not-toggles" class="toggle" id="toggle-account" />
-    <input type="radio" name="toggles" class="toggle" id="toggle-student" onclick="untoggleAccounts()" checked="checked" />
-    <input type="radio" name="toggles" class="toggle" id="toggle-industry" onclick="untoggleAccounts()" />
-    <input type="radio" name="toggles" class="toggle" id="toggle-outreach" onclick="untoggleAccounts()" />
-    <input type="radio" name="toggles" class="toggle" id="toggle-events" onclick="untoggleAccounts()" />
-    <input type="radio" name="toggles" class="toggle" id="toggle-about" onclick="untoggleAccounts()" />
-    <script>
-      function untoggleAccounts() {
-        var input = document.getElementById("toggle-account");
-        console.log(input);
-        console.log(input.type == "checkbox");
-        input.checked = false;
-      }
-    </script>
-
-    <div class="navi-container">
-      <div class="navi">
-        <a href="/">
-          <div class="navi-logo">
-            <img src="{% static "img/hkn-bear.svg" %}" class="navi-logo-img">
-            <div class="navi-menu-logo-text">
-              <div class="navi-logo-title">
-                <b>Eta Kappa Nu</b>
-              </div>
-              <div class="navi-logo-subtitle">
-                UC Berkeley
-              </div>
-            </div>
-          </div>
-        </a>
-        <div class="navi-menu">
-          <label for="toggle-student">Student Services</label>
-          <label for="toggle-industry">Industry</label>
-          <label for="toggle-outreach">Outreach</label>
-          <label for="toggle-events">Events</label>
-          <label for="toggle-about">About</label>
-          {% if user.is_authenticated %}
-          <span style="height: 1.8em; width: 1px; border-left: 1px black solid;"></span>
-          <label for="toggle-account">
-            Welcome, {{ user.first_name }}
-            <i id="carrot"></i>
-          </label>
-          {% else %}
-          <a class="account-button" href="/accounts/login">Account</a>
-          {% endif %}
-          <div class="navi-menu-button"><label for="toggle">Menu</label></div>
-        </div>
+    <input type="checkbox" name="not-toggles" class="display-none" id="toggle-account" />
+    <input type="radio" name="toggles" class="display-none" id="toggle-student" checked="checked" />
+    <input type="radio" name="toggles" class="display-none" id="toggle-industry" />
+    <input type="radio" name="toggles" class="display-none" id="toggle-outreach" />
+    <input type="radio" name="toggles" class="display-none" id="toggle-events" />
+    <input type="radio" name="toggles" class="display-none" id="toggle-about" />
+    <nav class="h3 pv2 ph4 bg-white mw-100 flex justify-between content-center">
+      <a href="/" class="link black flex justify-start items-center">
+        <img src="{% static "img/hkn-bear.svg" %}" class="h2 pa2">
+        <p>
+          <b>Eta Kappa Nu</b><br>
+          UC Berkeley
+        </p>
+      </a>
+      <div class="navi-menu flex justify-end items-center basis-auto">
+        <label class="dn db-ns ph2" for="toggle-student">Student Services</label>
+        <label class="dn db-ns ph2" for="toggle-industry">Industry</label>
+        <label class="dn db-ns ph2" for="toggle-outreach">Outreach</label>
+        <label class="dn db-ns ph2" for="toggle-events">Events</label>
+        <label class="dn db-ns ph2" for="toggle-about">About</label>
+        {% if user.is_authenticated %}
+        <!-- <span class="h2 bl"></span> -->
+        <label class="bl dn db-ns ph2 ph4-ns" for="toggle-account">
+          Welcome, {{ user.first_name }}
+          <i id="carrot"></i>
+        </label>
+        {% else %}
+        <a class="account-button" href="/accounts/login">Account</a>
+        {% endif %}
+        <label class="navi-menu-button pl3 underline-hover db dn-ns" for="toggle">Menu</label>
       </div>
-    </div>
+    </nav>
 
-    <div id="student-nav-bar" class="sub-nav-bar navi-container">
-      <a href="/exams">Exam Archive</a>
-      <span class="slash">/</span>
-      <a href="">Tutoring Hours</a>
-      <span class="slash">/</span>
-      <a href="">Review Sessions</a>
-      <span class="slash">/</span>
-      <a href="">Course Surveys</a>
-      <span class="slash">/</span>
-      <a href="">Course Guide</a>
-      <span class="slash">/</span>
-      <a href="">Department Tours</a>
-    </div>
+    <nav id="student-nav-bar" class="sub-nav-bar navi-container">
+      <ul class="flex flex-row justify-center flex-wrap ph2 mv0">
+        <li class="db pv1 pv0-ns w-40 w-auto-ns"><a href="/exams">Exam Archive</a></li>
+        <span class="slash">/</span>
+        <li class="db pv1 pv0-ns w-40 w-auto-ns"><a href="">Tutoring Hours</a></li>
+        <span class="slash dn db-ns">/</span>
+        <li class="db pv1 pv0-ns w-40 w-auto-ns"><a href="">Review Sessions</a></li>
+        <span class="slash">/</span>
+        <li class="db pv1 pv0-ns w-40 w-auto-ns"><a href="">Course Surveys</a></li>
+        <span class="slash dn db-ns">/</span>
+        <li class="db pv1 pv0-ns w-40 w-auto-ns"><a href="">Course Guide</a></li>
+        <span class="slash">/</span>
+        <li class="db pv1 pv0-ns w-40 w-auto-ns"><a href="">Department Tours</a></li>
+      </ul>
+    </nav>
     <div id="industry-nav-bar" class="sub-nav-bar navi-container">
       <a href="">Why HKN?</a>
       <span class="slash">/</span>
@@ -168,7 +153,7 @@
             Our Offices
           </div>
           <div class="footer-block-text">
-            290 Cory Hall | (510) 642-7346 <br />
+            290 Cory Hall | (510) 642-7346 <br>
             345 Soda Hall | (510) 642-9952
           </div>
         </div>
@@ -178,21 +163,24 @@
             Email
           </div>
           <div class="footer-block-text">
-            General: hkn[at]hkn.eecs.berkeley.edu <br />
-            Industrial Relations: indrel[at]hkn.eecs.berkeley.edu <br />
-            Service: serv[at]hkn.eecs.berkeley.edu
+            General: hkn[at]hkn.eecs.berkeley.edu <br>
+            Industrial Relations: indrel[at]hkn.eecs.berkeley.edu <br>
+            Service: serv[at]hkn.eecs.berkeley.edu <br>
+            Computing: compserv[at]hkn.eecs.berkeley.edu
           </div>
         </div>
 
         <div class="footer-block">
           <div class="footer-block-text">
-            Created by the Computing Services (Compserv) committee. <br />
-            Copyright &copy;
-            <script type="text/javascript">
-              var d = new Date();
-              document.write(d.getFullYear());
-            </script>
-            Berkeley HKN
+            <p>
+              Created by the Computing Services (Compserv) committee. <br>
+              Copyright &copy; 2019 UC Berkeley HKN.
+            </p>
+            <p>
+              We are a student group acting independently of the University <br>
+              of California. We take full responsibility for our organization <br>
+              and this website.
+            </p>
           </div>
         </div>
 
