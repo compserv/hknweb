@@ -118,9 +118,9 @@
             </div>
             <ul>
                 {% for event in events %}
-                    <li>{{ event.name }}
-                    <div id="date-and-time"></div>
-                        <span class="events-card-time">{{ event.start}} - {{ event.end}}</span> 
+                    <li>
+                        {{ event.name }}
+                        <span class="events-card-time">{{event.start_time|date:"D m/d h:i A"}} - {{ event.end_time|date:"h:i A"}}</span>
                     </li>
                 {% endfor %}
             </ul>
