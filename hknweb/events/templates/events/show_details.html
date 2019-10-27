@@ -34,7 +34,7 @@
   <p>{{ event.description }}</p>
   <p><b>Event Type</b>: {{ event.event_type }}</p>
   <p><b>Location</b>: {{ event.location }}</p>
-  <p><b>Date</b>: {{event.start_time|date:"SHORT_DATE_FORMAT"}}</p>
+  <p><b>Date</b>: {{event.start_time|date:"D, N j, Y"}}</p>
   <p><b>Time</b>: {{event.start_time|time}} to {{event.end_time|time}}</p>
   <p><a href="{% url 'events:index' %}">
       Go Back to Calendar
