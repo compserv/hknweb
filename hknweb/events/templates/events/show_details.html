@@ -3,12 +3,23 @@
 
 {% block title %}{{ event.name }}{% endblock %}
 
-{% block header %}
+{% block heading %}
 {{ event.name }}
 {% endblock %}
 
+{% block header %}
+<link rel="stylesheet" href="{% static "events/style.css" %}">
+<style>
+    @media screen and (min-width: 1000px) {
+        .content {
+            padding-bottom: 1em;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="center measure-very-wide pv4">
+<div class="left-text">
 
   <h1> {{ event.name }} </h1>
 
@@ -39,7 +50,5 @@
   <p><a href="{% url 'events:index' %}">
       Go Back to Calendar
   </a></p>
-
-  <br>
 </div>
 {% endblock %}

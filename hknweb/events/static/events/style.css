@@ -1,0 +1,35 @@
+.left-text {
+    padding-left: 2em;
+}
+
+#add-event-title {
+    margin: 0;
+    margin-bottom: 1em;
+    font-weight: normal;
+    text-align: center;
+}
+
+#form {
+    position: relative;
+}
+
+.row {
+    margin-bottom: 1em;
+}
+
+@media screen and (min-width: 700px) {
+    .left-side {
+        display: inline-block;
+        width: 50%;
+        text-align: right;
+    }
+    #submit {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+#button {
+    width: 100%;
+    text-align: center;
+}
