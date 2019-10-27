@@ -22,54 +22,54 @@
     <title>{% block title %}{% endblock %} | HKN</title>
   </head>
   <body>
-    <input type="checkbox" name="not-toggles" class="display-none" id="toggle-account" onload="this.checked = false;"/>
-    <input type="radio" name="toggles" class="display-none" id="toggle-student" onclick="untoggleAccounts()" checked="checked" />
-    <input type="radio" name="toggles" class="display-none" id="toggle-industry" onclick="untoggleAccounts()" />
-    <input type="radio" name="toggles" class="display-none" id="toggle-outreach" onclick="untoggleAccounts()" />
-    <input type="radio" name="toggles" class="display-none" id="toggle-events" onclick="untoggleAccounts()" />
-    <input type="radio" name="toggles" class="display-none" id="toggle-about" onclick="untoggleAccounts()" />
-    <div class="bg-white ph3">
-      <nav class="h3 pv2 mw-100 flex justify-between content-center">
-        <a href="/" class="link black flex justify-start items-center">
-          <img src="{% static "img/hkn-bear.svg" %}" class="h2 h3-l pa2">
-          <p>
-            <b>Eta Kappa Nu</b><br>
-            UC Berkeley
-          </p>
-        </a>
-        <div class="navi-menu">
-          <label for="toggle-student">Student Services</label>
-          <label for="toggle-industry">Industry</label>
-          <label for="toggle-outreach">Outreach</label>
-          <label for="toggle-events">Events</label>
-          <label for="toggle-about">About</label>
-          {% if user.is_authenticated %}
-          <span style="height: 1.8em; width: 1px; border-left: 1px black solid;"></span>
-          <label for="toggle-account">
-            Welcome, {{ user.first_name }}
-            <i id="carrot"></i>
-          </label>
-          {% else %}
-          <a class="account-button" href="/accounts/login">Account</a>
-          {% endif %}
-          <div class="navi-menu-button"><label for="toggle">Menu</label></div>
-        </div>
-      </nav>
-    </div>
+    <input type="checkbox" name="not-toggles" class="display-none" id="toggle-account" />
+    <input type="radio" name="toggles" class="display-none" id="toggle-student" checked="checked" />
+    <input type="radio" name="toggles" class="display-none" id="toggle-industry" />
+    <input type="radio" name="toggles" class="display-none" id="toggle-outreach" />
+    <input type="radio" name="toggles" class="display-none" id="toggle-events" />
+    <input type="radio" name="toggles" class="display-none" id="toggle-about" />
+    <nav class="h3 pv2 ph4 bg-white mw-100 flex justify-between content-center">
+      <a href="/" class="link black flex justify-start items-center">
+        <img src="{% static "img/hkn-bear.svg" %}" class="h2 pa2">
+        <p>
+          <b>Eta Kappa Nu</b><br>
+          UC Berkeley
+        </p>
+      </a>
+      <div class="navi-menu flex justify-end items-center basis-auto">
+        <label class="dn db-ns ph2" for="toggle-student">Student Services</label>
+        <label class="dn db-ns ph2" for="toggle-industry">Industry</label>
+        <label class="dn db-ns ph2" for="toggle-outreach">Outreach</label>
+        <label class="dn db-ns ph2" for="toggle-events">Events</label>
+        <label class="dn db-ns ph2" for="toggle-about">About</label>
+        {% if user.is_authenticated %}
+        <!-- <span class="h2 bl"></span> -->
+        <label class="bl dn db-ns ph2 ph4-ns" for="toggle-account">
+          Welcome, {{ user.first_name }}
+          <i id="carrot"></i>
+        </label>
+        {% else %}
+        <a class="account-button" href="/accounts/login">Account</a>
+        {% endif %}
+        <label class="navi-menu-button pl3 underline-hover db dn-ns" for="toggle">Menu</label>
+      </div>
+    </nav>
 
-    <div id="student-nav-bar" class="sub-nav-bar navi-container">
-      <a href="/exams">Exam Archive</a>
-      <span class="slash">/</span>
-      <a href="">Tutoring Hours</a>
-      <span class="slash">/</span>
-      <a href="">Review Sessions</a>
-      <span class="slash">/</span>
-      <a href="">Course Surveys</a>
-      <span class="slash">/</span>
-      <a href="">Course Guide</a>
-      <span class="slash">/</span>
-      <a href="">Department Tours</a>
-    </div>
+    <nav id="student-nav-bar" class="sub-nav-bar navi-container">
+      <ul class="flex flex-row justify-center flex-wrap ph2 mv0">
+        <li class="db pv1 pv0-ns w-40 w-auto-ns"><a href="/exams">Exam Archive</a></li>
+        <span class="slash">/</span>
+        <li class="db pv1 pv0-ns w-40 w-auto-ns"><a href="">Tutoring Hours</a></li>
+        <span class="slash dn db-ns">/</span>
+        <li class="db pv1 pv0-ns w-40 w-auto-ns"><a href="">Review Sessions</a></li>
+        <span class="slash">/</span>
+        <li class="db pv1 pv0-ns w-40 w-auto-ns"><a href="">Course Surveys</a></li>
+        <span class="slash dn db-ns">/</span>
+        <li class="db pv1 pv0-ns w-40 w-auto-ns"><a href="">Course Guide</a></li>
+        <span class="slash">/</span>
+        <li class="db pv1 pv0-ns w-40 w-auto-ns"><a href="">Department Tours</a></li>
+      </ul>
+    </nav>
     <div id="industry-nav-bar" class="sub-nav-bar navi-container">
       <a href="">Why HKN?</a>
       <span class="slash">/</span>

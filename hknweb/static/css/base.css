@@ -28,60 +28,43 @@ body {
 .navi-container {
   padding-top: 7px;
   padding-bottom: 7px;
-  /* border-bottom: solid 3px #003262; /* rgba(166, 60, 68, 1); HKN scarlet; hex code: #A63C44 */
+  border-bottom: solid 3px #003262; /* rgba(166, 60, 68, 1); HKN scarlet; hex code: #A63C44 */
 }
-.navi {
+/* .navi {
   min-height: 50px;
   max-width: 1250px;
   margin: auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-/* Logo */
-/* .navi a:first-child {
-  color: inherit;
 } */
-/* .navi-logo {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  flex-basis: auto;
-} */
-.navi-logo-img {
-  height: 45px;
-}
-/* .navi-menu-logo-text {
-  margin-left: 7px;
-} */
-
 /* Menu */
-.navi-menu {
+/* .navi-menu {
   display: flex;
   justify-content: flex-end;
   align-items: center;
   flex-basis: auto;
-}
-.navi-menu > * {
+} */
+/* .navi-menu > * {
   display: block;
   white-space: nowrap;
-}
+} */
 .navi-menu label {
   cursor: pointer;
 }
-.navi-menu > label {
+/* .navi-menu > label {
   padding-right: 24px;
-}
-.navi-menu > label:last-of-type {
+} */
+/* .navi-menu > label:last-of-type {
   padding-right: 0;
   padding-left: 24px;
-}
-.navi-menu-button {
+} */
+/* .navi-menu-button {
   padding-left: 24px;
 }
 .navi-menu label:hover {
   text-decoration: underline;
-}
+} */
 .account-button {
   display: inline-block;
   padding: 9px;
@@ -96,20 +79,20 @@ body {
 
 /* Media queries for responsive design */
 /* Desktop display: */
-@media screen and (min-width: 710px) {
+ /* @media screen and (min-width: 710px) {
   .navi-menu-button {
     display: none;
   }
-}
+} */
 /* Mobile display: */
-@media screen and (max-width: 710px) {
+/* @media screen and (max-width: 710px) {
   .navi-menu > label {
     display: none;
   }
   .navi-menu-button {
     display: block;
   }
-}
+} */
 
 /* Toggle system */
 .toggle {
@@ -129,7 +112,7 @@ body {
 }
 .sub-nav-bar * {
   color: white;
-  display: none;
+  /* display: none; */
 }
 #dummy-nav-bar {
   opacity: 0;
@@ -148,9 +131,9 @@ body {
   opacity: 1;
   z-index: 1;
 }
-#toggle-account:not(:checked) ~ #toggle-student:checked ~ #student-nav-bar * {
+/* #toggle-account:not(:checked) ~ #toggle-student:checked ~ #student-nav-bar * {
   display: inline;
-}
+} */
 #toggle-account:not(:checked)
   ~ #toggle-industry:checked
   ~ .navi-container
@@ -161,9 +144,9 @@ body {
   opacity: 1;
   z-index: 1;
 }
-#toggle-industry:checked ~ #industry-nav-bar * {
+/* #toggle-industry:checked ~ #industry-nav-bar * {
   display: inline;
-}
+} */
 #toggle-account:not(:checked)
   ~ #toggle-outreach:checked
   ~ .navi-container
@@ -174,9 +157,9 @@ body {
   opacity: 1;
   z-index: 1;
 }
-#toggle-account:not(:checked) ~ #toggle-outreach:checked ~ #outreach-nav-bar * {
+/* #toggle-account:not(:checked) ~ #toggle-outreach:checked ~ #outreach-nav-bar * {
   display: inline;
-}
+} */
 #toggle-account:not(:checked)
   ~ #toggle-events:checked
   ~ .navi-container
@@ -187,9 +170,9 @@ body {
   opacity: 1;
   z-index: 1;
 }
-#toggle-account:not(:checked) ~ #toggle-events:checked ~ #events-nav-bar * {
+/* #toggle-account:not(:checked) ~ #toggle-events:checked ~ #events-nav-bar * {
   display: inline;
-}
+} */
 #toggle-account:not(:checked)
   ~ #toggle-about:checked
   ~ .navi-container
@@ -200,16 +183,16 @@ body {
   opacity: 1;
   z-index: 1;
 }
-#toggle-account:not(:checked) ~ #toggle-about:checked ~ #about-nav-bar * {
+/* #toggle-account:not(:checked) ~ #toggle-about:checked ~ #about-nav-bar * {
   display: inline;
-}
+} */
 #toggle-account:checked ~ #account-nav-bar {
   opacity: 1;
   z-index: 1;
 }
-#toggle-account:checked ~ #account-nav-bar * {
+/* #toggle-account:checked ~ #account-nav-bar * {
   display: inline;
-}
+} */
 #toggle-account:checked ~ .navi-container label[for="toggle-account"] {
   text-decoration: underline;
 }
@@ -243,12 +226,12 @@ body {
 .navi-container a:visited {
   text-decoration: none;
 }
-.navi-container a:hover {
+/* .navi-container a:hover {
   text-decoration: underline;
-}
-.navi-menu a:hover {
+} */
+/* .navi-menu a:hover {
   text-decoration: none;
-}
+} */
 .navi-container a:active {
   text-decoration: underline;
 }
