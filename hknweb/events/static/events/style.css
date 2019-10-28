@@ -1,7 +1,32 @@
-.left-text {
+#event-detail-title {
+    margin-bottom: 0.2em;
+    padding-left: 1em;
+}
+
+#left-details {
     padding-left: 2em;
-    width: 50%;
+    width: 45%;
     float: left;
+}
+
+#right-details {
+    text-align: center;
+    padding-right: 2em;
+    width: 45%;
+    float: right;
+}
+
+.rsvp-list-title {
+    margin-bottom: 0.3em;
+}
+
+.rsvp-list {
+    margin: 0.2em;
+}
+
+.table-icon {
+    width: 1.5em;
+    vertical-align: middle;
 }
 
 #add-event-title {

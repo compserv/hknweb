@@ -42,10 +42,12 @@ def show_details(request, id):
     
     event = get_object_or_404(Event, pk=id)
 
-    rsvp = Rsvp.objects.filter(user=request.user, event=event).exists()
+    rsvpd = Rsvp.objects.filter(user=request.user, event=event).exists()
+    other_rsvps = Rsvp.objects.filter(event=event).exclude(user=request.user)
     context = {
         'event': event,
-        'rsvp': rsvp,
+        'rsvpd': rsvpd,
+        'other_rsvps': other_rsvps,
     }
     return render(request, 'events/show_details.html', context)
 
@@ -61,7 +63,6 @@ def rsvp(request, id):
 
     if request.user.is_authenticated and (event.rsvp_limit is None or rsvps < event.rsvp_limit):
         Rsvp.objects.create(user=request.user, event=event, confirmed=False)
-        messages.success(request, 'RSVP\'d!')
     else:
         messages.error(request, 'Could not RSVP; the RSVP limit has been reached.')
     return redirect('/events/' + str(id))
@@ -80,7 +81,6 @@ def unrsvp(request, id):
     else:
         rsvp = get_object_or_404(Rsvp, user=request.user, event=event)
         rsvp.delete()
-        messages.success(request, 'un-RSVP\'d :(')
     return redirect(event)
 
 

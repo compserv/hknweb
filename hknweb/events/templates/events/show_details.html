@@ -23,18 +23,30 @@
 
 {% block content %}
 <div class="parent">
-  <div class="left-text">
+  <h1 id="event-detail-title"> {{ event.name }} </h1>
 
-    <h1> {{ event.name }} </h1>
+  <div id="left-details">
 
+    <p>{{ event.description }}</p>
+    <p><b>Event Type</b>: {{ event.event_type }}</p>
+    <p><b>Location</b>: {{ event.location }}</p>
+    <p><b>Date</b>: {{event.start_time|date:"D, N j, Y"}}</p>
+    <p><b>Time</b>: {{event.start_time|time}} to {{event.end_time|time}}</p>
+    <p><a href="{% url 'events:index' %}">
+        Go Back to Calendar
+    </a></p>
+  </div>
+
+  <div id='right-details'>
     {% if messages %}
       {% for message in messages %}
-        <h3 {% if messages.tags %} class="{{ message.tags }}" {% endif %} style="color: #B78727;">{{ message }}</h3>
+        <h3 {% if messages.tags %} class="{{ message.tags }}" {% endif %}
+            style="color: #B78727;">{{ message }}</h3>
       {% endfor %}
     {% endif %}
 
     <!-- RSVP/un-RSVP button -->
-    {% if rsvp %}
+    {% if rsvpd %}
       <form action={% url 'events:unrsvp' event.id %} method="post">
         {% csrf_token %}
         <input type="submit" value="un-RSVP" />
@@ -46,14 +58,25 @@
       </form>
     {% endif %}
 
-    <p>{{ event.description }}</p>
-    <p><b>Event Type</b>: {{ event.event_type }}</p>
-    <p><b>Location</b>: {{ event.location }}</p>
-    <p><b>Date</b>: {{event.start_time|date:"D, N j, Y"}}</p>
-    <p><b>Time</b>: {{event.start_time|time}} to {{event.end_time|time}}</p>
-    <p><a href="{% url 'events:index' %}">
-        Go Back to Calendar
-    </a></p>
+    {% if rsvpd %}
+      <p class="rsvp-list">You have rsvp'd <img src="{% static 'candidate/yes.png'%}" alt="rsvp'd" class="table-icon"></p>
+    {% else %}
+      <p class="rsvp-list">You have not rsvp'd</p>
+    {% endif %}
+
+    <h3 class="rsvp-list-title">RSVPs</h3>
+
+    {% if rsvpd %}
+      <p class="rsvp-list">You</p>
+    {% endif %}
+
+    {% if other_rsvps %}
+      {% for rsvp in other_rsvps %}
+        <p class="rsvp-list">{{ rsvp.user.first_name }} {{ rsvp.user.last_name }} ({{ rsvp.user }})</p>
+      {% endfor %}
+    {% elif not rsvpd %}
+      <p class="rsvp-list">No rsvps.</p>
+    {% endif %}
   </div>
 </div>
 
