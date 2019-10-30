@@ -66,12 +66,8 @@
 
     <h3 class="rsvp-list-title">RSVPs</h3>
 
-    {% if rsvpd %}
-      <p class="rsvp-list">You</p>
-    {% endif %}
-
-    {% if other_rsvps %}
-      {% for rsvp in other_rsvps %}
+    {% if rsvps %}
+      {% for rsvp in rsvps %}
         <p class="rsvp-list">{{ rsvp.user.first_name }} {{ rsvp.user.last_name }} ({{ rsvp.user }})</p>
       {% endfor %}
     {% elif not rsvpd %}

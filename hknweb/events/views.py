@@ -43,11 +43,11 @@ def show_details(request, id):
     event = get_object_or_404(Event, pk=id)
 
     rsvpd = Rsvp.objects.filter(user=request.user, event=event).exists()
-    other_rsvps = Rsvp.objects.filter(event=event).exclude(user=request.user)
+    rsvps = Rsvp.objects.filter(event=event)
     context = {
         'event': event,
         'rsvpd': rsvpd,
-        'other_rsvps': other_rsvps,
+        'rsvps': rsvps,
     }
     return render(request, 'events/show_details.html', context)
 
