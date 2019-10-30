@@ -4,7 +4,7 @@ from . import views
 
 app_name = 'events'
 urlpatterns = [
-    path(r'<int:id>', views.show_details),
+    path(r'<int:id>', views.show_details, name='detail'),
     path(r'<int:id>/rsvp', views.rsvp, name='rsvp'),
     path(r'<int:id>/unrsvp', views.unrsvp, name='unrsvp'),
     path('new', views.add_event),
