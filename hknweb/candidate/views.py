@@ -6,11 +6,11 @@ from django.template.loader import render_to_string
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from django.utils import timezone
 from django.conf import settings
 from django.contrib.staticfiles.finders import find
 from django.db.models import Q
 from random import randint
-import datetime
 
 from .models import OffChallenge, Announcement
 from ..events.models import Event, Rsvp
@@ -53,14 +53,14 @@ class IndexView(generic.TemplateView):
                 .filter(visible=True) \
                 .order_by('-release_date')
 
-        today = datetime.date.today()
+        today = timezone.now()
         rsvps = Rsvp.objects.filter(user__exact=self.request.user)
         # Both confirmed and unconfirmed rsvps have been sorted into event types
         confirmed_events = sort_rsvps_into_events(rsvps.filter(confirmed=True))
         unconfirmed_events = sort_rsvps_into_events(rsvps.filter(confirmed=False))
         req_statuses = check_requirements(confirmed_events)
         upcoming_events = Event.objects \
-                .filter(start_time__range=(today, today + datetime.timedelta(days=7))) \
+                .filter(start_time__range=(today, today + timezone.timedelta(days=7))) \
                 .order_by('start_time')
 
         context = {
@@ -100,9 +100,8 @@ class CandRequestView(FormView, generic.ListView):
         return super().form_valid(form)
 
     def send_request_email(self, form):
-        subject = 'Confirm Officer Challenge'
+        subject = '[HKN] Confirm Officer Challenge'
         officer_email = form.instance.officer.email
-        text_content = 'Confirm officer challenge'
 
         confirm_link = self.request.build_absolute_uri(
                 reverse("candidate:challengeconfirm", kwargs={ 'pk' : form.instance.id }))
@@ -116,7 +115,7 @@ class CandRequestView(FormView, generic.ListView):
                 'img_link' : get_rand_photo(),
             }
         )
-        msg = EmailMultiAlternatives(subject, text_content,
+        msg = EmailMultiAlternatives(subject, subject,
                 'no-reply@hkn.eecs.berkeley.edu', [officer_email])
         msg.attach_alternative(html_content, "text/html")
         msg.send()
@@ -236,9 +235,8 @@ def get_rand_photo(width=400):
     return urls[randint(0, len(urls) - 1)].strip() + "?w=" + str(width)
 
 def send_cand_confirm_email(request, challenge, confirmed):
-    subject = 'Your Officer Challenge Was Reviewed'
+    subject = '[HKN] Your officer challenge was reviewed'
     candidate_email = challenge.requester.email
-    text_content = 'Your Officer Challenge Was Reviewed'
 
     challenge_link = request.build_absolute_uri(
             reverse("candidate:detail", kwargs={ 'pk': challenge.id }))
@@ -252,7 +250,7 @@ def send_cand_confirm_email(request, challenge, confirmed):
             'img_link': get_rand_photo(),
         }
     )
-    msg = EmailMultiAlternatives(subject, text_content,
+    msg = EmailMultiAlternatives(subject, subject,
             'no-reply@hkn.eecs.berkeley.edu', [candidate_email])
     msg.attach_alternative(html_content, "text/html")
     msg.send()
