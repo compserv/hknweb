@@ -19,12 +19,12 @@ View Officer Challenge
     <b>Detailed Description:</b> {{ challenge.description }}<br/>
     <b>Proof:</b> {{ challenge.proof }}<br/>
     <b>Status:</b>
-    {% if challenge.officer_confirmed is False or challenge.csec_confirmed is False %}
-        <img src="{% static 'candidate/no.png'%}" alt="declined" class="inline-icon">
-        Declined :<</br>
-    {% elif challenge.officer_confirmed is True and challenge.csec_confirmed is True %}
+    {% if challenge.confirmed %}
         <img src="{% static 'candidate/yes.png'%}" alt="confirmed" class="inline-icon">
         Confirmed uwu</br>
+    {% elif challenge.rejected %}
+        <img src="{% static 'candidate/no.png'%}" alt="rejected" class="inline-icon">
+        Declined :<</br>
     {% else %}
         <img src="{% static 'candidate/maybe.png'%}" alt="in progress" class="inline-icon">
         Waiting for officer/csec response</br>

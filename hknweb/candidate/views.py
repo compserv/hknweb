@@ -40,8 +40,7 @@ class IndexView(generic.TemplateView):
 
     def get_context_data(self):
         challenges = OffChallenge.objects \
-                .filter(requester__exact=self.request.user) \
-                .order_by('-request_date')
+                .filter(requester__exact=self.request.user)
         # if either one is waiting, challenge is still being reviewed
         num_pending = challenges \
                 .filter(Q(officer_confirmed__isnull=True) | Q(csec_confirmed__isnull=True)) \

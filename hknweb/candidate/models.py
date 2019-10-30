@@ -41,6 +41,18 @@ class OffChallenge(models.Model):
     csec_confirmed    = models.BooleanField(null=True)
     request_date      = models.DateTimeField(auto_now_add=True)
 
+    @property
+    def confirmed(self):
+        return self.officer_confirmed is True and self.csec_confirmed is True
+
+    @property
+    def rejected(self):
+        return self.officer_confirmed is False or self.csec_confirmed is False
+
+    @property
+    def rejected(self):
+        return self.officer_confirmed is False or self.csec_confirmed is False
+
     def __str__(self):
         return self.name
 

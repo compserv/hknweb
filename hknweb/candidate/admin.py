@@ -61,7 +61,7 @@ class OffChallengeAdmin(admin.ModelAdmin):
             if obj.csec_confirmed is not True:
                 obj.csec_confirmed = True
                 obj.save()
-                OffChallengeAdmin.check_send_email(request, obj)
+                self.check_send_email(request, obj)
 
     csec_confirm.short_description = "Mark selected as confirmed (csec)"
 
@@ -70,7 +70,7 @@ class OffChallengeAdmin(admin.ModelAdmin):
             if obj.csec_confirmed is not False:
                 obj.csec_confirmed = False
                 obj.save()
-                OffChallengeAdmin.check_send_email(request, obj)
+                self.check_send_email(request, obj)
 
     csec_reject.short_description = "Mark selected as rejected (csec)"
 
