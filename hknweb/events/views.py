@@ -3,7 +3,6 @@ from django.http import HttpResponse, Http404
 from django.template import loader, RequestContext
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
-from django.views.decorators.csrf import csrf_exempt #doing this for now bc idk how to make csrf work
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.utils import timezone
@@ -30,7 +29,7 @@ def is_cand_or_officer(user):
 
 def index(request):
     events = Event.objects.order_by('-start_time')
-    
+
     context = {
         'events': events,
     }
@@ -39,7 +38,7 @@ def index(request):
 @login_required(login_url='/accounts/login/')
 @check_account_access
 def show_details(request, id):
-    
+
     event = get_object_or_404(Event, pk=id)
 
     rsvp = Rsvp.objects.filter(user=request.user, event=event).exists()
@@ -49,7 +48,6 @@ def show_details(request, id):
     }
     return render(request, 'events/show_details.html', context)
 
-@csrf_exempt  # doing this for now bc idk how to make csrf work
 @login_required(login_url='/accounts/login/')
 @check_account_access
 def rsvp(request, id):
@@ -66,7 +64,6 @@ def rsvp(request, id):
         messages.error(request, 'Could not RSVP; the RSVP limit has been reached.')
     return redirect('/events/' + str(id))
 
-@csrf_exempt  # doing this for now bc idk how to make csrf work
 @login_required(login_url='/accounts/login/')
 @check_account_access
 def unrsvp(request, id):
