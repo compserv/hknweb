@@ -43,10 +43,13 @@ def show_details(request, id):
 
     rsvpd = Rsvp.objects.filter(user=request.user, event=event).exists()
     rsvps = Rsvp.objects.filter(event=event)
+
+    limit = event.rsvp_limit
     context = {
         'event': event,
         'rsvpd': rsvpd,
         'rsvps': rsvps,
+        'limit': limit
     }
     return render(request, 'events/show_details.html', context)
 
