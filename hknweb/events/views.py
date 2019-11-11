@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, Http404
-from django.template import loader, RequestContext
+from django.http import Http404
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from django.conf import settings
@@ -29,6 +28,7 @@ def is_cand_or_officer(user):
 
 def index(request):
     events = Event.objects.order_by('-start_time')
+    Event.objects.all()
 
     context = {
         'events': events,
@@ -43,13 +43,15 @@ def show_details(request, id):
 
     rsvpd = Rsvp.objects.filter(user=request.user, event=event).exists()
     rsvps = Rsvp.objects.filter(event=event)
-
     limit = event.rsvp_limit
+    rsvps = event.admitted_set()
+    waitlist = event.waitlist_set()
     context = {
         'event': event,
         'rsvpd': rsvpd,
         'rsvps': rsvps,
-        'limit': limit
+        'limit': limit,
+        'waitlist': waitlist,
     }
     return render(request, 'events/show_details.html', context)
 
@@ -62,10 +64,8 @@ def rsvp(request, id):
     event = get_object_or_404(Event, pk=id)
     rsvps = event.rsvp_set.count()
 
-    if request.user.is_authenticated and (event.rsvp_limit is None or rsvps < event.rsvp_limit):
-        Rsvp.objects.create(user=request.user, event=event, confirmed=False)
-    else:
-        messages.error(request, 'Could not RSVP; the RSVP limit has been reached.')
+    # Allow rsvps beyond cap (just waitlist them)
+    Rsvp.objects.create(user=request.user, event=event, confirmed=False)
     return redirect('/events/' + str(id))
 
 @login_required(login_url='/accounts/login/')

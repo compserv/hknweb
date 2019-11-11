@@ -40,6 +40,14 @@ class Event(models.Model):
     def __str__(self):
         return self.name
 
+    def admitted_set(self):
+        return self.rsvp_set.order_by("created_at")[:self.rsvp_limit]
+
+    def waitlist_set(self):
+        if not self.rsvp_limit:
+            return self.rsvp_set.none()
+        return self.rsvp_set.order_by("created_at")[self.rsvp_limit:]
+
 
 class Rsvp(models.Model):
     user  = models.ForeignKey(User, models.CASCADE, verbose_name="rsvp'd by")
@@ -52,7 +60,13 @@ class Rsvp(models.Model):
     # updated_at      = models.DateTimeField(auto_now=True)
 
     def __repr__(self):
-        return "Rsvp(event={})".format(self.event)
-    
+        return "Rsvp(user={}, event={})".format(self.user, self.event)
+
     def __str__(self):
-        return self.event.name
+        return "{} {} @ {}".format(self.user.first_name, self.user.last_name, self.event.name)
+
+    def waitlist_position(self):
+        waitlist_set = self.event.waitlist_set()
+        if not waitlist_set.filter(pk=self.pk).exists():
+            return None
+        return waitlist_set.filter(start_time__lt=self.start_time).count() + 1
