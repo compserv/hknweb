@@ -41,7 +41,8 @@ def show_details(request, id):
 
     event = get_object_or_404(Event, pk=id)
 
-    rsvpd = Rsvp.objects.filter(user=request.user, event=event).exists()
+    rsvp = Rsvp.objects.filter(user=request.user, event=event).first()
+    rsvpd = rsvp is not None
     rsvps = Rsvp.objects.filter(event=event)
     limit = event.rsvp_limit
     rsvps = event.admitted_set()
@@ -53,6 +54,12 @@ def show_details(request, id):
         'limit': limit,
         'waitlist': waitlist,
     }
+    if rsvp is not None:
+        context['waitlisted'] = rsvp.waitlisted()
+        context['waitlist_position'] = rsvp.waitlist_position()
+    else:
+        context['waitlisted'] = False
+        context['waitlist_position'] = None
     return render(request, 'events/show_details.html', context)
 
 @login_required(login_url='/accounts/login/')

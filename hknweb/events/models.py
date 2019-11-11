@@ -65,8 +65,14 @@ class Rsvp(models.Model):
     def __str__(self):
         return "{} {} @ {}".format(self.user.first_name, self.user.last_name, self.event.name)
 
+    def waitlisted(self):
+        if self.event.rsvp_limit is None:
+            return False
+        rsvps_before_self = self.event.rsvp_set.filter(created_at__lt=self.created_at).count()
+        return rsvps_before_self <= self.event.rsvp_limit
+
     def waitlist_position(self):
-        waitlist_set = self.event.waitlist_set()
-        if not waitlist_set.filter(pk=self.pk).exists():
+        if not self.waitlisted():
             return None
-        return waitlist_set.filter(start_time__lt=self.start_time).count() + 1
+        return self.event.rsvp_set.filter(created_at__lt=self.created_at).count() \
+                - self.event.rsvp_limit + 1
