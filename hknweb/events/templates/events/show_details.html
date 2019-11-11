@@ -64,9 +64,15 @@
       <p class="rsvp-list">You have not rsvp'd</p>
     {% endif %}
 
+    
     <h3 class="rsvp-list-title">RSVPs</h3>
-
+    
     {% if rsvps %}
+      {% if limit %}
+        <p class="rsvp-list"> Count: {{ rsvps.count }} / {{ limit }} </p>
+      {% else %}
+        <p class="rsvp-list"> Count: {{ rsvps.count }} </p>
+      {% endif %}
       {% for rsvp in rsvps %}
         <p class="rsvp-list">{{ rsvp.user.first_name }} {{ rsvp.user.last_name }} ({{ rsvp.user }})</p>
       {% endfor %}
