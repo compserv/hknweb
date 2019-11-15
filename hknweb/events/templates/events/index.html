@@ -31,7 +31,8 @@
                 title: "{{event.name | safe}}",
                 start: '{{ event.start_time|date:"c" }}', // date:"c" renders the dates in ISO format, as fullcalendar needs them
                 end: '{{ event.end_time|date:"c" }}',
-                url: '{{ event.id }}'
+                url: '{{ event.id }}',
+                color: '{{event.event_type.color}}'
                 },
             {% endfor %}]
         })
