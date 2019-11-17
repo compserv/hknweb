@@ -1,0 +1,62 @@
+#event-detail-title {
+    margin-bottom: 0.2em;
+    padding-left: 1em;
+}
+
+#left-details {
+    padding-left: 2em;
+    width: 45%;
+    float: left;
+}
+
+#right-details {
+    text-align: center;
+    padding-right: 2em;
+    width: 45%;
+    float: right;
+}
+
+.rsvp-list-title {
+    margin-bottom: 0.3em;
+}
+
+.rsvp-list {
+    margin: 0.2em;
+}
+
+.table-icon {
+    width: 1.5em;
+    vertical-align: middle;
+}
+
+#add-event-title {
+    margin: 0;
+    margin-bottom: 1em;
+    font-weight: normal;
+    text-align: center;
+}
+
+#form {
+    position: relative;
+}
+
+.row {
+    margin-bottom: 1em;
+}
+
+@media screen and (min-width: 700px) {
+    .left-side {
+        display: inline-block;
+        width: 50%;
+        text-align: right;
+    }
+    #submit {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+#button {
+    width: 100%;
+    text-align: center;
+}

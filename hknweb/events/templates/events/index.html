@@ -4,8 +4,10 @@
 {% block title %}Events{% endblock %}
 
 {% block header %}
-<!-- Scripts which make the calendar work: -->
+<!-- Scripts which make the calendar work:-->
+<link rel="stylesheet" href="{% static "events/style.css" %}">
 <link rel='stylesheet' href="https://unpkg.com/fullcalendar/dist/fullcalendar.min.css" />
+
 <script src="https://unpkg.com/moment/min/moment.min.js"></script>
 <script src="https://unpkg.com/jquery/dist/jquery.slim.min.js"></script>
 <script src="https://unpkg.com/fullcalendar/dist/fullcalendar.min.js"></script>
@@ -49,10 +51,6 @@
     .centered {
         max-width: 1250px;
         margin: 0 auto;
-    }
-    #button {
-        width: 100%;
-        text-align: center;
     }
 </style>
 {% endblock %}

@@ -6,10 +6,11 @@ from django.template.loader import render_to_string
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from django.utils import timezone
 from django.conf import settings
 from django.contrib.staticfiles.finders import find
+from django.db.models import Q
 from random import randint
-import datetime
 
 from .models import OffChallenge, Announcement
 from ..events.models import Event, Rsvp
@@ -39,23 +40,34 @@ class IndexView(generic.TemplateView):
 
     def get_context_data(self):
         challenges = OffChallenge.objects \
-                .filter(requester__exact=self.request.user) \
-                .order_by('-request_date')
-        reviewed_challenges = challenges.filter(reviewed=True)
+                .filter(requester__exact=self.request.user)
+        # if either one is waiting, challenge is still being reviewed
+        num_pending = challenges \
+                .filter(Q(officer_confirmed__isnull=True) | Q(csec_confirmed__isnull=True)) \
+                .count()
+        num_rejected = challenges \
+                .filter(Q(officer_confirmed=False) | Q(csec_confirmed=False)) \
+                .count()
+
         announcements = Announcement.objects \
                 .filter(visible=True) \
                 .order_by('-release_date')
-        today = datetime.date.today()
+
+        today = timezone.now()
         rsvps = Rsvp.objects.filter(user__exact=self.request.user)
-        #Both confirmed and unconfirmed rsvps have been sorted into event types
+        # Both confirmed and unconfirmed rsvps have been sorted into event types
         confirmed_events = sort_rsvps_into_events(rsvps.filter(confirmed=True))
         unconfirmed_events = sort_rsvps_into_events(rsvps.filter(confirmed=False))
         req_statuses = check_requirements(confirmed_events)
-        upcoming_events = Event.objects.filter(start_time__range=(today, today + datetime.timedelta(days=7))).order_by('start_time')
+        upcoming_events = Event.objects \
+                .filter(start_time__range=(today, today + timezone.timedelta(days=7))) \
+                .order_by('start_time')
+
         context = {
-            'num_pending' : challenges.filter(reviewed=False).count(),
-            'num_rejected' : reviewed_challenges.filter(confirmed=False).count(),
-            'num_confirmed' : reviewed_challenges.filter(confirmed=True).count(),
+            'num_pending' : num_pending,
+            'num_rejected' : num_rejected,
+            # anything not pending or rejected is confirmed
+            'num_confirmed' : challenges.count() - num_pending - num_rejected,
             'announcements' : announcements,
             'confirmed_events': confirmed_events,
             'unconfirmed_events': unconfirmed_events,
@@ -76,6 +88,10 @@ class CandRequestView(FormView, generic.ListView):
 
     context_object_name = 'challenge_list'
 
+    # resolve conflicting inheritance
+    def get(self, request, *args, **kwargs):
+        return generic.ListView.get(self, request, *args, **kwargs)
+
     def form_valid(self, form):
         form.instance.requester = self.request.user
         form.save()
@@ -84,9 +100,8 @@ class CandRequestView(FormView, generic.ListView):
         return super().form_valid(form)
 
     def send_request_email(self, form):
-        subject = 'Confirm Officer Challenge'
+        subject = '[HKN] Confirm Officer Challenge'
         officer_email = form.instance.officer.email
-        text_content = 'Confirm officer challenge'
 
         confirm_link = self.request.build_absolute_uri(
                 reverse("candidate:challengeconfirm", kwargs={ 'pk' : form.instance.id }))
@@ -100,7 +115,7 @@ class CandRequestView(FormView, generic.ListView):
                 'img_link' : get_rand_photo(),
             }
         )
-        msg = EmailMultiAlternatives(subject, text_content,
+        msg = EmailMultiAlternatives(subject, subject,
                 'no-reply@hkn.eecs.berkeley.edu', [officer_email])
         msg.attach_alternative(html_content, "text/html")
         msg.send()
@@ -133,28 +148,6 @@ class OffRequestView(generic.ListView):
 @login_required(login_url='/accounts/login/')
 @check_account_access
 def officer_confirm_view(request, pk):
-    def send_cand_confirm_email(form):
-        subject = 'Your Officer Challenge Was Reviewed'
-        candidate_email = form.instance.requester.email
-        text_content = 'Your Officer Challenge Was Reviewed'
-
-        challenge_link = request.build_absolute_uri(
-                reverse("candidate:detail", kwargs={ 'pk' : form.instance.id }))
-        html_content = render_to_string(
-            'candidate/cand_confirm_email.html',
-            {
-                'confirmed' : form.instance.confirmed,
-                'officer_name' : form.instance.officer.get_full_name(),
-                'officer_username' : form.instance.officer.username,
-                'challenge_link' : challenge_link,
-                'img_link' : get_rand_photo(),
-            }
-        )
-        msg = EmailMultiAlternatives(subject, text_content,
-                'no-reply@hkn.eecs.berkeley.edu', [candidate_email])
-        msg.attach_alternative(html_content, "text/html")
-        msg.send()
-
     # TODO: gracefully handle when a challenge does not exist
     challenge = OffChallenge.objects.get(id=pk)
     if request.user.id != challenge.officer.id:
@@ -163,15 +156,22 @@ def officer_confirm_view(request, pk):
     requester_name = challenge.requester.get_full_name()
     form = ChallengeConfirmationForm(request.POST or None, instance=challenge)
     context = {
-        'challenge' : challenge,
-        'requester_name' : requester_name,
+        'challenge': challenge,
+        'requester_name': requester_name,
         'form': form,
     }
 
     if form.is_valid():
         form.instance.reviewed = True
         form.save()
-        send_cand_confirm_email(form)
+        # csec has already confirmed, and now officer confirms
+        if challenge.officer_confirmed is True and challenge.csec_confirmed is True:
+            send_cand_confirm_email(request, form.instance, True)
+        # csec has not already rejected, and now officer rejects
+        elif challenge.officer_confirmed is False and challenge.csec_confirmed is not False:
+            send_cand_confirm_email(request, form.instance, False)
+        # if neither is true, either need to wait for csec to review,
+        # or csec has already rejected
         return redirect('/cand/reviewconfirm/{}'.format(pk))
     return render(request, "candidate/challenge_confirm.html", context=context)
 
@@ -234,10 +234,31 @@ def get_rand_photo(width=400):
         urls = f.readlines()
     return urls[randint(0, len(urls) - 1)].strip() + "?w=" + str(width)
 
-#Takes in all confirmed rsvps and sorts them into types, current hard coded
+def send_cand_confirm_email(request, challenge, confirmed):
+    subject = '[HKN] Your officer challenge was reviewed'
+    candidate_email = challenge.requester.email
+
+    challenge_link = request.build_absolute_uri(
+            reverse("candidate:detail", kwargs={ 'pk': challenge.id }))
+    html_content = render_to_string(
+        'candidate/cand_confirm_email.html',
+        {
+            'confirmed': confirmed,
+            'officer_name': challenge.officer.get_full_name(),
+            'officer_username': challenge.officer.username,
+            'challenge_link': challenge_link,
+            'img_link': get_rand_photo(),
+        }
+    )
+    msg = EmailMultiAlternatives(subject, subject,
+            'no-reply@hkn.eecs.berkeley.edu', [candidate_email])
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
+
+# Takes in all confirmed rsvps and sorts them into types, current hard coded
 # TODO: support more flexible typing and string-to-var parsing/conversion 
 def sort_rsvps_into_events(rsvps):
-    #Events in admin are currently in a readable format, must convert them to callable keys for Django template
+    # Events in admin are currently in a readable format, must convert them to callable keys for Django template
     map_event_vars = {
         'mandatory_meetings': 'Mandatory', 
         'big_fun': 'Big Fun', 
@@ -255,7 +276,7 @@ def sort_rsvps_into_events(rsvps):
 
 # Checks which requirements have been fulfilled by a candidate
 def check_requirements(sorted_rsvps):
-    #TODO: increase flexibility by fetching event requirement count from database
+    # TODO: increase flexibility by fetching event requirement count from database
     req_list = {
         'mandatory_meetings': 3, 
         'big_fun': 1,
