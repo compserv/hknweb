@@ -7,7 +7,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.utils import timezone
 
-from .models import Event, Rsvp
+from .models import Event, EventType, Rsvp
 from .forms import EventForm
 
 # decorators
@@ -16,9 +16,10 @@ from .forms import EventForm
 def check_account_access(func):
     def check_then_call(request, *args, **kwargs):
         if not is_cand_or_officer(request.user):
-            return render(request, "errors/401.html", status=401)
+            return render(request, 'errors/401.html', status=401)
         return func(request, *args, **kwargs)
     return check_then_call
+
 
 def is_cand_or_officer(user):
     return user.groups.filter(name=settings.CAND_GROUP).exists() or \
@@ -29,11 +30,14 @@ def is_cand_or_officer(user):
 
 def index(request):
     events = Event.objects.order_by('-start_time')
+    event_types = EventType.objects.order_by('type')
 
     context = {
         'events': events,
+        'event_types': event_types,
     }
     return render(request, 'events/index.html', context)
+
 
 @login_required(login_url='/accounts/login/')
 @check_account_access
@@ -49,9 +53,10 @@ def show_details(request, id):
         'event': event,
         'rsvpd': rsvpd,
         'rsvps': rsvps,
-        'limit': limit
+        'limit': limit,
     }
     return render(request, 'events/show_details.html', context)
+
 
 @login_required(login_url='/accounts/login/')
 @check_account_access
@@ -69,6 +74,7 @@ def rsvp(request, id):
         messages.error(request, 'Could not RSVP; the RSVP limit has been reached or you have already RSVP\'d.')
     return redirect('/events/' + str(id))
 
+
 @login_required(login_url='/accounts/login/')
 @check_account_access
 def unrsvp(request, id):
@@ -85,7 +91,7 @@ def unrsvp(request, id):
     return redirect(event)
 
 
-@permission_required('events.add_event', login_url = '/accounts/login/')
+@permission_required('events.add_event', login_url='/accounts/login/')
 def add_event(request):
     form = EventForm(request.POST or None)
     if request.method == 'POST':
