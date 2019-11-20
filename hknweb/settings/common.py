@@ -195,7 +195,17 @@ SOCIAL_AUTH_ASSOCIATION_SERVER_URL_LENGTH  = 100
 
 # Constants for backend code
 
+# user groups
 CAND_GROUP = 'candidate'
 OFFICER_GROUP = 'officer'
+
+# default hard-coded event types for candidate semester
+# NOTE: these strings are also hard-coded in candidate/index.html
+MANDATORY_EVENT = 'mandatory'
+FUN_EVENT = 'fun'
+BIG_FUN_EVENT = 'big_fun'
+SERV_EVENT = 'serv'
+PRODEV_EVENT = 'prodev',
+HANGOUT_EVENT = 'hangout'
 
 # Note: both candidate and officer group should have permission to add officer challenges

@@ -172,7 +172,15 @@ Candidate Portal
             <div class="checklist-right-col">
                 <h4>Interactivities</h4>
                 <ul>
-                    <li>Officer Challenges</li>
+                    <li>
+                        <!-- challenges and hangouts have the same done status-->
+                        {% if req_statuses.hangout %}
+                            <span class="req done"></span>
+                        {% else %}
+                            <span class="req not-done"></span>
+                        {% endif %}
+                        Officer Challenges
+                    </li>
                     <a href="{% url 'candidate:candrequests' %}">
                         (View/Request Officer Challenge Confirmations)</a>
                     <ul>
@@ -180,7 +188,24 @@ Candidate Portal
                         <li>{{ num_rejected }} rejected</li>
                         <li>{{ num_confirmed }} confirmed</li>
                     </ul>
-                    <li>Officer Hangouts</li>
+                    <li>
+                        {% if req_statuses.hangout %}
+                            <span class="req done"></span>
+                        {% else %}
+                            <span class="req not-done"></span>
+                        {% endif %}
+                        Officer Hangouts
+                    </li>
+                    <ul class="conf-events">
+                        {% for event in confirmed_events.hangout %}
+                            <li>{{ event.name }}<br/></li>
+                        {% endfor %}
+                    </ul>
+                    <ul class="unconf-events">
+                        {% for event in unconfirmed_events.hangout %}
+                            <li>{{ event.name }}<br/></li>
+                        {% endfor %}
+                    </ul>
                 </ul>
 
                 <h4>Bit-Byte</h4>
