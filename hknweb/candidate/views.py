@@ -289,13 +289,16 @@ def check_requirements(sorted_rsvps, challenges):
         settings.BIG_FUN_EVENT: 1,
         settings.SERV_EVENT: 1,
         settings.PRODEV_EVENT: 1,
+        settings.HANGOUT_EVENT: None,
     }
     req_statuses = dict.fromkeys(req_list.keys(), False)
     for req_type, minimum in req_list.items():
         num_confirmed = len(sorted_rsvps[req_type])
         # officer hangouts are special case
+        print(req_type)
         if req_type == settings.HANGOUT_EVENT:
             req_statuses[req_type] = check_interactivity_requirements(num_confirmed, challenges)
+            print(req_statuses)
         elif num_confirmed >= minimum:
             req_statuses[req_type] = True
     return req_statuses

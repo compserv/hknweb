@@ -10,28 +10,36 @@
 
 .checkboxes {
     list-style: none;
+    padding-left: 1em;
 }
 
 .checkboxes li {
-    height: 20px;
+    height: 1.25em;
+}
+
+.events-list {
+    margin-bottom: 0;
+}
+
+.events-sublist {
+    list-style-type: circle;
 }
 
 .req {
-    width: 20px;
-    height: 20px;
+    width: 1.25em;
+    height: 1.25em;
     display: inline-block;
     position: relative;
     vertical-align: middle;
+    background-size: 1.25em 1.25em;
 }
 
 .done {
     background-image: url('yes.png');
-    background-size: 20px 20px;
 }
 
 .not-done {
     background-image: url('maybe.png');
-    background-size: 20px 20px;
 }
 
 .conf-events, .unconf-events {
