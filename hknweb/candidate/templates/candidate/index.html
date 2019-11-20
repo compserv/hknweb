@@ -32,14 +32,14 @@ Candidate Portal
         <br>
         <section>
             <h2>Candidate Requirements</h2>
-            <ol type="1" style="margin-bottom: 0;">
+            <ol class="events-list" type="1">
                 <li>Attend Candidate Meeting</li>
                 <li>Attend all 3 General Meetings</li>
                 <li>Attend 3+ Fun Events</li>
                 <li>Attend 1+ Big Fun Events</li>
                 <li>Attend 1+ Serv Events</li>
                 <li>Complete 3+ Interactivities</li>
-                <ul style="list-style-type: circle;">
+                <ul class="events-sublist">
                     <li>Officer Challenges</li>
                     <li>Officer Hangouts</li>
                 </ul>
@@ -47,13 +47,13 @@ Candidate Portal
                 <li>Administer 1-2 Course Surveys</li>
                 <li>Complete a Committee Project</li>
                 <li>Complete Bit-Byte Requirements</li>
-                <ul style="list-style-type: circle;">
+                <ul class="events-sublist">
                     <li>2 Adventures</li>
                     <li>1 Boba or Equivalent</li>
                 </ul>
                 <li>Pay all dues (2 sets)</li>
                 <li>Complete all required forms</li>
-                <ul style="list-style-type: circle;">
+                <ul class="events-sublist">
                     <li><a href="">Candidate Information Form</a></li>
                     <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSep1eRdOGXJR3-3KjCeHgBHpBiM2gtULVFaKuX0OK5D13dQTg/viewform?usp=sf_link">Committee Preference Form</a></li>
                     <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSdrHgt57BILlWDe9W3fhaNAX4pAOZvcwQiyiLOwN_12WVa0dA/viewform?usp=sf_link">Bit-Byte Pairing Survey</a></li>
@@ -68,11 +68,11 @@ Candidate Portal
     <div class="left-column">
         <br id="break">
         <section id="candidate-checklist">
-            <h2 style="margin-bottom: 0;">Checklist</h2>
+            <h2 class="events-list"">Checklist</h2>
 
             <div class="checklist-left-col">
-                <ul class="checkboxes" style="margin-bottom: 0;">
-                    <br/>
+                <h4>Events</h4>
+                <ul class="checkboxes events-list">
                     <li>
                         {% if req_statuses.mandatory_meetings %}
                             <span class="req done"></span>
@@ -171,7 +171,7 @@ Candidate Portal
             </div>
             <div class="checklist-right-col">
                 <h4>Interactivities</h4>
-                <ul>
+                <ul class="checkboxes">
                     <li>
                         <!-- challenges and hangouts have the same done status-->
                         {% if req_statuses.hangout %}
@@ -209,7 +209,7 @@ Candidate Portal
                 </ul>
 
                 <h4>Bit-Byte</h4>
-                <ul style="margin-bottom: 0;">
+                <ul class="events-list">
                     <li>Adventures</li>
                     <li>Boba</li>
                 </ul>

@@ -205,7 +205,7 @@ MANDATORY_EVENT = 'mandatory'
 FUN_EVENT = 'fun'
 BIG_FUN_EVENT = 'big_fun'
 SERV_EVENT = 'serv'
-PRODEV_EVENT = 'prodev',
+PRODEV_EVENT = 'prodev'
 HANGOUT_EVENT = 'hangout'
 
 # Note: both candidate and officer group should have permission to add officer challenges
