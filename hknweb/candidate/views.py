@@ -261,8 +261,8 @@ def send_cand_confirm_email(request, challenge, confirmed):
 # code will not work if they're called something else!!
 map_event_vars = {
     settings.MANDATORY_EVENT: 'Mandatory',
-    settings.FUN_EVENT: 'Big Fun',
-    settings.BIG_FUN_EVENT: 'Fun',
+    settings.FUN_EVENT: 'Fun',
+    settings.BIG_FUN_EVENT: 'Big Fun',
     settings.SERV_EVENT: 'Serv',
     settings.PRODEV_EVENT: 'Prodev',
     settings.HANGOUT_EVENT: 'Hangout',
