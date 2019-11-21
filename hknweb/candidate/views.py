@@ -48,6 +48,7 @@ class IndexView(generic.TemplateView):
         num_rejected = challenges \
                 .filter(Q(officer_confirmed=False) | Q(csec_confirmed=False)) \
                 .count()
+        num_confirmed = challenges.count() - num_pending - num_rejected
 
         announcements = Announcement.objects \
                 .filter(visible=True) \
@@ -58,7 +59,7 @@ class IndexView(generic.TemplateView):
         # Both confirmed and unconfirmed rsvps have been sorted into event types
         confirmed_events = sort_rsvps_into_events(rsvps.filter(confirmed=True))
         unconfirmed_events = sort_rsvps_into_events(rsvps.filter(confirmed=False))
-        req_statuses = check_requirements(confirmed_events)
+        req_statuses = check_requirements(confirmed_events, num_confirmed)
         upcoming_events = Event.objects \
                 .filter(start_time__range=(today, today + timezone.timedelta(days=7))) \
                 .order_by('start_time')
@@ -67,7 +68,7 @@ class IndexView(generic.TemplateView):
             'num_pending' : num_pending,
             'num_rejected' : num_rejected,
             # anything not pending or rejected is confirmed
-            'num_confirmed' : challenges.count() - num_pending - num_rejected,
+            'num_confirmed' : num_confirmed,
             'announcements' : announcements,
             'confirmed_events': confirmed_events,
             'unconfirmed_events': unconfirmed_events,
@@ -255,17 +256,22 @@ def send_cand_confirm_email(request, challenge, confirmed):
     msg.attach_alternative(html_content, "text/html")
     msg.send()
 
+
+# what the event types are called on admin site
+# code will not work if they're called something else!!
+map_event_vars = {
+    settings.MANDATORY_EVENT: 'Mandatory',
+    settings.FUN_EVENT: 'Fun',
+    settings.BIG_FUN_EVENT: 'Big Fun',
+    settings.SERV_EVENT: 'Serv',
+    settings.PRODEV_EVENT: 'Prodev',
+    settings.HANGOUT_EVENT: 'Hangout',
+}
+
 # Takes in all confirmed rsvps and sorts them into types, current hard coded
 # TODO: support more flexible typing and string-to-var parsing/conversion 
 def sort_rsvps_into_events(rsvps):
     # Events in admin are currently in a readable format, must convert them to callable keys for Django template
-    map_event_vars = {
-        'mandatory_meetings': 'Mandatory', 
-        'big_fun': 'Big Fun', 
-        'fun': 'Fun',
-        'serv': 'Serv',
-        'prodev': 'Prodev',
-    }
     sorted_events = dict.fromkeys(map_event_vars.keys())
     for event_key, event_type in map_event_vars.items():
         temp = []
@@ -275,18 +281,26 @@ def sort_rsvps_into_events(rsvps):
     return sorted_events
 
 # Checks which requirements have been fulfilled by a candidate
-def check_requirements(sorted_rsvps):
+def check_requirements(sorted_rsvps, challenges):
     # TODO: increase flexibility by fetching event requirement count from database
     req_list = {
-        'mandatory_meetings': 3, 
-        'big_fun': 1,
-        'fun': 3,
-        'serv': 1,
-        'prodev': 1,
+        settings.MANDATORY_EVENT: 3,
+        settings.FUN_EVENT: 3,
+        settings.BIG_FUN_EVENT: 1,
+        settings.SERV_EVENT: 1,
+        settings.PRODEV_EVENT: 1,
+        settings.HANGOUT_EVENT: None,
     }
     req_statuses = dict.fromkeys(req_list.keys(), False)
     for req_type, minimum in req_list.items():
-        if len(sorted_rsvps[req_type])>= minimum:
+        num_confirmed = len(sorted_rsvps[req_type])
+        # officer hangouts are special case
+        if req_type == settings.HANGOUT_EVENT:
+            req_statuses[req_type] = check_interactivity_requirements(num_confirmed, challenges)
+        elif num_confirmed >= minimum:
             req_statuses[req_type] = True
     return req_statuses
 
+# returns whether officer interactivities are satisfied
+def check_interactivity_requirements(hangouts, challenges):
+    return hangouts >= 1 and challenges >= 1 and hangouts + challenges >= 3
