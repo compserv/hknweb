@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static "candidate/style.css" %}">
+{% endblock %}
+
+{% block title %}Department Tours{% endblock %}
+
+{% block heading %}
+Sign up for a department tour!
+{% endblock %}
+
+{% block content %}
+<div class="parent">
+  <div class="description">
+    <body>
+      <h4>Welcome! If you are interested in taking a tour of
+      the EECS department, you are in the right place!
+      Sign up here for a tour hosted by HKN, and your request
+      will be sent to the HKN officer corps. If you have any
+      special requests, list them in the comments section below.
+      Tours are offered during our open hours (MTWTF, 11am-5pm).
+      Please allow three days for confirmation.</h4>
+
+      <p>Note: Tour requests made less than 48 hours in advance from
+      the request time cannot be guaranteed.</p>
+    </body>
+    <form method="POST">{% csrf_token %}
+        {% for field in form %}
+            <br>
+            <span style="float: left;">{{ field.label }} {% if field.field.required %}
+                <span style="color: red;">* </span>{% endif %}
+            </span>&nbsp
+            {% if field|field_type == 'Textarea' %}
+                <br/>
+            {% endif %}
+            {{ field }}
+            <br/>
+            {{ field.errors }}
+            <br/>
+        {% endfor %}
+        <br/>
+
+        <input class="f6 grow no-underline br-pill ph3 pv2 mb2 dib white bg-black" type="submit" value="Submit"/>
+    </form>
+  </div>
+</div>
+{% endblock %}
