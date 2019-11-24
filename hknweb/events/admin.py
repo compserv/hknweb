@@ -2,6 +2,8 @@ from django.contrib import admin
 from django.shortcuts import redirect
 from .models import EventType, Event, Rsvp
 
+
+@admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
 
     fields = ['name', 'slug', 'start_time', 'end_time', 'location', 'event_type', 'description', 'rsvp_limit', 'created_by', 'created_at']
@@ -12,6 +14,7 @@ class EventAdmin(admin.ModelAdmin):
     search_fields = ['name', 'created_by__username', 'created_by__first_name', 'created_by__last_name']
 
 
+@admin.register(Rsvp)
 class RsvpAdmin(admin.ModelAdmin):
 
     fields = ['event', 'user', 'confirmed', 'comment', 'created_at']
@@ -41,5 +44,3 @@ class RsvpAdmin(admin.ModelAdmin):
     cute_animal.short_description = "I wanna see a cute animal"
 
 admin.site.register(EventType)
-admin.site.register(Event, EventAdmin)
-admin.site.register(Rsvp, RsvpAdmin)
