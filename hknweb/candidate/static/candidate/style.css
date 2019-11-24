@@ -118,8 +118,10 @@ h2:first-child {
 }
 
 .links-div {
-    float: right;
-    width: 40%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
     font-size: 1.3em;
 }
 
@@ -161,6 +163,15 @@ h2:first-child {
     display: block; /* Center image */
     margin-left: auto;
     margin-right: auto;
+}
+
+#sunny-caption {
+    font-size: 0.8em;
+    margin-left: auto;
+    margin-right: 30%;
+    max-width: 40%;
+    text-align: right;
+    float: right;
 }
 
 #hiding-cat {
