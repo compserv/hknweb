@@ -53,6 +53,6 @@ class Rsvp(models.Model):
 
     def __repr__(self):
         return "Rsvp(event={})".format(self.event)
-    
+
     def __str__(self):
         return self.event.name

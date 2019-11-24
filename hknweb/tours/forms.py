@@ -1,7 +1,7 @@
 from django import forms
 
 from django.conf import settings
-from .models import OffChallenge
+from .models import DepTour
 from django.contrib.auth.models import User
 
 
@@ -9,16 +9,20 @@ class TourRequest(forms.ModelForm):
 
     class Meta:
         model = DepTour
-        fields = ['name', 'desired_date', 'email', 'confirm_email', 'phone', 'comments']
-
+        fields = ['name', 'desired_date', 'email', 'confirm_email', 'phone', 'comments', 'reviewed', \
+        'confirmed']
+        help_texts = {
+            'start_time': 'mm/dd/yyyy hh:mm, 24-hour time',
+            'end_time': 'mm/dd/yyyy hh:mm, 24-hour time',
+        }
 
 class TourConfirmationForm(forms.ModelForm):
 
     class Meta:
         model = DepTour
-        fields = ['confirmed', 'officer_comment']
+        fields = ['confirmed']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['confirmed'].label = "Check to confirm challenge (if not checked, request will be declined)"
-        self.fields['officer_comment'].label = "Optionally add a comment"
+        self.fields['confirmed'].label = "Check to confirm tour request (if not checked, request will be declined)"
+        # self.fields['officer_comment'].label = "Optionally add a comment"

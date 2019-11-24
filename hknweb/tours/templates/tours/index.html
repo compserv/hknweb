@@ -32,6 +32,9 @@ Sign up for a department tour!
             <span style="float: left;">{{ field.label }} {% if field.field.required %}
                 <span style="color: red;">* </span>{% endif %}
             </span>&nbsp
+            {% if field.help_text %}
+                <i>({{ field.help_text }})</i>
+            {% endif %}
             {% if field|field_type == 'Textarea' %}
                 <br/>
             {% endif %}
@@ -40,6 +43,15 @@ Sign up for a department tour!
             {{ field.errors }}
             <br/>
         {% endfor %}
+        <div id="submit">
+            <input type="submit" value="Submit" />
+            {% if messages %}
+                {% for message in messages %}
+                    <br>
+                    <span style="color: rgba(166, 60, 68, 1);">{{ message }}</span>
+                {% endfor %}
+            {% endif %}
+        </div>
         <br/>
 
         <input class="f6 grow no-underline br-pill ph3 pv2 mb2 dib white bg-black" type="submit" value="Submit"/>
