@@ -2,7 +2,7 @@ from django import forms
 from hknweb.models import User
 from hknweb.models import Profile
 from .models import Event
-from django.contrib.admin import widgets
+from .models import EventType
 
 
 class EventForm(forms.ModelForm):
