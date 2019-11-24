@@ -2,6 +2,7 @@ import datetime
 import pickle
 import os.path
 
+from django.urls import reverse
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
@@ -35,18 +36,21 @@ class GoogleCalendar:
         self.cal.calendars().clear(calendarId='primary').execute()
     
     def description(self, event):
+        # TODO: Make this link not hardcoded
+        link = "https://dev-hkn.eecs.berkeley.edu" + reverse('events:detail', kwargs={'id':event.id})
         rsvps = [rsvp.user.get_full_name() for rsvp in event.rsvp_set.all()]
         if rsvps:
             rsvps = ", ".join(rsvps)
         else:
             rsvps = None
-        fields = {
-            'Description': event.description,
-            'Event Type': event.event_type,
-            'RSVP Limit': event.rsvp_limit,
-            'RSVPS': rsvps
-        }
-        return '\n'.join([f'{k}: {v}' for k, v in fields.items()])
+        fields = [
+            f'Description: {event.description}',
+            f'Event Type: {event.event_type}',
+            f'RSVP Limit: {event.rsvp_limit}',
+            f'RSVPS: {rsvps}',
+            f'View on <a href={link}>HKN website</a>',
+        ]
+        return '\n'.join(fields)
 
     def add_event(self, event):
         event = {
@@ -70,6 +74,11 @@ class GoogleCalendar:
 
 def update():
     # Change this if you want to store the token and credentials somewhere else
-    cal = GoogleCalendar('./google_calendar/token.pickle', './google_calendar/credentials.json')
+    def relative(path):
+        file_dir = os.path.dirname(os.path.abspath(__file__))
+        return os.path.join(file_dir, path)
+    cal = GoogleCalendar(
+        relative('google_calendar/token.pickle'),
+        relative('google_calendar/credentials.json'))
     cal.delete_all()
     cal.add_all()
