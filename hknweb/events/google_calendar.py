@@ -35,10 +35,16 @@ class GoogleCalendar:
         self.cal.calendars().clear(calendarId='primary').execute()
     
     def description(self, event):
+        rsvps = [rsvp.user.get_full_name() for rsvp in event.rsvp_set.all()]
+        if rsvps:
+            rsvps = ", ".join(rsvps)
+        else:
+            rsvps = None
         fields = {
             'Description': event.description,
             'Event Type': event.event_type,
-            # TODO: Add RSVPs here.
+            'RSVP Limit': event.rsvp_limit,
+            'RSVPS': rsvps
         }
         return '\n'.join([f'{k}: {v}' for k, v in fields.items()])
 
@@ -63,6 +69,7 @@ class GoogleCalendar:
             self.add_event(event)
 
 def update():
-    cal = GoogleCalendar('/Users/praveen/Drive/cal3/hkn/hknweb/hknweb/events/google_calendar/token.pickle', '/Users/praveen/Drive/cal3/hkn/hknweb/hknweb/events/google_calendar/credentials.json')
+    # Change this if you want to store the token and credentials somewhere else
+    cal = GoogleCalendar('./google_calendar/token.pickle', './google_calendar/credentials.json')
     cal.delete_all()
     cal.add_all()

@@ -62,7 +62,6 @@ class Rsvp(models.Model):
     def __str__(self):
         return self.event.name
     
-    # TODO: Enable this once RSVPs are logged to the Calendar.
-    # def save(self, *args, **kwargs):
-    #     super().save(*args, **kwargs)
-    #     google_calendar.update()
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        google_calendar.update()
