@@ -8,6 +8,61 @@
     margin: 0 auto;
 }
 
+.checkboxes {
+    list-style: none;
+    padding-left: 1em;
+}
+
+.checkboxes li {
+    height: 1.25em;
+}
+
+.events-list {
+    margin-bottom: 0;
+}
+
+.events-sublist {
+    list-style-type: circle;
+}
+
+.req {
+    width: 1.25em;
+    height: 1.25em;
+    display: inline-block;
+    position: relative;
+    vertical-align: middle;
+    background-size: 1.25em 1.25em;
+}
+
+.done {
+    background-image: url('yes.png');
+}
+
+.not-done {
+    background-image: url('maybe.png');
+}
+
+.conf-events, .unconf-events {
+    list-style: none;
+    font-size: 0.9em;
+}
+
+.conf-events li::before {
+    content: "\25CF";
+    color: green;
+    display: inline-block;
+    width: 15px;
+    margin-left: -20px;
+}
+
+.unconf-events li::before {
+    content: "\25CF";
+    color: red;
+    display: inline-block;
+    width: 15px;
+    margin-left: -20px;
+}
+
 @media screen and (min-width: 1250px) {
     .content {
         padding-top: 3em;

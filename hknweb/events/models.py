@@ -1,8 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 class EventType(models.Model):
     type = models.CharField(max_length=255)
+    # Default color: CS61A blue
+    color = models.CharField(max_length=7, default="#0072c1")
 
     def __repr__(self):
         return "EventType(type={})".format(self.type)
@@ -10,13 +13,14 @@ class EventType(models.Model):
     def __str__(self):
         return str(self.type)
 
+
 class Event(models.Model):
-    name        = models.CharField(max_length=255, null=False)
+    name        = models.CharField(max_length=255)
     slug        = models.CharField(max_length=255)
-    start_time  = models.DateTimeField(null=False)
-    end_time    = models.DateTimeField(null=False)
+    start_time  = models.DateTimeField()
+    end_time    = models.DateTimeField()
     location    = models.CharField(max_length=255)
-    event_type  = models.ForeignKey(EventType, models.CASCADE, null=True)
+    event_type  = models.ForeignKey(EventType, models.CASCADE)
     description = models.TextField()
     rsvp_limit  = models.PositiveIntegerField(null=True, blank=True)
     # need_transportation = models.BooleanField(default=False)
@@ -29,16 +33,20 @@ class Event(models.Model):
     created_at  = models.DateTimeField(auto_now_add=True)
     # updated_at  = models.DateTimeField(auto_now=True)
 
+    def get_absolute_url(self):
+        return '/events/{}'.format(self.id)
+
     def __repr__(self):
-       return "Event(name={}, location={})".format(self.name, self.location)
+        return "Event(name={}, location={})".format(self.name, self.location)
 
     def __str__(self):
-       return self.name
+        return self.name
 
-class Rsvp(models.Model): # TODO: null should be false in some cases
-    user  = models.ForeignKey(User, models.CASCADE, null=True, verbose_name="rsvp'd by")
-    event = models.ForeignKey(Event, models.CASCADE, null=True)
-    confirmed       = models.BooleanField(null=True)
+
+class Rsvp(models.Model):
+    user  = models.ForeignKey(User, models.CASCADE, verbose_name="rsvp'd by")
+    event = models.ForeignKey(Event, models.CASCADE)
+    confirmed       = models.BooleanField(default=False)
     comment         = models.TextField(blank=True, default="")
     # transportation  = models.IntegerField(choices=TRANSPORT_ENUM,
     #                                       default=HAVE_RIDE)
@@ -46,7 +54,7 @@ class Rsvp(models.Model): # TODO: null should be false in some cases
     # updated_at      = models.DateTimeField(auto_now=True)
 
     def __repr__(self):
-       return "Rsvp(event={})".format(self.event)
+        return "Rsvp(event={})".format(self.event)
     
     def __str__(self):
         return self.event.name

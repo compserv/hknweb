@@ -165,7 +165,11 @@
         </label>
       </div>
       <div id="account-nav-bar" class="sub-nav-bar navi-container">
-        <a href="/cand">Profile</a>
+        {% if viewer_is_an_officer %}
+          <a href="/cand/offreq">Officer Portal</a>
+          <span class="slash">/</span>
+        {% endif %}
+        <a href="/cand">Candidate Portal</a>
         <span class="slash">/</span>
         <a href="/accounts/settings">Settings</a>
         <span class="slash">/</span>

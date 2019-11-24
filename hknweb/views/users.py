@@ -1,10 +1,6 @@
 import urllib
 import json
-from django.shortcuts import redirect
 from django.http import HttpResponse, HttpResponseRedirect
-from django.http import JsonResponse
-from hknweb.models import Profile
-# import ast
 from django.contrib.auth.models import User
 from hknweb.forms import SettingsForm, ProfileForm, SignupForm, ValidPasswordForm, UpdatePasswordForm
 from django.shortcuts import render, render_to_response, redirect
@@ -12,9 +8,18 @@ from django.contrib.auth import authenticate, login, update_session_auth_hash
 from hknweb.forms import SettingsForm, ProfileForm, SignupForm
 from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib import messages
 from django.conf import settings
+
+# context processor for base to know whether a user is in the officer group
+def add_officer_context(request):
+    return {
+        "viewer_is_an_officer":
+            request.user.groups.filter(name=settings.OFFICER_GROUP).exists()
+    }
+
+
+# views
 
 def account_create(request):
     if request.method == 'POST':

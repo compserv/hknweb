@@ -18,12 +18,10 @@ Your Officer Challenges
     <div style="width: 40%; float: left; padding-left: 50px;">
         <h3>Request Officer Challenge Confirmation</h3>
 
-        {% if messages %}
-            {% for message in messages %}
-                <span {% if messages.tags %} class="{{ message.tags }}" {% endif %}
-                    class="blue">{{ message }}</span>
-            {% endfor %}
-        {% endif %}
+        {% for message in messages %}
+            <span {% if messages.tags %} class="{{ message.tags }}" {% endif %}
+                class="blue">{{ message }}</span>
+        {% endfor %}
 
         {% load app_filters %}
 
@@ -59,7 +57,8 @@ Your Officer Challenges
     </div>
 
     <!-- Right side of page, list of requested challenges -->
-    <div id='agenda'  style="width: 50%; float: right; padding-left: 20px; padding-right: 20px;">
+    <!--  TODO: refactor CSS (e.g. move into style.css and change px into em)  -->
+    <div id='agenda' style="width: 50%; float: right; padding-left: 20px; padding-right: 20px;">
         <h3>Past Requests</h3>
 
         {% if challenge_list %}
@@ -80,12 +79,12 @@ Your Officer Challenges
             			</td>
                         <td align="center">{{ challenge.officer }}</td>
                         <td align="center">
-                            {% if not challenge.reviewed %}
-                                <img src="{% static 'candidate/maybe.png'%}" alt="in progress" class="table-icon">
-                            {% elif challenge.confirmed %}
+                            {% if challenge.confirmed %}
                                 <img src="{% static 'candidate/yes.png'%}" alt="confirmed" class="table-icon">
+                            {% elif challenge.rejected %}
+                                <img src="{% static 'candidate/no.png'%}" alt="rejected" class="table-icon">
                             {% else %}
-                                <img src="{% static 'candidate/no.png'%}" alt="declined" class="table-icon">
+                                <img src="{% static 'candidate/maybe.png'%}" alt="in progress" class="table-icon">
                             {% endif %}
                         </td>
                     </tr>

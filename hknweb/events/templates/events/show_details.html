@@ -3,49 +3,83 @@
 
 {% block title %}{{ event.name }}{% endblock %}
 
-{% block header %}
+{% block heading %}
 {{ event.name }}
 {% endblock %}
 
-{% block content %}
-<div class="center measure-very-wide pv4 parent">
-
-  {% if messages %}
-    {% for message in messages %}
-      <h3 {% if messages.tags %} class="{{ message.tags }}" {% endif %} style="color: #B78727;">{{ message }}</h3>
-    {% endfor %}
-  {% endif %}
-
-  <!-- RSVP/un-RSVP button -->
-  {% if rsvp %}
-    <form action={% url 'events:unrsvp' event.id %} method="post">
-      {% csrf_token %}
-      <input type="submit" value="un-RSVP" />
-    </form>
-  {% else %}
-    <form action={% url 'events:rsvp' event.id %} method="post">
-      {% csrf_token %}
-      <input type="submit" value="RSVP" />
-    </form>
-  {% endif %}
-  
-  <p>{{ event.description }}</p>
-
-  <p><b>Location</b>: {{ event.location }}</p>
-  
-  <div id="date-and-time"></div>
-  <!-- Script to render dates prettily -->
-  <script>
-    var start = new Date('{{ event.start_time|date:"c" }}');
-    var end = new Date('{{ event.end_time|date:"c" }}');
-    var sameDayEvent = start.getDate() === end.getDate() && start.getMonth() === end.getMonth() && start.getYear() === end.getYear();
-    
-    if (sameDayEvent) {
-      var HTMLtext = '<p><b>Date</b>: ' + start.toLocaleDateString() + '</p> <p><b>Time</b>: ' + start.toLocaleTimeString() + ' to ' + end.toLocaleTimeString();
-    } else { // Event starts and ends on different days
-      var HTMLtext = '<p><b>Starts</b>: ' + start.toLocaleString() + '</p> <p><b>Ends</b>: ' + start.toLocaleString();
+{% block header %}
+<link rel="stylesheet" href="{% static "events/style.css" %}">
+<style>
+    .heading {
+        display: none;
     }
-    document.getElementById("date-and-time").innerHTML = HTMLtext;
-  </script>
+    @media screen and (min-width: 1000px) {
+        .content {
+            padding-bottom: 1em;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="parent">
+  <h1 id="event-detail-title"> {{ event.name }} </h1>
+
+  <div id="left-details">
+
+    <p>{{ event.description }}</p>
+    <p><b>Event Type</b>: {{ event.event_type }}</p>
+    <p><b>Location</b>: {{ event.location }}</p>
+    <p><b>Date</b>: {{event.start_time|date:"D, N j, Y"}}</p>
+    <p><b>Time</b>: {{event.start_time|time}} to {{event.end_time|time}}</p>
+    <p><a href="{% url 'events:index' %}">
+        Go Back to Calendar
+    </a></p>
+  </div>
+
+  <div id='right-details'>
+    {% if messages %}
+      {% for message in messages %}
+        <h3 {% if messages.tags %} class="{{ message.tags }}" {% endif %}
+            style="color: #B78727;">{{ message }}</h3>
+      {% endfor %}
+    {% endif %}
+
+    <!-- RSVP/un-RSVP button -->
+    {% if rsvpd %}
+      <form action={% url 'events:unrsvp' event.id %} method="post">
+        {% csrf_token %}
+        <input type="submit" value="un-RSVP" />
+      </form>
+    {% else %}
+      <form action={% url 'events:rsvp' event.id %} method="post">
+        {% csrf_token %}
+        <input type="submit" value="RSVP" />
+      </form>
+    {% endif %}
+
+    {% if rsvpd %}
+      <p class="rsvp-list">You have rsvp'd <img src="{% static 'candidate/yes.png'%}" alt="rsvp'd" class="table-icon"></p>
+    {% else %}
+      <p class="rsvp-list">You have not rsvp'd</p>
+    {% endif %}
+
+    
+    <h3 class="rsvp-list-title">RSVPs</h3>
+    
+    {% if rsvps %}
+      {% if limit %}
+        <p class="rsvp-list"> Count: {{ rsvps.count }} / {{ limit }} </p>
+      {% else %}
+        <p class="rsvp-list"> Count: {{ rsvps.count }} </p>
+      {% endif %}
+      {% for rsvp in rsvps %}
+        <p class="rsvp-list">{{ rsvp.user.first_name }} {{ rsvp.user.last_name }} ({{ rsvp.user }})</p>
+      {% endfor %}
+    {% elif not rsvpd %}
+      <p class="rsvp-list">No rsvps.</p>
+    {% endif %}
+  </div>
 </div>
+
 {% endblock %}
