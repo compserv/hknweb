@@ -28,7 +28,7 @@ class GoogleCalendar:
                     ['https://www.googleapis.com/auth/calendar',
                     'https://www.googleapis.com/auth/calendar.events'])
                 creds = flow.run_local_server(port=0)
-            with open('token.pickle', 'wb') as token:
+            with open(token_path, 'wb') as token:
                 pickle.dump(creds, token)
         self.cal = build('calendar', 'v3', credentials=creds)
 
