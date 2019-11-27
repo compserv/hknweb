@@ -3,6 +3,7 @@
 {% block title %}Add an event{% endblock %}
 
 {% block header %}
+<link rel="stylesheet" href="{% static "events/style.css" %}">
 <style>
     .heading {
         display: none;
@@ -13,44 +14,22 @@
     }
     @media screen and (min-width: 1000px) {
         .content {
-            padding-top: 2.5em;
-            padding-bottom: 2.5em;
+            padding-top: 1.5em;
+            padding-bottom: 1.5em;
         }
     }
     .centered {
         max-width: 700px;
         margin: 0 auto;
     }
-    h1 {
-        margin: 0;
-        margin-bottom: 1em;
-        font-weight: normal;
-        text-align: center;
-    }
-    #form {
-        position: relative;
-    }
-    .row {
-        margin-bottom: 1em;
-    }
-    @media screen and (min-width: 700px) {
-        .left-side {
-            display: inline-block;
-            width: 50%;
-            text-align: right;
-        }
-        #submit {
-            width: 100%;
-            text-align: center;
-        }
-    }
 </style>
 {% endblock %}
 
-{% block heading %}{% endblock %}
+{% block heading %}Add a calendar event{% endblock %}
 
 {% block content %}
-<h1> Add a calendar event </h1>
+<h1 id="add-event-title"> Add a calendar event </h1>
+
 <div class="centered">
     <form method="POST" id="form">
         {% csrf_token %}
