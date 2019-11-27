@@ -6,6 +6,8 @@ from django.shortcuts import get_object_or_404
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.utils import timezone
+from django.utils.decorators import method_decorator
+from django.views import generic
 
 from .models import Event, EventType, Rsvp
 from .forms import EventForm
@@ -54,6 +56,7 @@ def show_details(request, id):
         'rsvpd': rsvpd,
         'rsvps': rsvps,
         'limit': limit,
+        'can_edit': request.user.has_perm('events.change_event')
     }
     return render(request, 'events/show_details.html', context)
 
@@ -106,3 +109,11 @@ def add_event(request):
             messages.success(request, 'Something went wrong oops')
             return render(request, 'events/add_event.html', {'form': EventForm(None)})
     return render(request, 'events/add_event.html', {'form': EventForm(None)})
+
+@method_decorator(permission_required('events.change_event', login_url='/accounts/login/'), name='dispatch')
+class EventUpdateView(generic.edit.UpdateView):
+    model = Event
+    fields = ['name', 'slug', 'start_time', 'end_time', 'location', 'event_type',
+              'description', 'rsvp_limit']
+    template_name_suffix = '_update'
+
