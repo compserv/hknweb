@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block header %}
+	<link rel="stylesheet" href="{% static "dept_tours/style.css" %}">
+<!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+
+  <!-- XDSoft DateTimePicker -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" integrity="sha256-DOS9W6NR+NFe1fUhEE0PGKY/fubbUCnOfTje2JMDw3Y=" crossorigin="anonymous" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js" integrity="sha256-FEqEelWI3WouFOo2VWP/uJfs1y8KJ++FLh2Lbqc8SJk=" crossorigin="anonymous"></script>
+{% endblock %}
+
+{% block title %}Department Tour Request{% endblock %}
+
+{% block content %}
+<div class="parent">
+	<div style="width: 100%; float: left; padding-left: 50px;">
+		{% if messages %}
+			{% for message in messages %}
+	            <div class="blue">{{ message }}</div>
+	        {% endfor %}
+	        <br/>
+	        <br/>
+	    {% else %}
+	    	{% load app_filters %}
+			<form method="POST" autocomplete="off">
+				{% csrf_token %}
+	            {% for field in form %}
+	                <br>
+	                <span style="float: left;">{{ field.label }} {% if field.field.required %}
+	                    <span style="color: red;">* </span>{% endif %}
+	                </span>&nbsp
+	                {% if field|field_type == 'Textarea' %}
+	                    <br/>
+	                {% endif %}
+	                {{ field }}
+	                {{ field.errors }}
+	                <br/>
+	            {% endfor %}
+	            <br/>
+	            <input class="f6 grow no-underline br-pill ph3 pv2 mb2 dib white bg-black" type="submit" value="Submit"/>
+	    {% endif %}
+        </form>
+    </div>
+</div>
+<script>
+  $(function () {
+  	console.log("hi");
+    $("#id_tour_date").datetimepicker({
+      format: 'm/d/Y h:i A',
+      step: 30
+    });
+  });
+</script>
+{% endblock %}

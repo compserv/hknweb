@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'hknweb.shortlinks',
     'hknweb.alumni',
     'hknweb.candidate',
+    'hknweb.dept_tours',
     'hknweb.elections',
     'hknweb.courses',
     'hknweb.exams',
