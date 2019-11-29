@@ -106,13 +106,13 @@ def add_event(request):
         else:
             print(form.errors)
             messages.success(request, 'Something went wrong oops')
-            return render(request, 'events/add_event.html', {'form': EventForm(None)})
-    return render(request, 'events/add_event.html', {'form': EventForm(None)})
+            return render(request, 'events/event_add.html', {'form': EventForm(None)})
+    return render(request, 'events/event_add.html', {'form': EventForm(None)})
 
 @method_decorator(permission_required('events.change_event', login_url='/accounts/login/'), name='dispatch')
 class EventUpdateView(generic.edit.UpdateView):
     model = Event
     fields = ['name', 'slug', 'start_time', 'end_time', 'location', 'event_type',
               'description', 'rsvp_limit']
-    template_name_suffix = '_update'
+    template_name_suffix = '_edit'
 
