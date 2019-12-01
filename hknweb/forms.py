@@ -21,9 +21,9 @@ class ProfileForm(forms.ModelForm):
         fields = ('picture', 'private', 'phone_number', 'date_of_birth', 'resume', 'graduation_date')
 
 class SignupForm(UserCreationForm):
-     first_name = forms.CharField(max_length=30, required=True)
-     last_name = forms.CharField(max_length=30, required=True)
-     email = forms.EmailField(max_length=200, required=True)
+     first_name = forms.CharField(max_length=30, required=True, widget=forms.TextInput(attrs={'class' : 'input-style'}))
+     last_name = forms.CharField(max_length=30, required=True, widget=forms.TextInput(attrs={'class' : 'input-style'}))
+     email = forms.EmailField(max_length=200, required=True, widget=forms.TextInput(attrs={'class' : 'input-style'}))
 
      def clean_email(self):
          email = self.cleaned_data.get('email')
