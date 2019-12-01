@@ -15,12 +15,12 @@ class DepTour(models.Model):
     class Meta:
         verbose_name = "Department Tours"
 
-    name            = models.CharField(max_length=MAX_STRLEN, default='', verbose_name="title")
-    email           = models.CharField(max_length=MAX_STRLEN, default='')
-    confirm_email   = models.CharField(max_length=MAX_STRLEN, default='')
+    name            = models.CharField(max_length=MAX_STRLEN, default='')
+    email           = models.EmailField(max_length=MAX_STRLEN, default='')
+    confirm_email   = models.EmailField(max_length=MAX_STRLEN, default='')
     desired_date    = models.DateTimeField()
     phone           = models.CharField(max_length=12, default='')
-    comments        = models.TextField(max_length=MAX_TXTLEN, blank=True, default='')
+    comments        = models.TextField(max_length=MAX_TXTLEN, blank=True, default='', verbose_name='Additional comments')
 
     # whether officer reviewed this request
     reviewed        = models.BooleanField(default=False)

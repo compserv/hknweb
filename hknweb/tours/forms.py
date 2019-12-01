@@ -9,11 +9,10 @@ class TourRequest(forms.ModelForm):
 
     class Meta:
         model = DepTour
-        fields = ['name', 'desired_date', 'email', 'confirm_email', 'phone', 'comments', 'reviewed', \
-        'confirmed']
+        fields = ['name', 'desired_date', 'email', 'confirm_email', 'phone', 'comments']
         help_texts = {
-            'start_time': 'mm/dd/yyyy hh:mm, 24-hour time',
-            'end_time': 'mm/dd/yyyy hh:mm, 24-hour time',
+            'desired_date': 'mm/dd/yyyy hh:mm, 24-hour time',
+            # 'end_time': 'mm/dd/yyyy hh:mm, 24-hour time',
         }
 
 class TourConfirmationForm(forms.ModelForm):

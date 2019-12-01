@@ -2,11 +2,18 @@ from django.shortcuts import render
 from django.views import generic
 import datetime
 from django.views.generic.edit import FormView
-from .forms import TourRequest
+from .forms import *
+from .models import DepTour
 
-class DepTourView(FormView):
+class IndexView(FormView):
     template_name = 'tours/index.html'
     form_class = TourRequest
+    model = DepTour
+
+class ConfirmView(FormView):
+    template_name = 'tours/confirmtour.html'
+    form_class = TourConfirmationForm
+    model = DepTour
 
     # def add_event(request):
     #     form = TourRequest(request.POST or None)

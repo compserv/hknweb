@@ -15,47 +15,41 @@ Sign up for a department tour!
 <div class="parent">
   <div class="description">
     <body>
-      <h4>Welcome! If you are interested in taking a tour of
+      <h2 align='center'>Welcome! If you are interested in taking a tour of
       the EECS department, you are in the right place!
       Sign up here for a tour hosted by HKN, and your request
       will be sent to the HKN officer corps. If you have any
       special requests, list them in the comments section below.
       Tours are offered during our open hours (MTWTF, 11am-5pm).
-      Please allow three days for confirmation.</h4>
+      Please allow three days for confirmation.</h2>
 
-      <p>Note: Tour requests made less than 48 hours in advance from
+      <p align='center'>Note: Tour requests made less than 48 hours in advance from
       the request time cannot be guaranteed.</p>
     </body>
-    <form method="POST">{% csrf_token %}
-        {% for field in form %}
-            <br>
-            <span style="float: left;">{{ field.label }} {% if field.field.required %}
-                <span style="color: red;">* </span>{% endif %}
-            </span>&nbsp
-            {% if field.help_text %}
-                <i>({{ field.help_text }})</i>
-            {% endif %}
-            {% if field|field_type == 'Textarea' %}
+    <div class="centered">
+      <form method="POST">{% csrf_token %}
+          {% for field in form %}
+              <br/>
+              <span style="float: left;">{{ field.label }}: {% if field.field.required %}
+                  <span style="color: red;">* </span>{% endif %}
+              </span>&nbsp
+              {% if field.label == 'Additional comments' %}
                 <br/>
-            {% endif %}
-            {{ field }}
-            <br/>
-            {{ field.errors }}
-            <br/>
-        {% endfor %}
-        <div id="submit">
-            <input type="submit" value="Submit" />
-            {% if messages %}
-                {% for message in messages %}
-                    <br>
-                    <span style="color: rgba(166, 60, 68, 1);">{{ message }}</span>
-                {% endfor %}
-            {% endif %}
-        </div>
-        <br/>
-
-        <input class="f6 grow no-underline br-pill ph3 pv2 mb2 dib white bg-black" type="submit" value="Submit"/>
-    </form>
+              {% endif %}
+              {% if field.help_text %}
+                  <i>({{ field.help_text }})</i>
+              {% endif %}
+              {{ field }}
+              <br/>
+              {{ field.errors }}
+              <br/>
+          {% endfor %}
+          <div id="submit">
+              <input type="submit" value="Submit"/>
+          </div>
+          <br/>
+      </form>
+    </div>
   </div>
 </div>
 {% endblock %}

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static "candidate/style.css" %}">
+{% endblock %}
+
+{% block title %}Officer Challenge Confirmation{% endblock %}
+
+{% block heading %}
+Officer Challenge Confirmation
+{% endblock %}
+
+{% block content %}
+<div class="parent">
+
+    <div style="padding-left: 50px; font-family: font-size: 12pt; line-height:23px;">
+
+        <h1>Confirm Department Tours</h1>
+
+        <!-- Information about the challenge -->
+        Title: {{ challenge.name }}<br/>
+        Requested by: {{ challenge.requester }} &nbsp;&nbsp; ({{ requester_name }})<br/>
+        Detailed Description: {{ challenge.description }}<br/>
+        Proof: {{ challenge.proof }}<br/>
+        Request Date: {{ challenge.request_date }}<br/><br/>
+
+        <!-- Confimation form -->
+        <form method="post">
+            {% csrf_token %}
+
+            {% for field in form %}
+                <div class="fieldWrapper">
+                    {{ field.errors }}
+                    {{ field.label_tag }} <br/>
+                    {{ field }}
+                    {% if field.help_text %}
+                        <p class="help">{{ field.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <input class="f6 grow no-underline br-pill ph3 pv2 mb2 dib white bg-black" type="submit" value="Submit"/>
+
+        </form>
+        <br>
+
+    </div>
+
+
+</div>
+
+{% endblock %}
