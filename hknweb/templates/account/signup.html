@@ -1,9 +1,22 @@
 {% extends "base.html" %}
 {% load static %}
-
+{% block header %}
+<style>
+  .centered {
+      margin: 0 auto;
+  }
+  @media screen and (min-width: 700px) {
+      label {
+          display: inline-block;
+          width: 157.812px;
+          text-align: right;
+      }
+  }
+</style>
+{% endblock %}
 {% block content %}
 
-<div class="small-margin">
+<div class="centered">
   <h2>Sign up</h2>
   <form method="post">
     {% csrf_token %}
