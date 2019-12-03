@@ -1,4 +1,5 @@
 from django.db import models
+from datetime import datetime, timedelta
 
 MAX_STRLEN = 85 # Default maximum length for a char field
 MAX_NUMLEN = 12 # Default maximum length for phone number field
@@ -21,4 +22,5 @@ class DepartmentTourRequest(models.Model):
 	comments = models.TextField(max_length=MAX_TXTLEN, blank=True, default='')
 
 	def __str__(self):
-		return self.name + ' @ ' + self.tour_date.strftime('%m/%d/%Y %I:%M %p')
+		pdt = self.tour_date - timedelta(hours=8, minutes=0)
+		return self.name + ' @ ' + pdt.strftime('%m/%d/%Y %I:%M %p')

@@ -6,3 +6,12 @@
 .blue {
 	color: blue;
 }
+
+.description h3 {
+	margin-top: 0px;
+}
+
+.errorlist {
+	color: red;
+	margin-bottom: 0px;
+}

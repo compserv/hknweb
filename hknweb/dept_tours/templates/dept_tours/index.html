@@ -15,6 +15,17 @@
 
 {% block content %}
 <div class="parent">
+	<div class = "description" style="width: 60%; float: left; padding: 0px 50px 0px 50px">
+	    <h3> Welcome! If you are interested in taking a tour of
+	    the EECS department, you are in the right place! </h3>
+	    <p> Sign up here for a tour hosted by HKN, and your request
+	    will be sent to the HKN officer corps. If you have any
+	    special requests, list them in the comments section below.
+	    Tours are offered during our open hours (MTWTF, 11am-5pm).
+	    Please allow up to three days for confirmation. </p>
+	    <p> Note: Tour requests made less than 48 hours in advance from
+	    the request time cannot be guaranteed. </p>
+	</div>
 	<div style="width: 100%; float: left; padding-left: 50px;">
 		{% if messages %}
 			{% for message in messages %}
@@ -40,17 +51,50 @@
 	            {% endfor %}
 	            <br/>
 	            <input class="f6 grow no-underline br-pill ph3 pv2 mb2 dib white bg-black" type="submit" value="Submit"/>
+	            <br/>
 	    {% endif %}
         </form>
     </div>
 </div>
 <script>
+  function dateToString(d) {
+  	var month = '' + (d.getMonth() + 1);
+  	var day = '' + d.getDate();
+  	var year = d.getFullYear();
+  	if (month.length < 2) {
+  		month = '0' + month;
+  	}
+  	if (day.length < 2) {
+  		day = '0' + day;
+  	}
+  	var date = [month, day, year].join('/');
+  	return date;
+  }
+
   $(function () {
-  	console.log("hi");
-    $("#id_tour_date").datetimepicker({
+  	var tomorrow = new Date();
+  	tomorrow.setDate(tomorrow.getDate() + 1);
+  	var minDate = dateToString(tomorrow);
+  	const minTime = '11:00';
+  	const maxTime = '16:15';
+  	var disabledDays = [0,6];
+    var tour_date = $("#id_tour_date").datetimepicker({
+      formatDate: 'm/d/Y',
+      minDate: minDate,
+      minTime: minTime,
+      maxTime: maxTime,
+      defaultTime: minTime,
+      formatTime: 'H:i A',
       format: 'm/d/Y h:i A',
-      step: 30
+      step: 15,
+      disabledWeekDays: disabledDays,
+      validateOnBlur: false,
+      onSelectDate: function(ct,$i){
+	      var date = dateToString(ct);
+	      $i.val(date + ' 11:00 AM');
+      }
     });
+    tour_date.prop('readonly', true);
   });
 </script>
 {% endblock %}
