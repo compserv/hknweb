@@ -17,7 +17,7 @@
 <div class="parent">
 	<div class = "description" style="width: 60%; float: left; padding: 0px 50px 0px 50px">
 	    <h3> Welcome! If you are interested in taking a tour of
-	    the EECS department, you are in the right place! </h3>
+	    the EECS department, you're in the right place! </h3>
 	    <p> Sign up here for a tour hosted by HKN, and your request
 	    will be sent to the HKN officer corps. If you have any
 	    special requests, list them in the comments section below.
@@ -27,32 +27,28 @@
 	    the request time cannot be guaranteed. </p>
 	</div>
 	<div style="width: 100%; float: left; padding-left: 50px;">
-		{% if messages %}
-			{% for message in messages %}
-	            <div class="blue">{{ message }}</div>
+	    {% load app_filters %}
+		<form method="POST" autocomplete="off">
+			{% csrf_token %}
+	        {% for field in form %}
+	            <br>
+	            <div class="form-field">
+		            <div class="form-label">{{ field.label }}
+  		            {% if field.field.required %}
+  		                <span class="required">*</span>
+                  {% endif %}
+                </div>
+		            <div class="field-input">
+		            	{{ field }}
+		        	</div>
+		        </div>
+	            {{ field.errors }}
 	        {% endfor %}
 	        <br/>
+          <div class="submit">
+  	        <input class="submit-button" type="submit" value="Submit"/>
+          </div>
 	        <br/>
-	    {% else %}
-	    	{% load app_filters %}
-			<form method="POST" autocomplete="off">
-				{% csrf_token %}
-	            {% for field in form %}
-	                <br>
-	                <span style="float: left;">{{ field.label }} {% if field.field.required %}
-	                    <span style="color: red;">* </span>{% endif %}
-	                </span>&nbsp
-	                {% if field|field_type == 'Textarea' %}
-	                    <br/>
-	                {% endif %}
-	                {{ field }}
-	                {{ field.errors }}
-	                <br/>
-	            {% endfor %}
-	            <br/>
-	            <input class="f6 grow no-underline br-pill ph3 pv2 mb2 dib white bg-black" type="submit" value="Submit"/>
-	            <br/>
-	    {% endif %}
         </form>
     </div>
 </div>
@@ -84,11 +80,12 @@
       minTime: minTime,
       maxTime: maxTime,
       defaultTime: minTime,
-      formatTime: 'H:i A',
+      formatTime: 'h:i A',
       format: 'm/d/Y h:i A',
       step: 15,
       disabledWeekDays: disabledDays,
       validateOnBlur: false,
+      timepickerScrollbar: false,
       onSelectDate: function(ct,$i){
 	      var date = dateToString(ct);
 	      $i.val(date + ' 11:00 AM');

@@ -7,11 +7,39 @@
 	color: blue;
 }
 
-.description h3 {
+h3 {
 	margin-top: 0px;
 }
 
 .errorlist {
 	color: red;
 	margin-bottom: 0px;
+}
+
+.form-field {
+	display: flex;
+	flex-direction: row;
+}
+
+.form-label {
+	font-weight: 600;
+	text-align: right;
+	width:6em;
+	padding-right: 0.4em;
+}
+
+.required {
+	color: red;
+}
+
+.field-input {
+	float: right;
+}
+
+.submit {
+	width:6em;
+}
+
+.submit-button {
+	padding: 4px 12px 4px 12px;
 }

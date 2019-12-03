@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views import generic
 from django.contrib import messages
 from django.views.generic.edit import FormView
@@ -12,23 +12,18 @@ class IndexView(FormView):
     template_name = 'dept_tours/index.html'
     model = DepartmentTourRequest
     form_class = DepartmentTourForm
-    success_url = "/dept_tours"
-
-    """
-    def get_context_data(self):
-    	tour_requests = DepartmentTourRequest.objects.all()
-    	form_class = DepartmentTourForm
-    	context = {
-    		'tour_requests': tour_requests,
-    		'form': form_class
-    	}
-    	return context
-    """
 
     def form_valid(self, form):
     	form.save()
     	msg = "Your request for a department tour has been successfully submitted!\n A copy of your request has been sent" + \
     		" to " + form.instance.email
     	messages.success(self.request, msg)
-    	return super().form_valid(form)
+    	form_id = form.instance.id
+    	return redirect('/dept_tours/request/{}'.format(form_id))
 
+def request_submitted(request, pk):
+	req = DepartmentTourRequest.objects.get(id=pk)
+	context = {
+		'tour_request': req
+	}
+	return render(request, 'dept_tours/request_confirm.html', context = context)

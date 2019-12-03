@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static "dept_tours/style.css" %}">
+{% endblock %}
+
+{% block title %}Department Tour{% endblock %}
+
+{% block content %}
+
+<div class="parent">
+    <div id="confirm-text" style="width: 60%; float: left; padding: 0px 50px 0px 50px">
+        <h3>Request Submitted</h3>
+        Your request for a department tour has been successfully submitted!
+        <br> A copy of your request has been sent to {{ tour_request.email }}!
+    </div>
+</div>
+<br>
+
+{% endblock %}
