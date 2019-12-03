@@ -38,7 +38,7 @@
                 <span class="left-side">
                     {{ field.label }}
                     {% if field.field.required %}
-                        <span style="color: rgba(166, 60, 68, 1);">*</span>
+                        <span class="message">*</span>
                     {% endif %}
                     {% if field.help_text %}
                         <i>({{ field.help_text }})</i>
@@ -53,7 +53,7 @@
             {% if messages %}
                 {% for message in messages %}
                     <br>
-                    <span style="color: rgba(166, 60, 68, 1);">{{ message }}</span>
+                    <span class="message">{{ message }}</span>
                 {% endfor %}
             {% endif %}
         </div>

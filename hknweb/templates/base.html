@@ -22,6 +22,7 @@
     <title>{% block title %}{% endblock %} | Berkeley HKN</title>
   </head>
   <body>
+    <input type="checkbox" name="not-toggles" class="toggle" id="toggle-mobile" />
     <input type="checkbox" name="not-toggles" class="toggle" id="toggle-account" />
     <input type="radio" name="toggles" class="toggle" id="toggle-student" onclick="untoggleAccounts()" checked="checked" />
     <input type="radio" name="toggles" class="toggle" id="toggle-industry" onclick="untoggleAccounts()" />
@@ -59,19 +60,32 @@
           <label for="toggle-events">Events</label>
           <label for="toggle-about">About</label>
           {% if user.is_authenticated %}
-          <span style="height: 1.8em; width: 1px; border-left: 1px black solid;"></span>
-          <label for="toggle-account">
-            Welcome, {{ user.first_name }}
-            <i id="carrot"></i>
-          </label>
+            <span style="height: 1.8em; width: 1px; border-left: 1px black solid;"></span>
+            <label for="toggle-account">
+              Welcome, {{ user.first_name }}
+              <i id="carrot"></i>
+            </label>
           {% else %}
-          <a class="account-button" href="/accounts/login">Account</a>
+            <a class="account-button" href="/accounts/login">Account</a>
           {% endif %}
-          <div class="navi-menu-button"><label for="toggle">Menu</label></div>
+          <div class="navi-menu-button">
+            <label for="toggle-mobile">
+              <!-- Hamburger button -->
+              <div style="height: 20px; width: 25px;">
+                <div style="box-sizing: border-box; height: 50%; border-top: solid 4px #353535; border-bottom: solid 2px #353535;"></div>
+                <div style="box-sizing: border-box; height: 50%; border-bottom: solid 4px #353535; border-top: solid 2px #353535;"></div>
+              </div>
+            </label>
+          </div>
         </div>
       </div>
     </div>
 
+    <div class="navi-container mobile-nav-bar" style="text-align: center;">
+      <label for="toggle-student">
+        Student Services
+      </label>
+    </div>
     <div id="student-nav-bar" class="sub-nav-bar navi-container">
       <a href="/exams">Exam Archive</a>
       <span class="slash">/</span>
@@ -85,6 +99,11 @@
       <span class="slash">/</span>
       <a href="/dept_tours">Department Tours</a>
     </div>
+    <div class="navi-container mobile-nav-bar" style="text-align: center;">
+      <label for="toggle-industry">
+        Industry
+      </label>
+    </div>
     <div id="industry-nav-bar" class="sub-nav-bar navi-container">
       <a href="">Why HKN?</a>
       <span class="slash">/</span>
@@ -95,6 +114,11 @@
       <a href="">Career Fair</a>
       <span class="slash">/</span>
       <a href="">Get in Touch</a>
+    </div>
+    <div class="navi-container mobile-nav-bar" style="text-align: center;">
+      <label for="toggle-outreach">
+        Outreach
+      </label>
     </div>
     <div id="outreach-nav-bar" class="sub-nav-bar navi-container">
       <a href="">EECS Day</a>
@@ -107,10 +131,20 @@
       <span class="slash">/</span>
       <a href="">Cal Day</a>
     </div>
+    <div class="navi-container mobile-nav-bar" style="text-align: center;">
+      <label for="toggle-events">
+        Events
+      </label>
+    </div>
     <div id="events-nav-bar" class="sub-nav-bar navi-container">
       <a href="/events">Calendar</a>
       <span class="slash">/</span>
       <a href="https://www.flickr.com/people/berkeley_hkn/">Photos</a>
+    </div>
+    <div class="navi-container mobile-nav-bar" style="text-align: center;">
+      <label for="toggle-about">
+        About
+      </label>
     </div>
     <div id="about-nav-bar" class="sub-nav-bar navi-container">
       <a href="">Contact Us</a>
@@ -124,17 +158,23 @@
       <a href="">Yearbooks</a>
     </div>
     {% if user.is_authenticated %}
-    <div id="account-nav-bar" class="sub-nav-bar navi-container">
-      {% if viewer_is_an_officer %}
-        <a href="/cand/offreq">Officer Portal</a>
+      <div class="navi-container mobile-nav-bar" style="text-align: center;">
+        <label for="toggle-account">
+          Welcome, {{ user.first_name }}
+          <i id="carrot"></i>
+        </label>
+      </div>
+      <div id="account-nav-bar" class="sub-nav-bar navi-container">
+        {% if viewer_is_an_officer %}
+          <a href="/cand/offreq">Officer Portal</a>
+          <span class="slash">/</span>
+        {% endif %}
+        <a href="/cand">Candidate Portal</a>
         <span class="slash">/</span>
-      {% endif %}
-      <a href="/cand">Candidate Portal</a>
-      <span class="slash">/</span>
-      <a href="/accounts/settings">Settings</a>
-      <span class="slash">/</span>
-      <a href="/accounts/logout">Log out</a>
-    </div>
+        <a href="/accounts/settings">Settings</a>
+        <span class="slash">/</span>
+        <a href="/accounts/logout">Log out</a>
+      </div>
     {% endif %}
 
     <div class="content">
