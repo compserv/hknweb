@@ -110,7 +110,6 @@ class CandRequestView(FormView, generic.ListView):
             'candidate/request_email.html',
             {
                 'candidate_name' : form.instance.requester.get_full_name(),
-                # TODO: for some usernames such as catherine.hu, this becomes a link. Why??
                 'candidate_username' : form.instance.requester.username,
                 'confirm_link' : confirm_link,
                 'img_link' : get_rand_photo(),
