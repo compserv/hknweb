@@ -53,6 +53,9 @@ class Rsvp(models.Model):
 
     def __repr__(self):
         return "Rsvp(event={})".format(self.event)
-    
+
     def __str__(self):
         return self.event.name
+
+    def has_not_rsvpd(self, user, event):
+        return Rsvp.objects.filter(user=user, event=event).first() == None

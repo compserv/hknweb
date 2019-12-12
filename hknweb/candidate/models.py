@@ -49,10 +49,6 @@ class OffChallenge(models.Model):
     def rejected(self):
         return self.officer_confirmed is False or self.csec_confirmed is False
 
-    @property
-    def rejected(self):
-        return self.officer_confirmed is False or self.csec_confirmed is False
-
     def __str__(self):
         return self.name
 
@@ -73,4 +69,3 @@ class Announcement(models.Model):
 
     def __str__(self):
         return self.title if self.title != '' else self.text
-
