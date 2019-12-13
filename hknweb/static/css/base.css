@@ -22,13 +22,12 @@ body {
   padding-right: 13px;
 }
 
-/* NAVIGATION BAR
- * If confused by the flexbox attributes, see https://css-tricks.com/snippets/css/a-guide-to-flexbox/ for a helpful tutorial
+/*
+ * NAVIGATION BAR
  */
 .navi-container {
   padding-top: 7px;
   padding-bottom: 7px;
-  /* border-bottom: solid 3px #003262; /* rgba(166, 60, 68, 1); HKN scarlet; hex code: #A63C44 */
 }
 .navi {
   min-height: 50px;
@@ -38,7 +37,7 @@ body {
   justify-content: space-between;
   align-items: center;
 }
-/* Logo */
+/* Logo: designed as a flexbox */
 .navi a:first-child {
   color: inherit;
 }
@@ -55,33 +54,55 @@ body {
 .navi-menu-logo-text {
   margin-left: 7px;
 }
-
-/* Menu */
+/* Menu: also a flexbox */
 .navi-menu {
   display: flex;
   justify-content: flex-end;
   align-items: center;
   flex-basis: auto;
 }
-.navi-menu > * {
-  display: block;
-  white-space: nowrap;
-}
 .navi-menu label {
   cursor: pointer;
 }
-.navi-menu > label {
-  padding-right: 24px;
+@media screen and (min-width: 710px) { /* Desktop display */
+  .navi-menu > label {
+    padding-right: 24px;
+  }
+  .navi-menu > label[for="toggle-account"] {
+    padding-right: 0;
+    padding-left: 24px;
+  }
+  .navi-menu-button {
+    display: none;
+  }
+  .navi-menu label:hover {
+    text-decoration: underline;
+  }
+  .mobile-nav-bar {
+    display: none;
+  }
+  #dummy-nav-bar {
+    opacity: 0;
+    position: static;
+  }
+  #dummy-nav-bar * {
+    display: inline;
+  }
 }
-.navi-menu > label:last-of-type {
-  padding-right: 0;
-  padding-left: 24px;
-}
-.navi-menu-button {
-  padding-left: 24px;
-}
-.navi-menu label:hover {
-  text-decoration: underline;
+@media screen and (max-width: 710px) { /* Mobile display */
+  .navi-menu > label {
+    display: none;
+  }
+  .navi-menu-button {
+    display: block;
+    padding-left: 24px;
+  }
+  #dummy-nav-bar {
+    display: none;
+  }
+  .navi-menu > span {
+    display: none;
+  }
 }
 .account-button {
   display: inline-block;
@@ -94,24 +115,6 @@ body {
 .account-button:hover {
   text-decoration: underline;
 }
-
-/* Media queries for responsive design */
-/* Desktop display: */
-@media screen and (min-width: 710px) {
-  .navi-menu-button {
-    display: none;
-  }
-}
-/* Mobile display: */
-@media screen and (max-width: 710px) {
-  .navi-menu > label {
-    display: none;
-  }
-  .navi-menu-button {
-    display: block;
-  }
-}
-
 /* Toggle system */
 .toggle {
   position: absolute;
@@ -132,87 +135,50 @@ body {
   color: white;
   display: none;
 }
-#dummy-nav-bar {
-  opacity: 0;
-  position: static;  
+@media screen and (max-width: 710px) {
+  .sub-nav-bar {
+    position: static;
+    display: none;
+  }
 }
-#dummy-nav-bar * {
-  display: inline;
-}
-#toggle-account:not(:checked)
-  ~ #toggle-student:checked
-  ~ .navi-container
-  label[for="toggle-student"] {
+#toggle-account:not(:checked) ~ #toggle-student:checked ~ .navi-container label[for="toggle-student"],
+#toggle-account:not(:checked) ~ #toggle-industry:checked ~ .navi-container label[for="toggle-industry"],
+#toggle-account:not(:checked) ~ #toggle-outreach:checked ~ .navi-container label[for="toggle-outreach"],
+#toggle-account:not(:checked) ~ #toggle-events:checked ~ .navi-container label[for="toggle-events"],
+#toggle-account:not(:checked) ~ #toggle-about:checked ~ .navi-container label[for="toggle-about"],
+#toggle-account:checked ~ .navi-container label[for="toggle-account"] {
   text-decoration: underline;
 }
-#toggle-account:not(:checked) ~ #toggle-student:checked ~ #student-nav-bar {
-  opacity: 1;
-  z-index: 1;
-}
-#toggle-account:not(:checked) ~ #toggle-student:checked ~ #student-nav-bar * {
-  display: inline;
-}
-#toggle-account:not(:checked)
-  ~ #toggle-industry:checked
-  ~ .navi-container
-  label[for="toggle-industry"] {
-  text-decoration: underline;
-}
-#toggle-account:not(:checked) ~ #toggle-industry:checked ~ #industry-nav-bar {
-  opacity: 1;
-  z-index: 1;
-}
-#toggle-industry:checked ~ #industry-nav-bar * {
-  display: inline;
-}
-#toggle-account:not(:checked)
-  ~ #toggle-outreach:checked
-  ~ .navi-container
-  label[for="toggle-outreach"] {
-  text-decoration: underline;
-}
-#toggle-account:not(:checked) ~ #toggle-outreach:checked ~ #outreach-nav-bar {
-  opacity: 1;
-  z-index: 1;
-}
-#toggle-account:not(:checked) ~ #toggle-outreach:checked ~ #outreach-nav-bar * {
-  display: inline;
-}
-#toggle-account:not(:checked)
-  ~ #toggle-events:checked
-  ~ .navi-container
-  label[for="toggle-events"] {
-  text-decoration: underline;
-}
-#toggle-account:not(:checked) ~ #toggle-events:checked ~ #events-nav-bar {
-  opacity: 1;
-  z-index: 1;
-}
-#toggle-account:not(:checked) ~ #toggle-events:checked ~ #events-nav-bar * {
-  display: inline;
-}
-#toggle-account:not(:checked)
-  ~ #toggle-about:checked
-  ~ .navi-container
-  label[for="toggle-about"] {
-  text-decoration: underline;
-}
-#toggle-account:not(:checked) ~ #toggle-about:checked ~ #about-nav-bar {
-  opacity: 1;
-  z-index: 1;
-}
-#toggle-account:not(:checked) ~ #toggle-about:checked ~ #about-nav-bar * {
-  display: inline;
-}
+#toggle-account:not(:checked) ~ #toggle-student:checked ~ #student-nav-bar,
+#toggle-account:not(:checked) ~ #toggle-industry:checked ~ #industry-nav-bar,
+#toggle-account:not(:checked) ~ #toggle-outreach:checked ~ #outreach-nav-bar,
+#toggle-account:not(:checked) ~ #toggle-events:checked ~ #events-nav-bar,
+#toggle-account:not(:checked) ~ #toggle-about:checked ~ #about-nav-bar,
 #toggle-account:checked ~ #account-nav-bar {
   opacity: 1;
   z-index: 1;
 }
+#toggle-account:not(:checked) ~ #toggle-student:checked ~ #student-nav-bar *,
+#toggle-account:not(:checked) ~ #toggle-industry:checked ~ #industry-nav-bar *,
+#toggle-account:not(:checked) ~ #toggle-outreach:checked ~ #outreach-nav-bar *,
+#toggle-account:not(:checked) ~ #toggle-events:checked ~ #events-nav-bar *,
+#toggle-account:not(:checked) ~ #toggle-about:checked ~ #about-nav-bar *,
 #toggle-account:checked ~ #account-nav-bar * {
   display: inline;
 }
-#toggle-account:checked ~ .navi-container label[for="toggle-account"] {
-  text-decoration: underline;
+@media screen and (max-width: 710px) {
+  #toggle-mobile:checked ~ #toggle-account:not(:checked) ~ #toggle-student:checked ~ #student-nav-bar,
+  #toggle-mobile:checked ~ #toggle-account:not(:checked) ~ #toggle-industry:checked ~ #industry-nav-bar,
+  #toggle-mobile:checked ~ #toggle-account:not(:checked) ~ #toggle-outreach:checked ~ #outreach-nav-bar,
+  #toggle-mobile:checked ~ #toggle-account:not(:checked) ~ #toggle-events:checked ~ #events-nav-bar,
+  #toggle-mobile:checked ~ #toggle-account:not(:checked) ~ #toggle-about:checked ~ #about-nav-bar,
+  #toggle-mobile:checked ~ #toggle-account:checked ~ #account-nav-bar {
+    display: block;
+  }
+  #toggle-mobile:not(:checked) ~ .sub-nav-bar,
+  #toggle-mobile:not(:checked) ~ .mobile-nav-bar {
+    display: none;
+  }
 }
 #carrot {
   position: relative;

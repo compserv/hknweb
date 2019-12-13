@@ -29,6 +29,10 @@
     vertical-align: middle;
 }
 
+.message {
+    color: rgba(166, 60, 68, 1);
+}
+
 #add-event-title {
     margin: 0;
     margin-bottom: 1em;

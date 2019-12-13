@@ -20,13 +20,14 @@ Confirm Officer Challenge
     <br><br>
 
     <img id="sunny" src="{% static 'candidate/seal_sunny.jpg'%}" alt="cute dog">
+    <span id="sunny-caption">
+        Sunny, the world's cutest dog (according to Sarah Sun)
+    </span>
 
     <br>
-    <div class="links-div link">
-        <a href="{% url 'candidate:offrequests' %}">Go to portal</a>
-    </div>
 
     <div class="links-div link">
+        <a href="{% url 'candidate:offrequests' %}">Go to portal</a>
         <a href="{% url 'candidate:detail' challenge.id %}">View this challenge</a>
     </div>
     <br><br>

@@ -110,7 +110,6 @@ class CandRequestView(FormView, generic.ListView):
             'candidate/request_email.html',
             {
                 'candidate_name' : form.instance.requester.get_full_name(),
-                # TODO: for some usernames such as catherine.hu, this becomes a link. Why??
                 'candidate_username' : form.instance.requester.username,
                 'confirm_link' : confirm_link,
                 'img_link' : get_rand_photo(),
@@ -280,17 +279,19 @@ def sort_rsvps_into_events(rsvps):
         sorted_events[event_key] = temp
     return sorted_events
 
+
+# TODO: increase flexibility by fetching event requirement count from database
+req_list = {
+    settings.MANDATORY_EVENT: 3,
+    settings.FUN_EVENT: 3,
+    settings.BIG_FUN_EVENT: 1,
+    settings.SERV_EVENT: 1,
+    settings.PRODEV_EVENT: 1,
+    settings.HANGOUT_EVENT: None,
+}
+
 # Checks which requirements have been fulfilled by a candidate
 def check_requirements(sorted_rsvps, challenges):
-    # TODO: increase flexibility by fetching event requirement count from database
-    req_list = {
-        settings.MANDATORY_EVENT: 3,
-        settings.FUN_EVENT: 3,
-        settings.BIG_FUN_EVENT: 1,
-        settings.SERV_EVENT: 1,
-        settings.PRODEV_EVENT: 1,
-        settings.HANGOUT_EVENT: None,
-    }
     req_statuses = dict.fromkeys(req_list.keys(), False)
     for req_type, minimum in req_list.items():
         num_confirmed = len(sorted_rsvps[req_type])
