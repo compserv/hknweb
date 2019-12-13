@@ -45,6 +45,10 @@ class Event(models.Model):
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         google_calendar.update()
+    
+    def delete(self, *args, **kwargs):
+        super().delete(*args, **kwargs)
+        google_calendar.update()
 
 class Rsvp(models.Model):
     user  = models.ForeignKey(User, models.CASCADE, verbose_name="rsvp'd by")
@@ -64,4 +68,8 @@ class Rsvp(models.Model):
     
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
+        google_calendar.update()
+    
+    def delete(self, *args, **kwargs):
+        super().delete(*args, **kwargs)
         google_calendar.update()

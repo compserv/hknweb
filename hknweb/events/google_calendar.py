@@ -6,31 +6,33 @@ from django.urls import reverse
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
+from google.auth.exceptions import GoogleAuthError
 
 from . import models
 
+class InitError(Exception):
+    pass
+
 class GoogleCalendar:
-    def __init__(self, token_path, credential_path):
+    def __init__(self, token_path='./google_calendar_creds/token.pickle'):
         """
         Based on:
         https://developers.google.com/calendar/quickstart/python?authuser=3
         """
-        creds = None
-        if os.path.exists(token_path):
-            with open(token_path, 'rb') as token:
-                creds = pickle.load(token)
-        if not creds or not creds.valid:
-            if creds and creds.expired and creds.refresh_token:
-                creds.refresh(Request())
-            else:
-                flow = InstalledAppFlow.from_client_secrets_file(
-                    credential_path,
-                    ['https://www.googleapis.com/auth/calendar',
-                    'https://www.googleapis.com/auth/calendar.events'])
-                creds = flow.run_local_server(port=0)
-            with open(token_path, 'wb') as token:
-                pickle.dump(creds, token)
-        self.cal = build('calendar', 'v3', credentials=creds)
+        if not os.path.exists(token_path):
+            raise InitError(f"No token found at {token_path}")
+        with open(token_path, 'rb') as token:
+            creds = pickle.load(token)
+        if creds.expired:
+            if creds.refresh_token:
+                try:
+                    creds.refresh(Request())
+                except GoogleAuthError:
+                    raise InitError("Failed to refresh token")
+        try:
+            self.cal = build('calendar', 'v3', credentials=creds)
+        except GoogleAuthError:
+            raise InitError("Failed to build calendar")
 
     def delete_all(self):
         self.cal.calendars().clear(calendarId='primary').execute()
@@ -72,13 +74,16 @@ class GoogleCalendar:
         for event in models.Event.objects.all():
             self.add_event(event)
 
-def update():
-    # Change this if you want to store the token and credentials somewhere else
-    def relative(path):
+def relative(path):
         file_dir = os.path.dirname(os.path.abspath(__file__))
         return os.path.join(file_dir, path)
-    cal = GoogleCalendar(
-        relative('google_calendar/token.pickle'),
-        relative('google_calendar/credentials.json'))
-    cal.delete_all()
-    cal.add_all()
+
+def update():
+    try:
+        cal = GoogleCalendar(relative('google_calendar_creds/token.pickle'))
+    except InitError as e:
+        # TODO: Replace with logging once we have it.
+        print(f"Calendar update failed with error: {e}")
+    if cal:
+        cal.delete_all()
+        cal.add_all()
