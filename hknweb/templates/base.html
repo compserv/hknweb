@@ -66,7 +66,7 @@
               <i id="carrot"></i>
             </label>
           {% else %}
-            <a class="account-button" href="/accounts/login">Account</a>
+            <a class="account-button" href="/accounts/login?next={{request.path}}">Account</a>
           {% endif %}
           <div class="navi-menu-button">
             <label for="toggle-mobile">
@@ -173,7 +173,7 @@
         <span class="slash">/</span>
         <a href="/accounts/settings">Settings</a>
         <span class="slash">/</span>
-        <a href="/accounts/logout">Log out</a>
+        <a href="/accounts/logout?next={{request.path}}">Log out</a>
       </div>
     {% endif %}
 
