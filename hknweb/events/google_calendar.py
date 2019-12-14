@@ -79,11 +79,12 @@ def relative(path):
         return os.path.join(file_dir, path)
 
 def update():
+    # TODO: Maybe save the calendar object somehow instead of recreating it every time
     try:
         cal = GoogleCalendar(relative('google_calendar_creds/token.pickle'))
     except InitError as e:
         # TODO: Replace with logging once we have it.
         print(f"Calendar update failed with error: {e}")
-    if cal:
-        cal.delete_all()
-        cal.add_all()
+        return
+    cal.delete_all()
+    cal.add_all()
