@@ -74,7 +74,10 @@ class Slot(models.Model):
         return self.time(self.hour + 1)
 
     def __repr__(self):
-        return "Slot(room={}, day = {}, start = {}, end = {})".format(self.room, self.day, self.start_time(), self.end_time())
+        tutor_string = ""
+        for tutor in self.tutors.all():
+            tutor_string += str(tutor) + ", "
+        return "Slot(room={}, day = {}, start = {}, end = {}, tutors = {})".format(self.room, self.day, self.start_time(), self.end_time(), tutor_string)
 
     def __str__(self):
         return str(self.room) + ' ' + str(self.day) + ' ' + str(self.start_time()) + ' ' + str(self.end_time())
