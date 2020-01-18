@@ -63,7 +63,7 @@ li {
             {% for slot in office.slots.hour %}
             <td class="pv2 w ba b--near-white">
                 <ul class="list">
-                    {% for tutor in slot.tutor_set.all %}
+                    {% for tutor in slot.tutors.all %}
                     <li class="relative dib">{{tutor.name}}
                         <span class="tooltiptext">
                         {% for course in tutor.courses.all %}

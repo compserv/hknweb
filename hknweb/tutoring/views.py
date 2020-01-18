@@ -22,4 +22,5 @@ def index(request):
             },
         ],
     }
+    print(cory_slots)
     return render(request, 'tutoring/index.html', context)

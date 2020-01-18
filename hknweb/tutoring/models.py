@@ -7,6 +7,22 @@ class Course(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255, null=False)
 
+    def __repr__(self):
+        return "Course(name={})".format(self.name)
+
+    def __str__(self):
+        return str(self.name)
+
+class Tutor(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=255)
+    courses = models.ManyToManyField(Course)
+
+    def __repr__(self):
+        return "Tutor(name={})".format(self.name)
+
+    def __str__(self):
+        return str(self.name)
 
 class Slot(models.Model):
     MON = 1
@@ -42,6 +58,7 @@ class Slot(models.Model):
     hour = models.IntegerField(choices=HOUR_CHOICES)
     day = models.IntegerField(choices=DAY_CHOICES)
     room = models.IntegerField(choices=ROOM_CHOICES)
+    tutors = models.ManyToManyField(Tutor)
 
     @staticmethod
     def time(hour):
@@ -56,9 +73,11 @@ class Slot(models.Model):
     def end_time(self):
         return self.time(self.hour + 1)
 
+    def __repr__(self):
+        return "Slot(room={}, day = {}, start = {}, end = {})".format(self.room, self.day, self.start_time(), self.end_time())
 
-class Tutor(models.Model):
-    id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=255)
-    slots = models.ManyToManyField(Slot)
-    courses = models.ManyToManyField(Course)
+    def __str__(self):
+        return str(self.room) + ' ' + str(self.day) + ' ' + str(self.start_time()) + ' ' + str(self.end_time())
+
+
+
