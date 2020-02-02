@@ -59,5 +59,6 @@ class Rsvp(models.Model):
     def __str__(self):
         return self.event.name
 
-    def has_not_rsvpd(self, user, event):
-        return Rsvp.objects.filter(user=user, event=event).first() == None
+    @classmethod
+    def has_not_rsvpd(cls, user, event):
+        return cls.objects.filter(user=user, event=event).first() is None

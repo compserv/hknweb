@@ -87,7 +87,7 @@ def unrsvp(request, id):
     event = get_object_or_404(Event, pk=id)
     rsvp = get_object_or_404(Rsvp, user=request.user, event=event)
 
-    if rsvp.confirmed: #timezone.now() > event.end_time:
+    if rsvp.confirmed:
         messages.error(request, 'Cannot un-rsvp from event you have gone to.')
     else:
         rsvp.delete()
