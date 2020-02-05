@@ -14,7 +14,7 @@ class OffChallengeAdmin(admin.ModelAdmin):
     readonly_fields = ['request_date']
     list_display = ('name', 'requester', 'officer', 'officer_confirmed', 'csec_confirmed', 'request_date')
     list_filter = ['requester', 'officer', 'officer_confirmed', 'csec_confirmed', 'request_date']
-    search_fields = ['requester', 'officer', 'name']
+    search_fields = ['requester__username', 'requester__first_name', 'requester__last_name', 'officer__username', 'officer__first_name', 'officer__last_name', 'name']
 
     actions = ["export_as_csv", "csec_confirm", "csec_reject"]
 
