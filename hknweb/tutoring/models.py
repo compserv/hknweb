@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 # Create your models here.
 
 
@@ -14,7 +14,7 @@ class Course(models.Model):
         return str(self.name)
 
 class Tutor(models.Model):
-    id = models.AutoField(primary_key=True)
+    user  = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     name = models.CharField(max_length=255)
     courses = models.ManyToManyField(Course)
 
@@ -54,7 +54,6 @@ class Slot(models.Model):
         (16, '4pm'),
     ]
 
-    id = models.AutoField(primary_key=True)
     hour = models.IntegerField(choices=HOUR_CHOICES)
     day = models.IntegerField(choices=DAY_CHOICES)
     room = models.IntegerField(choices=ROOM_CHOICES)

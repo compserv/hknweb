@@ -22,3 +22,6 @@ class TutorForm(forms.ModelForm):
         fields = ('name', 'courses')
 
     courses = forms.ModelMultipleChoiceField(queryset=Course.objects.order_by('name'))
+
+class ClassPreferenceForm(forms.Form):
+    courses = forms.ModelMultipleChoiceField(queryset=Course.objects.order_by('name'))
