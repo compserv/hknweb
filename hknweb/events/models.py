@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-
+from . import google_calendar
 class EventType(models.Model):
     type = models.CharField(max_length=255)
     # Default color: CS61A blue
@@ -41,7 +41,14 @@ class Event(models.Model):
 
     def __str__(self):
         return self.name
-
+    
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        google_calendar.update()
+    
+    def delete(self, *args, **kwargs):
+        super().delete(*args, **kwargs)
+        google_calendar.update()
 
 class Rsvp(models.Model):
     user  = models.ForeignKey(User, models.CASCADE, verbose_name="rsvp'd by")
@@ -58,3 +65,11 @@ class Rsvp(models.Model):
     
     def __str__(self):
         return self.event.name
+    
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        google_calendar.update()
+    
+    def delete(self, *args, **kwargs):
+        super().delete(*args, **kwargs)
+        google_calendar.update()
