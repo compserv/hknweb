@@ -15,14 +15,18 @@ class ChallengeRequestForm(forms.ModelForm):
     officer = forms.ModelChoiceField(queryset=User.objects
             .filter(groups__name=settings.OFFICER_GROUP).order_by('username'))
 
+    officer.label_from_instance = lambda obj: \
+            "{} ({} {})".format(obj.username, obj.first_name, obj.last_name)
+
 
 class ChallengeConfirmationForm(forms.ModelForm):
 
     class Meta:
         model = OffChallenge
-        fields = ['confirmed', 'officer_comment']
+        fields = ['officer_confirmed', 'officer_comment']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['confirmed'].label = "Check to confirm challenge (if not checked, request will be declined)"
+        self.fields['officer_confirmed'].label = "Choose \"Yes\" to confirm challenge, \"No\" to decline" \
+                                                 " (after you confirm, csec still has to confirm as well)"
         self.fields['officer_comment'].label = "Optionally add a comment"

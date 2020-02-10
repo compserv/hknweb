@@ -58,8 +58,25 @@
             <a href="/exams">Exams</a> &#8226; <a href="">course guides and surveys</a> &#8226; <a href="">course map</a>
         </div>
     </div>
-
     <div class="tutoring-column">
+
+        <div class="tutoring-panel">
+          <div class="tutoring-title">
+              Announcements
+
+          </div>
+          {% if not announcements %}
+              No announcements at this time.
+          {% endif %}
+
+          {% for announcement in announcements %}
+              <p>
+              <strong>{{ announcement.title }}</strong> [{{ announcement.release_date|date:"m/d/Y" }}]<br>
+              {{ announcement.text }}
+              </p>
+          {% endfor %}
+        </div>
+        <br>
         <div class="tutoring-panel">
             <div class="tutoring-title">
                 Today's Tutoring Hours

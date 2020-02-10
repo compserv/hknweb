@@ -4,6 +4,8 @@ from django.contrib.auth.models import User
 
 class EventType(models.Model):
     type = models.CharField(max_length=255)
+    # Default color: CS61A blue
+    color = models.CharField(max_length=7, default="#0072c1")
 
     def __repr__(self):
         return "EventType(type={})".format(self.type)
@@ -53,6 +55,6 @@ class Rsvp(models.Model):
 
     def __repr__(self):
         return "Rsvp(event={})".format(self.event)
-    
+
     def __str__(self):
         return self.event.name

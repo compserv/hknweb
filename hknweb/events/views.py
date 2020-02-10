@@ -3,12 +3,11 @@ from django.http import HttpResponse, Http404
 from django.template import loader, RequestContext
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
-from django.views.decorators.csrf import csrf_exempt #doing this for now bc idk how to make csrf work
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.utils import timezone
 
-from .models import Event, Rsvp
+from .models import Event, EventType, Rsvp
 from .forms import EventForm
 
 # decorators
@@ -17,9 +16,10 @@ from .forms import EventForm
 def check_account_access(func):
     def check_then_call(request, *args, **kwargs):
         if not is_cand_or_officer(request.user):
-            return render(request, "errors/401.html", status=401)
+            return render(request, 'errors/401.html', status=401)
         return func(request, *args, **kwargs)
     return check_then_call
+
 
 def is_cand_or_officer(user):
     return user.groups.filter(name=settings.CAND_GROUP).exists() or \
@@ -30,26 +30,34 @@ def is_cand_or_officer(user):
 
 def index(request):
     events = Event.objects.order_by('-start_time')
-    
+    event_types = EventType.objects.order_by('type')
+
     context = {
         'events': events,
+        'event_types': event_types,
     }
     return render(request, 'events/index.html', context)
+
 
 @login_required(login_url='/accounts/login/')
 @check_account_access
 def show_details(request, id):
-    
+
     event = get_object_or_404(Event, pk=id)
 
-    rsvp = Rsvp.objects.filter(user=request.user, event=event).exists()
+    rsvpd = Rsvp.objects.filter(user=request.user, event=event).exists()
+    rsvps = Rsvp.objects.filter(event=event)
+
+    limit = event.rsvp_limit
     context = {
         'event': event,
-        'rsvp': rsvp,
+        'rsvpd': rsvpd,
+        'rsvps': rsvps,
+        'limit': limit,
     }
     return render(request, 'events/show_details.html', context)
 
-@csrf_exempt  # doing this for now bc idk how to make csrf work
+
 @login_required(login_url='/accounts/login/')
 @check_account_access
 def rsvp(request, id):
@@ -61,12 +69,11 @@ def rsvp(request, id):
 
     if request.user.is_authenticated and (event.rsvp_limit is None or rsvps < event.rsvp_limit):
         Rsvp.objects.create(user=request.user, event=event, confirmed=False)
-        messages.success(request, 'RSVP\'d!')
     else:
         messages.error(request, 'Could not RSVP; the RSVP limit has been reached.')
     return redirect('/events/' + str(id))
 
-@csrf_exempt  # doing this for now bc idk how to make csrf work
+
 @login_required(login_url='/accounts/login/')
 @check_account_access
 def unrsvp(request, id):
@@ -80,11 +87,10 @@ def unrsvp(request, id):
     else:
         rsvp = get_object_or_404(Rsvp, user=request.user, event=event)
         rsvp.delete()
-        messages.success(request, 'un-RSVP\'d :(')
     return redirect(event)
 
 
-@permission_required('events.add_event', login_url = '/accounts/login/')
+@permission_required('events.add_event', login_url='/accounts/login/')
 def add_event(request):
     form = EventForm(request.POST or None)
     if request.method == 'POST':
