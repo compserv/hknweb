@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 
-from .models import OffChallenge, Announcement
+from .models import OffChallenge, Announcement, CandidateForm
 from .views import send_cand_confirm_email
 
 import csv
@@ -93,9 +93,15 @@ class AnnouncementAdmin(admin.ModelAdmin):
 
     def set_invisible(self, request, queryset):
         queryset.update(visible=False)
-        
+
     set_invisible.short_description = "Set selected as invisible"
 
+class CandidateFormAdmin(admin.ModelAdmin):
+    fields = ['name', 'link', 'duedate']
+    list_display = ['name', 'link', 'duedate']
+    list_filter = ['name', 'link', 'duedate']
+    search_fields = ['name', 'link', 'duedate']
 
+admin.site.register(CandidateForm, CandidateFormAdmin)
 admin.site.register(OffChallenge, OffChallengeAdmin)
 admin.site.register(Announcement, AnnouncementAdmin)
