@@ -12,7 +12,7 @@ from django.contrib.staticfiles.finders import find
 from django.db.models import Q
 from random import randint
 
-from .models import OffChallenge, Announcement, CandidateForm
+from .models import OffChallenge, BitByteActivity, Announcement, CandidateForm
 from ..events.models import Event, Rsvp
 from .forms import ChallengeRequestForm, ChallengeConfirmationForm
 
@@ -50,6 +50,10 @@ class IndexView(generic.TemplateView):
                 .count()
         num_confirmed = challenges.count() - num_pending - num_rejected
 
+        num_bitbytes = BitByteActivity.objects \
+                .filter(candidate__exact=self.request.user) \
+                .count()
+
         announcements = Announcement.objects \
                 .filter(visible=True) \
                 .order_by('-release_date')
@@ -73,6 +77,7 @@ class IndexView(generic.TemplateView):
             'num_rejected' : num_rejected,
             # anything not pending or rejected is confirmed
             'num_confirmed' : num_confirmed,
+            'num_bitbytes' : num_bitbytes,
             'announcements' : announcements,
             'confirmed_events': confirmed_events,
             'unconfirmed_events': unconfirmed_events,
@@ -133,7 +138,8 @@ class CandRequestView(FormView, generic.ListView):
 
 
 # List of past challenge requests for officer
-# Non-officers can still visit this page but it will not have any entries
+# Non-officers can still visit this page by typing in the url,
+# but it will not have any new entries
 @method_decorator(login_required(login_url='/accounts/login/'), name='dispatch')
 @method_decorator(check_account_access, name='dispatch')
 class OffRequestView(generic.ListView):
@@ -147,6 +153,20 @@ class OffRequestView(generic.ListView):
                 .order_by('-request_date')
         return result
 
+# List of past bit-byte activities for candidates
+# Offices can still visit this page but it will not have any new entries
+@method_decorator(login_required(login_url='/accounts/login/'), name='dispatch')
+@method_decorator(check_account_access, name='dispatch')
+class BitByteView(generic.ListView):
+    template_name = 'candidate/bitbyte.html'
+
+    context_object_name = 'bitbyte_list'
+
+    def get_queryset(self):
+        result = BitByteActivity.objects \
+                .filter(candidate__exact=self.request.user) \
+                .order_by('-confirm_date')
+        return result
 
 # Officer views and confirms a challenge request after clicking email link
 # Only the officer who game the challenge can review it
