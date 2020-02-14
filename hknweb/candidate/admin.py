@@ -15,6 +15,7 @@ class OffChallengeAdmin(admin.ModelAdmin):
     list_display = ('name', 'requester', 'officer', 'officer_confirmed', 'csec_confirmed', 'request_date')
     list_filter = ['requester', 'officer', 'officer_confirmed', 'csec_confirmed', 'request_date']
     search_fields = ['requester__username', 'requester__first_name', 'requester__last_name', 'officer__username', 'officer__first_name', 'officer__last_name', 'name']
+    autocomplete_fields = ['requester', 'officer']
 
     actions = ["export_as_csv", "csec_confirm", "csec_reject"]
 
@@ -70,6 +71,7 @@ class BitByteActivityAdmin(admin.ModelAdmin):
     list_display = ('candidate', 'confirm_date', 'notes')
     list_filter = ['candidate', 'confirm_date']
     search_fields = ['candidate__username', 'candidate__first_name', 'candidate__last_name', 'notes']
+    autocomplete_fields = ['candidate']
 
     actions = ['export_as_csv']
 

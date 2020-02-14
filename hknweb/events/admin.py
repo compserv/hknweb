@@ -2,6 +2,10 @@ from django.contrib import admin
 from django.shortcuts import redirect
 from .models import EventType, Event, Rsvp
 
+@admin.register(EventType)
+class EventTypeAdmin(admin.ModelAdmin):
+    ordering = ['type']
+    search_fields = ['type']
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
@@ -12,6 +16,10 @@ class EventAdmin(admin.ModelAdmin):
     list_display = ('name', 'start_time', 'location', 'event_type','created_by', 'created_at')
     list_filter = ['start_time', 'created_at', 'event_type', 'location', 'created_by']
     search_fields = ['name', 'created_by__username', 'created_by__first_name', 'created_by__last_name']
+    autocomplete_fields = ['event_type', 'created_by']
+
+    ordering = ['-created_at']
+    search_fields = ['name']
 
 
 @admin.register(Rsvp)
@@ -22,6 +30,7 @@ class RsvpAdmin(admin.ModelAdmin):
     list_display = ('event', 'user', 'full_name', 'confirmed', 'created_at')
     list_filter = ['confirmed', 'created_at', 'event']
     search_fields = ['event__name', 'user__username', 'user__first_name', 'user__last_name']
+    autocomplete_fields = ['event', 'user']
 
     actions = ["mark_confirmed", "mark_unconfirmed", "cute_animal"]
 
@@ -42,5 +51,3 @@ class RsvpAdmin(admin.ModelAdmin):
         return redirect("https://www.google.com/search?q=cute+cats&tbm=isch")
 
     cute_animal.short_description = "I wanna see a cute animal"
-
-admin.site.register(EventType)
