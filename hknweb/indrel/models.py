@@ -11,7 +11,7 @@ class Company(models.Model):
     contact_name = models.CharField(max_length = 200)
     contact_title = models.CharField(max_length = 200)
     contact_phone = models.CharField(max_length = 200)
-    contact_email = models.CharField(max_length = 200)
+    contact_email = models.EmailField()
 
     def __str__(self):
         return str(self.company_name)
