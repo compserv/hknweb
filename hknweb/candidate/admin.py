@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 
-from .models import OffChallenge, Announcement, CandidateForm
+from .models import OffChallenge, BitByteActivity, Announcement, CandidateForm
 from .views import send_cand_confirm_email
 
 import csv
@@ -39,20 +39,8 @@ class OffChallengeAdmin(admin.ModelAdmin):
         # if neither is true, either need to wait for officer to review,
         # or officer has already rejected
 
-    # @source: http://books.agiliq.com/projects/django-admin-cookbook/en/latest/export.html
     def export_as_csv(self, request, queryset):
-        meta = self.model._meta
-        field_names = [field.name for field in meta.fields]
-
-        response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename={}.csv'.format(meta)
-        writer = csv.writer(response)
-
-        writer.writerow(field_names)
-        for obj in queryset:
-            writer.writerow([getattr(obj, field) for field in field_names])
-
-        return response
+        return export_model_as_csv(self, queryset)
 
     export_as_csv.short_description = "Export selected as csv"
 
@@ -73,6 +61,22 @@ class OffChallengeAdmin(admin.ModelAdmin):
                 self.check_send_email(request, obj)
 
     csec_reject.short_description = "Mark selected as rejected (csec)"
+
+
+class BitByteActivityAdmin(admin.ModelAdmin):
+
+    fields = ['candidate', 'notes', 'confirm_date']
+    readonly_fields = ['confirm_date']
+    list_display = ('candidate', 'confirm_date', 'notes')
+    list_filter = ['candidate', 'confirm_date']
+    search_fields = ['candidate__username', 'candidate__first_name', 'candidate__last_name', 'notes']
+
+    actions = ['export_as_csv']
+
+    def export_as_csv(self, request, queryset):
+        return export_model_as_csv(self, queryset)
+
+    export_as_csv.short_description = "Export selected as csv"
 
 
 class AnnouncementAdmin(admin.ModelAdmin):
@@ -114,6 +118,23 @@ class CandidateFormAdmin(admin.ModelAdmin):
 
     set_invisible.short_description = "Set selected as invisible"
 
+# Helper. @source: http://books.agiliq.com/projects/django-admin-cookbook/en/latest/export.html
+def export_model_as_csv(model, queryset):
+    meta = model.model._meta
+    field_names = [field.name for field in meta.fields]
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename={}.csv'.format(meta)
+    writer = csv.writer(response)
+
+    writer.writerow(field_names)
+    for obj in queryset:
+        writer.writerow([getattr(obj, field) for field in field_names])
+
+    return response
+
+
 admin.site.register(CandidateForm, CandidateFormAdmin)
 admin.site.register(OffChallenge, OffChallengeAdmin)
+admin.site.register(BitByteActivity, BitByteActivityAdmin)
 admin.site.register(Announcement, AnnouncementAdmin)
