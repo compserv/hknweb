@@ -18,3 +18,12 @@ class Company(models.Model):
 
     def __repr__(self):
         return ''.join(str(self.company_name).split()).lower()
+
+class ResumeBookOrderForm(Company):
+    comments = models.CharField(max_length = 5000)
+
+class InfosessionRegistration(Company):
+    preferred_week = models.CharField(max_length = 5000)
+    preferred_food = models.CharField(max_length = 5000)
+    advertisements = models.CharField(max_length = 5000)
+    comments = models.CharField(max_length = 5000)
