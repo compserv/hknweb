@@ -67,7 +67,7 @@ class IndexView(generic.TemplateView):
         # Both confirmed and unconfirmed rsvps have been sorted into event types
         confirmed_events = sort_rsvps_into_events(rsvps.filter(confirmed=True))
         unconfirmed_events = sort_rsvps_into_events(rsvps.filter(confirmed=False))
-        req_statuses = check_requirements(confirmed_events, num_confirmed)
+        req_statuses = check_requirements(confirmed_events, num_confirmed, num_bitbytes)
         upcoming_events = Event.objects \
                 .filter(start_time__range=(today, today + timezone.timedelta(days=7))) \
                 .order_by('start_time')
@@ -86,7 +86,6 @@ class IndexView(generic.TemplateView):
             'candidate_forms': candidate_forms,
         }
         return context
-
 
 # Form for submitting officer challenge requests
 # And list of past requests for candidate
@@ -135,7 +134,6 @@ class CandRequestView(FormView, generic.ListView):
                 .filter(requester__exact=self.request.user) \
                 .order_by('-request_date')
         return result
-
 
 # List of past challenge requests for officer
 # Non-officers can still visit this page by typing in the url,
@@ -313,16 +311,20 @@ req_list = {
     settings.SERV_EVENT: 1,
     settings.PRODEV_EVENT: 1,
     settings.HANGOUT_EVENT: None,
+    settings.BITBYTE_ACTIVITY: 3,
 }
 
 # Checks which requirements have been fulfilled by a candidate
-def check_requirements(sorted_rsvps, challenges):
+def check_requirements(sorted_rsvps, num_challenges, num_bitbytes):
     req_statuses = dict.fromkeys(req_list.keys(), False)
     for req_type, minimum in req_list.items():
-        num_confirmed = len(sorted_rsvps[req_type])
+        if req_type == settings.BITBYTE_ACTIVITY:
+            num_confirmed = num_bitbytes
+        else:
+            num_confirmed = len(sorted_rsvps[req_type])
         # officer hangouts are special case
         if req_type == settings.HANGOUT_EVENT:
-            req_statuses[req_type] = check_interactivity_requirements(num_confirmed, challenges)
+            req_statuses[req_type] = check_interactivity_requirements(num_confirmed, num_challenges)
         elif num_confirmed >= minimum:
             req_statuses[req_type] = True
     return req_statuses

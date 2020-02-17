@@ -83,6 +83,9 @@ class BitByteActivity(models.Model):
     notes = models.TextField(max_length=MAX_TXTLEN, blank=True, default='')
     confirm_date = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return self.candidate.username + ", " + self.notes[:20]
+
 
 # CS 61A LECTURE NUMBER 3141592653589793238462643383
 class Announcement(models.Model):
