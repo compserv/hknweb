@@ -55,18 +55,15 @@ Candidate Portal
                 <li>Complete all required forms</li>
                 <ul class="events-sublist">
 
-                    {% for form in candidate_form %}
+                    {% if not candidate_forms %}
+                        No candiate forms at this time.
+                    {% endif %}
+
+                    {% for form in candidate_forms %}
                         <li><a href={{ form.link }}>{{ form.name }}</a> (due {{ form.duedate }})</li>
                     {% endfor %}
 
-                    <!-- <li><a href="">Candidate Information Form</a></li>
-                    <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSep1eRdOGXJR3-3KjCeHgBHpBiM2gtULVFaKuX0OK5D13dQTg/viewform?usp=sf_link">Committee Preference Form</a></li>
-                    <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSdrHgt57BILlWDe9W3fhaNAX4pAOZvcwQiyiLOwN_12WVa0dA/viewform?usp=sf_link">Bit-Byte Pairing Survey</a></li>
-                    <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSe9LKhVgLOdePTX2x7kqSh6Ll6KmCCxQNbNTmWQ-fBFVx0blg/viewform?usp=sf_link">Resume Drop</a></li>
-                    <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSfa_yv33u-jl1XlyLwd_Ur9fYphKwCfCDpUPRQOD0XY_1eF1A/viewform?usp=sf_link">Candidate Quiz</a></li>
-                    <li><a href="">Candidate Feedback Form</a></li>
-                    <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSeAHGqygFRJHp1n-uNLt-qxgTwKD6njg76IlOoCKpcdvK_udg/viewform?usp=sf_link">Membership Application Form</a></li> -->
-                <ul>
+                </ul>
             </ol>
         </section>
     </div>

@@ -54,6 +54,10 @@ class IndexView(generic.TemplateView):
                 .filter(visible=True) \
                 .order_by('-release_date')
 
+        candidate_forms = CandidateForm.objects \
+                .filter(visible=True) \
+                .order_by('duedate')
+
         today = timezone.now()
         rsvps = Rsvp.objects.filter(user__exact=self.request.user)
         # Both confirmed and unconfirmed rsvps have been sorted into event types
@@ -63,9 +67,6 @@ class IndexView(generic.TemplateView):
         upcoming_events = Event.objects \
                 .filter(start_time__range=(today, today + timezone.timedelta(days=7))) \
                 .order_by('start_time')
-
-        candidate_form = CandidateForm.objects \
-                .order_by('duedate')
 
         context = {
             'num_pending' : num_pending,
@@ -77,7 +78,7 @@ class IndexView(generic.TemplateView):
             'unconfirmed_events': unconfirmed_events,
             'req_statuses' : req_statuses,
             'upcoming_events': upcoming_events,
-            'candidate_form': candidate_form,
+            'candidate_forms': candidate_forms,
         }
         return context
 

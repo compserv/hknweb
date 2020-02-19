@@ -61,6 +61,8 @@ class CandidateForm(models.Model):
     name           = models.CharField(max_length=MAX_STRLEN, default='')
     duedate        = models.DateTimeField(default=timezone.now)
     link           = models.CharField(max_length=MAX_STRLEN, default='')
+    # if visible == False, then admins can see candiate form but it's not displayed on portal
+    visible         = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
