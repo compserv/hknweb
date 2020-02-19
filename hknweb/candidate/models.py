@@ -61,7 +61,7 @@ class OffChallenge(models.Model):
 class Announcement(models.Model):
     """
     Model for an announcement. Created by VP or some other superuser.
-    Displayed on the candidate portal. The title will be displayed in bold,
+    Displayed on the home page. The title will be displayed in bold,
     and the text will follow that in normal font, with a space in between.
     """
 
