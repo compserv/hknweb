@@ -44,7 +44,6 @@ class Event(models.Model):
     def __str__(self):
         return self.name
 
-
 class Rsvp(models.Model):
     user  = models.ForeignKey(User, models.CASCADE, verbose_name="rsvp'd by")
     event = models.ForeignKey(Event, models.CASCADE)
@@ -60,3 +59,7 @@ class Rsvp(models.Model):
     
     def __str__(self):
         return self.event.name
+
+    @classmethod
+    def has_not_rsvpd(cls, user, event):
+        return cls.objects.filter(user=user, event=event).first() is None

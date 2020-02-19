@@ -2,7 +2,7 @@ from django.db import models
 from django.utils import timezone
 from django.conf import settings
 
-MAX_STRLEN = 85 # default max length for char fields
+MAX_STRLEN = 150 # default max length for char fields
 MAX_TXTLEN = 2000 # default max length for text fields
 
 
@@ -56,12 +56,23 @@ class OffChallenge(models.Model):
     def __str__(self):
         return self.name
 
+class CandidateForm(models.Model):
+
+    name           = models.CharField(max_length=MAX_STRLEN, default='')
+    duedate        = models.DateTimeField(default=timezone.now)
+    link           = models.CharField(max_length=MAX_STRLEN, default='')
+    # if visible == False, then admins can see candiate form but it's not displayed on portal
+    visible         = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.name
+
 
 # CS 61A LECTURE NUMBER 3141592653589793238462643383
 class Announcement(models.Model):
     """
     Model for an announcement. Created by VP or some other superuser.
-    Displayed on the candidate portal. The title will be displayed in bold,
+    Displayed on the home page. The title will be displayed in bold,
     and the text will follow that in normal font, with a space in between.
     """
 
@@ -73,4 +84,3 @@ class Announcement(models.Model):
 
     def __str__(self):
         return self.title if self.title != '' else self.text
-

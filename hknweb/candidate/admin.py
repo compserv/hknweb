@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 
-from .models import OffChallenge, Announcement
+from .models import OffChallenge, Announcement, CandidateForm
 from .views import send_cand_confirm_email
 
 import csv
@@ -14,7 +14,7 @@ class OffChallengeAdmin(admin.ModelAdmin):
     readonly_fields = ['request_date']
     list_display = ('name', 'requester', 'officer', 'officer_confirmed', 'csec_confirmed', 'request_date')
     list_filter = ['requester', 'officer', 'officer_confirmed', 'csec_confirmed', 'request_date']
-    search_fields = ['requester', 'officer', 'name']
+    search_fields = ['requester__username', 'requester__first_name', 'requester__last_name', 'officer__username', 'officer__first_name', 'officer__last_name', 'name']
 
     actions = ["export_as_csv", "csec_confirm", "csec_reject"]
 
@@ -93,9 +93,27 @@ class AnnouncementAdmin(admin.ModelAdmin):
 
     def set_invisible(self, request, queryset):
         queryset.update(visible=False)
-        
+
     set_invisible.short_description = "Set selected as invisible"
 
+class CandidateFormAdmin(admin.ModelAdmin):
+    fields = ['name', 'link', 'visible', 'duedate']
+    list_display = ('name', 'link', 'visible', 'duedate')
+    list_filter = ['visible', 'duedate']
+    search_fields = ['name', 'link']
 
+    actions = ["set_visible", "set_invisible"]
+
+    def set_visible(self, request, queryset):
+        queryset.update(visible=True)
+
+    set_visible.short_description = "Set selected as visible"
+
+    def set_invisible(self, request, queryset):
+        queryset.update(visible=False)
+
+    set_invisible.short_description = "Set selected as invisible"
+
+admin.site.register(CandidateForm, CandidateFormAdmin)
 admin.site.register(OffChallenge, OffChallengeAdmin)
 admin.site.register(Announcement, AnnouncementAdmin)
