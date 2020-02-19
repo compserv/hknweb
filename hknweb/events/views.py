@@ -1,11 +1,9 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, Http404
-from django.template import loader, RequestContext
+from django.http import Http404
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
-from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views import generic
 

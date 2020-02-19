@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static "candidate/style.css" %}">
+{% endblock %}
+
+{% block title %}Your Bitbyte{% endblock %}
+
+{% block heading %}
+Candidate's Bit-Byte Activities
+{% endblock %}
+
+{% block content %}
+<div class="parent">
+
+    <!-- list of requested bit-byte activities -->
+    <div id='agenda' class="table-div">
+        <h3>Bit-Byte Activities</h3>
+
+        {% if bitbyte_list %}
+            <table class="full-table">
+                <thead>
+                    <th>Confirm Date</th>
+                    <th>Notes</th>
+                </thead>
+
+                <tbody>
+                {% for bitbyte in bitbyte_list %}
+                    <tr>
+                        <td align="center"> {{ bitbyte.confirm_date|date }} </td>
+                        <td align="center">{{ bitbyte.notes }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+        {% else %}
+            <p>No activities to show.</p>
+        {% endif %}
+
+        <!-- TODO: make officer portal and link here -->
+        <p class="link">
+            <a href="{% url 'candidate:index' %}">Back to candidate portal</a>
+        </p>
+    </div>
+
+</div>
+
+{% endblock %}
