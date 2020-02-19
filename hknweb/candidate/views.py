@@ -12,7 +12,7 @@ from django.contrib.staticfiles.finders import find
 from django.db.models import Q
 from random import randint
 
-from .models import OffChallenge, Announcement
+from .models import OffChallenge, Announcement, CandidateForm
 from ..events.models import Event, Rsvp
 from .forms import ChallengeRequestForm, ChallengeConfirmationForm
 
@@ -54,6 +54,10 @@ class IndexView(generic.TemplateView):
                 .filter(visible=True) \
                 .order_by('-release_date')
 
+        candidate_forms = CandidateForm.objects \
+                .filter(visible=True) \
+                .order_by('duedate')
+
         today = timezone.now()
         rsvps = Rsvp.objects.filter(user__exact=self.request.user)
         # Both confirmed and unconfirmed rsvps have been sorted into event types
@@ -74,6 +78,7 @@ class IndexView(generic.TemplateView):
             'unconfirmed_events': unconfirmed_events,
             'req_statuses' : req_statuses,
             'upcoming_events': upcoming_events,
+            'candidate_forms': candidate_forms,
         }
         return context
 
@@ -268,7 +273,7 @@ map_event_vars = {
 }
 
 # Takes in all confirmed rsvps and sorts them into types, current hard coded
-# TODO: support more flexible typing and string-to-var parsing/conversion 
+# TODO: support more flexible typing and string-to-var parsing/conversion
 def sort_rsvps_into_events(rsvps):
     # Events in admin are currently in a readable format, must convert them to callable keys for Django template
     sorted_events = dict.fromkeys(map_event_vars.keys())
