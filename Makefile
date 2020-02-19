@@ -27,12 +27,20 @@ venv: Pipfile Pipfile.lock
 createsuperuser:
 	HKNWEB_MODE='dev' pipenv run python ./manage.py createsuperuser
 
+.PHONY: superuser
+createsuperuser:
+	HKNWEB_MODE='dev' pipenv run python ./manage.py createsuperuser
+
 .PHONY: migrate
 migrate:
 	HKNWEB_MODE='dev' pipenv run python ./manage.py migrate
 
 .PHONY: makemigrations
 makemigrations:
+	HKNWEB_MODE='dev' pipenv run python ./manage.py makemigrations
+
+.PHONY: migrations
+migrations:
 	HKNWEB_MODE='dev' pipenv run python ./manage.py makemigrations
 
 .PHONY: test

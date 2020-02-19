@@ -211,9 +211,20 @@ Candidate Portal
                 </ul>
 
                 <h4>Bit-Byte</h4>
-                <ul class="events-list">
-                    <li>Adventures</li>
-                    <li>Boba</li>
+                <ul class="checkboxes">
+                    <li>
+                        <!-- do not distinguish between boba and adventures-->
+                        {% if req_statuses.bitbyte %}
+                            <span class="req done"></span>
+                        {% else %}
+                            <span class="req not-done"></span>
+                        {% endif %}
+                        {{ num_bitbytes }} Bit-Byte Activities Completed
+
+                        <a href="{% url 'candidate:bitbyte' %}">
+                            (View Details)</a>
+                        <ul>
+                    </li>
                 </ul>
             </div>
         </section>

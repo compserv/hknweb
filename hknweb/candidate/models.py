@@ -26,9 +26,9 @@ class OffChallenge(models.Model):
     requester         = models.ForeignKey('auth.User',
     # NOTE: for some reason this causes an error when you try to save on the admin, so I'll just comment it out for now
                             # limit_choices_to=Q(groups__permissions__codename='add_offchallenge'),
-                            on_delete=models.CASCADE, default=None, related_name='requester')
+                            on_delete=models.CASCADE, default=None, related_name='received_challenges')
     officer           = models.ForeignKey('auth.User', limit_choices_to={'groups__name': settings.OFFICER_GROUP},
-                            on_delete=models.CASCADE, default=None, related_name='officer')
+                            on_delete=models.CASCADE, default=None, related_name='given_challenges')
     name              = models.CharField(max_length=MAX_STRLEN, default='', verbose_name="title")
     description       = models.TextField(max_length=MAX_TXTLEN, blank=True, default='')
     # proof of completion is optional (if proof is a file, the candiate can send it to slack)
@@ -66,6 +66,25 @@ class CandidateForm(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class BitByteActivity(models.Model):
+    """
+    Model for one bit byte activity for one candidate.
+    Each bite byte activity confirmation must be added separately for each
+    candidate by VP on the admin site. However, these objects can be bulk added.
+    """
+
+    class Meta:
+        verbose_name_plural = "Bit Byte Activities"
+
+    candidate = models.ForeignKey('auth.User', limit_choices_to={'groups__name': settings.CAND_GROUP},
+                                on_delete=models.CASCADE, default=None)
+    notes = models.TextField(max_length=MAX_TXTLEN, blank=True, default='')
+    confirm_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.candidate.username + ", " + self.notes[:20]
 
 
 # CS 61A LECTURE NUMBER 3141592653589793238462643383

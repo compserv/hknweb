@@ -12,7 +12,7 @@ from django.contrib.staticfiles.finders import find
 from django.db.models import Q
 from random import randint
 
-from .models import OffChallenge, Announcement, CandidateForm
+from .models import OffChallenge, BitByteActivity, Announcement, CandidateForm
 from ..events.models import Event, Rsvp
 from .forms import ChallengeRequestForm, ChallengeConfirmationForm
 
@@ -50,6 +50,10 @@ class IndexView(generic.TemplateView):
                 .count()
         num_confirmed = challenges.count() - num_pending - num_rejected
 
+        num_bitbytes = BitByteActivity.objects \
+                .filter(candidate__exact=self.request.user) \
+                .count()
+
         announcements = Announcement.objects \
                 .filter(visible=True) \
                 .order_by('-release_date')
@@ -63,7 +67,7 @@ class IndexView(generic.TemplateView):
         # Both confirmed and unconfirmed rsvps have been sorted into event types
         confirmed_events = sort_rsvps_into_events(rsvps.filter(confirmed=True))
         unconfirmed_events = sort_rsvps_into_events(rsvps.filter(confirmed=False))
-        req_statuses = check_requirements(confirmed_events, num_confirmed)
+        req_statuses = check_requirements(confirmed_events, num_confirmed, num_bitbytes)
         upcoming_events = Event.objects \
                 .filter(start_time__range=(today, today + timezone.timedelta(days=7))) \
                 .order_by('start_time')
@@ -73,6 +77,7 @@ class IndexView(generic.TemplateView):
             'num_rejected' : num_rejected,
             # anything not pending or rejected is confirmed
             'num_confirmed' : num_confirmed,
+            'num_bitbytes' : num_bitbytes,
             'announcements' : announcements,
             'confirmed_events': confirmed_events,
             'unconfirmed_events': unconfirmed_events,
@@ -81,7 +86,6 @@ class IndexView(generic.TemplateView):
             'candidate_forms': candidate_forms,
         }
         return context
-
 
 # Form for submitting officer challenge requests
 # And list of past requests for candidate
@@ -131,9 +135,9 @@ class CandRequestView(FormView, generic.ListView):
                 .order_by('-request_date')
         return result
 
-
 # List of past challenge requests for officer
-# Non-officers can still visit this page but it will not have any entries
+# Non-officers can still visit this page by typing in the url,
+# but it will not have any new entries
 @method_decorator(login_required(login_url='/accounts/login/'), name='dispatch')
 @method_decorator(check_account_access, name='dispatch')
 class OffRequestView(generic.ListView):
@@ -147,6 +151,20 @@ class OffRequestView(generic.ListView):
                 .order_by('-request_date')
         return result
 
+# List of past bit-byte activities for candidates
+# Offices can still visit this page but it will not have any new entries
+@method_decorator(login_required(login_url='/accounts/login/'), name='dispatch')
+@method_decorator(check_account_access, name='dispatch')
+class BitByteView(generic.ListView):
+    template_name = 'candidate/bitbyte.html'
+
+    context_object_name = 'bitbyte_list'
+
+    def get_queryset(self):
+        result = BitByteActivity.objects \
+                .filter(candidate__exact=self.request.user) \
+                .order_by('-confirm_date')
+        return result
 
 # Officer views and confirms a challenge request after clicking email link
 # Only the officer who game the challenge can review it
@@ -293,16 +311,20 @@ req_list = {
     settings.SERV_EVENT: 1,
     settings.PRODEV_EVENT: 1,
     settings.HANGOUT_EVENT: None,
+    settings.BITBYTE_ACTIVITY: 3,
 }
 
 # Checks which requirements have been fulfilled by a candidate
-def check_requirements(sorted_rsvps, challenges):
+def check_requirements(sorted_rsvps, num_challenges, num_bitbytes):
     req_statuses = dict.fromkeys(req_list.keys(), False)
     for req_type, minimum in req_list.items():
-        num_confirmed = len(sorted_rsvps[req_type])
+        if req_type == settings.BITBYTE_ACTIVITY:
+            num_confirmed = num_bitbytes
+        else:
+            num_confirmed = len(sorted_rsvps[req_type])
         # officer hangouts are special case
         if req_type == settings.HANGOUT_EVENT:
-            req_statuses[req_type] = check_interactivity_requirements(num_confirmed, challenges)
+            req_statuses[req_type] = check_interactivity_requirements(num_confirmed, num_challenges)
         elif num_confirmed >= minimum:
             req_statuses[req_type] = True
     return req_statuses
