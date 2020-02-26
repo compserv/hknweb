@@ -3,9 +3,9 @@ from .models import DepTour
 
 class ToursAdmin(admin.ModelAdmin):
 
-    fields = ['name', 'desired_date', 'email', 'confirm_email', 'phone', 'comments', 'confirmed']
+    fields = ['name', 'desired_date', 'email', 'phone', 'confirmed', 'comments']
     # readonly_fields = ['desired_date']
-    list_display = ('name', 'email', 'phone', 'comments', 'confirmed')
+    list_display = ('name','confirmed', 'email', 'desired_date', 'phone', 'comments')
     # list_filter = ['requester', 'officer', 'request_date']
     # search_fields = ['requester', 'officer', 'name']
 

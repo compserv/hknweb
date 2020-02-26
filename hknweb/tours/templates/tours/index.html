@@ -15,22 +15,23 @@ Sign up for a department tour!
 <div class="parent">
   <div class="description">
     <body>
-      <h2 align='center'>Welcome! If you are interested in taking a tour of
-      the EECS department, you are in the right place!
+      <p align='center'>Welcome! If you are interested in taking a tour of
+      the Berkeley EECS department, you are in the right place!
       Sign up here for a tour hosted by HKN, and your request
       will be sent to the HKN officer corps. If you have any
       special requests, list them in the comments section below.
       Tours are offered during our open hours (MTWTF, 11am-5pm).
-      Please allow three days for confirmation.</h2>
+      Please allow three days for confirmation.</p>
 
-      <p align='center'>Note: Tour requests made less than 48 hours in advance from
-      the request time cannot be guaranteed.</p>
+      <h4 align='center'>Note: Tour requests made less than 48 hours in advance from
+      the request time cannot be guaranteed.</h4>
+
     </body>
     <div class="centered">
       <form method="POST">{% csrf_token %}
           {% for field in form %}
               <br/>
-              <span style="float: left;">{{ field.label }}: {% if field.field.required %}
+              <span style="float: left;" >{{ field.label }}: {% if field.field.required %}
                   <span style="color: red;">* </span>{% endif %}
               </span>&nbsp
               {% if field.label == 'Additional comments' %}
