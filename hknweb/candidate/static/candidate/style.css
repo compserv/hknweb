@@ -113,6 +113,32 @@ h2:first-child {
     display: table;
 }
 
+.left {
+    float: left;
+}
+
+.left-narrow {
+    width: 40%;
+    float: left;
+    padding-left: 4%;
+}
+
+.right-wide {
+    width: 50%;
+    float: right;
+    padding-left: 27px; /* Just the right absolute distance to make it appear under on a phone */
+    padding-right: 2%;
+}
+
+.table-div {
+    padding-left: 10%;
+    padding-right: 30%;
+}
+
+.full-table {
+    width: 100%;
+}
+
 .link {
     font-family: 'Source Sans Pro', sans-serif;
 }
@@ -144,8 +170,17 @@ h2:first-child {
     vertical-align: middle;
 }
 
+.red {
+    color: red;
+}
+
 .blue {
     color: #0000A0;
+}
+
+.blue-note {
+    color: #0000A0;
+    font-size: 0.8em
 }
 
 .table-icon {

@@ -2,7 +2,7 @@ from django.db import models
 from django.utils import timezone
 from django.conf import settings
 
-MAX_STRLEN = 85 # default max length for char fields
+MAX_STRLEN = 150 # default max length for char fields
 MAX_TXTLEN = 2000 # default max length for text fields
 
 
@@ -26,9 +26,9 @@ class OffChallenge(models.Model):
     requester         = models.ForeignKey('auth.User',
     # NOTE: for some reason this causes an error when you try to save on the admin, so I'll just comment it out for now
                             # limit_choices_to=Q(groups__permissions__codename='add_offchallenge'),
-                            on_delete=models.CASCADE, default=None, related_name='requester')
+                            on_delete=models.CASCADE, default=None, related_name='received_challenges')
     officer           = models.ForeignKey('auth.User', limit_choices_to={'groups__name': settings.OFFICER_GROUP},
-                            on_delete=models.CASCADE, default=None, related_name='officer')
+                            on_delete=models.CASCADE, default=None, related_name='given_challenges')
     name              = models.CharField(max_length=MAX_STRLEN, default='', verbose_name="title")
     description       = models.TextField(max_length=MAX_TXTLEN, blank=True, default='')
     # proof of completion is optional (if proof is a file, the candiate can send it to slack)
@@ -56,12 +56,42 @@ class OffChallenge(models.Model):
     def __str__(self):
         return self.name
 
+class CandidateForm(models.Model):
+
+    name           = models.CharField(max_length=MAX_STRLEN, default='')
+    duedate        = models.DateTimeField(default=timezone.now)
+    link           = models.CharField(max_length=MAX_STRLEN, default='')
+    # if visible == False, then admins can see candiate form but it's not displayed on portal
+    visible         = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.name
+
+
+class BitByteActivity(models.Model):
+    """
+    Model for one bit byte activity for one candidate.
+    Each bite byte activity confirmation must be added separately for each
+    candidate by VP on the admin site. However, these objects can be bulk added.
+    """
+
+    class Meta:
+        verbose_name_plural = "Bit Byte Activities"
+
+    candidate = models.ForeignKey('auth.User', limit_choices_to={'groups__name': settings.CAND_GROUP},
+                                on_delete=models.CASCADE, default=None)
+    notes = models.TextField(max_length=MAX_TXTLEN, blank=True, default='')
+    confirm_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.candidate.username + ", " + self.notes[:20]
+
 
 # CS 61A LECTURE NUMBER 3141592653589793238462643383
 class Announcement(models.Model):
     """
     Model for an announcement. Created by VP or some other superuser.
-    Displayed on the candidate portal. The title will be displayed in bold,
+    Displayed on the home page. The title will be displayed in bold,
     and the text will follow that in normal font, with a space in between.
     """
 
@@ -73,4 +103,3 @@ class Announcement(models.Model):
 
     def __str__(self):
         return self.title if self.title != '' else self.text
-
