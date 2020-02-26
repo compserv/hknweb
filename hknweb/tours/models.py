@@ -3,6 +3,9 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from django.conf import settings
 from django import forms
+from django.contrib.admin.widgets import AdminDateWidget
+import datetime
+
 
 MAX_STRLEN = 255 # default max length for char fields
 MAX_TXTLEN = 2000 # default max length for text fields
@@ -21,10 +24,13 @@ class DepTour(models.Model):
     name            = models.CharField(max_length=MAX_STRLEN, default='')
     email           = models.EmailField(max_length=MAX_STRLEN, default='')
     # verify_email    = models.EmailField(max_length=MAX_STRLEN, default='')
+    desired_time    = models.TimeField()
     desired_date    = models.DateTimeField()
     phone           = models.CharField(max_length=12, default='')
     comments        = models.TextField(max_length=MAX_TXTLEN, blank=True, default='', verbose_name='Additional comments')
-    confirmed        = models.BooleanField(default=False)
+    date_submitted  = models.DateTimeField(default=timezone.datetime.now)
+    confirmed       = models.BooleanField(default=False)
+    rsec_comments   = models.TextField(max_length=MAX_TXTLEN, blank=True, default='')
 
     # whether officer reviewed this request
     # reviewed        = models.BooleanField(default=False)

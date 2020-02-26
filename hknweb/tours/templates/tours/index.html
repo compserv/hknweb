@@ -2,8 +2,15 @@
 {% load static %}
 
 {% block header %}
-<link rel="stylesheet" href="{% static "candidate/style.css" %}">
+<link rel="stylesheet" href="{% static 'candidate/style.css' %}">
 {% endblock %}
+
+<script type="text/javascript" src="/admin/jsi18n/"></script>
+<script type="text/javascript" src="{% static 'admin/js/core.js' %}"></script>
+<script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
+<script type="text/javascript" src="{% static 'admin/js/jquery.init.js' %}"></script>
+
+{{ form.media }}
 
 {% block title %}Department Tours{% endblock %}
 
@@ -27,6 +34,11 @@ Sign up for a department tour!
       the request time cannot be guaranteed.</h4>
 
     </body>
+    <p align='center'>
+    {% for message in messages %}
+            <span {% if messages.tags %} class="{{ message.tags }}" {% endif %}
+                class="blue">{{ message }}</span>
+    {% endfor %}</p>
     <div class="centered">
       <form method="POST">{% csrf_token %}
           {% for field in form %}
