@@ -5,24 +5,30 @@
 <link rel="stylesheet" href="{% static 'candidate/style.css' %}">
 {% endblock %}
 
-<script type="text/javascript" src="/admin/jsi18n/"></script>
-<script type="text/javascript" src="{% static 'admin/js/core.js' %}"></script>
-<script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
-<script type="text/javascript" src="{% static 'admin/js/jquery.init.js' %}"></script>
-
-{{ form.media }}
-
 {% block title %}Department Tours{% endblock %}
+
 
 {% block heading %}
 Sign up for a department tour!
 {% endblock %}
 
 {% block content %}
+<p style="font-size:110%;" align='center'>
+
+    {% for message in messages %}
+        {% if message.tags == 'success' %} 
+            <span style='color: green;'> {{ message }} </span>
+        {% else %}
+            <span style='color: red;'> {{ message }} </span>
+        {% endif %}
+    {% endfor %}
+</p>
+
+
 <div class="parent">
   <div class="description">
     <body>
-      <p align='center'>Welcome! If you are interested in taking a tour of
+      <p style = "margin: 0px 10%;" align='center'>Welcome! If you are interested in taking a tour of
       the Berkeley EECS department, you are in the right place!
       Sign up here for a tour hosted by HKN, and your request
       will be sent to the HKN officer corps. If you have any
@@ -34,11 +40,7 @@ Sign up for a department tour!
       the request time cannot be guaranteed.</h4>
 
     </body>
-    <p align='center'>
-    {% for message in messages %}
-            <span {% if messages.tags %} class="{{ message.tags }}" {% endif %}
-                class="blue">{{ message }}</span>
-    {% endfor %}</p>
+    
     <div class="centered">
       <form method="POST">{% csrf_token %}
           {% for field in form %}

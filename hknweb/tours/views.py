@@ -16,22 +16,25 @@ def index(request):
     }
     return render(request, 'tours/index.html', context)
 
-# def send_request_email(request, form):
-#         subject = 'Department Tour Request'
-#         officer_email = 'conhuang@hkn.mu'
+def send_request_email(request, form):
+        subject = 'Department Tour Request'
+        officer_email = 'conhuang@hkn.mu'
 
-#         html_content = render_to_string(
-#             'tours/tours_confirm_email.html',
-#             {
-#                 'name' : form.instance.name,
-#                 'time' : form.instance.desired_time,
-#                 'date' : form.instance.desired_date,
-#             }
-#         )
-#         msg = EmailMultiAlternatives(subject, subject,
-#                 'no-reply@hkn.eecs.berkeley.edu', [officer_email])
-#         msg.attach_alternative(html_content, "text/html")
-#         msg.send()
+        html_content = render_to_string(
+            'tours/request_email.html',
+            {
+                'name' : form.instance.name,
+                'time' : form.instance.desired_time,
+                'date' : form.instance.date,
+                'email': form.instance.email,
+                'phone': form.instance.phone,
+                'comments': form.instance.comments,
+            }
+        )
+        msg = EmailMultiAlternatives(subject, subject,
+                'no-reply@hkn.eecs.berkeley.edu', [officer_email])
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
 
 def tour(request):
     form = TourRequest(request.POST or None)

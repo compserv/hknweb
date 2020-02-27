@@ -146,6 +146,14 @@ h2:first-child {
     color: #0000A0;
 }
 
+.success {
+    color: green;
+}
+
+.error {
+    color: red;
+}
+
 .table-icon {
     width: 1.5em;
     vertical-align: middle;
