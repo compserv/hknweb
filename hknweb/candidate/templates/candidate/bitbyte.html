@@ -13,7 +13,7 @@ Candidate's Bit-Byte Activities
 
 {% block content %}
 <div class="parent">
-    <div class="left-narrow">
+    <div class="left-extra-narrow">
         <h3>Request Bit-Byte Activity Confirmation</h3>
 
         {% for message in messages %}
@@ -48,11 +48,15 @@ Candidate's Bit-Byte Activities
 
             <input class="f6 grow no-underline br-pill ph3 pv2 mb2 dib white bg-black" type="submit" value="Submit"/>
         </form>
+
+        <p class="link">
+            <a href="{% url 'candidate:index' %}">Back to candidate portal</a>
+        </p>
     </div>
 
     <!-- list of requested bit-byte activities -->
-    <div id='agenda' class="large-table-div">
-        <h3>Bit-Byte Activities</h3>
+    <div id='agenda' class="right-extra-wide">
+        <h3 class="title-left-pad">Bit-Byte Activities</h3>
 
         {% if bitbyte_list %}
             <table class="full-table">
@@ -70,8 +74,8 @@ Candidate's Bit-Byte Activities
                             {{ cand.first_name }} {{ cand.last_name }} ({{ cand.username }}) <br>
                         {% endfor %}</td>
                         <td align="center">{{ bitbyte.request_date|date }}</td>
-                        <td align="center">{{ bitbyte.proof }}</td>
-                        <td align="center">{{ bitbyte.notes }}</td>
+                        <td class="table-column-max" align="center">{{ bitbyte.proof }}</td>
+                        <td class="table-column-max" align="center">{{ bitbyte.notes }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -80,10 +84,6 @@ Candidate's Bit-Byte Activities
         {% else %}
             <p>No activities to show.</p>
         {% endif %}
-
-        <p class="link">
-            <a href="{% url 'candidate:index' %}">Back to candidate portal</a>
-        </p>
     </div>
 
 </div>
