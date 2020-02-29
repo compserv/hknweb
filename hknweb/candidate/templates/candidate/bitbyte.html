@@ -62,6 +62,7 @@ Candidate's Bit-Byte Activities
             <table class="full-table">
                 <thead>
                     <th>Participating Candidates</th>
+                    <th>Confirmed</th>
                     <th>Request Date</th>
                     <th>Proof</th>
                     <th>Notes</th>
@@ -73,6 +74,15 @@ Candidate's Bit-Byte Activities
                         <td align="center">{% for cand in bitbyte.candidates.all %}
                             {{ cand.first_name }} {{ cand.last_name }} ({{ cand.username }}) <br>
                         {% endfor %}</td>
+                        <td align="center">
+                            {% if bitbyte.confirmed %}
+                                <img src="{% static 'candidate/yes.png'%}" alt="confirmed" class="table-icon">
+                            {% elif bitbyte.rejected %}
+                                <img src="{% static 'candidate/no.png'%}" alt="rejected" class="table-icon">
+                            {% else %}
+                                <img src="{% static 'candidate/maybe.png'%}" alt="in progress" class="table-icon">
+                            {% endif %}
+                        </td>
                         <td align="center">{{ bitbyte.request_date|date }}</td>
                         <td class="table-column-max" align="center">{{ bitbyte.proof }}</td>
                         <td class="table-column-max" align="center">{{ bitbyte.notes }}</td>
