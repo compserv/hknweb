@@ -66,12 +66,21 @@ class OffChallengeAdmin(admin.ModelAdmin):
 
 class BitByteActivityAdmin(admin.ModelAdmin):
 
-    fields = ['candidate', 'notes', 'confirm_date']
-    readonly_fields = ['confirm_date']
-    list_display = ('candidate', 'confirm_date', 'notes')
-    list_filter = ['candidate', 'confirm_date']
-    search_fields = ['candidate__username', 'candidate__first_name', 'candidate__last_name', 'notes']
-    autocomplete_fields = ['candidate']
+    fields = ['candidates', 'confirmed', 'proof', 'notes', 'request_date']
+    readonly_fields = ['request_date']
+    list_display = ('get_candidate_usernames', 'request_date', 'proof', 'notes')
+    list_filter = ['confirmed', 'request_date']
+    search_fields = ['get_candidate_usernames', 'get_candidate_first', 'get_candidate_last', 'proof', 'notes']
+    autocomplete_fields = ['candidates']
+
+    def get_candidate_usernames(self, obj):
+        return ", ".join([c.username for c in obj.candidates.all()])
+
+    def get_candidate_first(self, obj):
+        return " ".join([c.first_name for c in obj.candidates.all()])
+
+    def get_candidate_last(self, obj):
+        return " ".join([c.last_name for c in obj.candidates.all()])
 
     actions = ['export_as_csv']
 
