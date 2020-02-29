@@ -1,22 +1,22 @@
 from django import forms
-
 from django.conf import settings
 from .models import OffChallenge, BitByteActivity
 from django.contrib.auth.models import User
 
+from dal import autocomplete
+
+# Pretty sure this is terrible coding practice but hey it works
+# Sorry Daddy DeNero
+User.__str__ = lambda self: "{} ({} {})".format(self.username, self.first_name, self.last_name)
 
 class ChallengeRequestForm(forms.ModelForm):
 
     class Meta:
         model = OffChallenge
         fields = ['name', 'officer', 'description', 'proof']
-
-    # only officers can confirm challenges
-    officer = forms.ModelChoiceField(queryset=User.objects
-            .filter(groups__name=settings.OFFICER_GROUP).order_by('username'))
-
-    officer.label_from_instance = lambda obj: \
-            "{} ({} {})".format(obj.username, obj.first_name, obj.last_name)
+        widgets = {
+            'officer': autocomplete.ModelSelect2(url='candreq/autocomplete')
+        }
 
 
 class ChallengeConfirmationForm(forms.ModelForm):
@@ -37,6 +37,9 @@ class BitByteRequestForm(forms.ModelForm):
     class Meta:
         model = BitByteActivity
         fields = ['candidates', 'proof']
+        widgets = {
+            'candidates': autocomplete.ModelSelect2Multiple(url='bitbyte/autocomplete')
+        }
 
     def __init__(self, *args, **kwargs):
         super(BitByteRequestForm, self).__init__(*args, **kwargs)

@@ -4,12 +4,14 @@ from django.shortcuts import render, redirect, reverse
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.contrib import messages
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.utils import timezone
 from django.conf import settings
 from django.contrib.staticfiles.finders import find
 from django.db.models import Q
+from dal import autocomplete
 from random import randint
 
 from .models import OffChallenge, BitByteActivity, Announcement, CandidateForm
@@ -251,6 +253,27 @@ def challenge_detail_view(request, pk):
 
 
 # HELPERS
+
+class OfficerAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return User.objects.none()
+
+        qs = User.objects.filter(groups__name=settings.OFFICER_GROUP)
+        if self.q:
+            qs = qs.filter(Q(username__icontains=self.q) | Q(first_name__icontains=self.q) | Q(last_name__icontains=self.q))
+        return qs
+
+class CandidateAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return User.objects.none()
+
+        qs = User.objects.all()
+        if self.q:
+            qs = qs.filter(
+                Q(username__icontains=self.q) | Q(first_name__icontains=self.q) | Q(last_name__icontains=self.q))
+        return qs
 
 def is_cand_or_officer(user):
     return user.groups.filter(name=settings.CAND_GROUP).exists() or \
