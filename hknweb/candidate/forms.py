@@ -1,7 +1,7 @@
 from django import forms
 
 from django.conf import settings
-from .models import OffChallenge
+from .models import OffChallenge, BitByteActivity
 from django.contrib.auth.models import User
 
 
@@ -30,3 +30,14 @@ class ChallengeConfirmationForm(forms.ModelForm):
         self.fields['officer_confirmed'].label = "Choose \"Yes\" to confirm challenge, \"No\" to decline" \
                                                  " (after you confirm, csec still has to confirm as well)"
         self.fields['officer_comment'].label = "Optionally add a comment"
+
+
+class BitByteRequestForm(forms.ModelForm):
+
+    class Meta:
+        model = BitByteActivity
+        fields = ['candidates', 'proof']
+
+    def __init__(self, *args, **kwargs):
+        super(BitByteRequestForm, self).__init__(*args, **kwargs)
+        self.fields['candidates'].queryset = User.objects.order_by('username')

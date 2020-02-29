@@ -135,6 +135,11 @@ h2:first-child {
     padding-right: 30%;
 }
 
+.large-table-div {
+    padding-left: 5%;
+    padding-right: 5%;
+}
+
 .full-table {
     width: 100%;
 }

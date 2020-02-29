@@ -14,7 +14,7 @@ from random import randint
 
 from .models import OffChallenge, BitByteActivity, Announcement, CandidateForm
 from ..events.models import Event, Rsvp
-from .forms import ChallengeRequestForm, ChallengeConfirmationForm
+from .forms import ChallengeRequestForm, ChallengeConfirmationForm, BitByteRequestForm
 
 # decorators
 
@@ -51,7 +51,7 @@ class IndexView(generic.TemplateView):
         num_confirmed = challenges.count() - num_pending - num_rejected
 
         num_bitbytes = BitByteActivity.objects \
-                .filter(candidate__exact=self.request.user) \
+                .filter(candidates__exact=self.request.user) \
                 .count()
 
         announcements = Announcement.objects \
@@ -155,15 +155,26 @@ class OffRequestView(generic.ListView):
 # Offices can still visit this page but it will not have any new entries
 @method_decorator(login_required(login_url='/accounts/login/'), name='dispatch')
 @method_decorator(check_account_access, name='dispatch')
-class BitByteView(generic.ListView):
+class BitByteView(FormView, generic.ListView):
     template_name = 'candidate/bitbyte.html'
+    form_class = BitByteRequestForm
+    success_url = "/cand/bitbyte"
 
     context_object_name = 'bitbyte_list'
 
+    # resolve conflicting inheritance
+    def get(self, request, *args, **kwargs):
+        return generic.ListView.get(self, request, *args, **kwargs)
+
+    def form_valid(self, form):
+        form.save()
+        messages.success(self.request, 'Your request was submitted to the VP!')
+        return super().form_valid(form)
+
     def get_queryset(self):
         result = BitByteActivity.objects \
-                .filter(candidate__exact=self.request.user) \
-                .order_by('-confirm_date')
+                .filter(candidates__exact=self.request.user) \
+                .order_by('-request_date')
         return result
 
 # Officer views and confirms a challenge request after clicking email link

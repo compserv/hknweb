@@ -70,7 +70,7 @@ Candidate Portal
     <div class="left-column">
         <br id="break">
         <section id="candidate-checklist">
-            <h2 class="events-list"">Checklist</h2>
+            <h2 class="events-list">Checklist</h2>
 
             <div class="checklist-left-col">
                 <h4>Events</h4>
@@ -220,10 +220,9 @@ Candidate Portal
                             <span class="req not-done"></span>
                         {% endif %}
                         {{ num_bitbytes }} Bit-Byte Activities Completed
-
+                        <br>
                         <a href="{% url 'candidate:bitbyte' %}">
-                            (View Details)</a>
-                        <ul>
+                            (View/Request Bit-Byte Confirmations)</a>
                     </li>
                 </ul>
             </div>
@@ -232,7 +231,7 @@ Candidate Portal
         <section>
             <h2>Upcoming Events</h2>
             {% if upcoming_events %}
-            <table style="width: 100%;">
+            <table class="full-table">
                 <thead>
                     <th align="left">Event</th>
                     <th align="left">Time</th>

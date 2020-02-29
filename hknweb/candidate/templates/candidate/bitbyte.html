@@ -13,22 +13,64 @@ Candidate's Bit-Byte Activities
 
 {% block content %}
 <div class="parent">
+    <div class="left-narrow">
+        <h3>Request Bit-Byte Activity Confirmation</h3>
+
+        {% for message in messages %}
+            <span {% if messages.tags %} class="{{ message.tags }}" {% endif %}
+                class="blue">{{ message }}</span>
+        {% endfor %}
+
+        {% load app_filters %}
+
+        <form method="POST">{% csrf_token %}
+            {% for field in form %}
+                <br>
+                <span class="left">{{ field.label }}
+                    {% if field.field.required %}<span class="red">* </span>{% endif %}
+                </span>&nbsp
+                {% if field|field_type == 'Textarea' %}
+                    <br/>
+                {% endif %}
+                {{ field }}
+                {% if field.label == 'Proof' %}
+                <br/>
+                <span class="blue-note">
+                    Please send a photo to #bitbyte on Slack and paste the link here, along
+                    with any comments. You can obtain the link by clicking "More actions->Copy link"
+                    on Slack. The link should start with "https://hkn.slack.com/archives/"
+                </span>
+                {% endif %}
+                {{ field.errors }}
+                <br/>
+            {% endfor %}
+            <br/>
+
+            <input class="f6 grow no-underline br-pill ph3 pv2 mb2 dib white bg-black" type="submit" value="Submit"/>
+        </form>
+    </div>
 
     <!-- list of requested bit-byte activities -->
-    <div id='agenda' class="table-div">
+    <div id='agenda' class="large-table-div">
         <h3>Bit-Byte Activities</h3>
 
         {% if bitbyte_list %}
             <table class="full-table">
                 <thead>
-                    <th>Confirm Date</th>
+                    <th>Participating Candidates</th>
+                    <th>Request Date</th>
+                    <th>Proof</th>
                     <th>Notes</th>
                 </thead>
 
                 <tbody>
                 {% for bitbyte in bitbyte_list %}
                     <tr>
-                        <td align="center"> {{ bitbyte.confirm_date|date }} </td>
+                        <td align="center">{% for cand in bitbyte.candidates.all %}
+                            {{ cand.first_name }} {{ cand.last_name }} ({{ cand.username }}) <br>
+                        {% endfor %}</td>
+                        <td align="center">{{ bitbyte.request_date|date }}</td>
+                        <td align="center">{{ bitbyte.proof }}</td>
                         <td align="center">{{ bitbyte.notes }}</td>
                     </tr>
                 {% endfor %}
@@ -39,7 +81,6 @@ Candidate's Bit-Byte Activities
             <p>No activities to show.</p>
         {% endif %}
 
-        <!-- TODO: make officer portal and link here -->
         <p class="link">
             <a href="{% url 'candidate:index' %}">Back to candidate portal</a>
         </p>
