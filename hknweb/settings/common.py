@@ -207,5 +207,6 @@ BIG_FUN_EVENT = 'big_fun'
 SERV_EVENT = 'serv'
 PRODEV_EVENT = 'prodev'
 HANGOUT_EVENT = 'hangout'
+BITBYTE_ACTIVITY = 'bitbyte'
 
 # Note: both candidate and officer group should have permission to add officer challenges

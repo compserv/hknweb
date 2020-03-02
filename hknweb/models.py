@@ -4,6 +4,10 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 import re
 from django.core.validators import RegexValidator
+from django.utils import timezone
+
+MAX_STRLEN = 85 # default max length for char fields
+MAX_TXTLEN = 2000 # default max length for text fields
 
 from django.utils import timezone
 

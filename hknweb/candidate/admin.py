@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 
-from .models import OffChallenge, Announcement
+from .models import OffChallenge, BitByteActivity, Announcement, CandidateForm
 from .views import send_cand_confirm_email
 
 import csv
@@ -14,7 +14,8 @@ class OffChallengeAdmin(admin.ModelAdmin):
     readonly_fields = ['request_date']
     list_display = ('name', 'requester', 'officer', 'officer_confirmed', 'csec_confirmed', 'request_date')
     list_filter = ['requester', 'officer', 'officer_confirmed', 'csec_confirmed', 'request_date']
-    search_fields = ['requester', 'officer', 'name']
+    search_fields = ['requester__username', 'requester__first_name', 'requester__last_name', 'officer__username', 'officer__first_name', 'officer__last_name', 'name']
+    autocomplete_fields = ['requester', 'officer']
 
     actions = ["export_as_csv", "csec_confirm", "csec_reject"]
 
@@ -39,20 +40,8 @@ class OffChallengeAdmin(admin.ModelAdmin):
         # if neither is true, either need to wait for officer to review,
         # or officer has already rejected
 
-    # @source: http://books.agiliq.com/projects/django-admin-cookbook/en/latest/export.html
     def export_as_csv(self, request, queryset):
-        meta = self.model._meta
-        field_names = [field.name for field in meta.fields]
-
-        response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename={}.csv'.format(meta)
-        writer = csv.writer(response)
-
-        writer.writerow(field_names)
-        for obj in queryset:
-            writer.writerow([getattr(obj, field) for field in field_names])
-
-        return response
+        return export_model_as_csv(self, queryset)
 
     export_as_csv.short_description = "Export selected as csv"
 
@@ -75,6 +64,23 @@ class OffChallengeAdmin(admin.ModelAdmin):
     csec_reject.short_description = "Mark selected as rejected (csec)"
 
 
+class BitByteActivityAdmin(admin.ModelAdmin):
+
+    fields = ['candidate', 'notes', 'confirm_date']
+    readonly_fields = ['confirm_date']
+    list_display = ('candidate', 'confirm_date', 'notes')
+    list_filter = ['candidate', 'confirm_date']
+    search_fields = ['candidate__username', 'candidate__first_name', 'candidate__last_name', 'notes']
+    autocomplete_fields = ['candidate']
+
+    actions = ['export_as_csv']
+
+    def export_as_csv(self, request, queryset):
+        return export_model_as_csv(self, queryset)
+
+    export_as_csv.short_description = "Export selected as csv"
+
+
 class AnnouncementAdmin(admin.ModelAdmin):
 
     # NOTE: release_date is not readonly because we can reuse announcements from past semesters
@@ -93,9 +99,44 @@ class AnnouncementAdmin(admin.ModelAdmin):
 
     def set_invisible(self, request, queryset):
         queryset.update(visible=False)
-        
+
     set_invisible.short_description = "Set selected as invisible"
 
+class CandidateFormAdmin(admin.ModelAdmin):
+    fields = ['name', 'link', 'visible', 'duedate']
+    list_display = ('name', 'link', 'visible', 'duedate')
+    list_filter = ['visible', 'duedate']
+    search_fields = ['name', 'link']
 
+    actions = ["set_visible", "set_invisible"]
+
+    def set_visible(self, request, queryset):
+        queryset.update(visible=True)
+
+    set_visible.short_description = "Set selected as visible"
+
+    def set_invisible(self, request, queryset):
+        queryset.update(visible=False)
+
+    set_invisible.short_description = "Set selected as invisible"
+
+# Helper. @source: http://books.agiliq.com/projects/django-admin-cookbook/en/latest/export.html
+def export_model_as_csv(model, queryset):
+    meta = model.model._meta
+    field_names = [field.name for field in meta.fields]
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename={}.csv'.format(meta)
+    writer = csv.writer(response)
+
+    writer.writerow(field_names)
+    for obj in queryset:
+        writer.writerow([getattr(obj, field) for field in field_names])
+
+    return response
+
+
+admin.site.register(CandidateForm, CandidateFormAdmin)
 admin.site.register(OffChallenge, OffChallengeAdmin)
+admin.site.register(BitByteActivity, BitByteActivityAdmin)
 admin.site.register(Announcement, AnnouncementAdmin)

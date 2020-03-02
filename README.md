@@ -84,3 +84,10 @@ $ make
 
 which will make the web site available at `http://localhost:3000`.
 
+If you would like to access the admin interface in the local web server, run
+```sh
+$ make createsuperuser
+```
+
+You will be prompted for some login info, after which you should be able to access
+the admin interface with your super user credentials at `http://localhost:3000/admin`.

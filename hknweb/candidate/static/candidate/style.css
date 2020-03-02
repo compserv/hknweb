@@ -113,13 +113,41 @@ h2:first-child {
     display: table;
 }
 
+.left {
+    float: left;
+}
+
+.left-narrow {
+    width: 40%;
+    float: left;
+    padding-left: 4%;
+}
+
+.right-wide {
+    width: 50%;
+    float: right;
+    padding-left: 27px; /* Just the right absolute distance to make it appear under on a phone */
+    padding-right: 2%;
+}
+
+.table-div {
+    padding-left: 10%;
+    padding-right: 30%;
+}
+
+.full-table {
+    width: 100%;
+}
+
 .link {
     font-family: 'Source Sans Pro', sans-serif;
 }
 
 .links-div {
-    float: right;
-    width: 40%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
     font-size: 1.3em;
 }
 
@@ -142,8 +170,17 @@ h2:first-child {
     vertical-align: middle;
 }
 
+.red {
+    color: red;
+}
+
 .blue {
     color: #0000A0;
+}
+
+.blue-note {
+    color: #0000A0;
+    font-size: 0.8em
 }
 
 .table-icon {
@@ -161,6 +198,15 @@ h2:first-child {
     display: block; /* Center image */
     margin-left: auto;
     margin-right: auto;
+}
+
+#sunny-caption {
+    font-size: 0.8em;
+    margin-left: auto;
+    margin-right: 30%;
+    max-width: 40%;
+    text-align: right;
+    float: right;
 }
 
 #hiding-cat {

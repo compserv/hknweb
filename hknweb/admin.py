@@ -2,6 +2,9 @@ from django.contrib import admin
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.admin import UserAdmin
 from django.conf import settings
+from .models import Announcement
+
+
 
 from .models import Announcement
 MAX_STRLEN = 85
