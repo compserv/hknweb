@@ -79,23 +79,6 @@
         <br>
         <div class="tutoring-panel">
             <div class="tutoring-title">
-                Announcements 
-            </div>
-                {% if not announcements %}
-                    No announcements at this time.
-                {% endif %}
-                
-                {% for announcement in announcements %}
-                    <p>
-                    <strong>{{ announcement.title }}</strong> [{{ announcement.release_date|date:"m/d/Y" }}]<br>
-                    {{ announcement.text }}
-                    </p>
-                {% endfor %}
-
-        </div>
-        <br>
-        <div class="tutoring-panel">
-            <div class="tutoring-title">
                 Today's Tutoring Hours
             </div>
             <span class="tutoring-date"><div>April 22, 2019</div></span>
