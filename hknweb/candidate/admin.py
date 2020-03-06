@@ -70,17 +70,11 @@ class BitByteActivityAdmin(admin.ModelAdmin):
     readonly_fields = ['request_date']
     list_display = ('get_candidate_usernames', 'request_date', 'proof', 'notes')
     list_filter = ['confirmed', 'request_date']
-    search_fields = ['get_candidate_usernames', 'get_candidate_first', 'get_candidate_last', 'proof', 'notes']
+    search_fields = ['candidates__username', 'candidates__first_name', 'candidates__last_name', 'proof', 'notes']
     autocomplete_fields = ['candidates']
 
     def get_candidate_usernames(self, obj):
         return ", ".join([c.username for c in obj.candidates.all()])
-
-    def get_candidate_first(self, obj):
-        return " ".join([c.first_name for c in obj.candidates.all()])
-
-    def get_candidate_last(self, obj):
-        return " ".join([c.last_name for c in obj.candidates.all()])
 
     actions = ['export_as_csv']
 

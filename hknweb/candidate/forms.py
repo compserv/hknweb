@@ -1,5 +1,4 @@
 from django import forms
-from django.conf import settings
 from .models import OffChallenge, BitByteActivity
 from django.contrib.auth.models import User
 
