@@ -35,11 +35,11 @@ class BitByteRequestForm(forms.ModelForm):
 
     class Meta:
         model = BitByteActivity
-        fields = ['candidates', 'proof']
+        fields = ['participants', 'proof']
         widgets = {
-            'candidates': autocomplete.ModelSelect2Multiple(url='bitbyte/autocomplete')
+            'participants': autocomplete.ModelSelect2Multiple(url='bitbyte/autocomplete')
         }
 
     def __init__(self, *args, **kwargs):
         super(BitByteRequestForm, self).__init__(*args, **kwargs)
-        self.fields['candidates'].queryset = User.objects.order_by('username')
+        self.fields['participants'].queryset = User.objects.order_by('username')

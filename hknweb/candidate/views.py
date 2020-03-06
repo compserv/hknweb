@@ -53,7 +53,8 @@ class IndexView(generic.TemplateView):
         num_confirmed = challenges.count() - num_pending - num_rejected
 
         num_bitbytes = BitByteActivity.objects \
-                .filter(candidates__exact=self.request.user) \
+                .filter(participants__exact=self.request.user) \
+                .filter(confirmed=True) \
                 .count()
 
         announcements = Announcement.objects \
@@ -175,7 +176,7 @@ class BitByteView(FormView, generic.ListView):
 
     def get_queryset(self):
         result = BitByteActivity.objects \
-                .filter(candidates__exact=self.request.user) \
+                .filter(participants__exact=self.request.user) \
                 .order_by('-request_date')
         return result
 
@@ -264,7 +265,7 @@ class OfficerAutocomplete(autocomplete.Select2QuerySetView):
             qs = qs.filter(Q(username__icontains=self.q) | Q(first_name__icontains=self.q) | Q(last_name__icontains=self.q))
         return qs
 
-class CandidateAutocomplete(autocomplete.Select2QuerySetView):
+class UserAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         if not self.request.user.is_authenticated:
             return User.objects.none()

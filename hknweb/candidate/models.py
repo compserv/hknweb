@@ -65,7 +65,7 @@ class BitByteActivity(models.Model):
     class Meta:
         verbose_name_plural = "Bit Byte Activities"
 
-    candidates = models.ManyToManyField('auth.User')
+    participants = models.ManyToManyField('auth.User')
     # whether VP/Csec confirmed this request, null when unreviewed
     confirmed = models.BooleanField(null=True)
     proof = models.TextField(max_length=MAX_TXTLEN, blank=True, default='') # notes and link by candidate
@@ -73,7 +73,16 @@ class BitByteActivity(models.Model):
     request_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return ", ".join([c.username for c in self.candidates.all()]) + "; " + self.proof
+        return ", ".join([c.username for c in self.participants.all()]) + "; " + self.proof
+
+    @property
+    def is_confirmed(self):
+        return self.confirmed is True
+
+    @property
+    def is_rejected(self):
+        return self.confirmed is False
+
 
 
 # CS 61A LECTURE NUMBER 3141592653589793238462643383
