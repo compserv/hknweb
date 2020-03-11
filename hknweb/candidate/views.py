@@ -119,7 +119,7 @@ class CandRequestView(FormView, generic.ListView):
         confirm_link = self.request.build_absolute_uri(
                 reverse("candidate:challengeconfirm", kwargs={ 'pk' : form.instance.id }))
         html_content = render_to_string(
-            'candidate/request_email.html',
+            'candidate/challenge_request_email.html',
             {
                 'candidate_name' : form.instance.requester.get_full_name(),
                 'candidate_username' : form.instance.requester.username,
@@ -203,10 +203,10 @@ def officer_confirm_view(request, pk):
         form.save()
         # csec has already confirmed, and now officer confirms
         if challenge.officer_confirmed is True and challenge.csec_confirmed is True:
-            send_cand_confirm_email(request, form.instance, True)
+            send_challenge_confirm_email(request, form.instance, True)
         # csec has not already rejected, and now officer rejects
         elif challenge.officer_confirmed is False and challenge.csec_confirmed is not False:
-            send_cand_confirm_email(request, form.instance, False)
+            send_challenge_confirm_email(request, form.instance, False)
         # if neither is true, either need to wait for csec to review,
         # or csec has already rejected
         return redirect('/cand/reviewconfirm/{}'.format(pk))
@@ -292,14 +292,14 @@ def get_rand_photo(width=400):
         urls = f.readlines()
     return urls[randint(0, len(urls) - 1)].strip() + "?w=" + str(width)
 
-def send_cand_confirm_email(request, challenge, confirmed):
+def send_challenge_confirm_email(request, challenge, confirmed):
     subject = '[HKN] Your officer challenge was reviewed'
     candidate_email = challenge.requester.email
 
     challenge_link = request.build_absolute_uri(
             reverse("candidate:detail", kwargs={ 'pk': challenge.id }))
     html_content = render_to_string(
-        'candidate/cand_confirm_email.html',
+        'candidate/challenge_confirm_email.html',
         {
             'confirmed': confirmed,
             'officer_name': challenge.officer.get_full_name(),
@@ -309,7 +309,27 @@ def send_cand_confirm_email(request, challenge, confirmed):
         }
     )
     msg = EmailMultiAlternatives(subject, subject,
-            'no-reply@hkn.eecs.berkeley.edu', [candidate_email])
+                settings.NO_REPLY_EMAIL, [candidate_email])
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
+
+def send_bitbyte_confirm_email(request, bitbyte, confirmed):
+    subject = '[HKN] Your bit-byte request was reviewed'
+    candidate_emails = [part.email for part in bitbyte.participants]
+
+    bitbyte_link = request.build_absolute_uri(
+        reverse("candidate:bitbyte"))
+    html_content = render_to_string(
+        'candidate/bitbyte_confirm_email.html',
+        {
+            'confirmed': confirmed,
+            'participants': bitbyte.participants,
+            'bitbyte_link': bitbyte_link,
+            'img_link': get_rand_photo(),
+        }
+    )
+    msg = EmailMultiAlternatives(subject, subject,
+                settings.NO_REPLY_EMAIL, candidate_emails)
     msg.attach_alternative(html_content, "text/html")
     msg.send()
 
