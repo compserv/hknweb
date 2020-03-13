@@ -4,17 +4,19 @@ from django.shortcuts import render, redirect, reverse
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.contrib import messages
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.utils import timezone
 from django.conf import settings
 from django.contrib.staticfiles.finders import find
 from django.db.models import Q
+from dal import autocomplete
 from random import randint
 
 from .models import OffChallenge, BitByteActivity, Announcement, CandidateForm
 from ..events.models import Event, Rsvp
-from .forms import ChallengeRequestForm, ChallengeConfirmationForm
+from .forms import ChallengeRequestForm, ChallengeConfirmationForm, BitByteRequestForm
 
 # decorators
 
@@ -51,7 +53,8 @@ class IndexView(generic.TemplateView):
         num_confirmed = challenges.count() - num_pending - num_rejected
 
         num_bitbytes = BitByteActivity.objects \
-                .filter(candidate__exact=self.request.user) \
+                .filter(participants__exact=self.request.user) \
+                .filter(confirmed=True) \
                 .count()
 
         announcements = Announcement.objects \
@@ -155,15 +158,26 @@ class OffRequestView(generic.ListView):
 # Offices can still visit this page but it will not have any new entries
 @method_decorator(login_required(login_url='/accounts/login/'), name='dispatch')
 @method_decorator(check_account_access, name='dispatch')
-class BitByteView(generic.ListView):
+class BitByteView(FormView, generic.ListView):
     template_name = 'candidate/bitbyte.html'
+    form_class = BitByteRequestForm
+    success_url = "/cand/bitbyte"
 
     context_object_name = 'bitbyte_list'
 
+    # resolve conflicting inheritance
+    def get(self, request, *args, **kwargs):
+        return generic.ListView.get(self, request, *args, **kwargs)
+
+    def form_valid(self, form):
+        form.save()
+        messages.success(self.request, 'Your request was submitted to the VP!')
+        return super().form_valid(form)
+
     def get_queryset(self):
         result = BitByteActivity.objects \
-                .filter(candidate__exact=self.request.user) \
-                .order_by('-confirm_date')
+                .filter(participants__exact=self.request.user) \
+                .order_by('-request_date')
         return result
 
 # Officer views and confirms a challenge request after clicking email link
@@ -240,6 +254,27 @@ def challenge_detail_view(request, pk):
 
 
 # HELPERS
+
+class OfficerAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return User.objects.none()
+
+        qs = User.objects.filter(groups__name=settings.OFFICER_GROUP)
+        if self.q:
+            qs = qs.filter(Q(username__icontains=self.q) | Q(first_name__icontains=self.q) | Q(last_name__icontains=self.q))
+        return qs
+
+class UserAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return User.objects.none()
+
+        qs = User.objects.all()
+        if self.q:
+            qs = qs.filter(
+                Q(username__icontains=self.q) | Q(first_name__icontains=self.q) | Q(last_name__icontains=self.q))
+        return qs
 
 def is_cand_or_officer(user):
     return user.groups.filter(name=settings.CAND_GROUP).exists() or \

@@ -66,19 +66,38 @@ class OffChallengeAdmin(admin.ModelAdmin):
 
 class BitByteActivityAdmin(admin.ModelAdmin):
 
-    fields = ['candidate', 'notes', 'confirm_date']
-    readonly_fields = ['confirm_date']
-    list_display = ('candidate', 'confirm_date', 'notes')
-    list_filter = ['candidate', 'confirm_date']
-    search_fields = ['candidate__username', 'candidate__first_name', 'candidate__last_name', 'notes']
-    autocomplete_fields = ['candidate']
+    fields = ['participants', 'confirmed', 'proof', 'notes', 'request_date']
+    readonly_fields = ['request_date']
+    list_display = ('participant_usernames', 'confirmed', 'request_date', 'proof', 'notes')
+    list_filter = ['confirmed', 'request_date']
+    search_fields = ['participants__username', 'participants__first_name', 'participants__last_name', 'proof', 'notes']
+    autocomplete_fields = ['participants']
 
-    actions = ['export_as_csv']
+    def participant_usernames(self, obj):
+        return ", ".join([c.username for c in obj.participants.all()])
+
+    actions = ['export_as_csv', 'confirm', 'reject']
 
     def export_as_csv(self, request, queryset):
         return export_model_as_csv(self, queryset)
 
     export_as_csv.short_description = "Export selected as csv"
+
+    def confirm(self, request, queryset):
+        for obj in queryset:
+            if obj.confirmed is not True:
+                obj.confirmed = True
+                obj.save()
+
+    confirm.short_description = "Mark selected as confirmed"
+
+    def reject(self, request, queryset):
+        for obj in queryset:
+            if obj.confirmed is not False:
+                obj.confirmed = False
+                obj.save()
+
+    reject.short_description = "Mark selected as rejected"
 
 
 class AnnouncementAdmin(admin.ModelAdmin):

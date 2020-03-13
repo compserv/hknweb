@@ -34,15 +34,16 @@ Your Officer Challenges
                 {% if field|field_type == 'Textarea' %}
                     <br/>
                 {% endif %}
-                {{ field }}
                 {% if field.label == 'Proof' %}
-                <br/>
-                <span class="blue-note">
-                    You can optionally include some proof that you've completed
-                    the challenge. If your proof is a file, you can send it to
-                    the Slack channel, or upload to Google Drive and paste a link here.
+                <span class="gray-note">
+                    You can include some proof that you've completed the challenge.
+                    If applicable, send it to #challenges on Slack and paste a link here.
+                    You can obtain the link by clicking "More actions->Copy link"
+                    on Slack. The link should start with "https://hkn.slack.com/archives/"
                 </span>
+                <br>
                 {% endif %}
+                {{ field }}
                 {{ field.errors }}
                 <br/>
             {% endfor %}
@@ -107,3 +108,4 @@ Your Officer Challenges
 </div>
 
 {% endblock %}
+

@@ -14,7 +14,7 @@
 }
 
 .checkboxes li {
-    height: 1.25em;
+    margin: 0.125em;
 }
 
 .events-list {
@@ -117,6 +117,10 @@ h2:first-child {
     float: left;
 }
 
+.right {
+    float: right;
+}
+
 .left-narrow {
     width: 40%;
     float: left;
@@ -130,9 +134,31 @@ h2:first-child {
     padding-right: 2%;
 }
 
+.left-extra-narrow {
+    width: 30%;
+    float: left;
+    padding-left: 4%;
+}
+
+.right-extra-wide {
+    width: 60%;
+    float: right;
+    padding-left: 27px;
+    padding-right: 2%;
+}
+
+.table-column-max {
+    max-width: 160px;
+    word-break: break-all;
+}
+
 .table-div {
     padding-left: 10%;
     padding-right: 30%;
+}
+
+.title-left-pad {
+    margin-left: 5%;
 }
 
 .full-table {
@@ -178,8 +204,8 @@ h2:first-child {
     color: #0000A0;
 }
 
-.blue-note {
-    color: #0000A0;
+.gray-note {
+    color: #727c81;
     font-size: 0.8em
 }
 
