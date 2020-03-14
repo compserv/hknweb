@@ -60,7 +60,7 @@ def show_details(request, id):
         position = rsvps.filter(created_at__lt=rsvp.created_at).count()
         waitlist_position = position - event.rsvp_limit + 1
     #render only non-waitlisted rsvps
-    rsvps = Rsvp.objects.order_by('created_at')[:event.rsvp_limit]
+    rsvps = Rsvp.objects.filter(event=event).order_by('created_at')[:event.rsvp_limit]
     limit = event.rsvp_limit
     context = {
         'event': event,
