@@ -23,3 +23,6 @@ def home(request):
         'announcements' : announcements,
     }
     return render(request, 'landing/home.html', context)
+
+def contact_us(request):
+    return render(request, 'about/contact_us.html')

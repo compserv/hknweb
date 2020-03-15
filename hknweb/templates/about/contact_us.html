@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static 'candidate/style.css' %}">
+{% endblock %}
+
+{% block title %}Contact Us!{% endblock %}
+
+
+{% block heading %}
+Contact Us!
+{% endblock %}
+
+{% block content %}
+<head>
+<style>
+.column {
+  float: left;
+  width: 33.33%;
+}
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+</style>
+</head>
+<div class="parent">
+  <div class="centered">
+    <body>
+      <div class='row'>
+        <div class='column'>
+            <h2 align = 'center'>Mailing Address</h2>
+            <p align = 'center'>Eta Kappa Nu </br>
+            290 Cory Hall </br>
+            Berkeley, CA 94720-1770
+            </p>
+              </br>
+        </div>
+        <div class='column'>
+            <h2 align = 'center'>Email</h2>
+            <p align = 'center'><b>General:</b> hkn@hkn.mu </br>
+            <b>Industrial Relations:</b> indrel@hkn.mu</p>
+            </br>
+        </div>
+        <div class='column'>
+            <h2 align = 'center'>Office Locations</h2>
+            <p align = 'center'>290 Cory Hall </br>
+            (510) 642-7346 </br>
+            </br>
+            345 Soda Hall</br>
+            (510) 642-9952
+            </p>
+        </div>
+    </div>
+    </body>
+
+<!-- <a href="https://hkn.ieee.org/get-involved/awards/outstanding-chapter-award/" target="_blank" align='center'><p>
+  <img id="outstanding-chapter" src="{% static 'img/outstanding_chapter.png' %}" alt="2019 Outstanding Chapter Award" width=500></p>
+</a> -->
+
+    </div>
+    
+</div>
+{% endblock %}

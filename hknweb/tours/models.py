@@ -19,7 +19,6 @@ class DepTour(models.Model):
 
     name            = models.CharField(max_length=MAX_STRLEN, default='')
     email           = models.EmailField(max_length=MAX_STRLEN, default='')
-    # verify_email    = models.EmailField(max_length=MAX_STRLEN, default='')
     desired_time    = models.TimeField(verbose_name='Desired Time')
     date            = models.DateField(default=timezone.now,verbose_name='Desired Date')
     phone           = models.CharField(max_length=12, default='')
