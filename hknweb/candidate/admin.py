@@ -101,6 +101,7 @@ class BitByteActivityAdmin(admin.ModelAdmin):
             if obj.confirmed is not True:
                 obj.confirmed = True
                 obj.save()
+                self.check_send_email(request, obj)
 
     confirm.short_description = "Mark selected as confirmed"
 
@@ -109,6 +110,7 @@ class BitByteActivityAdmin(admin.ModelAdmin):
             if obj.confirmed is not False:
                 obj.confirmed = False
                 obj.save()
+                self.check_send_email(request, obj)
 
     reject.short_description = "Mark selected as rejected"
 

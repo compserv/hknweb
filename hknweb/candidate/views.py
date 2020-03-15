@@ -315,7 +315,7 @@ def send_challenge_confirm_email(request, challenge, confirmed):
 
 def send_bitbyte_confirm_email(request, bitbyte, confirmed):
     subject = '[HKN] Your bit-byte request was reviewed'
-    candidate_emails = [part.email for part in bitbyte.participants]
+    participant_emails = [part.email for part in bitbyte.participants.all()]
 
     bitbyte_link = request.build_absolute_uri(
         reverse("candidate:bitbyte"))
@@ -323,13 +323,13 @@ def send_bitbyte_confirm_email(request, bitbyte, confirmed):
         'candidate/bitbyte_confirm_email.html',
         {
             'confirmed': confirmed,
-            'participants': bitbyte.participants,
+            'participants': bitbyte.participants.all(),
             'bitbyte_link': bitbyte_link,
             'img_link': get_rand_photo(),
         }
     )
     msg = EmailMultiAlternatives(subject, subject,
-                settings.NO_REPLY_EMAIL, candidate_emails)
+                settings.NO_REPLY_EMAIL, participant_emails)
     msg.attach_alternative(html_content, "text/html")
     msg.send()
 
