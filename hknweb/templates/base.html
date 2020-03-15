@@ -17,6 +17,10 @@
     <!-- Favicon -->
     <link rel="shortcut icon" href="{% static 'img/favicon.png' %}" />
 
+    <!-- Stuff needed for autocomplete to work -->
+    <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
+    {{ form.media }}
+
     {% block header %}{% endblock %}
 
     <title>{% block title %}{% endblock %} | Berkeley HKN</title>

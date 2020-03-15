@@ -32,6 +32,8 @@ INSTALLED_APPS = [
     'hknweb.courses',
     'hknweb.exams',
     'hknweb.tours',
+    'dal', # must be before django.contrib.admin
+    'dal_select2', # must be before django.contrib.admin
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
