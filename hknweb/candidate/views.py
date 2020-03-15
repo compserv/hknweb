@@ -171,8 +171,29 @@ class BitByteView(FormView, generic.ListView):
 
     def form_valid(self, form):
         form.save()
+        self.send_request_email(form)
         messages.success(self.request, 'Your request was submitted to the VP!')
         return super().form_valid(form)
+
+    def send_request_email(self, form):
+        subject = '[HKN] Bit-byte request submitted'
+        participant_emails = [part.email for part in form.instance.participants.all()]
+
+        bitbyte_link = self.request.build_absolute_uri(
+            reverse("candidate:bitbyte"))
+        html_content = render_to_string(
+            'candidate/bitbyte_request_email.html',
+            {
+                'requester': self.request.user,
+                'participants': form.instance.participants.all(),
+                'bitbyte_link': bitbyte_link,
+                'img_link': get_rand_photo(),
+            }
+        )
+        msg = EmailMultiAlternatives(subject, subject,
+                    settings.NO_REPLY_EMAIL, participant_emails)
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
 
     def get_queryset(self):
         result = BitByteActivity.objects \

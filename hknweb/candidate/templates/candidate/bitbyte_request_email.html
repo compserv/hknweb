@@ -7,12 +7,9 @@
 <body>
 
     <p>
-        {% if confirmed %}
-            Congratulations! VP/csec has confirmed your bit-byte activity!
-        {% else %}
-            Oh no! Your bit-byte activity request has been rejected by VP/csec.
-        {% endif %}
-        The following participants were part of this activity:
+        {{ requester.first_name }} {{ requester.last_name }} ({{ requester.username }})
+        has requested a bit-byte activity to be confirmed, of which you are a participant.
+        Participants include:
     </p>
     <p>
         {% for part in participants %}
@@ -22,7 +19,8 @@
     <p>
         Click
         <a href="{{ bitbyte_link }}">here</a>
-        to view VP/csec's feedback.
+        to view the activity on your portal. You will receive a notification when the
+        request is confirmed by VP/csec.
     </p>
 
     <p>
