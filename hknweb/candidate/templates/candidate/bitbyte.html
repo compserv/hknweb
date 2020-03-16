@@ -38,7 +38,9 @@ Candidate's Bit-Byte Activities
                         on Slack. The link should start with "https://hkn.slack.com/archives/"
                     </span>
                 </span>
-                <br>
+                {% endif %}
+                {% if field|field_type == 'Textarea' %}
+                    <br/>
                 {% endif %}
                 {{ field }}
                 {{ field.errors }}

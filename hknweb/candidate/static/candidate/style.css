@@ -225,14 +225,14 @@ h2:first-child {
     border-style: groove;
     border-radius: 8px;
     position: absolute;
-    top: -222%;
+    top: -40%;
     left: 150%;
 }
 
 .tooltip .tooltiptext::after {
     content: "";
     position: absolute;
-    top: 50%;
+    top: 15%;
     right: 101.2%;
     margin-top: -5px;
     border-width: 5px;
