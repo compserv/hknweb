@@ -41,6 +41,7 @@ class Event(models.Model):
 
     def __str__(self):
         return self.name
+
     def admitted_set(self):
         return self.rsvp_set.order_by("created_at")[:self.rsvp_limit]
     
@@ -48,6 +49,7 @@ class Event(models.Model):
         if not self.rsvp_limit:
             return self.rsvp_set.none()
         return self.rsvp_set.order_by("created_at")[self.rsvp_limit:]
+        
 class Rsvp(models.Model):
     user  = models.ForeignKey(User, models.CASCADE, verbose_name="rsvp'd by")
     event = models.ForeignKey(Event, models.CASCADE)
