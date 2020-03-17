@@ -24,5 +24,5 @@ def home(request):
     }
     return render(request, 'landing/home.html', context)
 
-def contact_us(request):
-    return render(request, 'about/contact_us.html')
+def about(request):
+    return render(request, 'about/abouthkn.html')
