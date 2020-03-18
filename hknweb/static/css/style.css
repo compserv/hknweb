@@ -17,18 +17,6 @@
     margin: 0.125em;
 }
 
-.column {
-  float: left;
-  width: 50%;
-}
-
-.events-list {
-    margin-bottom: 0;
-}
-
-.events-sublist {
-    list-style-type: circle;
-}
 
 .req {
     width: 1.25em;
@@ -37,12 +25,6 @@
     position: relative;
     vertical-align: middle;
     background-size: 1.25em 1.25em;
-}
-
-.row:after {
-  content: "";
-  display: table;
-  clear: both;
 }
 
 .conf-events, .unconf-events {
@@ -223,8 +205,43 @@ h2:first-child {
       line-height: 1.75em;
     }
 
-/* about page
+/* 
+about page
 */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  color: grey;
+}
+
+a:hover {
+  color: orange;
+}
+
+.column {
+  float: left;
+}
+
+.half {
+  width: 50%;
+}
+
+.left {
+  width: 75%;
+}
+
+.right {
+  width: 25%;
+}
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
 .tabset > input[type="radio"] {
   position: absolute;
   left: -200vw;
@@ -244,7 +261,7 @@ h2:first-child {
 }
 
 /*
- Styling
+Styling
 */
 
 .tabset > label {
@@ -269,13 +286,13 @@ h2:first-child {
 
 .tabset > label:hover,
 .tabset > input:focus + label {
-  color: #06c;
+  color: #ffa500;
 }
 
 .tabset > label:hover::after,
 .tabset > input:focus + label::after,
 .tabset > input:checked + label::after {
-  background: #06c;
+  background: #ffa500;
 }
 
 .tabset > input:checked + label {
@@ -288,4 +305,3 @@ h2:first-child {
   padding: 30px 0;
   border-top: 1px solid #ccc;
 }
-
