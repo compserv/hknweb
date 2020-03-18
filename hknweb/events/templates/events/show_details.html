@@ -81,7 +81,7 @@
         <p class="rsvp-list"> Count: {{ rsvps.count }} </p>
       {% endif %}
       {% for rsvp in rsvps %}
-        <p class="rsvp-list">{{ rsvp.user.first_name }} {{ rsvp.user.last_name }} ({{ rsvp.user }})</p>
+        <p class="rsvp-list">{{ rsvp.user.first_name }} {{ rsvp.user.last_name }} ({{ rsvp.user.username }})</p>
       {% endfor %}
     {% elif not rsvpd %}
       <p class="rsvp-list">No rsvps.</p>
