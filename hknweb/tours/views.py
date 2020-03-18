@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views import generic
 import datetime
 from django.core.mail import EmailMultiAlternatives
+from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.views.generic.edit import FormView
 from .forms import *
@@ -31,14 +32,15 @@ def send_request_email(request, form):
                 'comments': form.instance.comments,
             }
         )
-        msg = EmailMultiAlternatives(subject, subject,
+        msg = EmailMessage(subject, html_content,
                 'no-reply@hkn.eecs.berkeley.edu', [officer_email])
-        msg.attach_alternative(html_content, "text/html")
+        msg.content_subtype = 'html'
         msg.send()
 
 def tour(request):
     form = TourRequest(request.POST or None)
     if request.method == 'POST':
+
         if form.is_valid():
             tour = form.save(commit=False)
             tour.save()
@@ -48,7 +50,8 @@ def tour(request):
             messages.success(request, 'Your request has been sent!')
             return redirect('/tours/')
         else:
-            print(form.errors)
-            messages.error(request, 'Something went wrong! Your request did not send. Try again, or email deprel@hkn.eecs.berkeley.edu.')
+            print(form.errors.as_data())
+            msg = 'Something went wrong! Your request did not send. Try again, or email deprel@hkn.mu.'
+            messages.error(request, msg)
             return render(request, 'tours/index.html', {'form': TourRequest(None)})
     return render(request, 'tours/index.html', {'form': TourRequest(None)})
