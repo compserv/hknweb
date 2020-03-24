@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import generic
-import datetime
 from django.core.mail import EmailMultiAlternatives
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
@@ -19,7 +18,7 @@ def index(request):
 
 def send_request_email(request, form):
         subject = 'Department Tour Request'
-        officer_email = 'conhuang@hkn.mu'
+        officer_email = 'deprel@hkn.mu'
 
         html_content = render_to_string(
             'tours/request_email.html',
@@ -50,8 +49,6 @@ def tour(request):
             messages.success(request, 'Your request has been sent!')
             return redirect('/tours/')
         else:
-            print(form.errors.as_data())
             msg = 'Something went wrong! Your request did not send. Try again, or email deprel@hkn.mu.'
             messages.error(request, msg)
-            return render(request, 'tours/index.html', {'form': TourRequest(None)})
-    return render(request, 'tours/index.html', {'form': TourRequest(None)})
+    return render(request, 'tours/index.html', {'form': form})

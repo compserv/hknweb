@@ -18,10 +18,9 @@ class TourRequest(forms.ModelForm):
             raise forms.ValidationError("The date cannot be in the past!")
         return date
     
-    def clean(self):
-        cleaned_data = super(TourRequest, self).clean()
-        email = cleaned_data.get("email")
-        confirm_email = cleaned_data.get("confirm_email")
+    def clean_confirm_email(self):
+        email = self.cleaned_data['email']
+        confirm_email = self.cleaned_data["confirm_email"]
 
         if email and confirm_email:
             if email != confirm_email:
