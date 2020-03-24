@@ -2,29 +2,28 @@ from django.shortcuts import render, redirect
 from django.http import Http404
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
-from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.utils.decorators import method_decorator
 from django.views import generic
+from functools import wraps
 
 from .models import Event, EventType, Rsvp
 from .forms import EventForm
 
 # decorators
 
-# used for things only officers and candidates can access
-def check_account_access(func):
-    def check_then_call(request, *args, **kwargs):
-        if not is_cand_or_officer(request.user):
-            return render(request, 'errors/401.html', status=401)
-        return func(request, *args, **kwargs)
-    return check_then_call
-
-
-def is_cand_or_officer(user):
-    return user.groups.filter(name=settings.CAND_GROUP).exists() or \
-           user.groups.filter(name=settings.OFFICER_GROUP).exists()
-
+# first requires log in, but if you're already logged in but don't have permission, displays more info
+def login_and_permission(permission_name):
+    def decorator(func):
+        return wraps(func)( # preserves function attributes to the decorated function
+                login_required(login_url='/accounts/login/')(
+                    # raises 403 error which invokes our custom 403.html
+                    permission_required(permission_name, login_url='/accounts/login/', raise_exception=True)(
+                        func # decorates function with both login_required and permission_required
+                    )
+                )
+            )
+    return decorator
 
 # views
 
@@ -39,8 +38,7 @@ def index(request):
     return render(request, 'events/index.html', context)
 
 
-@login_required(login_url='/accounts/login/')
-@check_account_access
+@login_and_permission('events.view_event')
 def show_details(request, id):
 
     event = get_object_or_404(Event, pk=id)
@@ -76,8 +74,7 @@ def show_details(request, id):
     return render(request, 'events/show_details.html', context)
 
 
-@login_required(login_url='/accounts/login/')
-@check_account_access
+@login_and_permission('events.add_rsvp')
 def rsvp(request, id):
     if request.method != 'POST':
         raise Http404()
@@ -91,8 +88,7 @@ def rsvp(request, id):
     return redirect('/events/' + str(id))
 
 
-@login_required(login_url='/accounts/login/')
-@check_account_access
+@login_and_permission('events.remove_rsvp')
 def unrsvp(request, id):
     if request.method != 'POST':
         raise Http404()
@@ -106,7 +102,7 @@ def unrsvp(request, id):
     return redirect(event)
 
 
-@permission_required('events.add_event', login_url='/accounts/login/')
+@login_and_permission('events.add_event')
 def add_event(request):
     form = EventForm(request.POST or None)
     if request.method == 'POST':
@@ -122,7 +118,8 @@ def add_event(request):
             return render(request, 'events/event_add.html', {'form': EventForm(None)})
     return render(request, 'events/event_add.html', {'form': EventForm(None)})
 
-@method_decorator(permission_required('events.change_event', login_url='/accounts/login/'), name='dispatch')
+
+@method_decorator(login_and_permission('events.change_event'), name='dispatch')
 class EventUpdateView(generic.edit.UpdateView):
     model = Event
     fields = ['name', 'slug', 'start_time', 'end_time', 'location', 'event_type',
