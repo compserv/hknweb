@@ -189,11 +189,11 @@ h2:first-child {
     vertical-align: middle;
 }
 .what-about-subtitle {
-      font-size: 1.1em;
-      font-weight: 400;
-      opacity: 0.8;
-      line-height: 1.75em;
-    }
+    font-size: 1.1em;
+    font-weight: 400;
+    opacity: 0.8;
+    line-height: 1.75em;
+}
 
 /* 
 about page
@@ -220,11 +220,11 @@ a:hover {
 }
 
 .left {
-  width: 75%;
+  width: 80%;
 }
 
 .right {
-  width: 25%;
+  width: 20%;
 }
 .row:after {
   content: "";
@@ -255,44 +255,48 @@ Styling
 */
 
 .tabset > label {
-  position: relative;
-  display: inline-block;
-  padding: 15px 15px 25px;
-  border: 1px solid transparent;
-  border-bottom: 0;
-  cursor: pointer;
-  font-weight: 600;
+    position: relative;
+    display: inline-block;
+    padding: 15px 15px 25px;
+    border: 1px solid transparent;
+    border-bottom: 0;
+    cursor: pointer;
+    font-weight: 600;
 }
 
 .tabset > label::after {
-  content: "";
-  position: absolute;
-  left: 15px;
-  bottom: 10px;
-  width: 22px;
-  height: 4px;
-  background: #8d8d8d;
+    content: "";
+    position: absolute;
+    left: 15px;
+    bottom: 10px;
+    width: 22px;
+    height: 4px;
+    background: #8d8d8d;
 }
 
 .tabset > label:hover,
 .tabset > input:focus + label {
-  color: #ffa500;
+    color: #ffa500;
 }
 
 .tabset > label:hover::after,
 .tabset > input:focus + label::after,
 .tabset > input:checked + label::after {
-  background: #ffa500;
+    background: #ffa500;
 }
 
 .tabset > input:checked + label {
-  border-color: #ccc;
-  border-bottom: 1px solid #fff;
-  margin-bottom: -1px;
+    border-color: #ccc;
+    border-bottom: 1px solid #fff;
+    margin-bottom: -1px;
+}
+
+.tabpadding {
+    padding: 0% 5%;
 }
 
 .tab-panel {
-  padding: 30px 0;
-  border-top: 1px solid #ccc;
+    padding: 30px 0;
+    border-top: 1px solid #ccc;
 }
 
