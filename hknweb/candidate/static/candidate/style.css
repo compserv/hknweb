@@ -214,7 +214,7 @@ h2:first-child {
     vertical-align: middle;
 }
 
-#confirm-text {
+.confirm-text {
     font-size: 1.4em;
     margin-left: 10%;
 }

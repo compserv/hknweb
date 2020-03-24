@@ -14,7 +14,7 @@ Confirm Officer Challenge
 {% block content %}
 
 <div class="parent">
-    <span id="confirm-text">
+    <span class="confirm-text">
         You have successfully reviewed the challenge requested by {{ requester_name }}!
     </span>
     <br><br>
@@ -28,7 +28,7 @@ Confirm Officer Challenge
 
     <div class="links-div link">
         <a href="{% url 'candidate:offrequests' %}">Go to portal</a>
-        <a href="{% url 'candidate:detail' challenge.id %} class="right"">View this challenge</a>
+        <a href="{% url 'candidate:detail' challenge.id %}" class="right">View this challenge</a>
     </div>
     <br><br>
 
@@ -48,6 +48,7 @@ Confirm Officer Challenge
         <li>I dreamed of dating (the 20 year-old) him last week. <br>
             There was a hot blond but I still chose my shy Jay. </li>
     </ul> -->
+    <!-- Author: Catherine Hu -->
 </div>
 
 
