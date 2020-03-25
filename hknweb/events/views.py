@@ -44,15 +44,32 @@ def index(request):
 def show_details(request, id):
 
     event = get_object_or_404(Event, pk=id)
-
-    rsvpd = Rsvp.objects.filter(user=request.user, event=event).exists()
     rsvps = Rsvp.objects.filter(event=event)
-
+    rsvpd = Rsvp.objects.filter(user=request.user, event=event).exists()
+    waitlisted = False
+    waitlist_position = 0
+    if (rsvpd):
+        # Gets the rsvp object for the user
+        rsvp = Rsvp.objects.filter(user=request.user, event=event)[:1].get()
+        # Check if waitlisted
+        if event.rsvp_limit:
+            rsvps_before = rsvps.filter(created_at__lt = rsvp.created_at).count()
+            waitlisted = rsvps_before >= event.rsvp_limit
+    # Get waitlist position
+    if waitlisted:
+        position = rsvps.filter(created_at__lt=rsvp.created_at).count()
+        waitlist_position = position - event.rsvp_limit + 1
+    # Render only non-waitlisted rsvps
+    rsvps = event.admitted_set()
+    waitlists = event.waitlist_set()
     limit = event.rsvp_limit
     context = {
         'event': event,
         'rsvpd': rsvpd,
         'rsvps': rsvps,
+        'waitlisted': waitlisted,
+        'waitlist_position': waitlist_position,
+        'waitlists': waitlists,
         'limit': limit,
         'can_edit': request.user.has_perm('events.change_event')
     }
@@ -66,13 +83,11 @@ def rsvp(request, id):
         raise Http404()
 
     event = get_object_or_404(Event, pk=id)
-    rsvps = event.rsvp_set.count()
 
-    if request.user.is_authenticated and (event.rsvp_limit is None or rsvps < event.rsvp_limit) \
-            and Rsvp.has_not_rsvpd(request.user, event):
+    if request.user.is_authenticated and Rsvp.has_not_rsvpd(request.user, event):
         Rsvp.objects.create(user=request.user, event=event, confirmed=False)
     else:
-        messages.error(request, 'Could not RSVP; the RSVP limit has been reached or you have already RSVP\'d.')
+        messages.error(request, 'You have already RSVP\'d.')
     return redirect('/events/' + str(id))
 
 
