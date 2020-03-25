@@ -12,8 +12,9 @@ from .forms import EventForm
 
 # decorators
 
-# first requires log in, but if you're already logged in but don't have permission, displays more info
 def login_and_permission(permission_name):
+    """ First requires log in, but if you're already logged in but don't have permission,
+        displays more info. """
     def decorator(func):
         return wraps(func)( # preserves function attributes to the decorated function
                 login_required(login_url='/accounts/login/')(

@@ -22,8 +22,9 @@ from .forms import ChallengeRequestForm, ChallengeConfirmationForm, BitByteReque
 
 # decorators
 
-# first requires log in, but if you're already logged in but don't have permission, displays more info
 def login_and_permission(permission_name):
+    """ First requires log in, but if you're already logged in but don't have permission,
+        displays more info. """
     def decorator(func):
         return wraps(func)( # preserves function attributes to the decorated function
                 login_required(login_url='/accounts/login/')(
@@ -40,9 +41,9 @@ def method_login_and_permission(permission_name):
 
 # views
 
-# Candidate portal home
 @method_login_and_permission('candidate.view_announcement')
 class IndexView(generic.TemplateView):
+    """ Candidate portal home. """
     template_name = 'candidate/index.html'
     context_object_name = 'my_favorite_publishers'
 
@@ -96,9 +97,9 @@ class IndexView(generic.TemplateView):
         }
         return context
 
-# Form for submitting officer challenge requests and list of past requests for candidate
 @method_login_and_permission('candidate.add_offchallenge')
 class CandRequestView(FormView, generic.ListView):
+    """ Form for submitting officer challenge requests and list of past requests for candidate. """
     template_name = 'candidate/candreq.html'
     form_class = ChallengeRequestForm
     success_url = "/cand/candreq"
@@ -142,11 +143,11 @@ class CandRequestView(FormView, generic.ListView):
                 .order_by('-request_date')
         return result
 
-# List of past challenge requests for officer
-# Non-officers can still visit this page by typing in the url,
-# but it will not have any new entries
 @method_login_and_permission('candidate.view_offchallenge')
 class OffRequestView(generic.ListView):
+    """ List of past challenge requests for officer.
+        Non-officers can still visit this page by typing in the url,
+        but it will not have any new entries. """
     template_name = 'candidate/offreq.html'
 
     context_object_name = 'challenge_list'
@@ -157,10 +158,10 @@ class OffRequestView(generic.ListView):
                 .order_by('-request_date')
         return result
 
-# Form for submitting bit-byte activity requests and list of past requests for candidate
-# Officers can still visit this page but it will not have any new entries
 @method_login_and_permission('candidate.add_bitbyteactivity')
 class BitByteView(FormView, generic.ListView):
+    """ Form for submitting bit-byte activity requests and list of past requests for candidate.
+        Officers can still visit this page, but it will not have any new entries. """
     template_name = 'candidate/bitbyte.html'
     form_class = BitByteRequestForm
     success_url = "/cand/bitbyte"
@@ -182,10 +183,10 @@ class BitByteView(FormView, generic.ListView):
                 .order_by('-request_date')
         return result
 
-# Officer views and confirms a challenge request after clicking email link
-# Only the officer who game the challenge can review it
 @login_and_permission('candidate.change_offchallenge')
 def officer_confirm_view(request, pk):
+    """ Officer views and confirms a challenge request after clicking email link.
+        Only the officer who gave the challenge can review it. """
     challenge = OffChallenge.objects.get(id=pk)
     if request.user.id != challenge.officer.id:
         raise PermissionDenied # not the officer that gave the challenge
@@ -212,9 +213,9 @@ def officer_confirm_view(request, pk):
         return redirect('/cand/reviewconfirm/{}'.format(pk))
     return render(request, "candidate/challenge_confirm.html", context=context)
 
-# The page displayed after officer reviews challenge and clicks "submit"
 @login_and_permission('candidate.view_offchallenge')
 def officer_review_confirmation(request, pk):
+    """ The page displayed after officer reviews challenge and clicks "submit." """
     challenge = OffChallenge.objects.get(id=pk)
     requester_name = challenge.requester.get_full_name()
     context = {
@@ -223,9 +224,9 @@ def officer_review_confirmation(request, pk):
     }
     return render(request, "candidate/review_confirm.html", context=context)
 
-# Detail view of an officer challenge
 @login_and_permission('candidate.view_offchallenge')
 def challenge_detail_view(request, pk):
+    """ Detail view of an officer challenge. """
     challenge = OffChallenge.objects.get(id=pk)
     officer_name = challenge.officer.get_full_name()
     requester_name = challenge.requester.get_full_name()
@@ -274,8 +275,8 @@ class UserAutocomplete(autocomplete.Select2QuerySetView):
 
 # HELPERS
 
-# This function is not used; it can be used to view all photos available
 def get_all_photos():
+    """ This function is not used; it can be used to view all photos available. """
     with open(find("candidate/animal_photo_urls.txt")) as f:
         urls = f.readlines()
     return [url.strip() + "?w=400" for url in urls]
@@ -308,8 +309,8 @@ def send_cand_confirm_email(request, challenge, confirmed):
     msg.send()
 
 
-# what the event types are called on admin site
-# code will not work if they're called something else!!
+""" What the event types are called on admin site.
+    Code will not work if they're called something else!! """
 map_event_vars = {
     settings.MANDATORY_EVENT: 'Mandatory',
     settings.FUN_EVENT: 'Fun',
@@ -319,9 +320,9 @@ map_event_vars = {
     settings.HANGOUT_EVENT: 'Hangout',
 }
 
-# Takes in all confirmed rsvps and sorts them into types, current hard coded
 # TODO: support more flexible typing and string-to-var parsing/conversion
 def sort_rsvps_into_events(rsvps):
+    """ Takes in all confirmed rsvps and sorts them into types, currently hard coded. """
     # Events in admin are currently in a readable format, must convert them to callable keys for Django template
     sorted_events = dict.fromkeys(map_event_vars.keys())
     for event_key, event_type in map_event_vars.items():
@@ -343,8 +344,8 @@ req_list = {
     settings.BITBYTE_ACTIVITY: 3,
 }
 
-# Checks which requirements have been fulfilled by a candidate
 def check_requirements(sorted_rsvps, num_challenges, num_bitbytes):
+    """ Checks which requirements have been fulfilled by a candidate. """
     req_statuses = dict.fromkeys(req_list.keys(), False)
     for req_type, minimum in req_list.items():
         if req_type == settings.BITBYTE_ACTIVITY:
@@ -358,6 +359,6 @@ def check_requirements(sorted_rsvps, num_challenges, num_bitbytes):
             req_statuses[req_type] = True
     return req_statuses
 
-# returns whether officer interactivities are satisfied
 def check_interactivity_requirements(hangouts, challenges):
+    """ Returns whether officer interactivities are satisfied. """
     return hangouts >= 1 and challenges >= 1 and hangouts + challenges >= 3
