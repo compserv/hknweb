@@ -27,9 +27,3 @@ class TourRequest(forms.ModelForm):
             if email != confirm_email:
                 raise forms.ValidationError("Emails do not match.")
         return confirm_email
-
-    def clean_phone(self):
-        phone = self.cleaned_data['phone']
-        if (not re.fullmatch("[0-9]+", phone)) or (len(phone) != 10 and len(phone) != 11):
-            raise forms.ValidationError("Please enter a valid 10-digit phone number.")
-        return phone
