@@ -8,14 +8,14 @@
     margin: 0 auto;
 }
 
-.req {
+/*.req {
     width: 1.25em;
     height: 1.25em;
     display: inline-block;
     position: relative;
     vertical-align: middle;
     background-size: 1.25em 1.25em;
-}
+}*/
 
 .conf-events, .unconf-events {
     list-style: none;
@@ -81,7 +81,7 @@ h2:first-child {
     margin-top: 0;
 }
 
-/* Lastly, the clearfix hack to prevent floated elements overflowing container */
+/*Lastly, the clearfix hack to prevent floated elements overflowing container */
 .centered::after {
     content: "";
     clear: both;
@@ -105,7 +105,7 @@ h2:first-child {
 .right-wide {
     width: 50%;
     float: right;
-    padding-left: 27px; /* Just the right absolute distance to make it appear under on a phone */
+    padding-left: 27px;  /* Just the right absolute distance to make it appear under on a phone */ 
     padding-right: 2%;
 }
 
@@ -159,12 +159,12 @@ h2:first-child {
     font-size: 1.3em;
 }
 
-.detail {
+/*.detail {
     max-width: 700px;
     margin: 0 auto;
     font-size: 1.3em;
     line-height: 1.5em;
-}
+}*/
 
 .inline-icon {
     width: 1.1em;
@@ -188,6 +188,7 @@ h2:first-child {
     width: 1.5em;
     vertical-align: middle;
 }
+
 .what-about-subtitle {
     font-size: 1.1em;
     font-weight: 400;
@@ -219,13 +220,14 @@ a:hover {
   width: 50%;
 }
 
-.left {
+.one {
   width: 80%;
 }
 
-.right {
+.two {
   width: 20%;
 }
+
 .row:after {
   content: "";
   display: table;
