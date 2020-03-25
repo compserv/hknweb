@@ -25,6 +25,9 @@ def login_and_permission(permission_name):
             )
     return decorator
 
+def method_login_and_permission(permission_name):
+    return method_decorator(login_and_permission(permission_name), name='dispatch')
+
 # views
 
 def index(request):
@@ -36,7 +39,6 @@ def index(request):
         'event_types': event_types,
     }
     return render(request, 'events/index.html', context)
-
 
 @login_and_permission('events.view_event')
 def show_details(request, id):
@@ -74,7 +76,6 @@ def show_details(request, id):
     }
     return render(request, 'events/show_details.html', context)
 
-
 @login_and_permission('events.add_rsvp')
 def rsvp(request, id):
     if request.method != 'POST':
@@ -88,7 +89,6 @@ def rsvp(request, id):
         messages.error(request, 'You have already RSVP\'d.')
     return redirect('/events/' + str(id))
 
-
 @login_and_permission('events.remove_rsvp')
 def unrsvp(request, id):
     if request.method != 'POST':
@@ -101,7 +101,6 @@ def unrsvp(request, id):
     else:
         rsvp.delete()
     return redirect(event)
-
 
 @login_and_permission('events.add_event')
 def add_event(request):
@@ -119,8 +118,7 @@ def add_event(request):
             return render(request, 'events/event_add.html', {'form': EventForm(None)})
     return render(request, 'events/event_add.html', {'form': EventForm(None)})
 
-
-@method_decorator(login_and_permission('events.change_event'), name='dispatch')
+@method_login_and_permission('events.change_event')
 class EventUpdateView(generic.edit.UpdateView):
     model = Event
     fields = ['name', 'slug', 'start_time', 'end_time', 'location', 'event_type',

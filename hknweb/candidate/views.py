@@ -2,16 +2,18 @@ from django.views import generic
 from django.views.generic.edit import FormView
 from django.shortcuts import render, redirect, reverse
 from django.core.mail import EmailMultiAlternatives
+from django.core.exceptions import PermissionDenied
 from django.template.loader import render_to_string
 from django.contrib import messages
 from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.utils.decorators import method_decorator
 from django.utils import timezone
 from django.conf import settings
 from django.contrib.staticfiles.finders import find
 from django.db.models import Q
 from dal import autocomplete
+from functools import wraps
 from random import randint
 
 from .models import OffChallenge, BitByteActivity, Announcement, CandidateForm
@@ -20,22 +22,26 @@ from .forms import ChallengeRequestForm, ChallengeConfirmationForm, BitByteReque
 
 # decorators
 
-# used for things only officers and candidates can access
-# TODO: use permissions instead of just the groups
-def check_account_access(func):
-    def check_then_call(request, *args, **kwargs):
-        if not is_cand_or_officer(request.user):
-            return render(request, "errors/401.html", status=401)
-        return func(request, *args, **kwargs)
-    return check_then_call
+# first requires log in, but if you're already logged in but don't have permission, displays more info
+def login_and_permission(permission_name):
+    def decorator(func):
+        return wraps(func)( # preserves function attributes to the decorated function
+                login_required(login_url='/accounts/login/')(
+                    # raises 403 error which invokes our custom 403.html
+                    permission_required(permission_name, login_url='/accounts/login/', raise_exception=True)(
+                        func # decorates function with both login_required and permission_required
+                    )
+                )
+            )
+    return decorator
 
+def method_login_and_permission(permission_name):
+    return method_decorator(login_and_permission(permission_name), name='dispatch')
 
 # views
 
 # Candidate portal home
-@method_decorator(login_required(login_url='/accounts/login/'), name='dispatch')
-@method_decorator(check_account_access, name='dispatch')
-# @method_decorator(is_cand_or_officer)
+@method_login_and_permission('candidate.view_announcement')
 class IndexView(generic.TemplateView):
     template_name = 'candidate/index.html'
     context_object_name = 'my_favorite_publishers'
@@ -90,10 +96,8 @@ class IndexView(generic.TemplateView):
         }
         return context
 
-# Form for submitting officer challenge requests
-# And list of past requests for candidate
-@method_decorator(login_required(login_url='/accounts/login/'), name='dispatch')
-@method_decorator(check_account_access, name='dispatch')
+# Form for submitting officer challenge requests and list of past requests for candidate
+@method_login_and_permission('candidate.add_offchallenge')
 class CandRequestView(FormView, generic.ListView):
     template_name = 'candidate/candreq.html'
     form_class = ChallengeRequestForm
@@ -141,8 +145,7 @@ class CandRequestView(FormView, generic.ListView):
 # List of past challenge requests for officer
 # Non-officers can still visit this page by typing in the url,
 # but it will not have any new entries
-@method_decorator(login_required(login_url='/accounts/login/'), name='dispatch')
-@method_decorator(check_account_access, name='dispatch')
+@method_login_and_permission('candidate.view_offchallenge')
 class OffRequestView(generic.ListView):
     template_name = 'candidate/offreq.html'
 
@@ -154,10 +157,9 @@ class OffRequestView(generic.ListView):
                 .order_by('-request_date')
         return result
 
-# List of past bit-byte activities for candidates
-# Offices can still visit this page but it will not have any new entries
-@method_decorator(login_required(login_url='/accounts/login/'), name='dispatch')
-@method_decorator(check_account_access, name='dispatch')
+# Form for submitting bit-byte activity requests and list of past requests for candidate
+# Officers can still visit this page but it will not have any new entries
+@method_login_and_permission('candidate.add_bitbyteactivity')
 class BitByteView(FormView, generic.ListView):
     template_name = 'candidate/bitbyte.html'
     form_class = BitByteRequestForm
@@ -182,13 +184,11 @@ class BitByteView(FormView, generic.ListView):
 
 # Officer views and confirms a challenge request after clicking email link
 # Only the officer who game the challenge can review it
-@login_required(login_url='/accounts/login/')
-@check_account_access
+@login_and_permission('candidate.change_offchallenge')
 def officer_confirm_view(request, pk):
-    # TODO: gracefully handle when a challenge does not exist
     challenge = OffChallenge.objects.get(id=pk)
     if request.user.id != challenge.officer.id:
-        return render(request, "errors/401.html", status=401)
+        raise PermissionDenied # not the officer that gave the challenge
 
     requester_name = challenge.requester.get_full_name()
     form = ChallengeConfirmationForm(request.POST or None, instance=challenge)
@@ -212,10 +212,8 @@ def officer_confirm_view(request, pk):
         return redirect('/cand/reviewconfirm/{}'.format(pk))
     return render(request, "candidate/challenge_confirm.html", context=context)
 
-
 # The page displayed after officer reviews challenge and clicks "submit"
-@login_required(login_url='/accounts/login/')
-@check_account_access
+@login_and_permission('candidate.view_offchallenge')
 def officer_review_confirmation(request, pk):
     challenge = OffChallenge.objects.get(id=pk)
     requester_name = challenge.requester.get_full_name()
@@ -225,10 +223,8 @@ def officer_review_confirmation(request, pk):
     }
     return render(request, "candidate/review_confirm.html", context=context)
 
-
 # Detail view of an officer challenge
-@login_required(login_url='/accounts/login/')
-@check_account_access
+@login_and_permission('candidate.view_offchallenge')
 def challenge_detail_view(request, pk):
     challenge = OffChallenge.objects.get(id=pk)
     officer_name = challenge.officer.get_full_name()
@@ -252,33 +248,31 @@ def challenge_detail_view(request, pk):
     }
     return render(request, "candidate/challenge_detail.html", context=context)
 
-
-# HELPERS
-
+# this is needed otherwise anyone can see the users in the database
+@method_login_and_permission('auth.view_user')
 class OfficerAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
-        if not self.request.user.is_authenticated:
-            return User.objects.none()
-
         qs = User.objects.filter(groups__name=settings.OFFICER_GROUP)
         if self.q:
-            qs = qs.filter(Q(username__icontains=self.q) | Q(first_name__icontains=self.q) | Q(last_name__icontains=self.q))
+            qs = qs.filter(
+                Q(username__icontains=self.q) |
+                Q(first_name__icontains=self.q) |
+                Q(last_name__icontains=self.q))
         return qs
 
+# this is needed otherwise anyone can see the users in the database
+@method_login_and_permission('auth.view_user')
 class UserAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
-        if not self.request.user.is_authenticated:
-            return User.objects.none()
-
         qs = User.objects.all()
         if self.q:
             qs = qs.filter(
-                Q(username__icontains=self.q) | Q(first_name__icontains=self.q) | Q(last_name__icontains=self.q))
+                Q(username__icontains=self.q) |
+                Q(first_name__icontains=self.q) |
+                Q(last_name__icontains=self.q))
         return qs
 
-def is_cand_or_officer(user):
-    return user.groups.filter(name=settings.CAND_GROUP).exists() or \
-            user.groups.filter(name=settings.OFFICER_GROUP).exists()
+# HELPERS
 
 # This function is not used; it can be used to view all photos available
 def get_all_photos():
