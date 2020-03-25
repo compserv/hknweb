@@ -8,15 +8,6 @@
     margin: 0 auto;
 }
 
-/*.req {
-    width: 1.25em;
-    height: 1.25em;
-    display: inline-block;
-    position: relative;
-    vertical-align: middle;
-    background-size: 1.25em 1.25em;
-}*/
-
 .conf-events, .unconf-events {
     list-style: none;
     font-size: 0.9em;
@@ -158,13 +149,6 @@ h2:first-child {
     width: 40%;
     font-size: 1.3em;
 }
-
-/*.detail {
-    max-width: 700px;
-    margin: 0 auto;
-    font-size: 1.3em;
-    line-height: 1.5em;
-}*/
 
 .inline-icon {
     width: 1.1em;
