@@ -40,19 +40,20 @@ def index(request):
 
 @login_and_permission('events.view_event')
 def show_details(request, id):
-
     event = get_object_or_404(Event, pk=id)
     rsvps = Rsvp.objects.filter(event=event)
     rsvpd = Rsvp.objects.filter(user=request.user, event=event).exists()
     waitlisted = False
     waitlist_position = 0
-    if (rsvpd):
+
+    if rsvpd:
         # Gets the rsvp object for the user
         rsvp = Rsvp.objects.filter(user=request.user, event=event)[:1].get()
         # Check if waitlisted
         if event.rsvp_limit:
             rsvps_before = rsvps.filter(created_at__lt = rsvp.created_at).count()
             waitlisted = rsvps_before >= event.rsvp_limit
+
     # Get waitlist position
     if waitlisted:
         position = rsvps.filter(created_at__lt=rsvp.created_at).count()
