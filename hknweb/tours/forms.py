@@ -3,6 +3,7 @@ from django.conf import settings
 from .models import DepTour
 from django.forms.widgets import SelectDateWidget
 import datetime
+import re
 
 
 class TourRequest(forms.ModelForm):
@@ -25,4 +26,10 @@ class TourRequest(forms.ModelForm):
         if email and confirm_email:
             if email != confirm_email:
                 raise forms.ValidationError("Emails do not match.")
-        return cleaned_data
+        return confirm_email
+
+    def clean_phone(self):
+        phone = self.cleaned_data['phone']
+        if (not re.fullmatch("[0-9]+", phone)) or (len(phone) != 10 and len(phone) != 11):
+            raise forms.ValidationError("Please enter a valid 10-digit phone number.")
+        return phone
