@@ -1,10 +1,8 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.views import generic
-from django.core.mail import EmailMultiAlternatives
+from django.shortcuts import render, redirect
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.views.generic.edit import FormView
-from .forms import *
+from .forms import TourRequest
 from django.contrib import messages
 from .models import DepTour
 
@@ -18,7 +16,7 @@ def index(request):
 
 def send_request_email(request, form):
         subject = 'Department Tour Request'
-        officer_email = 'deprel@hkn.mu'
+        officer_email = 'deprel@hkn.eecs.berkeley.edu'
 
         html_content = render_to_string(
             'tours/request_email.html',

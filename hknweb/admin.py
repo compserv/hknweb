@@ -4,12 +4,6 @@ from django.contrib.auth.admin import UserAdmin
 from django.conf import settings
 from .models import Announcement
 
-
-
-from .models import Announcement
-MAX_STRLEN = 85
-MAX_TXTLEN = 2000
-
 # Unregister the provided model admin
 admin.site.unregister(User)
 

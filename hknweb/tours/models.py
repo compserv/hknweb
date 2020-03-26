@@ -17,10 +17,9 @@ class DepTour(models.Model):
 
     name            = models.CharField(max_length=MAX_STRLEN, default='')
     email           = models.EmailField(max_length=MAX_STRLEN, default='')
-    confirm_email   = models.EmailField(max_length=MAX_STRLEN, default='')
     desired_time    = models.TimeField(verbose_name='Desired Time')
     date            = models.DateField(default=datetime.date.today,verbose_name='Desired Date')
-    phone_regex     = RegexValidator(regex=r'^\+?1?\d{10,15}$', message="Enter a valid 10-digit phone number in the format:'+999999999'")
+    phone_regex     = RegexValidator(regex=r'^\+?1?\d{10}$', message="Enter a valid 10-digit phone number in the format: '9876543210'")
     phone           = models.CharField(validators=[phone_regex], max_length=15, default='')
     comments        = models.TextField(max_length=MAX_TXTLEN, blank=True, default='', verbose_name='Additional comments')
     date_submitted  = models.DateTimeField(default=timezone.datetime.now)

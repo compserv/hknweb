@@ -9,11 +9,6 @@ from django.utils import timezone
 MAX_STRLEN = 85 # default max length for char fields
 MAX_TXTLEN = 2000 # default max length for text fields
 
-from django.utils import timezone
-
-MAX_STRLEN = 85
-MAX_TXTLEN = 2000
-
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, editable=False)
     date_of_birth = models.DateField(null=True, blank=True)
