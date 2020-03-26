@@ -8,7 +8,7 @@ import re
 
 class TourRequest(forms.ModelForm):
     date = forms.DateField(widget=SelectDateWidget(), label='Desired Date', initial=datetime.date.today)
-    desired_time = forms.TimeField(help_text='hh:mm 24-hour time', label='Desired Time')
+    desired_time = forms.TimeField(help_text='hh:mm 24-hour time (PST)', label='Desired Time')
     class Meta:
         model = DepTour
         fields = ['name', 'date', 'desired_time', 'email', 'confirm_email', 'phone', 'comments']
