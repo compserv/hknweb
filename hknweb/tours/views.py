@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
-from django.views.generic.edit import FormView
 from .forms import TourRequest
 from django.contrib import messages
 from .models import DepTour

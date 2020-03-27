@@ -1,9 +1,7 @@
 from django import forms
-from django.conf import settings
 from .models import DepTour
 from django.forms.widgets import SelectDateWidget
 import datetime
-import re
 
 MAX_STRLEN = 85
 

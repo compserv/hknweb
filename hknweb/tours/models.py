@@ -1,6 +1,5 @@
 from django.db import models
 from django.utils import timezone
-from django.conf import settings
 import datetime
 from django.core.validators import RegexValidator
 
