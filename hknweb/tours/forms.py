@@ -21,7 +21,7 @@ class TourRequest(forms.ModelForm):
         return date
 
     def clean_desired_time(self):
-        date = self.cleaned_data['date']
+        date = self.cleaned_data.get('date', 0)
         time = self.cleaned_data['desired_time']
         if date == datetime.date.today() and time < datetime.datetime.now().time():
             raise forms.ValidationError("Time cannot be in the past!")
