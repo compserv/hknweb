@@ -121,6 +121,7 @@ class CandRequestView(FormView, generic.ListView):
         html_content = render_to_string(
             'candidate/challenge_request_email.html',
             {
+                'subject': subject,
                 'candidate_name' : form.instance.requester.get_full_name(),
                 'candidate_username' : form.instance.requester.username,
                 'confirm_link' : confirm_link,
@@ -184,6 +185,7 @@ class BitByteView(FormView, generic.ListView):
         html_content = render_to_string(
             'candidate/bitbyte_request_email.html',
             {
+                'subject': subject,
                 'requester': self.request.user,
                 'participants': form.instance.participants.all(),
                 'bitbyte_link': bitbyte_link,
@@ -322,6 +324,7 @@ def send_challenge_confirm_email(request, challenge, confirmed):
     html_content = render_to_string(
         'candidate/challenge_confirm_email.html',
         {
+            'subject': subject,
             'confirmed': confirmed,
             'officer_name': challenge.officer.get_full_name(),
             'officer_username': challenge.officer.username,
@@ -343,6 +346,7 @@ def send_bitbyte_confirm_email(request, bitbyte, confirmed):
     html_content = render_to_string(
         'candidate/bitbyte_confirm_email.html',
         {
+            'subject': subject,
             'confirmed': confirmed,
             'participants': bitbyte.participants.all(),
             'bitbyte_link': bitbyte_link,

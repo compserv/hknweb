@@ -87,7 +87,7 @@ class BitByteActivityAdmin(admin.ModelAdmin):
             send_bitbyte_confirm_email(request, obj, True)
         elif obj.is_rejected:
             send_bitbyte_confirm_email(request, obj, False)
-        # if neither is true, it means it became null, which is weird but technically can happen
+        # if neither is true, it means it became someone changed the nullable boolean to 'Unknown'
 
     actions = ['export_as_csv', 'confirm', 'reject']
 

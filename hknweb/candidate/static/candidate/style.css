@@ -229,6 +229,8 @@ h2:first-child {
     left: 150%;
 }
 
+/* This is the small triangle on the text box. Some of these values are quite arbitrary
+   and unfortunately do not work for all browser zoom levels, but it's the best I can do. */
 .tooltip .tooltiptext::after {
     content: "";
     position: absolute;
