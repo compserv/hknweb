@@ -24,4 +24,13 @@ class TutorForm(forms.ModelForm):
     courses = forms.ModelMultipleChoiceField(queryset=Course.objects.order_by('name'))
 
 class ClassPreferenceForm(forms.Form):
-    courses = forms.ModelMultipleChoiceField(queryset=Course.objects.order_by('name'))
+    current_courses = forms.ModelMultipleChoiceField(queryset=Course.objects.order_by('name'))
+    completed_courses = forms.ModelMultipleChoiceField(queryset=Course.objects.order_by('name'))
+    preferred_courses = forms.ModelMultipleChoiceField(queryset=Course.objects.order_by('name'))
+
+class SlotPreferenceForm(forms.Form):
+    class Meta:
+        model = SlotPreference
+        fields = ('tutor', 'slot', 'rating')
+
+

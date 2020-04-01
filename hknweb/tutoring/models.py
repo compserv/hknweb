@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+import json
 # Create your models here.
 
 
@@ -14,16 +15,28 @@ class Course(models.Model):
         return str(self.name)
 
 class Tutor(models.Model):
+    id = models.AutoField(primary_key=True)
     user  = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     name = models.CharField(max_length=255)
-    courses = models.ManyToManyField(Course)
-
+    adjacent_pref = models.IntegerField(default=0)
+    course_preferences = models.ManyToManyField(CoursePreference)
+    slot_preferences = models.ManyToManyField(SlotPreference)
     def __repr__(self):
         return "Tutor(name={})".format(self.name)
 
     def __str__(self):
         return str(self.name)
 
+class CoursePreference(models.Model):
+    tutor = models.ForeignKey(Tutor, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    rating = models.IntegerField
+
+class SlotPreference(models.Model):
+    tutor = models.ForeignKey(Tutor, on_delete=models.CASCADE)
+    slot = models.ForeignKey(Slot, on_delete=models.CASCADE)
+    rating = models.IntegerField
+    
 class Slot(models.Model):
     MON = 1
     TUE = 2
@@ -58,6 +71,7 @@ class Slot(models.Model):
     day = models.IntegerField(choices=DAY_CHOICES)
     room = models.IntegerField(choices=ROOM_CHOICES)
     tutors = models.ManyToManyField(Tutor)
+    slot_id = models.IntegerField()
 
     @staticmethod
     def time(hour):
