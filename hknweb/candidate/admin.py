@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse
 
 from .models import OffChallenge, BitByteActivity, Announcement, CandidateForm
-from .views import send_cand_confirm_email
+from .views import send_challenge_confirm_email, send_bitbyte_confirm_email
 
 import csv
 
@@ -33,10 +33,10 @@ class OffChallengeAdmin(admin.ModelAdmin):
     def check_send_email(request, obj):
         # officer has already confirmed, and now csec confirms
         if obj.csec_confirmed is True and obj.officer_confirmed is True:
-            send_cand_confirm_email(request, obj, True)
+            send_challenge_confirm_email(request, obj, True)
         # officer has not already rejected, and now csec rejects
         elif obj.csec_confirmed is False and obj.officer_confirmed is not False:
-            send_cand_confirm_email(request, obj, False)
+            send_challenge_confirm_email(request, obj, False)
         # if neither is true, either need to wait for officer to review,
         # or officer has already rejected
 
@@ -76,6 +76,19 @@ class BitByteActivityAdmin(admin.ModelAdmin):
     def participant_usernames(self, obj):
         return ", ".join([c.username for c in obj.participants.all()])
 
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        if 'confirmed' in form.changed_data:
+            BitByteActivityAdmin.check_send_email(request, obj)
+
+    @staticmethod
+    def check_send_email(request, obj):
+        if obj.is_confirmed:
+            send_bitbyte_confirm_email(request, obj, True)
+        elif obj.is_rejected:
+            send_bitbyte_confirm_email(request, obj, False)
+        # if neither is true, it means it became someone changed the nullable boolean to 'Unknown'
+
     actions = ['export_as_csv', 'confirm', 'reject']
 
     def export_as_csv(self, request, queryset):
@@ -88,6 +101,7 @@ class BitByteActivityAdmin(admin.ModelAdmin):
             if obj.confirmed is not True:
                 obj.confirmed = True
                 obj.save()
+                self.check_send_email(request, obj)
 
     confirm.short_description = "Mark selected as confirmed"
 
@@ -96,6 +110,7 @@ class BitByteActivityAdmin(admin.ModelAdmin):
             if obj.confirmed is not False:
                 obj.confirmed = False
                 obj.save()
+                self.check_send_email(request, obj)
 
     reject.short_description = "Mark selected as rejected"
 
