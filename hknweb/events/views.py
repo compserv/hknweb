@@ -2,32 +2,11 @@ from django.shortcuts import render, redirect
 from django.http import Http404
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
-from django.contrib.auth.decorators import login_required, permission_required
-from django.utils.decorators import method_decorator
 from django.views import generic
-from functools import wraps
 
+from hknweb.utils import login_and_permission, method_login_and_permission
 from .models import Event, EventType, Rsvp
 from .forms import EventForm
-
-# decorators
-
-def login_and_permission(permission_name):
-    """ First requires log in, but if you're already logged in but don't have permission,
-        displays more info. """
-    def decorator(func):
-        return wraps(func)( # preserves function attributes to the decorated function
-                login_required(login_url='/accounts/login/')(
-                    # raises 403 error which invokes our custom 403.html
-                    permission_required(permission_name, login_url='/accounts/login/', raise_exception=True)(
-                        func # decorates function with both login_required and permission_required
-                    )
-                )
-            )
-    return decorator
-
-def method_login_and_permission(permission_name):
-    return method_decorator(login_and_permission(permission_name), name='dispatch')
 
 # views
 
