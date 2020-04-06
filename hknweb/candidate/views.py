@@ -44,13 +44,13 @@ class IndexView(generic.TemplateView):
         challenges = OffChallenge.objects \
                 .filter(requester__exact=self.request.user)
         # if either one is waiting, challenge is still being reviewed
-        num_pending = challenges \
-                .filter(Q(officer_confirmed__isnull=True) | Q(csec_confirmed__isnull=True)) \
+        num_confirmed = challenges \
+                .filter(Q(officer_confirmed=True) & Q(csec_confirmed=True)) \
                 .count()
         num_rejected = challenges \
                 .filter(Q(officer_confirmed=False) | Q(csec_confirmed=False)) \
                 .count()
-        num_confirmed = challenges.count() - num_pending - num_rejected
+        num_pending = challenges.count() - num_confirmed - num_rejected
 
         num_bitbytes = BitByteActivity.objects \
                 .filter(participants__exact=self.request.user) \
