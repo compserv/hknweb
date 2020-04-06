@@ -2,41 +2,25 @@ from django.views import generic
 from django.views.generic.edit import FormView
 from django.shortcuts import render, redirect, reverse
 from django.core.mail import EmailMultiAlternatives
+from django.core.exceptions import PermissionDenied
 from django.template.loader import render_to_string
 from django.contrib import messages
 from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
 from django.utils import timezone
 from django.conf import settings
-from django.contrib.staticfiles.finders import find
 from django.db.models import Q
 from dal import autocomplete
-from random import randint
 
+from hknweb.utils import login_and_permission, method_login_and_permission, get_rand_photo
 from .models import OffChallenge, BitByteActivity, Announcement, CandidateForm
 from ..events.models import Event, Rsvp
 from .forms import ChallengeRequestForm, ChallengeConfirmationForm, BitByteRequestForm
 
-# decorators
-
-# used for things only officers and candidates can access
-# TODO: use permissions instead of just the groups
-def check_account_access(func):
-    def check_then_call(request, *args, **kwargs):
-        if not is_cand_or_officer(request.user):
-            return render(request, "errors/401.html", status=401)
-        return func(request, *args, **kwargs)
-    return check_then_call
-
-
 # views
 
-# Candidate portal home
-@method_decorator(login_required(login_url='/accounts/login/'), name='dispatch')
-@method_decorator(check_account_access, name='dispatch')
-# @method_decorator(is_cand_or_officer)
+@method_login_and_permission('candidate.view_announcement')
 class IndexView(generic.TemplateView):
+    """ Candidate portal home. """
     template_name = 'candidate/index.html'
     context_object_name = 'my_favorite_publishers'
 
@@ -90,11 +74,9 @@ class IndexView(generic.TemplateView):
         }
         return context
 
-# Form for submitting officer challenge requests
-# And list of past requests for candidate
-@method_decorator(login_required(login_url='/accounts/login/'), name='dispatch')
-@method_decorator(check_account_access, name='dispatch')
+@method_login_and_permission('candidate.add_offchallenge')
 class CandRequestView(FormView, generic.ListView):
+    """ Form for submitting officer challenge requests and list of past requests for candidate. """
     template_name = 'candidate/candreq.html'
     form_class = ChallengeRequestForm
     success_url = "/cand/candreq"
@@ -139,12 +121,11 @@ class CandRequestView(FormView, generic.ListView):
                 .order_by('-request_date')
         return result
 
-# List of past challenge requests for officer
-# Non-officers can still visit this page by typing in the url,
-# but it will not have any new entries
-@method_decorator(login_required(login_url='/accounts/login/'), name='dispatch')
-@method_decorator(check_account_access, name='dispatch')
+@method_login_and_permission('candidate.view_offchallenge')
 class OffRequestView(generic.ListView):
+    """ List of past challenge requests for officer.
+        Non-officers can still visit this page by typing in the url,
+        but it will not have any new entries. """
     template_name = 'candidate/offreq.html'
 
     context_object_name = 'challenge_list'
@@ -155,11 +136,10 @@ class OffRequestView(generic.ListView):
                 .order_by('-request_date')
         return result
 
-# List of past bit-byte activities for candidates
-# Offices can still visit this page but it will not have any new entries
-@method_decorator(login_required(login_url='/accounts/login/'), name='dispatch')
-@method_decorator(check_account_access, name='dispatch')
+@method_login_and_permission('candidate.add_bitbyteactivity')
 class BitByteView(FormView, generic.ListView):
+    """ Form for submitting bit-byte activity requests and list of past requests for candidate.
+        Officers can still visit this page, but it will not have any new entries. """
     template_name = 'candidate/bitbyte.html'
     form_class = BitByteRequestForm
     success_url = "/cand/bitbyte"
@@ -203,15 +183,13 @@ class BitByteView(FormView, generic.ListView):
                 .order_by('-request_date')
         return result
 
-# Officer views and confirms a challenge request after clicking email link
-# Only the officer who game the challenge can review it
-@login_required(login_url='/accounts/login/')
-@check_account_access
+@login_and_permission('candidate.change_offchallenge')
 def officer_confirm_view(request, pk):
-    # TODO: gracefully handle when a challenge does not exist
+    """ Officer views and confirms a challenge request after clicking email link.
+        Only the officer who gave the challenge can review it. """
     challenge = OffChallenge.objects.get(id=pk)
     if request.user.id != challenge.officer.id:
-        return render(request, "errors/401.html", status=401)
+        raise PermissionDenied # not the officer that gave the challenge
 
     requester_name = challenge.requester.get_full_name()
     form = ChallengeConfirmationForm(request.POST or None, instance=challenge)
@@ -235,11 +213,9 @@ def officer_confirm_view(request, pk):
         return redirect('/cand/reviewconfirm/{}'.format(pk))
     return render(request, "candidate/challenge_confirm.html", context=context)
 
-
-# The page displayed after officer reviews challenge and clicks "submit"
-@login_required(login_url='/accounts/login/')
-@check_account_access
+@login_and_permission('candidate.view_offchallenge')
 def officer_review_confirmation(request, pk):
+    """ The page displayed after officer reviews challenge and clicks "submit." """
     challenge = OffChallenge.objects.get(id=pk)
     requester_name = challenge.requester.get_full_name()
     context = {
@@ -248,11 +224,9 @@ def officer_review_confirmation(request, pk):
     }
     return render(request, "candidate/review_confirm.html", context=context)
 
-
-# Detail view of an officer challenge
-@login_required(login_url='/accounts/login/')
-@check_account_access
+@login_and_permission('candidate.view_offchallenge')
 def challenge_detail_view(request, pk):
+    """ Detail view of an officer challenge. """
     challenge = OffChallenge.objects.get(id=pk)
     officer_name = challenge.officer.get_full_name()
     requester_name = challenge.requester.get_full_name()
@@ -275,45 +249,31 @@ def challenge_detail_view(request, pk):
     }
     return render(request, "candidate/challenge_detail.html", context=context)
 
-
-# HELPERS
-
+# this is needed otherwise anyone can see the users in the database
+@method_login_and_permission('auth.view_user')
 class OfficerAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
-        if not self.request.user.is_authenticated:
-            return User.objects.none()
-
         qs = User.objects.filter(groups__name=settings.OFFICER_GROUP)
         if self.q:
-            qs = qs.filter(Q(username__icontains=self.q) | Q(first_name__icontains=self.q) | Q(last_name__icontains=self.q))
+            qs = qs.filter(
+                Q(username__icontains=self.q) |
+                Q(first_name__icontains=self.q) |
+                Q(last_name__icontains=self.q))
         return qs
 
+# this is needed otherwise anyone can see the users in the database
+@method_login_and_permission('auth.view_user')
 class UserAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
-        if not self.request.user.is_authenticated:
-            return User.objects.none()
-
         qs = User.objects.all()
         if self.q:
             qs = qs.filter(
-                Q(username__icontains=self.q) | Q(first_name__icontains=self.q) | Q(last_name__icontains=self.q))
+                Q(username__icontains=self.q) |
+                Q(first_name__icontains=self.q) |
+                Q(last_name__icontains=self.q))
         return qs
 
-def is_cand_or_officer(user):
-    return user.groups.filter(name=settings.CAND_GROUP).exists() or \
-            user.groups.filter(name=settings.OFFICER_GROUP).exists()
-
-# This function is not used; it can be used to view all photos available
-def get_all_photos():
-    with open(find("candidate/animal_photo_urls.txt")) as f:
-        urls = f.readlines()
-    return [url.strip() + "?w=400" for url in urls]
-
-# images from pexels.com
-def get_rand_photo(width=400):
-    with open(find("candidate/animal_photo_urls.txt")) as f:
-        urls = f.readlines()
-    return urls[randint(0, len(urls) - 1)].strip() + "?w=" + str(width)
+# HELPERS
 
 def send_challenge_confirm_email(request, challenge, confirmed):
     subject = '[HKN] Your officer challenge was reviewed'
@@ -359,8 +319,8 @@ def send_bitbyte_confirm_email(request, bitbyte, confirmed):
     msg.send()
 
 
-# what the event types are called on admin site
-# code will not work if they're called something else!!
+""" What the event types are called on admin site.
+    Code will not work if they're called something else!! """
 map_event_vars = {
     settings.MANDATORY_EVENT: 'Mandatory',
     settings.FUN_EVENT: 'Fun',
@@ -370,9 +330,9 @@ map_event_vars = {
     settings.HANGOUT_EVENT: 'Hangout',
 }
 
-# Takes in all confirmed rsvps and sorts them into types, current hard coded
 # TODO: support more flexible typing and string-to-var parsing/conversion
 def sort_rsvps_into_events(rsvps):
+    """ Takes in all confirmed rsvps and sorts them into types, currently hard coded. """
     # Events in admin are currently in a readable format, must convert them to callable keys for Django template
     sorted_events = dict.fromkeys(map_event_vars.keys())
     for event_key, event_type in map_event_vars.items():
@@ -394,8 +354,8 @@ req_list = {
     settings.BITBYTE_ACTIVITY: 3,
 }
 
-# Checks which requirements have been fulfilled by a candidate
 def check_requirements(sorted_rsvps, num_challenges, num_bitbytes):
+    """ Checks which requirements have been fulfilled by a candidate. """
     req_statuses = dict.fromkeys(req_list.keys(), False)
     for req_type, minimum in req_list.items():
         if req_type == settings.BITBYTE_ACTIVITY:
@@ -409,6 +369,6 @@ def check_requirements(sorted_rsvps, num_challenges, num_bitbytes):
             req_statuses[req_type] = True
     return req_statuses
 
-# returns whether officer interactivities are satisfied
 def check_interactivity_requirements(hangouts, challenges):
+    """ Returns whether officer interactivities are satisfied. """
     return hangouts >= 1 and challenges >= 1 and hangouts + challenges >= 3

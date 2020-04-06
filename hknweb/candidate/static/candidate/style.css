@@ -1,8 +1,3 @@
-.content {
-    padding-top: 1em;
-    padding-bottom: 1em;
-}
-
 .centered {
     max-width: 1250px;
     margin: 0 auto;
@@ -246,9 +241,10 @@ h2:first-child {
     visibility: visible;
 }
 
-#confirm-text {
-    font-size: 1.4em;
+.confirm-text {
+    font-size: 1.3em;
     margin-left: 10%;
+    margin-right: 10%;
 }
 
 #sunny {
@@ -265,11 +261,4 @@ h2:first-child {
     max-width: 40%;
     text-align: right;
     float: right;
-}
-
-#hiding-cat {
-    width: 45%;
-    display: block; /* Center image */
-    margin-left: auto;
-    margin-right: auto;
 }
