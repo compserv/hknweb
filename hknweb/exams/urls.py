@@ -5,5 +5,6 @@ from . import views
 
 urlpatterns = [
 	path('course/<department>/<number>/', views.exams_for_course),
+    path('new', views.add_event),
     url(r'^$', views.index),
 ]
