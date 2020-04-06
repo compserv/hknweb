@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<style>
+    .content {
+        padding-top: 1em;
+        padding-bottom: 1em;
+        text-align: center;
+    }
+    #actual-contents {
+        display: inline-block;
+        margin: 0 auto;
+        text-align: left;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    
+    <button type="submit">Upload</button>
+
+  </form>
+
+  <p><a href="{% url 'home' %}">Return to home</a></p>
+{% endblock %}
