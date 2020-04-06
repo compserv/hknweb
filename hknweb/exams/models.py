@@ -49,4 +49,6 @@ class CourseSemester(models.Model):
 class Exam(models.Model):
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
+    semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
+    exam_type = models.CharField(max_length=255, default = "Mideterm 1")
 

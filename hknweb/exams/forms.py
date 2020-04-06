@@ -4,11 +4,15 @@ from hknweb.exams.models import Exam
 
 
 class ExamUploadForm(forms.ModelForm):
-
+    file = forms.FileField(label="Exam")
 
     class Meta:
         model = Exam
-        fields = ('department', 'course')
+
+
+
+        exclude = ()
+        # fields = ('department', 'course')
                   #'markdown', 'event_type', 'view_permission', 'rsvp_type', 'transportation')
 
         # help_texts = {

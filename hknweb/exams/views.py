@@ -1,3 +1,4 @@
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
 from hknweb.exams.forms import ExamUploadForm
@@ -26,4 +27,10 @@ def exams_for_course(request, department, number):
 
 
 def add_event(request):
+	if request.method == 'POST':
+		form = ExamUploadForm(request.POST, request.FILES)
+		if form.is_valid():
+			form.save()
+			return HttpResponseRedirect('/')
+
 	return render(request, 'exams/exams_add.html', {'form': ExamUploadForm(None)})
