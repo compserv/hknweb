@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.views import generic
-from .models import ResumeBookOrderForm, InfosessionRegistration
+from django.core.mail import EmailMessage
+from .models import ResumeBookOrderForm, InfosessionRegistration,IndrelMailer
 
 def index(request):
     return render(request, 'indrel/index.html')
@@ -30,3 +31,17 @@ def order_resume_book(request):
 
 def register_info_session(request):
     pass
+def mailer(request):
+
+    msg = EmailMessage("indrelmailer@gmail.com", "indrelmailer@gmail.com", "indrelmailer@gmail.com",
+                       ["indrelmailer@gmail.com"])
+    msg.content_subtype="html"
+    msg.send()
+class MailerView(generic.FormView):
+    form_class = IndrelMailer
+    template_name = 'indrel/mailer.html'
+    success_url="thanks"
+    def form_valid(self,form):
+        print(form.cleaned_data)
+        form.send_email()
+        return super().form_valid(form)

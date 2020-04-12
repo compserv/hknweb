@@ -1,4 +1,18 @@
 from django.db import models
+from django import forms
+from django.core.mail import send_mail,EmailMessage
+class IndrelMailer(forms.Form):
+    sender=forms.CharField(initial='indrel@hkn.eecs.berkeley.edu ')
+    receiver=forms.CharField()
+    conf_receiver=forms.CharField(label='Confirmation Receiver',initial='indrel@hkn.eecs.berkeley.edu ')
+    subject=forms.CharField(max_length=200)
+    mail=forms.CharField(label='Email Body')
+    def send_email(self):
+        # msg=EmailMessage(self.cleaned_data['subject'],self.cleaned_data['mail'],self.cleaned_data['sender'],self.cleaned_data['receiver'].split(","))
+        # msg.send()
+        return send_mail(self.cleaned_data['subject'],self.cleaned_data['mail'],self.cleaned_data['sender'],
+                  self.cleaned_data['receiver'].split(","))
+
 
 class Company(models.Model):
     company_name = models.CharField(max_length = 200)

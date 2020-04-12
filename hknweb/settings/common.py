@@ -161,9 +161,12 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 
 # Optional SMTP authentication information for EMAIL_HOST.
-EMAIL_HOST_USER = 'hknwebsite@hkn.eecs.berkeley.edu'
 EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'indrelmailer@gmail.com'
+EMAIL_HOST_PASS='eyskeuoggxxgkmlj'
 
+# DEFAULT_FROM_EMAIL = 'indrelmailer@gmail.com'
+# SERVER_EMAIL = 'indrelmailer@gmail.com'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
