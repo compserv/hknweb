@@ -22,9 +22,15 @@ class Course(models.Model):
     def __str__(self):
         return "{} {}".format(self.department, self.number)
 
+class Semester(models.Model):
+     semester = models.CharField(max_length=255)
+
+     def __str__(self):
+         return "Test {}".format(self.semester)
+
 class CourseSemester(models.Model):
     course      = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
-    semester    = models.CharField(max_length=255)
+    semester    = models.ForeignKey(Semester, on_delete=models.CASCADE)
     instructor  = models.ForeignKey(Instructor, on_delete=models.CASCADE, null=False)
     release     = models.BooleanField()
     midterm1    = models.FileField(blank=True)
@@ -38,3 +44,11 @@ class CourseSemester(models.Model):
 
     def __str__(self):
         return "CourseSemester(course={}, semester={})".format(self.course, self.semester)
+
+# department (EE or CS), Course (Number), Instructor (Name), Exam Type(Midterm1, Midterm2, Final)
+class Exam(models.Model):
+    department = models.ForeignKey(Department, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
+    semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
+    exam_type = models.CharField(max_length=255, default = "Mideterm 1")
+
