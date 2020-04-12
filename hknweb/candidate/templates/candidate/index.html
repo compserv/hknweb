@@ -21,7 +21,7 @@ Candidate Portal
             {% if not announcements %}
                 No announcements at this time.
             {% endif %}
-            
+
             {% for announcement in announcements %}
                 <p>
                 <strong>{{ announcement.title }}</strong> [{{ announcement.release_date|date:"m/d/Y" }}]<br>
@@ -54,21 +54,23 @@ Candidate Portal
                 <li>Pay all dues (2 sets)</li>
                 <li>Complete all required forms</li>
                 <ul class="events-sublist">
-                    <li><a href="">Candidate Information Form</a></li>
-                    <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSep1eRdOGXJR3-3KjCeHgBHpBiM2gtULVFaKuX0OK5D13dQTg/viewform?usp=sf_link">Committee Preference Form</a></li>
-                    <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSdrHgt57BILlWDe9W3fhaNAX4pAOZvcwQiyiLOwN_12WVa0dA/viewform?usp=sf_link">Bit-Byte Pairing Survey</a></li>
-                    <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSe9LKhVgLOdePTX2x7kqSh6Ll6KmCCxQNbNTmWQ-fBFVx0blg/viewform?usp=sf_link">Resume Drop</a></li>
-                    <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSfa_yv33u-jl1XlyLwd_Ur9fYphKwCfCDpUPRQOD0XY_1eF1A/viewform?usp=sf_link">Candidate Quiz</a></li>
-                    <li><a href="">Candidate Feedback Form</a></li>
-                    <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSeAHGqygFRJHp1n-uNLt-qxgTwKD6njg76IlOoCKpcdvK_udg/viewform?usp=sf_link">Membership Application Form</a></li>
-                <ul>
+
+                    {% if not candidate_forms %}
+                        No candiate forms at this time.
+                    {% endif %}
+
+                    {% for form in candidate_forms %}
+                        <li><a href={{ form.link }}>{{ form.name }}</a> (due {{ form.duedate }})</li>
+                    {% endfor %}
+
+                </ul>
             </ol>
         </section>
     </div>
     <div class="left-column">
         <br id="break">
         <section id="candidate-checklist">
-            <h2 class="events-list"">Checklist</h2>
+            <h2 class="events-list">Checklist</h2>
 
             <div class="checklist-left-col">
                 <h4>Events</h4>
@@ -82,12 +84,12 @@ Candidate Portal
                         Mandatory Meetings
                     </li>
                     <ul class="conf-events">
-                        {% for event in confirmed_events.mandatory_meetings %} 
+                        {% for event in confirmed_events.mandatory_meetings %}
                             <li>{{ event.name }}<br/></li>
                         {% endfor %}
                     </ul>
                     <ul class="unconf-events">
-                        {% for event in unconfirmed_events.mandatory_meetings %} 
+                        {% for event in unconfirmed_events.mandatory_meetings %}
                             <li>{{ event.name }}<br/></li>
                         {% endfor %}
                     </ul>
@@ -101,12 +103,12 @@ Candidate Portal
                         Fun
                     </li>
                     <ul class="conf-events">
-                        {% for event in confirmed_events.fun %} 
+                        {% for event in confirmed_events.fun %}
                             <li>{{ event.name }}<br/></li>
                         {% endfor %}
                     </ul>
                     <ul class="unconf-events">
-                        {% for event in unconfirmed_events.fun %} 
+                        {% for event in unconfirmed_events.fun %}
                             <li>{{ event.name }}<br/></li>
                         {% endfor %}
                     </ul>
@@ -120,12 +122,12 @@ Candidate Portal
                         Big Fun
                     </li>
                     <ul class="conf-events">
-                        {% for event in confirmed_events.big_fun %} 
+                        {% for event in confirmed_events.big_fun %}
                             <li>{{ event.name }}<br/></li>
                         {% endfor %}
                     </ul>
                     <ul class="unconf-events">
-                        {% for event in unconfirmed_events.big_fun %} 
+                        {% for event in unconfirmed_events.big_fun %}
                             <li>{{ event.name }}<br/></li>
                         {% endfor %}
                     </ul>
@@ -139,12 +141,12 @@ Candidate Portal
                         Service
                     </li>
                     <ul class="conf-events">
-                        {% for event in confirmed_events.serv %} 
+                        {% for event in confirmed_events.serv %}
                             <li>{{ event.name }}<br/></li>
                         {% endfor %}
                     </ul>
                     <ul class="unconf-events">
-                        {% for event in unconfirmed_events.serv %} 
+                        {% for event in unconfirmed_events.serv %}
                             <li>{{ event.name }}<br/></li>
                         {% endfor %}
                     </ul>
@@ -158,12 +160,12 @@ Candidate Portal
                         Prodev
                     </li>
                     <ul class="conf-events">
-                        {% for event in confirmed_events.prodev %} 
+                        {% for event in confirmed_events.prodev %}
                             <li>{{ event.name }}<br/></li>
                         {% endfor %}
                     </ul>
                     <ul class="unconf-events">
-                        {% for event in unconfirmed_events.prodev %} 
+                        {% for event in unconfirmed_events.prodev %}
                             <li>{{ event.name }}<br/></li>
                         {% endfor %}
                     </ul>
@@ -209,9 +211,18 @@ Candidate Portal
                 </ul>
 
                 <h4>Bit-Byte</h4>
-                <ul class="events-list">
-                    <li>Adventures</li>
-                    <li>Boba</li>
+                <ul class="checkboxes">
+                    <li>
+                        <!-- do not distinguish between boba and adventures-->
+                        {% if req_statuses.bitbyte %}
+                            <span class="req done"></span>
+                        {% else %}
+                            <span class="req not-done"></span>
+                        {% endif %}
+                        {{ num_bitbytes }} Bit-Byte Activities Completed
+                    </li>
+                    <a href="{% url 'candidate:bitbyte' %}">
+                        (View/Request Bit-Byte Confirmations)</a>
                 </ul>
             </div>
         </section>
@@ -219,7 +230,7 @@ Candidate Portal
         <section>
             <h2>Upcoming Events</h2>
             {% if upcoming_events %}
-            <table style="width: 100%;">
+            <table class="full-table">
                 <thead>
                     <th align="left">Event</th>
                     <th align="left">Time</th>

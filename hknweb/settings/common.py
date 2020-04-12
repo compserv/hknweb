@@ -32,6 +32,8 @@ INSTALLED_APPS = [
     'hknweb.courses',
     'hknweb.exams',
     'hknweb.indrel',
+    'dal', # must be before django.contrib.admin
+    'dal_select2', # must be before django.contrib.admin
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -165,8 +167,12 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'indrelmailer@gmail.com'
 EMAIL_HOST_PASS='eyskeuoggxxgkmlj'
 
+
 # DEFAULT_FROM_EMAIL = 'indrelmailer@gmail.com'
 # SERVER_EMAIL = 'indrelmailer@gmail.com'
+
+NO_REPLY_EMAIL = 'no-reply@hkn.eecs.berkeley.edu'
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
@@ -210,5 +216,6 @@ BIG_FUN_EVENT = 'big_fun'
 SERV_EVENT = 'serv'
 PRODEV_EVENT = 'prodev'
 HANGOUT_EVENT = 'hangout'
+BITBYTE_ACTIVITY = 'bitbyte'
 
 # Note: both candidate and officer group should have permission to add officer challenges
