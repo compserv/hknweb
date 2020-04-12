@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Get in Touch{% endblock %}
+
+{% block heading %}
+Send Company Email
+{% endblock %}
+
+{% block content %}
+<style>
+    .content {
+        padding-top: 25px;
+        padding-bottom: 25px;
+    }
+
+    #inner {
+        max-width: 700px;
+        margin: auto;
+    }
+</style>
+
+<form method="post">{% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Send message">
+</form>
+{% endblock %}
