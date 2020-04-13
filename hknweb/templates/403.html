@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static 'css/errors.css' %}">
+{% endblock %}
+
+{% block title %} 403 Forbidden {% endblock %}
+
+{% block heading %}
+Oops!
+{% endblock %}
+
+{% block content %}
+
+<div class="parent">
+    <div class="confirm-text">
+        You do not have access to this page. If this issue persists, contact Compserv or VP.
+    </div>
+    <br>
+
+    <img id="hiding-cat" src="{% static 'img/hiding_cat.jpg' %}" alt="hiding cat">
+
+    <br>
+
+    <div class="links-div link">
+        <a href="{% url 'home' %}">Go to home</a>
+        <a href="{% url 'login' %}?next={{ request.path|urlencode }}" class="right">Switch account</a>
+    </div>
+
+    <br>
+
+</div>
+
+
+
+{% endblock %}

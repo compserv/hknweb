@@ -166,6 +166,7 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'hknwebsite@hkn.eecs.berkeley.edu'
 EMAIL_USE_TLS = True
 
+NO_REPLY_EMAIL = 'no-reply@hkn.eecs.berkeley.edu'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/

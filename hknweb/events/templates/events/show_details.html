@@ -84,13 +84,14 @@
     {% for rsvp in rsvps %}
       <p class="rsvp-list">{{ rsvp.user.first_name }} {{ rsvp.user.last_name }} ({{ rsvp.user.username }})</p>
     {% endfor %}
-
+    {% if limit %}
     <h3 class="rsvp-list-title">Waitlist</h3>
 
       <p class="rsvp-list"> Count: {{waitlists.count}}</p>
       {% for waitlist in waitlists %}
         <p class="rsvp-list">{{ waitlist.user.first_name }} {{ waitlist.user.last_name }} ({{ waitlist.user.username }})</p>
       {% endfor %}
+    {% endif %}
   </div>
 </div>
 

@@ -48,10 +48,6 @@ class OffChallenge(models.Model):
     def rejected(self):
         return self.officer_confirmed is False or self.csec_confirmed is False
 
-    @property
-    def rejected(self):
-        return self.officer_confirmed is False or self.csec_confirmed is False
-
     def __str__(self):
         return self.name
 
@@ -68,7 +64,7 @@ class BitByteActivity(models.Model):
     participants = models.ManyToManyField('auth.User')
     # whether VP/Csec confirmed this request, null when unreviewed
     confirmed = models.BooleanField(null=True)
-    proof = models.TextField(max_length=MAX_TXTLEN, blank=True, default='') # notes and link by candidate
+    proof = models.TextField(max_length=MAX_TXTLEN, blank=False, default='') # notes and link by candidate
     notes = models.TextField(max_length=MAX_TXTLEN, blank=True, default='') # notes by VP
     request_date = models.DateTimeField(auto_now_add=True)
 
