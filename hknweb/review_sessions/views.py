@@ -12,9 +12,25 @@ from .models import ReviewSession
 # views
 
 def index(request):
-    review_sessions = ReviewSession.objects.order_by('-start_time')
+    reviewsessions = ReviewSession.objects.order_by('-start_time')
 
     context = {
-        'review_sessions': review_sessions,
+        'reviewsessions': reviewsessions,
     }
     return render(request, 'reviewsessions/index.html', context)
+
+@permission_required('reviewsessions.add_reviewsession', login_url='/accounts/login/')
+def add_reviewsession(request):
+    form = ReviewSessionForm(request.POST or None)
+    if request.method == 'POST':
+        if form.is_valid():
+            reviewsession = form.save(commit=False)
+            reviewsession.created_by = request.user
+            reviewsession.save()
+            messages.success(request, 'Review session has been added!')
+            return redirect('/reviewsessions')
+        else:
+            print(form.errors)
+            messages.success(request, 'Something went wrong oops')
+            return render(request, 'reviewsessions/reviewsession_add.html', {'form': ReviewSessionForm(None)})
+    return render(request, 'reviewsessions/reviewsession_add.html', {'form': ReviewSessionForm(None)})

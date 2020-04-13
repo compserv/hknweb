@@ -28,6 +28,7 @@ urlpatterns = [
     path('accounts/settings/', users.account_settings, name='account-settings'),
     path('accounts/activate/', users.activate),
     path('events/', include('hknweb.events.urls')),
+    path('reviewsessions/', include('hknweb.reviewsessions.urls')),
     path('exams/', include('hknweb.exams.urls')),
     path('alumni/', include('hknweb.alumni.urls')),
     path('tutoring/', include('hknweb.tutoring.urls')),
