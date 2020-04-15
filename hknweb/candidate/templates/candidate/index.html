@@ -81,7 +81,7 @@ Candidate Portal
                         {% else %}
                             <span class="req not-done"></span>
                         {% endif %}
-                        Mandatory Meetings
+                        Mandatory Meetings {{confirmed_counts.mandatory}} / {{req_list.mandatory}}
                     </li>
                     <ul class="conf-events">
                         {% for event in confirmed_events.mandatory_meetings %}
@@ -100,16 +100,22 @@ Candidate Portal
                         {% else %}
                             <span class="req not-done"></span>
                         {% endif %}
-                        Fun
+                        Fun {{confirmed_counts.fun}} / {{req_list.fun}}
                     </li>
                     <ul class="conf-events">
                         {% for event in confirmed_events.fun %}
                             <li>{{ event.name }}<br/></li>
                         {% endfor %}
+                        {% for event in confirmed_events.mini_fun %}
+                            <li>[Mini Fun] {{ event.name }} <br/> </li>
+                        {% endfor %}
                     </ul>
                     <ul class="unconf-events">
                         {% for event in unconfirmed_events.fun %}
                             <li>{{ event.name }}<br/></li>
+                        {% endfor %}
+                        {% for event in unconfirmed_events.mini_fun %}
+                            <li>[Mini Fun] {{ event.name }} <br/> </li>
                         {% endfor %}
                     </ul>
                     <br/>
@@ -119,7 +125,7 @@ Candidate Portal
                         {% else %}
                             <span class="req not-done"></span>
                         {% endif %}
-                        Big Fun
+                        Big Fun {{ confirmed_counts.big_fun}} / {{ req_list.big_fun}}
                     </li>
                     <ul class="conf-events">
                         {% for event in confirmed_events.big_fun %}
@@ -138,7 +144,7 @@ Candidate Portal
                         {% else %}
                             <span class="req not-done"></span>
                         {% endif %}
-                        Service
+                        Service {{ confirmed_counts.serv}} / {{ req_list.serv}}
                     </li>
                     <ul class="conf-events">
                         {% for event in confirmed_events.serv %}
@@ -157,7 +163,7 @@ Candidate Portal
                         {% else %}
                             <span class="req not-done"></span>
                         {% endif %}
-                        Prodev
+                        Prodev {{ confirmed_counts.prodev}} / {{ req_list.prodev}}
                     </li>
                     <ul class="conf-events">
                         {% for event in confirmed_events.prodev %}

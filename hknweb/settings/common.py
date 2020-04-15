@@ -205,6 +205,7 @@ OFFICER_GROUP = 'officer'
 # NOTE: these strings are also hard-coded in candidate/index.html
 MANDATORY_EVENT = 'mandatory'
 FUN_EVENT = 'fun'
+MINI_FUN_EVENT = 'mini_fun'
 BIG_FUN_EVENT = 'big_fun'
 SERV_EVENT = 'serv'
 PRODEV_EVENT = 'prodev'
