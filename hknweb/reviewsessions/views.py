@@ -7,19 +7,21 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.utils.decorators import method_decorator
 from django.views import generic
 
+from hknweb.utils import login_and_permission, method_login_and_permission
 from .models import ReviewSession
+from .forms import ReviewSessionForm
 
 # views
 
 def index(request):
-    reviewsessions = ReviewSession.objects.order_by('-start_time')
+    review_sessions = ReviewSession.objects.order_by('-start_time')
 
     context = {
-        'reviewsessions': reviewsessions,
+        'reviewsessions': review_sessions,
     }
     return render(request, 'reviewsessions/index.html', context)
 
-@permission_required('reviewsessions.add_reviewsession', login_url='/accounts/login/')
+@login_and_permission('reviewsessions.add_reviewsession')
 def add_reviewsession(request):
     form = ReviewSessionForm(request.POST or None)
     if request.method == 'POST':
