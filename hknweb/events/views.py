@@ -69,7 +69,7 @@ def rsvp(request, id):
         messages.error(request, 'You have already RSVP\'d.')
     return redirect('/events/' + str(id))
 
-@login_and_permission('events.remove_rsvp')
+@login_and_permission('events.delete_rsvp')
 def unrsvp(request, id):
     if request.method != 'POST':
         raise Http404()
