@@ -8,11 +8,8 @@ class ExamUploadForm(forms.ModelForm):
 
     class Meta:
         model = Exam
-
-
-
         exclude = ()
-        # fields = ('department', 'course')
+        fields = ('department', 'course', 'semester', 'instructor', 'exam_type', 'solution')
                   #'markdown', 'event_type', 'view_permission', 'rsvp_type', 'transportation')
 
         # help_texts = {
@@ -25,3 +22,6 @@ class ExamUploadForm(forms.ModelForm):
         #     'slug': 'URL-friendly name',
         #     'rsvp_limit': 'RSVP limit',
         # }
+        labels = {
+            'solution': 'Exam or Solution?'
+        }

@@ -45,5 +45,25 @@
             {% endif %}
         {% endfor %}
     </ul>
+
+    <h1>Electrical Engineering and Computer Science (EECS)</h1>
+
+    <ul>
+        {% for course in courses %}
+            {% if course.department.name == 'EECS' %}
+                <li>
+                    <a href="/exams/course/EECS/{{ course.number }}/">EECS {{ course.number }}</a>
+                </li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+
+    <!-- Add an Exam (Admin Access Only for later) -->
+    {% if True %}
+    <form action="new" method="GET" id="button">
+        <button type='submit'>Add an Exam</button>
+    </form>
+    {% endif %}
+
 </div>
 {% endblock %}

@@ -23,6 +23,26 @@
         <!--margin: 0 auto;-->
     <!--}-->
 <!--</style>-->
+<link rel="stylesheet" href="{% static "events/style.css" %}">
+<style>
+    .heading {
+        display: none;
+    }
+    .content {
+        padding-top: 1em;
+        padding-bottom: 1em;
+    }
+    @media screen and (min-width: 1000px) {
+        .content {
+            padding-top: 1.5em;
+            padding-bottom: 1.5em;
+        }
+    }
+    .centered {
+        max-width: 700px;
+        margin: 0 auto;
+    }
+</style>
 {% endblock %}
 
 {% block heading %}Upload an exam{% endblock %}
