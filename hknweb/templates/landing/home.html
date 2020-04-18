@@ -152,7 +152,7 @@
             <ul>
                 {% for reviewsession in reviewsessions %}
                     <li>
-                        {{ reviewsession.name }}
+                        <a href="{% url 'reviewsessions:index' %}{{ reviewsession.id }}">{{ reviewsession.name }}</a>
                         <span class="events-card-time">{{reviewsession.start_time|date:"D m/d h:i A"}} - {{ reviewsession.end_time|date:"h:i A"}}</span>
                     </li>
                 {% endfor %}
