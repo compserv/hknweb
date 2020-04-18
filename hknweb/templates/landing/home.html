@@ -136,7 +136,7 @@
             <ul>
                 {% for event in events %}
                     <li>
-                        {{ event.name }}
+                        <a href="{% url 'events:index' %}{{ event.id }}">{{ event.name }}</a>
                         <span class="events-card-time">{{event.start_time|date:"D m/d h:i A"}} - {{ event.end_time|date:"h:i A"}}</span>
                     </li>
                 {% endfor %}
