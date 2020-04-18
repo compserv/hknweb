@@ -62,12 +62,12 @@
     <div class="tutoring-column">
         <div class="tutoring-panel">
             <div class="tutoring-title">
-                Announcements 
+                Announcements
             </div>
                 {% if not announcements %}
                     No announcements at this time.
                 {% endif %}
-                
+
                 {% for announcement in announcements %}
                     <p>
                     <strong>{{ announcement.title }}</strong> [{{ announcement.release_date|date:"m/d/Y" }}]<br>
@@ -138,6 +138,22 @@
                     <li>
                         {{ event.name }}
                         <span class="events-card-time">{{event.start_time|date:"D m/d h:i A"}} - {{ event.end_time|date:"h:i A"}}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <br>
+
+        <div class="tutoring-panel">
+            <div class="tutoring-title">
+                Upcoming Review Sessions
+            </div>
+            <ul>
+                {% for reviewsession in reviewsessions %}
+                    <li>
+                        {{ reviewsession.name }}
+                        <span class="events-card-time">{{reviewsession.start_time|date:"D m/d h:i A"}} - {{ reviewsession.end_time|date:"h:i A"}}</span>
                     </li>
                 {% endfor %}
             </ul>

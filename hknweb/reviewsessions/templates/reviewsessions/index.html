@@ -41,14 +41,13 @@
                     nowIndicator: true,
                 }
             },
-            // Events
-            events: [{% for event in events %}
+            // Review sessions
+            events: [{% for reviewsession in reviewsessions %}
                 {
-                    title: "{{ event.name|safe }}",
-                    start: '{{ event.start_time|date:"c" }}',
-                    end: '{{ event.end_time|date:"c" }}',
-                    url: '{{ event.id }}',
-                    // color: '{{ event.event_type.color }}'
+                    title: "{{ reviewsession.name|safe }}",
+                    start: '{{ reviewsession.start_time|date:"c" }}',
+                    end: '{{ reviewsession.end_time|date:"c" }}',
+                    url: '{{ reviewsession.id }}',
                 },
             {% endfor %}]
         });
@@ -88,7 +87,7 @@ Upcoming Review Sessions
     <!-- FullCalendar -->
     <section class="pb3" id='calendar'></section>
 
-    {% if perms.events.add_event %}
+    {% if perms.reviewsessions.add_reviewsession %}
     <form action="new" method="GET" id="button">
         <button type='submit'>Add a review session</button>
     </form>

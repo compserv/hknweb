@@ -14,12 +14,22 @@ from .forms import ReviewSessionForm
 # views
 
 def index(request):
-    review_sessions = ReviewSession.objects.order_by('-start_time')
+    reviewsessions = ReviewSession.objects.order_by('-start_time')
 
     context = {
-        'reviewsessions': review_sessions,
+        'reviewsessions': reviewsessions,
     }
     return render(request, 'reviewsessions/index.html', context)
+
+@login_and_permission('reviewsessions.view_reviewsession')
+def show_details(request, id):
+    reviewsession = get_object_or_404(ReviewSession, pk=id)
+
+    context = {
+        'reviewsession': reviewsession,
+        'can_edit': request.user.has_perm('reviewsessions.change_review_session')
+    }
+    return render(request, 'reviewsessions/show_details.html', context)
 
 @login_and_permission('reviewsessions.add_reviewsession')
 def add_reviewsession(request):
@@ -36,3 +46,9 @@ def add_reviewsession(request):
             messages.success(request, 'Something went wrong oops')
             return render(request, 'reviewsessions/reviewsession_add.html', {'form': ReviewSessionForm(None)})
     return render(request, 'reviewsessions/reviewsession_add.html', {'form': ReviewSessionForm(None)})
+
+@method_login_and_permission('reviewsessions.change_review_session')
+class ReviewSessionUpdateView(generic.edit.UpdateView):
+    model = ReviewSession
+    fields = ['name', 'slug', 'start_time', 'end_time', 'location', 'description']
+    template_name_suffix = '_edit'
