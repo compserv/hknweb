@@ -1,27 +1,19 @@
 from django import forms
 
-from hknweb.exams.models import Exam
+from hknweb.exams.models import *
 
+EXAMS = [('midterm1', 'Midterm 1'), ('midterm2', 'Midterm 2'), ('final', 'Final')]
+TYPES = [('sol', 'Solution'), ('exam', 'Exam')]
 
-class ExamUploadForm(forms.ModelForm):
+class ExamUploadForm(forms.Form):
+
+    course = forms.ModelChoiceField(queryset=Course.objects.all())
+    semester = forms.ModelChoiceField(queryset=Semester.objects.all())
+    exam = forms.CharField(label='Exam', widget=forms.Select(choices=EXAMS))
+    type = forms.CharField(label='Type', widget=forms.Select(choices=TYPES))
+
     file = forms.FileField(label="Exam")
 
-    class Meta:
-        model = Exam
-        exclude = ()
-        fields = ('department', 'course', 'semester', 'instructor', 'exam_type', 'solution')
-                  #'markdown', 'event_type', 'view_permission', 'rsvp_type', 'transportation')
 
-        # help_texts = {
-        #     'start_time': 'mm/dd/yyyy hh:mm, 24-hour time',
-        #     'end_time': 'mm/dd/yyyy hh:mm, 24-hour time',
-        #     'slug': 'e.g. <semester>-<name>',
-        # }
-        #
-        # labels = {
-        #     'slug': 'URL-friendly name',
-        #     'rsvp_limit': 'RSVP limit',
-        # }
-        labels = {
-            'solution': 'Exam or Solution?'
-        }
+
+
