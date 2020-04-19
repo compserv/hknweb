@@ -51,7 +51,7 @@
 <h1 id="add-event-title"> Upload an exam </h1>
 
 <div class="centered">
-    <form method="POST" id="form">
+    <form method="POST" id="form"  enctype="multipart/form-data">
         {% csrf_token %}
         {% for field in form %}
             <div class="row">
