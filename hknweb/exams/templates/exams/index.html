@@ -26,7 +26,7 @@
     <h1>Computer Science</h1>
     <ul>
         {% for course in courses %}
-            {% if course.department.name == 'CS' %}
+            {% if course.department.abbreviated_name == 'CS' %}
                 <li>
                     <a href="/exams/course/CS/{{ course.number }}/">CS {{ course.number }}</a>
                 </li>
@@ -38,12 +38,32 @@
 
     <ul>
         {% for course in courses %}
-            {% if course.department.name == 'EE' %}
+            {% if course.department.abbreviated_name == 'EE' %}
                 <li>
                     <a href="/exams/course/EE/{{ course.number }}/">EE {{ course.number }}</a>
                 </li>
             {% endif %}
         {% endfor %}
     </ul>
+
+    <h1>Electrical Engineering and Computer Science (EECS)</h1>
+
+    <ul>
+        {% for course in courses %}
+            {% if course.department.abbreviated_name == 'EECS' %}
+                <li>
+                    <a href="/exams/course/EECS/{{ course.number }}/">EECS {{ course.number }}</a>
+                </li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+
+    <!-- Add an Exam (Admin Access Only for later) -->
+    {% if True %}
+    <form action="new" method="GET" id="button">
+        <button type='submit'>Add an Exam</button>
+    </form>
+    {% endif %}
+
 </div>
 {% endblock %}
