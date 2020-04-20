@@ -4,7 +4,6 @@ from django.shortcuts import render
 from hknweb.exams.forms import ExamUploadForm
 from .models import Course, Department, Instructor, Semester, CourseSemester
 
-
 def index(request):
 	courses = Course.objects.order_by('name')
 
