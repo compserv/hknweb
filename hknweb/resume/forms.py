@@ -4,4 +4,4 @@ from .models import Resume
 class DocumentForm(forms.ModelForm):
     class Meta:
         model = Resume
-        fields = ('name', 'document', )
+        fields = ('name', 'document', 'notes', 'email')
