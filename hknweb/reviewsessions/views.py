@@ -1,10 +1,6 @@
 from django.shortcuts import render, redirect
-from django.http import Http404
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
-from django.conf import settings
-from django.contrib.auth.decorators import login_required, permission_required
-from django.utils.decorators import method_decorator
 from django.views import generic
 
 from hknweb.utils import login_and_permission, method_login_and_permission
