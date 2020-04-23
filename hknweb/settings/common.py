@@ -165,7 +165,7 @@ EMAIL_PORT = 587
 # Optional SMTP authentication information for EMAIL_HOST.
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'indrelmailer@gmail.com'
-EMAIL_HOST_PASS='eyskeuoggxxgkmlj'
+EMAIL_HOST_PASSWORD='eyskeuoggxxgkmlj'
 
 
 # DEFAULT_FROM_EMAIL = 'indrelmailer@gmail.com'

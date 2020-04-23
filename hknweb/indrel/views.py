@@ -42,6 +42,5 @@ class MailerView(generic.FormView):
     template_name = 'indrel/mailer.html'
     success_url="thanks"
     def form_valid(self,form):
-        print(form.cleaned_data)
-        form.send_email()
+        form.send_email(self.request.FILES['template'],self.request.FILES['fill_ins'])
         return super().form_valid(form)

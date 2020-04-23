@@ -1,17 +1,35 @@
 from django.db import models
 from django import forms
 from django.core.mail import send_mail,EmailMessage
+import json
 class IndrelMailer(forms.Form):
     sender=forms.CharField(initial='indrel@hkn.eecs.berkeley.edu ')
     receiver=forms.CharField()
     conf_receiver=forms.CharField(label='Confirmation Receiver',initial='indrel@hkn.eecs.berkeley.edu ')
     subject=forms.CharField(max_length=200)
-    mail=forms.CharField(label='Email Body')
-    def send_email(self):
-        # msg=EmailMessage(self.cleaned_data['subject'],self.cleaned_data['mail'],self.cleaned_data['sender'],self.cleaned_data['receiver'].split(","))
-        # msg.send()
-        return send_mail(self.cleaned_data['subject'],self.cleaned_data['mail'],self.cleaned_data['sender'],
-                  self.cleaned_data['receiver'].split(","))
+    template=forms.FileField()
+    fill_ins=forms.FileField()
+
+    def send_email(self,template_file,fillins_file):
+        recs=self.cleaned_data['receiver'].split(",")
+        template=template_file.read().decode('utf-8')
+
+        try:
+            fillins=json.loads(fillins_file.read().decode('utf-8'))
+        except json.JSONDecodeError:
+            print("JSON File was not in proper format")
+
+        for rec in recs:
+            rec_temp=template
+            rec_subject=self.cleaned_data['subject']
+            for field in fillins[rec]:
+                rec_temp=rec_temp.replace("{"+str(field)+"}",str(fillins[rec][field]))
+                rec_subject=rec_subject.replace("{"+str(field)+"}",str(fillins[rec][field]))
+            result=send_mail(rec_subject,rec_temp,self.cleaned_data['sender'],[rec])
+            if result==0:
+                print("Email to {} failed to send".format(rec))
+        # return send_mail(self.cleaned_data['subject'],self.cleaned_data['mail'],self.cleaned_data['sender'],
+        #           self.cleaned_data['receiver'].split(","))
 
 
 class Company(models.Model):
