@@ -75,11 +75,13 @@ def unrsvp(request, id):
         raise Http404()
 
     event = get_object_or_404(Event, pk=id)
-    rsvp = get_object_or_404(Rsvp, user=request.user, event = event)
+    rsvp = get_object_or_404(Rsvp, user=request.user, event=event)
     if rsvp.confirmed:
         messages.error(request, 'Cannot un-rsvp from event you have gone to.')
     else:
+        old_admitted = set(event.admitted_set())
         rsvp.delete()
+        event.check_newly_off_waitlist(old_admitted)
     return redirect(event)
 
 @login_and_permission('events.add_event')
@@ -105,3 +107,8 @@ class EventUpdateView(generic.edit.UpdateView):
               'description', 'rsvp_limit']
     template_name_suffix = '_edit'
 
+    def form_valid(self, form):
+        if 'rsvp_limit' in form.changed_data:
+            messages.success(self.request, "People who rsvp'd or are on the waitlist are not notified"
+                        " when you change the rsvp limit. Be sure to make an announcement!")
+        return super().form_valid(form)
