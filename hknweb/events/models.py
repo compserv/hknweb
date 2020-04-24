@@ -50,13 +50,10 @@ class Event(models.Model):
             return self.rsvp_set.none()
         return self.rsvp_set.order_by("created_at")[self.rsvp_limit:]
 
-    def check_newly_off_waitlist(self, old_admitted):
+    def newly_off_waitlist_rsvps(self, old_admitted):
         """ old_admitted must be a set, not a QuerySet. QuerySets are mutable views into the database. """
         new_admitted = set(self.admitted_set())
-        newly_off_waitlist = new_admitted - old_admitted
-        print("CHECKING OFF WAITLIST:", new_admitted, old_admitted, newly_off_waitlist)
-        for rsvp in newly_off_waitlist:
-            print("NEW USER:", rsvp.user.username)
+        return new_admitted - old_admitted
 
 
 class Rsvp(models.Model):
