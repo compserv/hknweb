@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load static %}
+{% block header %}
+<link rel="stylesheet" href="{% static "serv/style.css" %}">
+{% endblock %}
+
+{% block title %}Junior EECS Day{% endblock %}
+
+{% block heading %}Junior EECS Day{% endblock %}
+
+{% block content %}
+<div>
+    <div class="info">
+        <h2>Overview</h2>
+        <p>Much like our <a href="eecsday">EECS Day</a> event, Junior EECS Day provides a taste of EECS at UC Berkeley for all those interested.
+            Specifically catering to students from grade 5-8 as well as their families, our HKN members will lead participants on a
+             fun-filled day featuring introductory hands-on EECS activities and labs, a tour of campus, spectate a robotics competition,
+              and a showcase at the end of the day.</p>
+        <p><i>Annual, Spring Semester</i></p>
+        <h2>Schedule</h2>
+        <ul id="schedule">
+            <li>9:50 - 10:00 am: Check-in @ Wozniak Lounge</li>
+            <li>10:00 - 10:30 am: Introduction and Speaker @ Wozniak Lounge</li>
+            <li>10:30 am - 12:00 pm: CS Lab @ 271, 273 Soda</li>
+            <li>12:00 - 1:00 pm: Lunch @ Wozniak Lounge</li>
+            <li>1:00 - 2:30 pm: EE Lab @ 140 Cory</li>
+            <li>2:30 - 3:00 pm: EECS Campus Tour</li>
+            <li>3:00 - 3:30 pm: Wrap-up and Sign Out @ HP Auditorium</li>
+        </ul>
+    </div> 
+</div>
+{% endblock %}
