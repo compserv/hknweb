@@ -25,6 +25,18 @@ def is_cand_or_officer(user):
     return user.groups.filter(name=settings.CAND_GROUP).exists() or \
            user.groups.filter(name=settings.OFFICER_GROUP).exists()
 
+def get_leaderboard(request):
+	confirmed_rsvps = Rsvp.objects.all()
+	user_to_events = {}
+	for rsvp in confirmed_rsvps:
+		if rsvp.confirmed:
+			if rsvp.user in user_to_events:
+				user_to_events[rsvp.user] += 1
+			else:
+				user_to_events[rsvp.user] = 1
+	sorted_list = [(k, v) for k, v in sorted(user_to_events.items(), key=lambda item: item[1], reverse=True)]
+	context = {"leaders": sorted_list}
+	return render(request, 'events/leaderboard.html', context)
 
 # views
 
@@ -113,4 +125,5 @@ class EventUpdateView(generic.edit.UpdateView):
     fields = ['name', 'slug', 'start_time', 'end_time', 'location', 'event_type',
               'description', 'rsvp_limit']
     template_name_suffix = '_edit'
+
 

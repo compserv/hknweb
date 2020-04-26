@@ -9,4 +9,5 @@ urlpatterns = [
     path('new', views.add_event),
     path(r'<int:pk>/edit', views.EventUpdateView.as_view(), name='edit'),
     path(r'', views.index, name='index'),
+    path('leaderboard', views.get_leaderboard, name='leaderboard'),
 ]
