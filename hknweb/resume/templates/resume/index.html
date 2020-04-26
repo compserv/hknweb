@@ -25,6 +25,9 @@
       resize: none;
       margin-top: 10em;
     }
+    #warning {
+      color: red;
+    }
 </style>
 
 {% endblock %}
@@ -67,6 +70,9 @@
 </br>
     
     <button type="submit">Upload</button>
+    {% if err %}
+    <p id="warning">Something was wrong with your file. Please try again.</p>
+    {% endif %}
 
   </form>
 
