@@ -1,7 +1,9 @@
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views import generic
 from django.core.mail import EmailMessage
 from .models import ResumeBookOrderForm, InfosessionRegistration,IndrelMailer
+from hknweb.utils import login_and_permission, method_login_and_permission, get_rand_photo
 
 def index(request):
     return render(request, 'indrel/index.html')
@@ -31,12 +33,16 @@ def order_resume_book(request):
 
 def register_info_session(request):
     pass
+@login_and_permission("indrel.view_indrelmailerunderlying")
 def mailer(request):
-
-    msg = EmailMessage("indrelmailer@gmail.com", "indrelmailer@gmail.com", "indrelmailer@gmail.com",
-                       ["indrelmailer@gmail.com"])
-    msg.content_subtype="html"
-    msg.send()
+    if request.method == 'POST':
+        form = IndrelMailer(request.POST, request.FILES)
+        if form.is_valid():
+            form.save().send_email()
+            return HttpResponseRedirect("thanks")
+    else:
+        form=IndrelMailer()
+        return render(request,'indrel/mailer.html',{'form':form})
 class MailerView(generic.FormView):
     form_class = IndrelMailer
     template_name = 'indrel/mailer.html'
