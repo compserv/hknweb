@@ -15,4 +15,5 @@ urlpatterns = [
     path('reviewconfirm/<int:pk>/', views.officer_review_confirmation, name='reviewconfirm'),
     path('candreq/autocomplete/', views.OfficerAutocomplete.as_view(), name='candreq/autocomplete'),
     path('bitbyte/autocomplete/', views.UserAutocomplete.as_view(), name='bitbyte/autocomplete'),
+    path('upload-candidate-csv/', views.create_candidates, name='upload-candidate-csv'),
 ]

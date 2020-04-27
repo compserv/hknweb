@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static "candidate/style.css" %}">
+{% endblock %}
+
+{% block title %}Upload the Candidate CSV File{% endblock %}
+
+{% block heading %}
+CSV Upload
+{% endblock %}
+
+{% block content %}
+
+<div class="parent">
+
+    {% for message in messages %}
+        <span {% if messages.tags %} class="{{ message.tags }}" {% endif %}
+            class="blue">{{ message }}</span>
+    {% endfor %}
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label>Upload a file</label>
+        <input type="file" name="candidates_file">
+        <p>Takes in a csv file</p>
+        <button type="submit">Upload</button>
+    </form>
+
+    <br>
+
+    <div class="links-div link">
+        <a href="{% url 'candidate:upload-candidate-csv' %}">Upload Another File</a>
+    </div>
+    <br><br>
+</div>
+
+
+
+{% endblock %}

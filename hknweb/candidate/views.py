@@ -1,3 +1,4 @@
+import csv, io
 from django.views import generic
 from django.views.generic.edit import FormView
 from django.shortcuts import render, redirect, reverse
@@ -5,6 +6,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.utils import timezone
@@ -181,7 +183,7 @@ class BitByteView(FormView, generic.ListView):
         return result
 
 # Officer views and confirms a challenge request after clicking email link
-# Only the officer who game the challenge can review it
+# Only the officer who gave the challenge can review it
 @login_required(login_url='/accounts/login/')
 @check_account_access
 def officer_confirm_view(request, pk):
@@ -252,6 +254,64 @@ def challenge_detail_view(request, pk):
     }
     return render(request, "candidate/challenge_detail.html", context=context)
 
+
+@login_required(login_url='/accounts/login/')
+@check_account_access
+def create_candidates(request):
+    template = "candidate/create_candidates.html"
+
+    prompt = {
+        'order': 'CSV file should contain usernames to be added in title groups'
+    }
+
+    if request.method == "GET":
+        return render(request, template, prompt)
+
+    csv_file = request.FILES['candidates_file']
+
+    if not csv_file.name.endswith('.csv'):
+        messages.error(request, "Please upload a csv file!")
+
+    canditates = csv_file.read().decode('UTF-8')
+    io_string = io.StringIO(canditates)
+    header = next(io_string).split(',')
+
+    error_groups = ""
+    is_groups_error = False
+    groups = []
+
+    for group_name in header:
+        try:
+            groups += [Group.objects.get(name=group_name.strip())] 
+        except:
+            is_groups_error = True
+            error_groups += " " + group_name + ","
+    if (is_groups_error):
+        messages.error(request, "Non-existent group(s) entered: " + error_groups[:-1] + ". No changes were made.")
+        return render(request, template, context={})
+
+    error_usernames = ""
+    is_username_error = False
+    for row in csv.reader(io_string, delimiter=','):
+        for i in range(len(groups)):
+            try:
+                user_name = row[i]
+            except:
+                messages.error(request, "CSV file not correctly formatted! All usernames before " + user_name + " added")
+                return render(request, template, context={})
+                
+            try:
+                if user_name != "":
+                    user = User.objects.get(username = user_name)
+                    groups[i].user_set.add(user)
+            except:
+                is_username_error = True
+                error_usernames += " " + user_name + ","
+    if (is_username_error):
+        messages.error(request, "Non-existent username(s) entered: " + error_usernames[:-1] + ". All existing usernames added.")
+
+    context = {}
+    return render(request, template, context=context)
 
 # HELPERS
 
