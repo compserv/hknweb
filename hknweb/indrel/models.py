@@ -1,4 +1,46 @@
 from django.db import models
+from django import forms
+from django.core.mail import send_mail,EmailMessage
+import json
+class IndrelMailerUnderlying(models.Model):
+    sender=models.CharField(default='indrel@hkn.eecs.berkeley.edu',max_length=200)
+    receiver=models.CharField(max_length=200)
+    conf_receiver=models.CharField(default='indrel@hkn.eecs.berkeley.edu',max_length=200)
+    subject=models.CharField(max_length=200)
+    template=models.FileField()
+    fillins=models.FileField()
+
+    class Meta:
+        verbose_name = "Indrel Mailer Instance"
+
+    def send_email(self):
+        recs = self.receiver.split(",")
+        template = self.template.read().decode('utf-8')
+
+        try:
+            fillins = json.loads(self.fillins.read().decode('utf-8'))
+        except json.JSONDecodeError:
+            print("JSON File was not in proper format")
+
+        for rec in recs:
+            rec_temp = template
+            rec_subject = self.subject
+            for field in fillins[rec]:
+                rec_temp = rec_temp.replace("{" + str(field) + "}", str(fillins[rec][field]))
+                rec_subject = rec_subject.replace("{" + str(field) + "}", str(fillins[rec][field]))
+            result = send_mail(rec_subject, rec_temp, self.sender, [rec])
+            if result == 0:
+                print("Email to {} failed to send".format(rec))
+        # return send_mail(self.cleaned_data['subject'],self.cleaned_data['mail'],self.cleaned_data['sender'],
+        #           self.cleaned_data['receiver'].split(","))
+class IndrelMailer(forms.ModelForm):
+    class Meta:
+        model=IndrelMailerUnderlying
+        fields=['sender','receiver','conf_receiver','subject','template','fillins']
+        labels={'conf_receiver':"Confirmation Receiver"}
+
+
+
 
 class Company(models.Model):
     company_name = models.CharField(max_length = 200)

@@ -14,8 +14,8 @@ View Officer Challenge
 {% block content %}
 <div class="detail">
     <b>Title:</b> {{ challenge.name }}<br/>
-    <b>Officer:</b> {{ challenge.officer }} &nbsp;&nbsp; ({{ officer_name }})<br/>
-    <b>Requested by:</b> {{ challenge.requester }} &nbsp;&nbsp; ({{ requester_name }})<br/>
+    <b>Officer:</b> {{ challenge.officer.username }} ({{ officer_name }})<br/>
+    <b>Requested by:</b> {{ challenge.requester.username }} ({{ requester_name }})<br/>
     <b>Detailed Description:</b> {{ challenge.description }}<br/>
     <b>Proof:</b> {{ challenge.proof }}<br/>
     <b>Status:</b>

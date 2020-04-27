@@ -23,7 +23,8 @@ pipenv:
 venv: Pipfile Pipfile.lock
 	pipenv install --dev
 
-.PHONY: createsuperuser
+.PHONY: createsuperuser superuser
+superuser: createsuperuser
 createsuperuser:
 	HKNWEB_MODE='dev' pipenv run python ./manage.py createsuperuser
 
@@ -31,9 +32,14 @@ createsuperuser:
 migrate:
 	HKNWEB_MODE='dev' pipenv run python ./manage.py migrate
 
-.PHONY: makemigrations
+.PHONY: makemigrations migrations
+migrations: makemigrations
 makemigrations:
 	HKNWEB_MODE='dev' pipenv run python ./manage.py makemigrations
+
+.PHONY: shell
+shell:
+	HKNWEB_MODE='dev' pipenv run python ./manage.py shell
 
 .PHONY: test
 test: venv

@@ -1,6 +1,6 @@
 from .common import *
 
-#In dev mode, attempt to use real secrets, but if unavailiable, fall back to dummy secrets
+# In dev mode, attempt to use real secrets, but if unavailiable, fall back to dummy secrets
 try:
     from .secrets import *
 except ImportError:
