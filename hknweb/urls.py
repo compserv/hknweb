@@ -39,6 +39,7 @@ urlpatterns = [
     path('s/', include('hknweb.shortlinks.urls')),
     path('elections/', include('hknweb.elections.urls')),
     path('auth/', include('social_django.urls', namespace='social')),
+    path('resume/', include('hknweb.resume.urls')),
     path('', landing.home, name='home'),
 ]
 
