@@ -33,6 +33,10 @@
     color: rgba(166, 60, 68, 1);
 }
 
+.orange-messages {
+    color: #B78727;
+}
+
 #add-event-title {
     margin: 0;
     margin-bottom: 1em;

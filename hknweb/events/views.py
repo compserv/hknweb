@@ -70,7 +70,8 @@ def rsvp(request, id):
         Rsvp.objects.create(user=request.user, event=event, confirmed=False)
     else:
         messages.error(request, 'You have already RSVP\'d.')
-    return redirect('/events/' + str(id))
+    next_page = request.POST.get('next', '/')
+    return redirect(next_page)
 
 @login_and_permission('events.delete_rsvp')
 def unrsvp(request, id):
@@ -86,7 +87,8 @@ def unrsvp(request, id):
         rsvp.delete()
         for off_waitlist_rsvp in event.newly_off_waitlist_rsvps(old_admitted):
             send_off_waitlist_email(request, off_waitlist_rsvp.user, event)
-    return redirect(event)
+    next_page = request.POST.get('next', '/')
+    return redirect(next_page)
 
 @login_and_permission('events.add_event')
 def add_event(request):
