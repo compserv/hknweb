@@ -8,5 +8,6 @@ urlpatterns = [
     path('<int:id>/unrsvp', views.unrsvp, name='unrsvp'),
     path('new', views.add_event, name='new'),
     path('<int:pk>/edit', views.EventUpdateView.as_view(), name='edit'),
+    path('rsvps', views.AllRsvpsView.as_view(), name='rsvps'),
     path('', views.index, name='index'),
 ]

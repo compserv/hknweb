@@ -1,8 +1,5 @@
 from django import forms
-from hknweb.models import User
-from hknweb.models import Profile
-from .models import Event
-from .models import EventType
+from .models import Event, Rsvp
 
 
 class EventForm(forms.ModelForm):

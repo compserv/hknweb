@@ -16,6 +16,25 @@
     float: right;
 }
 
+.left-half {
+    width: 49%;
+    float: left;
+}
+
+.right-half {
+    width: 49%;
+    float: right;
+}
+
+.full-table {
+    width: 100%;
+}
+
+.no-vertical-margin {
+    margin-top: 0em;
+    margin-bottom: 0em;
+}
+
 .rsvp-list-title {
     margin-bottom: 0.3em;
 }
