@@ -26,6 +26,12 @@
     float: right;
 }
 
+.aligned {
+    float: left;
+    clear: none;
+    width: 100%;
+}
+
 .full-table {
     width: 100%;
 }
@@ -33,6 +39,17 @@
 .no-vertical-margin {
     margin-top: 0em;
     margin-bottom: 0em;
+}
+
+.rounded-text-box {
+    font-size: 0.95em;
+    color: white;
+    display: inline-block;
+    border-radius: 0.23em;
+    padding-top: 0.1em;
+    padding-bottom: 0.2em;
+    padding-left: 0.3em;
+    padding-right: 0.3em;
 }
 
 .rsvp-list-title {

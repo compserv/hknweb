@@ -43,9 +43,12 @@ class AllRsvpsView(TemplateView):
                 .filter(pk__in=rsvpd_event_ids)
         not_rsvpd_events = all_events \
                 .exclude(pk__in=rsvpd_event_ids)
+        event_types = EventType.objects.order_by('type')
+
         context = {
             'rsvpd_events': rsvpd_events,
             'not_rsvpd_events': not_rsvpd_events,
+            'event_types': event_types,
         }
         return context
 
