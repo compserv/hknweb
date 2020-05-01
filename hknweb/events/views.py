@@ -9,7 +9,7 @@ from django.views.generic import TemplateView
 from django.views.generic.edit import UpdateView
 from django.utils import timezone
 
-from hknweb.utils import login_and_permission, method_login_and_permission, get_rand_photo
+from hknweb.utils import login_and_permission, method_login_and_permission, get_rand_photo, get_semester_bounds
 from .models import Event, EventType, Rsvp
 from .forms import EventForm, EventUpdateForm
 
@@ -32,7 +32,10 @@ class AllRsvpsView(TemplateView):
 
     def get_context_data(self):
         view_option = self.request.GET.get('option')
+        semester_start, semester_end = get_semester_bounds(timezone.now())
         all_events = Event.objects \
+                .filter(start_time__gte=semester_start) \
+                .filter(start_time__lte=semester_end) \
                 .order_by('start_time')
         if view_option == "upcoming":
             all_events = all_events.filter(start_time__gte=timezone.now())
