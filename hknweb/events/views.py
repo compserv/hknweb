@@ -38,13 +38,16 @@ class AllRsvpsView(TemplateView):
             all_events = all_events.filter(start_time__gte=timezone.now())
         rsvpd_event_ids = Rsvp.objects \
                 .filter(user__exact=self.request.user) \
-                .values_list('event')
+                .values_list('event', flat=True)
         rsvpd_events = all_events \
                 .filter(pk__in=rsvpd_event_ids)
         not_rsvpd_events = all_events \
                 .exclude(pk__in=rsvpd_event_ids)
-        event_types = EventType.objects.order_by('type')
 
+        for event in rsvpd_events:
+            event.waitlisted = event.on_waitlist(self.request.user) # Is this bad practice? idk
+
+        event_types = EventType.objects.order_by('type')
         context = {
             'rsvpd_events': rsvpd_events,
             'not_rsvpd_events': not_rsvpd_events,

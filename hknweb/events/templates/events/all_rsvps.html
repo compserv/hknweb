@@ -29,6 +29,8 @@
             <li class="rounded-text-box" style="background-color: {{ event_type.color }};">
                 {{ event_type.type }}</li>
         {% endfor %}
+        <img class="table-icon" src="{% static 'candidate/maybe.png'%}">
+        waitlist
     </div>
 
     <div class="aligned">
@@ -96,6 +98,9 @@
                                    style="background-color: {{ event.event_type.color }};">
                                     {{ event.name }}
                                 </a>
+                                {% if event.waitlisted %}
+                                    <img src="{% static 'candidate/maybe.png' %}" alt="waitlisted" class="table-icon">
+                                {% endif %}
                             </td>
                             <td align="center">{{ event.start_time }}</td>
                             <td align="center">{{ event.location }}</td>

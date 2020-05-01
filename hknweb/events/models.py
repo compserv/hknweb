@@ -50,6 +50,14 @@ class Event(models.Model):
             return self.rsvp_set.none()
         return self.rsvp_set.order_by("created_at")[self.rsvp_limit:]
 
+    def on_waitlist(self, user):
+        if not self.rsvp_limit:
+            return False
+        return list(self.rsvp_set
+                        .order_by("created_at")
+                        .values_list('user', flat=True)) \
+                    .index(user.id) >= self.rsvp_limit
+
     def newly_off_waitlist_rsvps(self, old_admitted):
         """ old_admitted must be a set, not a QuerySet. QuerySets are mutable views into the database. """
         new_admitted = set(self.admitted_set())
