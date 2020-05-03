@@ -29,11 +29,6 @@
     vertical-align: middle;
 }
 
-.inline-icon {
-    width: 1.2em;
-    vertical-align: middle;
-}
-
 .message {
     color: rgba(166, 60, 68, 1);
 }
@@ -51,43 +46,6 @@
 
 .row {
     margin-bottom: 1em;
-}
-
-/* mouseover info for forms */
-.tooltip {
-    position: relative;
-    display: inline-block;
-}
-
-.tooltip .tooltiptext {
-    visibility: hidden;
-    width: 750%;
-    background-color: #f2f2f2;
-    color: black;
-    font-size: 0.8em;
-    padding: 0.4em;
-    border-style: groove;
-    border-radius: 8px;
-    position: absolute;
-    top: 0%;
-    left: 130%;
-}
-
-/* This is the small triangle on the text box. Some of these values are quite arbitrary
-   and unfortunately do not work for all browser zoom levels, but it's the best I can do. */
-.tooltip .tooltiptext::after {
-    content: "";
-    position: absolute;
-    top: 10px;
-    right: 101.6%;
-    margin-top: -5px;
-    border-width: 5px;
-    border-style: solid;
-    border-color: transparent #9a9a9a transparent transparent;
-}
-
-.tooltip:hover .tooltiptext {
-    visibility: visible;
 }
 
 @media screen and (min-width: 700px) {
