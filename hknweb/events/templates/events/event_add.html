@@ -41,7 +41,12 @@
                         <span class="message">*</span>
                     {% endif %}
                     {% if field.help_text %}
-                        <i>({{ field.help_text }})</i>
+                    <span class="tooltip">
+                        <img src="{% static 'candidate/more_info.png' %}" alt="more info" class="inline-icon">
+                        <span class="tooltiptext">
+                            {{ field.help_text }}
+                        </span>
+                    </span>
                     {% endif %}
                 </span>
                 {{ field }}
