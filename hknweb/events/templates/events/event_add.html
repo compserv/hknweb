@@ -10,7 +10,6 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" integrity="sha256-DOS9W6NR+NFe1fUhEE0PGKY/fubbUCnOfTje2JMDw3Y=" crossorigin="anonymous" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js" integrity="sha256-FEqEelWI3WouFOo2VWP/uJfs1y8KJ++FLh2Lbqc8SJk=" crossorigin="anonymous"></script>
 
-
 <link rel="stylesheet" href="{% static 'events/style.css' %}">
 <style>
     .heading {
@@ -68,12 +67,16 @@
     <script>
         $(function () {
             $("#id_start_time").datetimepicker({
-                format: 'd/m/Y H:i',
+                format: 'm/d/Y g:i A',
+                formatTime: 'g:i A',
+                validateOnBlur: false,
             });
         });
         $(function () {
             $("#id_end_time").datetimepicker({
-                format: 'd/m/Y H:i',
+                format: 'm/d/Y g:i A',
+                formatTime: 'g:i A',
+                validateOnBlur: false,
             });
         });
     </script>

@@ -9,7 +9,7 @@ from django.views import generic
 
 from hknweb.utils import login_and_permission, method_login_and_permission, get_rand_photo
 from .models import Event, EventType, Rsvp
-from .forms import EventForm
+from .forms import EventForm, EventUpdateForm
 
 # views
 
@@ -107,8 +107,7 @@ def add_event(request):
 @method_login_and_permission('events.change_event')
 class EventUpdateView(generic.edit.UpdateView):
     model = Event
-    fields = ['name', 'slug', 'start_time', 'end_time', 'location', 'event_type',
-              'description', 'rsvp_limit']
+    form_class = EventUpdateForm
     template_name_suffix = '_edit'
 
     def form_valid(self, form):
