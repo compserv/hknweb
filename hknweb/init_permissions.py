@@ -18,21 +18,18 @@ add_rsvp = ('add_rsvp',Rsvp)
 remove_rsvp = ('remove_rsvp',Rsvp)
 view_user = ('view_user', User)
 
-permission_names = [announcement, add_offchallenge, view_offchallenge, \
+cand_permission_names = [announcement, add_offchallenge, view_offchallenge, \
 	change_offchallenge, add_bitbyteactivity, add_rsvp, remove_rsvp, view_user]
-
-permission_group = {'candidate': permission_names, \
-'officer': []}
 
 # OFFICER ONLY PERMISSIONS
 add_event = ('add_event', Event)
 change_event = ('change_event', Event)
 
-permission_group['officer'].extend([add_event, change_event])
+off_permission_names = [add_event, change_event]
 
 # SETTING PERMISSIONS TO GROUPS
 cand_permissions = []
-for perm in permission_group['candidate']:
+for perm in cand_permission_names:
 	ct =  ContentType.objects.get_for_model(perm[1])
 	permission = Permission.objects.get(codename=perm[0], content_type=ct)
 	cand_permissions.append(permission)
@@ -40,7 +37,7 @@ for perm in permission_group['candidate']:
 candidate.permissions.set(cand_permissions)
 officer.permissions.set(cand_permissions)
 
-for perm in permission_group['officer']:
+for perm in off_permission_names:
 	ct =  ContentType.objects.get_for_model(perm[1])
 	permission = Permission.objects.get(codename=perm[0], content_type=ct)
 	officer.permissions.add(permission)
