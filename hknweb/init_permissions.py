@@ -1,6 +1,5 @@
 from hknweb.candidate.models import Announcement, OffChallenge, BitByteActivity
 from hknweb.events.models import Event, Rsvp
-from django.conf import settings
 from django.contrib.auth.models import User, Group, Permission
 from django.contrib.contenttypes.models import ContentType
 
