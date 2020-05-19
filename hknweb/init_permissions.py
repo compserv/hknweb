@@ -14,7 +14,7 @@ change_offchallenge = ('change_offchallenge', OffChallenge)
 add_bitbyteactivity = ('add_bitbyteactivity', BitByteActivity)
 view_event = ('view_event', Event)
 add_rsvp = ('add_rsvp',Rsvp)
-remove_rsvp = ('remove_rsvp',Rsvp)
+remove_rsvp = ('delete_rsvp',Rsvp)
 view_user = ('view_user', User)
 
 cand_permission_names = [announcement, add_offchallenge, view_offchallenge, \
@@ -33,12 +33,12 @@ for perm in cand_permission_names:
 	permission = Permission.objects.get(codename=perm[0], content_type=ct)
 	cand_permissions.append(permission)
 
-candidate.permissions.set(cand_permissions)
-officer.permissions.set(cand_permissions)
-
+off_permissions = cand_permissions
 for perm in off_permission_names:
 	ct =  ContentType.objects.get_for_model(perm[1])
 	permission = Permission.objects.get(codename=perm[0], content_type=ct)
-	officer.permissions.add(permission)
+	off_permissions.append(permission)
 
+candidate.permissions.set(cand_permissions)
+officer.permissions.set(off_permissions)
 
