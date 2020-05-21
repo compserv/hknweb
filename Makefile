@@ -58,3 +58,7 @@ update: venv
 mysql:
 	mysql -e "CREATE DATABASE IF NOT EXISTS hkn;"
 	mysql -e "GRANT ALL PRIVILEGES ON hkn.* TO 'hkn'@'localhost' IDENTIFIED BY 'hknweb-dev';"
+
+.PHONY: permissions
+permissions:
+	HKNWEB_MODE='dev' pipenv run python ./manage.py shell < hknweb/init_permissions.py
