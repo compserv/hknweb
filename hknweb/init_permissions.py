@@ -11,17 +11,17 @@ cand_permission_names = [
     ('view_announcement', Announcement), 
     ('add_offchallenge', OffChallenge), 
     ('view_offchallenge', OffChallenge), 
-	('change_offchallenge', OffChallenge), 
-	('add_bitbyteactivity', BitByteActivity), 
-	('add_rsvp',Rsvp), 
-	('delete_rsvp',Rsvp), 
-	('view_user', User)
+    ('change_offchallenge', OffChallenge), 
+    ('add_bitbyteactivity', BitByteActivity), 
+    ('add_rsvp',Rsvp), 
+    ('delete_rsvp',Rsvp), 
+    ('view_user', User)
 ]
 
 # OFFICER ONLY PERMISSIONS
 off_permission_names = [
-	('add_event', Event), 
-	('change_event', Event)
+    ('add_event', Event), 
+    ('change_event', Event)
 ]
 
 # SETTING PERMISSIONS TO GROUPS
