@@ -25,13 +25,13 @@ off_permission_names = [
 ]
 
 # SETTING PERMISSIONS TO GROUPS
-for perm in cand_permission_names:
-    ct =  ContentType.objects.get_for_model(perm[1])
-    permission = Permission.objects.get(codename=perm[0], content_type=ct)
+for codename, model in cand_permission_names:
+    ct =  ContentType.objects.get_for_model(model)
+    permission = Permission.objects.get(codename=codename, content_type=ct)
     candidate.permissions.add(permission)
     officer.permissions.add(permission)
 
-for perm in off_permission_names:
-    ct =  ContentType.objects.get_for_model(perm[1])
-    permission = Permission.objects.get(codename=perm[0], content_type=ct)
+for codename, model in off_permission_names:
+    ct =  ContentType.objects.get_for_model(model)
+    permission = Permission.objects.get(codename=codename, content_type=ct)
     officer.permissions.add(permission)
