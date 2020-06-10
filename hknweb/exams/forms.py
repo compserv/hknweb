@@ -3,7 +3,7 @@ from django import forms
 from hknweb.exams.models import *
 
 EXAMS = [('midterm1', 'Midterm 1'), ('midterm2', 'Midterm 2'), ('final', 'Final')]
-TYPES = [('sol', 'Solution'), ('exam', 'Exam')]
+TYPES = [('exam', 'Exam'), ('sol', 'Solution')]
 
 class ExamUploadForm(forms.Form):
 

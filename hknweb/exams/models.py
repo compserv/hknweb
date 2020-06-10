@@ -1,11 +1,8 @@
 from django.db import models
 
 class Department(models.Model):
-    abbreviated_name = models.CharField(unique=True, max_length=4, null=True) #short form (e.g. 'EE')
+    abbreviated_name = models.CharField(unique=True, max_length=8, null=True) #short form (e.g. 'EE')
     long_name = models.CharField(max_length=255) #long form (e.g. 'Electrical Engineering')
-
-    def getAbbrName(self):
-        return self.abbreviated_name
 
     def __str__(self):
         return "{} ({})".format(self.long_name, self.abbreviated_name)
@@ -23,7 +20,7 @@ class Course(models.Model):
     number 		= models.CharField(max_length=10, null=False)
 
     def __str__(self):
-        return "{} {}".format(self.department.getAbbrName(), self.number)
+        return "{} {}".format(self.department.abbreviated_name, self.number)
 
 class Semester(models.Model):
      semester = models.CharField(max_length=255)
