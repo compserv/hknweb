@@ -1,7 +1,6 @@
 from django import forms
-from dal import autocomplete
 
-from hknweb.exams.models import *
+from hknweb.exams.models import Course, Semester
 
 EXAMS = [('midterm1', 'Midterm 1'), ('midterm2', 'Midterm 2'), ('final', 'Final')]
 TYPES = [('exam', 'Exam'), ('sol', 'Solution')]
