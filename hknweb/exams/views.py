@@ -19,7 +19,7 @@ def exams_for_course(request, department, number):
 	specificSemester = request.GET.get('term', '')
 
 	department = Department.objects.get(abbreviated_name=department)
-	course = Course.objects.filter(department__exact=department.id).filter(number__exact=number).get()
+	course = Course.objects.filter(department__exact=department.id).get(number__exact=number)
 	semesters = CourseSemester.objects.filter(course__exact=course.id)
 	
 	if specificSemester:
