@@ -16,15 +16,25 @@ def index(request):
 
 def exams_for_course(request, department, number):
 
+	specificSemester = request.GET.get('term', '')
+
 	department = Department.objects.filter(abbreviated_name__exact=department).get()
 	course = Course.objects.filter(department__exact=department.id).filter(number__exact=number).get()
 	semesters = CourseSemester.objects.filter(course__exact=course.id)
+	
+	if specificSemester:
+		subSemesters = semesters.filter(semester__semester__exact=specificSemester)
+		if subSemesters:
+			semesters = subSemesters
+		else:
+			specificSemester = ""
 
 	# print(semesters)
 
 	context = {
 		'course': course,
-		'semesters': semesters
+		'semesters': semesters,
+		'selectedTerm': specificSemester
 	}
 
 	return render(request, 'exams/exams-course.html', context)

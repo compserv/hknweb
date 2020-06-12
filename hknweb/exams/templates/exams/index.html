@@ -38,7 +38,7 @@
         <select id="selectSemestercourses" style="width: 300px">
             <option selected disabled="true">--- Search for Course ---</option>
             {% for coursesemester in searchCourses %}
-            <option value="/exams/course/{{ coursesemester.course.department.abbreviated_name }}/{{ coursesemester.course.number }}/">{{coursesemester.semester.semester}} {{coursesemester.course.name}} {{coursesemester.course.number}}</option>
+            <option value="/exams/course/{{ coursesemester.course.department.abbreviated_name }}/{{ coursesemester.course.number }}/?term={{ coursesemester.semester.semester }}">{{coursesemester.semester.semester}} {{coursesemester.course.department.abbreviated_name}} {{coursesemester.course.number}}</option>
             {% endfor %}
         </select>
     </center>
@@ -81,7 +81,7 @@
     </ul>
 
     <!-- Add an Exam (Admin Access Only for later) -->
-    {% if True %}
+    {% if False %}
     <form action="new" method="GET" id="button">
         <button type='submit'>Add an Exam</button>
     </form>
