@@ -1,4 +1,5 @@
 from django import forms
+from dal import autocomplete
 
 from hknweb.exams.models import *
 
@@ -13,7 +14,3 @@ class ExamUploadForm(forms.Form):
     type = forms.CharField(label='Type', widget=forms.Select(choices=TYPES))
 
     file = forms.FileField(label="Exam")
-
-
-
-

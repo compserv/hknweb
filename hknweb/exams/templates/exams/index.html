@@ -3,6 +3,19 @@
 {% block title %}Exam archive{% endblock %}
 
 {% block header %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js" integrity="sha256-AFAYEOkzB6iIKnTYZOdUf9FFje6lOTYdwRJKwTN5mks=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" integrity="sha256-FdatTf20PQr/rWg+cAKfl6j4/IY3oohFAJ7gVC3M34E=" crossorigin="anonymous" />
+<script>
+    $(document).ready(function() {
+        $('#selectSemestercourses').select2()
+        $('#selectSemestercourses').on('select2:select', function (e) {
+            var sel = document.getElementById('selectSemestercourses');
+            window.open(sel.value,"_self");
+            sel.selectedIndex = null;
+        });
+    });
+</script>
 <style>
     .content {
         padding-top: 1em;
@@ -21,6 +34,15 @@
 
 {% block content %}
 <div id="actual-contents">
+    <center>
+        <select id="selectSemestercourses" style="width: 300px">
+            <option selected disabled="true">--- Search for Course ---</option>
+            {% for coursesemester in searchCourses %}
+            <option value="/exams/course/{{ coursesemester.course.department.abbreviated_name }}/{{ coursesemester.course.number }}/">{{coursesemester.semester.semester}} {{coursesemester.course.name}} {{coursesemester.course.number}}</option>
+            {% endfor %}
+        </select>
+    </center>
+    <br>
     Browse by department:
 
     <h1>Computer Science</h1>

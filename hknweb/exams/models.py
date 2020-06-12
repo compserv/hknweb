@@ -44,21 +44,3 @@ class CourseSemester(models.Model):
 
     def __str__(self):
         return "CourseSemester(course={}, semester={})".format(self.course, self.semester)
-
-# class ExamChoice(models.Model):
-#     exam_Choice = models.CharField(max_length=50)
-
-#     def __str__(self):
-#         return "{}".format(self.examChoices)
-
-# department (EE, CS, or EECS), Course (Number), Instructor (Name), Exam Type(Midterm1, Midterm2, Final)
-
-# class Exam(models.Model):
-#     department = models.ForeignKey(Department, on_delete=models.CASCADE)
-#     course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
-#     semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
-#     instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
-#     exam_type = models.ForeignKey(ExamChoice, on_delete=models.CASCADE)
-#     solution = models.BooleanField(default=False)
-#     # FIXME - Add file container
-
