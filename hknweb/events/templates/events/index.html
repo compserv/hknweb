@@ -6,21 +6,16 @@
 {% block header %}
 <!-- Scripts which make the calendar work:-->
 <link rel="stylesheet" href="{% static "events/style.css" %}">
-<link rel="stylesheet" href="https://unpkg.com/@fullcalendar/core/main.css" />
-<link rel="stylesheet" href="https://unpkg.com/@fullcalendar/daygrid/main.css" />
-<link rel="stylesheet" href="https://unpkg.com/@fullcalendar/timegrid/main.css" />
+<link rel="stylesheet" href="{% static "events/fullcalendar/main.css" %}" />
 <link rel="stylesheet" href="{% static "css/tachyons.css" %}" />
 
-<script src="https://unpkg.com/@fullcalendar/core/main.js"></script>
-<script src="https://unpkg.com/@fullcalendar/daygrid/main.js"></script>
-<script src="https://unpkg.com/@fullcalendar/timegrid/main.js"></script>
+<script src="{% static "events/fullcalendar/main.js" %}" /></script>
 
 <script type="text/javascript">
     document.addEventListener('DOMContentLoaded', function() {
         var calendarEl = document.getElementById('calendar');
         var calendar = new FullCalendar.Calendar(calendarEl, {
             // General options
-            plugins: [ 'dayGrid', 'timeGrid' ],
             defaultView: 'dayGridMonth',
             defaultDate: "{% now 'c' %}",
             header: {
