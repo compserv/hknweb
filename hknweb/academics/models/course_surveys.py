@@ -2,8 +2,6 @@ from django.db import models
 
 from .base_models import AcademicEntity
 
-from .icsr import ICSR
-
 
 class Question(AcademicEntity):
     pass

@@ -2,8 +2,6 @@ from django.db import models
 
 from .base_models import AcademicEntity
 
-from .logistics import Course, Department, Instructor, Semester
-
 
 class ICSR(AcademicEntity):
     """
