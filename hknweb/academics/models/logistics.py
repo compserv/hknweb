@@ -21,9 +21,9 @@ class Semester(AcademicEntity):
     SUMMER = 'Su'
     FALL = 'Fa'
     YEAR_SECTION_CHOICES = [
-        (SPRING, 'Spring')
-        (SUMMER, 'Summer')
-        (FALL, 'Fall')
+        (SPRING, 'Spring'),
+        (SUMMER, 'Summer'),
+        (FALL, 'Fall'),
     ]
 
     year = models.TextField(max_length=100)
