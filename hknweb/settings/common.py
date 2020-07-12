@@ -22,6 +22,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 
 INSTALLED_APPS = [
     "hknweb",
+    'hknweb.academics',
     "hknweb.events",
     "hknweb.tutoring",
     "hknweb.markdown_pages",
