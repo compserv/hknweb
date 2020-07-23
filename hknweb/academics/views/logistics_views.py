@@ -1,6 +1,4 @@
-from rest_framework import viewsets
-
-from ..permissions import HasPermissionOrReadOnly
+from .base_views import AcademicEntityViewSet
 
 from ..models.logistics import Course, Department, Instructor, Semester
 
@@ -12,25 +10,21 @@ from ..serializers.logistics_serializers import (
 )
 
 
-class CourseViewSet(viewsets.ModelViewSet):
+class CourseViewSet(AcademicEntityViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
-    permission_classes = (HasPermissionOrReadOnly,)
 
 
-class DepartmentViewSet(viewsets.ModelViewSet):
+class DepartmentViewSet(AcademicEntityViewSet):
     queryset = Department.objects.all()
     serializer_class = DepartmentSerializer
-    permission_classes = (HasPermissionOrReadOnly,)
 
 
-class InstructorViewSet(viewsets.ModelViewSet):
+class InstructorViewSet(AcademicEntityViewSet):
     queryset = Instructor.objects.all()
     serializer_class = InstructorSerializer
-    permission_classes = (HasPermissionOrReadOnly,)
 
 
-class SemesterViewSet(viewsets.ModelViewSet):
+class SemesterViewSet(AcademicEntityViewSet):
     queryset = Semester.objects.all()
     serializer_class = SemesterSerializer
-    permission_classes = (HasPermissionOrReadOnly,)
