@@ -4,8 +4,6 @@ from django.contrib.auth.admin import UserAdmin
 from django.conf import settings
 from .models import Announcement
 
-
-
 # Unregister the provided model admin
 admin.site.unregister(User)
 
@@ -27,7 +25,7 @@ class CustomUserAdmin(UserAdmin):
         group = Group.objects.get(name=settings.CAND_GROUP)
         for u in queryset:
             group.user_set.add(u)
-    
+
     add_cand.short_description = "Add selected as candidates"
 
     def add_officer(self, request, queryset):
@@ -51,7 +49,6 @@ class CustomUserAdmin(UserAdmin):
 
     remove_officer.short_description = "Remove selected from officers"
 
-
 class AnnouncementAdmin(admin.ModelAdmin):
 
     # NOTE: release_date is not readonly because we can reuse announcements from past semesters
@@ -70,7 +67,7 @@ class AnnouncementAdmin(admin.ModelAdmin):
 
     def set_invisible(self, request, queryset):
         queryset.update(visible=False)
-        
+
     set_invisible.short_description = "Set selected as invisible"
 
 admin.site.register(Announcement, AnnouncementAdmin)

@@ -5,6 +5,8 @@ from hknweb.models import Announcement
 from hknweb.events.models import Event
 # from hknweb.tutoring.models import Tutor
 
+from hknweb.models import Announcement
+
 
 def home(request):
     # TODO: determine earliest weekday for which tutoring still has yet to complete, and query those tutors
