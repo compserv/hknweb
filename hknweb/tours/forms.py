@@ -6,13 +6,13 @@ import datetime
 MAX_STRLEN = 85
 
 class TourRequest(forms.ModelForm):
-    date = forms.DateField(widget=SelectDateWidget(), label='Desired Date', initial=datetime.date.today)
-    desired_time = forms.TimeField(help_text='hh:mm 24-hour time PST', label='Desired Time')
+    datetime = forms.DateTimeField(help_text='MM/DD/YYYY hh:mm AM/PM', input_formats=('%m/%d/%Y %I:%M %p',), \
+        label='Desired Date and Time')
     confirm_email   = forms.EmailField(max_length=MAX_STRLEN)
 
     class Meta:
         model = DepTour
-        fields = ['name', 'date', 'desired_time', 'email', 'confirm_email', 'phone', 'comments']
+        fields = ['name', 'datetime', 'email', 'confirm_email', 'phone', 'comments']
 
     def clean_date(self):
         date = self.cleaned_data['date']
