@@ -7,4 +7,4 @@ class HasPermissionOrReadOnly(permissions.BasePermission):
             return True
 
         # !TODO Check if user has permissions
-        return request.user.is_authenticated
+        return True
