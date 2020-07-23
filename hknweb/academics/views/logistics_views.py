@@ -1,4 +1,4 @@
-from rest_framework import permissions, viewsets
+from rest_framework import viewsets
 
 from ..permissions import HasPermissionOrReadOnly
 
@@ -15,22 +15,22 @@ from ..serializers.logistics_serializers import (
 class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, HasPermissionOrReadOnly,)
+    permission_classes = (HasPermissionOrReadOnly,)
 
 
 class DepartmentViewSet(viewsets.ModelViewSet):
     queryset = Department.objects.all()
     serializer_class = DepartmentSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, HasPermissionOrReadOnly,)
+    permission_classes = (HasPermissionOrReadOnly,)
 
 
 class InstructorViewSet(viewsets.ModelViewSet):
     queryset = Instructor.objects.all()
     serializer_class = InstructorSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, HasPermissionOrReadOnly,)
+    permission_classes = (HasPermissionOrReadOnly,)
 
 
 class SemesterViewSet(viewsets.ModelViewSet):
     queryset = Semester.objects.all()
     serializer_class = SemesterSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, HasPermissionOrReadOnly,)
+    permission_classes = (HasPermissionOrReadOnly,)

@@ -1,4 +1,4 @@
-from rest_framework import permissions, viewsets
+from rest_framework import viewsets
 
 from ..permissions import HasPermissionOrReadOnly
 
@@ -10,16 +10,16 @@ from ..serializers.course_surveys_serializers import QuestionSerializer, RatingS
 class QuestionViewSet(viewsets.ModelViewSet):
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, HasPermissionOrReadOnly,)
+    permission_classes = (HasPermissionOrReadOnly,)
 
 
 class RatingViewSet(viewsets.ModelViewSet):
     queryset = Rating.objects.all()
     serializer_class = RatingSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, HasPermissionOrReadOnly,)
+    permission_classes = (HasPermissionOrReadOnly,)
 
 
 class SurveyViewSet(viewsets.ModelViewSet):
     queryset = Survey.objects.all()
     serializer_class = SurveySerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, HasPermissionOrReadOnly,)
+    permission_classes = (HasPermissionOrReadOnly,)
