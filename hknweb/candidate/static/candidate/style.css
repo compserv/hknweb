@@ -1,8 +1,3 @@
-.content {
-    padding-top: 1em;
-    padding-bottom: 1em;
-}
-
 .centered {
     max-width: 1250px;
     margin: 0 auto;
@@ -204,19 +199,52 @@ h2:first-child {
     color: #0000A0;
 }
 
-.gray-note {
-    color: #727c81;
-    font-size: 0.8em
-}
-
 .table-icon {
     width: 1.5em;
     vertical-align: middle;
 }
 
-#confirm-text {
-    font-size: 1.4em;
+/* mouseover info for forms */
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 1350%;
+    background-color: #f2f2f2;
+    color: black;
+    font-size: 0.8em;
+    padding: 0.4em;
+    border-style: groove;
+    border-radius: 8px;
+    position: absolute;
+    top: -40%;
+    left: 150%;
+}
+
+/* This is the small triangle on the text box. Some of these values are quite arbitrary
+   and unfortunately do not work for all browser zoom levels, but it's the best I can do. */
+.tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 17.5px;
+    right: 101.2%;
+    margin-top: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent #9a9a9a transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+}
+
+.confirm-text {
+    font-size: 1.3em;
     margin-left: 10%;
+    margin-right: 10%;
 }
 
 #sunny {
@@ -233,11 +261,4 @@ h2:first-child {
     max-width: 40%;
     text-align: right;
     float: right;
-}
-
-#hiding-cat {
-    width: 45%;
-    display: block; /* Center image */
-    margin-left: auto;
-    margin-right: auto;
 }
