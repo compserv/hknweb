@@ -10,5 +10,5 @@ router = DefaultRouter()
 register_viewsets(router)
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path('api/', include(router.urls)),
 ]
