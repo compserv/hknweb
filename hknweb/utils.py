@@ -3,6 +3,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.staticfiles.finders import find
 from functools import wraps
 from random import randint
+from datetime import datetime
 
 # decorators
 
@@ -36,3 +37,20 @@ def get_rand_photo(width=400):
     with open(find("animal_photo_urls.txt")) as f:
         urls = f.readlines()
     return urls[randint(0, len(urls) - 1)].strip() + "?w=" + str(width)
+
+# date and time
+
+def get_semester(date):
+    """ Returns a string representation of the candidate semester of this timezone object.
+        Assumes that there are only spring and fall semesters, separated at 07/01.
+        Example: "Spring 2020" """
+    season = "Spring" if date.month < 7 else "Fall"
+    return "{} {}".format(season, date.year)
+
+def get_semester_bounds(date):
+    """ Returns the two dates that bound the current candidate semester.
+        Assumes that there are only spring and fall semesters, separated at 07/01. """
+    if date.month < 7:
+        return datetime(date.year, 1, 1), datetime(date.year, 7, 1)
+    else:
+        return datetime(date.year, 7, 1), datetime(date.year + 1, 1, 1)
