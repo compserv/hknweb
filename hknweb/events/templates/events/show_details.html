@@ -32,6 +32,7 @@
     <p><b>Location</b>: {{ event.location }}</p>
     <p><b>Date</b>: {{event.start_time|date:"D, N j, Y"}}</p>
     <p><b>Time</b>: {{event.start_time|time}} to {{event.end_time|time}}</p>
+    <p><b>Semester</b>: {{event.semester}}</p>
 
     {% if can_edit %}
       <p><a href="{% url 'events:edit' event.id %}">

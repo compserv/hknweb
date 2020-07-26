@@ -43,8 +43,8 @@ def get_rand_photo(width=400):
 def get_semester(date):
     """ Returns a string representation of the candidate semester of this timezone object.
         Assumes that there are only spring and fall semesters, separated at 07/01.
-        Example: "spring 2020" """
-    season = "spring" if date.month < 7 else "fall"
+        Example: "Spring 2020" """
+    season = "Spring" if date.month < 7 else "Fall"
     return "{} {}".format(season, date.year)
 
 def get_semester_bounds(date):

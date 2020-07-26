@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+from hknweb.utils import get_semester
 
 class EventType(models.Model):
     type = models.CharField(max_length=255)
@@ -32,6 +33,13 @@ class Event(models.Model):
     created_by  = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     created_at  = models.DateTimeField(auto_now_add=True)
     # updated_at  = models.DateTimeField(auto_now=True)
+
+    @property
+    def semester(self):
+        """ A string representation of the candidate semester of this event.
+            Assumes that there are only spring and fall semesters, separated at 07/01.
+            Example: "Spring 2020" """
+        return get_semester(self.start_time)
 
     def get_absolute_url(self):
         return '/events/{}'.format(self.id)
