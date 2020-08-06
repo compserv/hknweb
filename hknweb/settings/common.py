@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'markdownx',
     'social_django',
+    'hknweb.frontend',
 ]
 
 MIDDLEWARE = [
