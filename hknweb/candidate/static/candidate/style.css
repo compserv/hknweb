@@ -229,7 +229,7 @@ h2:first-child {
 .tooltip .tooltiptext::after {
     content: "";
     position: absolute;
-    top: 15%;
+    top: 17.5px;
     right: 101.2%;
     margin-top: -5px;
     border-width: 5px;

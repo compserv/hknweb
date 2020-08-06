@@ -89,7 +89,8 @@ Upcoming Events
     <section id='calendar'></section>
 
     {% if perms.events.add_event %}
-    <form action="new" method="GET" id="button">
+    <br>
+    <form action="{% url 'events:new' %}" method="GET" id="button">
         <button type='submit'>Add an event</button>
     </form>
     {% endif %}
