@@ -32,6 +32,7 @@
     <p><b>Location</b>: {{ event.location }}</p>
     <p><b>Date</b>: {{event.start_time|date:"D, N j, Y"}}</p>
     <p><b>Time</b>: {{event.start_time|time}} to {{event.end_time|time}}</p>
+    <p><b>Semester</b>: {{event.semester}}</p>
 
     {% if can_edit %}
       <p><a href="{% url 'events:edit' event.id %}">
@@ -47,26 +48,28 @@
   <div id='right-details'>
     {% if messages %}
       {% for message in messages %}
-        <h3 {% if messages.tags %} class="{{ message.tags }}" {% endif %}
-            style="color: #B78727;">{{ message }}</h3>
+        <h3 class="orange-messages {% if messages.tags %} {{ message.tags }} {% endif %}">
+          {{ message }}</h3>
       {% endfor %}
     {% endif %}
 
     <!-- RSVP/un-RSVP button -->
     {% if rsvpd %}
-      <form action={% url 'events:unrsvp' event.id %} method="post">
+      <form action="{% url 'events:unrsvp' event.id %}" method="post">
         {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.path }}">
         <input type="submit" value="un-RSVP" />
       </form>
     {% else %}
-      <form action={% url 'events:rsvp' event.id %} method="post">
+      <form action="{% url 'events:rsvp' event.id %}" method="post">
         {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.path }}">
         <input type="submit" value="RSVP" />
       </form>
     {% endif %}
     
     {% if waitlisted %}
-      <p class="rsvp-list">You are at position {{waitlist_position}} on the waitlist. <img src="{% static 'candidate/maybe.png'%}" alt="rsvp'd" class="table-icon"></p>
+      <p class="rsvp-list">You are at position {{waitlist_position}} on the waitlist. <img src="{% static 'candidate/maybe.png'%}" alt="waitlisted" class="table-icon"></p>
     {% elif rsvpd %}
       <p class="rsvp-list">You have rsvp'd <img src="{% static 'candidate/yes.png'%}" alt="rsvp'd" class="table-icon"></p>
     {% else %}

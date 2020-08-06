@@ -5,11 +5,13 @@ from django.shortcuts import get_object_or_404, reverse
 from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
 from django.template.loader import render_to_string
-from django.views import generic
+from django.views.generic import TemplateView
+from django.views.generic.edit import UpdateView
+from django.utils import timezone
 
-from hknweb.utils import login_and_permission, method_login_and_permission, get_rand_photo
+from hknweb.utils import login_and_permission, method_login_and_permission, get_rand_photo, get_semester_bounds
 from .models import Event, EventType, Rsvp
-from .forms import EventForm
+from .forms import EventForm, EventUpdateForm
 
 # views
 
@@ -22,6 +24,39 @@ def index(request):
         'event_types': event_types,
     }
     return render(request, 'events/index.html', context)
+
+@method_login_and_permission('events.add_rsvp')
+class AllRsvpsView(TemplateView):
+    """ List of rsvp'd and not rsvp'd events. """
+    template_name = 'events/all_rsvps.html'
+
+    def get_context_data(self):
+        view_option = self.request.GET.get('option')
+        semester_start, semester_end = get_semester_bounds(timezone.now())
+        all_events = Event.objects \
+                .filter(start_time__gte=semester_start) \
+                .filter(start_time__lte=semester_end) \
+                .order_by('start_time')
+        if view_option == "upcoming":
+            all_events = all_events.filter(start_time__gte=timezone.now())
+        rsvpd_event_ids = Rsvp.objects \
+                .filter(user__exact=self.request.user) \
+                .values_list('event', flat=True)
+        rsvpd_events = all_events \
+                .filter(pk__in=rsvpd_event_ids)
+        not_rsvpd_events = all_events \
+                .exclude(pk__in=rsvpd_event_ids)
+
+        for event in rsvpd_events:
+            event.waitlisted = event.on_waitlist(self.request.user) # Is this bad practice? idk
+
+        event_types = EventType.objects.order_by('type')
+        context = {
+            'rsvpd_events': rsvpd_events,
+            'not_rsvpd_events': not_rsvpd_events,
+            'event_types': event_types,
+        }
+        return context
 
 @login_and_permission('events.view_event')
 def show_details(request, id):
@@ -66,11 +101,12 @@ def rsvp(request, id):
 
     event = get_object_or_404(Event, pk=id)
 
-    if request.user.is_authenticated and Rsvp.has_not_rsvpd(request.user, event):
+    if Rsvp.has_not_rsvpd(request.user, event):
         Rsvp.objects.create(user=request.user, event=event, confirmed=False)
     else:
         messages.error(request, 'You have already RSVP\'d.')
-    return redirect('/events/' + str(id))
+    next_page = request.POST.get('next', '/')
+    return redirect(next_page)
 
 @login_and_permission('events.delete_rsvp')
 def unrsvp(request, id):
@@ -86,7 +122,8 @@ def unrsvp(request, id):
         rsvp.delete()
         for off_waitlist_rsvp in event.newly_off_waitlist_rsvps(old_admitted):
             send_off_waitlist_email(request, off_waitlist_rsvp.user, event)
-    return redirect(event)
+    next_page = request.POST.get('next', '/')
+    return redirect(next_page)
 
 @login_and_permission('events.add_event')
 def add_event(request):
@@ -105,10 +142,9 @@ def add_event(request):
     return render(request, 'events/event_add.html', {'form': EventForm(None)})
 
 @method_login_and_permission('events.change_event')
-class EventUpdateView(generic.edit.UpdateView):
+class EventUpdateView(UpdateView):
     model = Event
-    fields = ['name', 'slug', 'start_time', 'end_time', 'location', 'event_type',
-              'description', 'rsvp_limit']
+    form_class = EventUpdateForm
     template_name_suffix = '_edit'
 
     def form_valid(self, form):
