@@ -8,6 +8,7 @@ from .constants import (
     GCAL_DATETIME_TEMPLATE,
     GCAL_INVITE_TEMPLATE,
     HOUR_ATTRIBUTE_NAME,
+    LOCATION_ATTRIBUTE_NAME,
     MINUTES_ATTRIBUTE_NAME,
     MONTH_ATTRIBUTE_NAME,
     SECONDS_ATTRIBUTE_NAME,
@@ -23,6 +24,7 @@ def create_gcal_link(event: Event) -> str:
         START_TIME_ATTRIBUTE_NAME: format_gcal_time(event.start_time),
         END_TIME_ATTRIBUTE_NAME: format_gcal_time(event.end_time),
         DESCRIPTION_ATTRIBUTE_NAME: event.description,
+        LOCATION_ATTRIBUTE_NAME: event.location,
     }
     return GCAL_INVITE_TEMPLATE.format(**attrs)
 
