@@ -13,7 +13,7 @@ from hknweb.utils import login_and_permission, method_login_and_permission, get_
 from .constants import GCAL_INVITE_TEMPLATE_ATTRIBUTE_NAME
 from .models import Event, EventType, Rsvp
 from .forms import EventForm, EventUpdateForm
-from .utils import create_gcal_link, format_gcal_time
+from .utils import create_gcal_link
 
 # views
 
