@@ -34,6 +34,10 @@
     <p><b>Time</b>: {{event.start_time|time}} to {{event.end_time|time}}</p>
     <p><b>Semester</b>: {{event.semester}}</p>
 
+    <p><a href={{gcal_link}}>
+      Add this event to your Google calendar
+    </a></p>
+
     {% if can_edit %}
       <p><a href="{% url 'events:edit' event.id %}">
           Edit This Event

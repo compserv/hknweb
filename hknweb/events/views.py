@@ -9,7 +9,24 @@ from django.views.generic import TemplateView
 from django.views.generic.edit import UpdateView
 from django.utils import timezone
 
+from datetime import datetime
+
 from hknweb.utils import login_and_permission, method_login_and_permission, get_rand_photo, get_semester_bounds
+from .constants import (
+    DAY_ATTRIBUTE_NAME,
+    DESCRIPTION_ATTRIBUTE_NAME,
+    END_TIME_ATTRIBUTE_NAME,
+    EVENT_NAME_ATTRIBUTE_NAME,
+    GCAL_DATETIME_TEMPLATE,
+    GCAL_INVITE_TEMPLATE,
+    GCAL_INVITE_TEMPLATE_ATTRIBUTE_NAME,
+    HOUR_ATTRIBUTE_NAME,
+    MINUTES_ATTRIBUTE_NAME,
+    MONTH_ATTRIBUTE_NAME,
+    SECONDS_ATTRIBUTE_NAME,
+    START_TIME_ATTRIBUTE_NAME,
+    YEAR_ATTRIBUTE_NAME,
+)
 from .models import Event, EventType, Rsvp
 from .forms import EventForm, EventUpdateForm
 
@@ -82,6 +99,7 @@ def show_details(request, id):
     rsvps = event.admitted_set()
     waitlists = event.waitlist_set()
     limit = event.rsvp_limit
+    gcal_link = create_gcal_link(event)
     context = {
         'event': event,
         'rsvpd': rsvpd,
@@ -90,7 +108,8 @@ def show_details(request, id):
         'waitlist_position': waitlist_position,
         'waitlists': waitlists,
         'limit': limit,
-        'can_edit': request.user.has_perm('events.change_event')
+        'can_edit': request.user.has_perm('events.change_event'),
+        GCAL_INVITE_TEMPLATE_ATTRIBUTE_NAME: gcal_link,
     }
     return render(request, 'events/show_details.html', context)
 
@@ -173,3 +192,23 @@ def send_off_waitlist_email(request, user, event):
                 settings.NO_REPLY_EMAIL, [user.email])
     msg.attach_alternative(html_content, "text/html")
     msg.send()
+
+def create_gcal_link(event: Event) -> str:
+    attrs = {
+        EVENT_NAME_ATTRIBUTE_NAME: event.name,
+        START_TIME_ATTRIBUTE_NAME: format_gcal_time(event.start_time),
+        END_TIME_ATTRIBUTE_NAME: format_gcal_time(event.end_time),
+        DESCRIPTION_ATTRIBUTE_NAME: event.description,
+    }
+    return GCAL_INVITE_TEMPLATE.format(**attrs)
+
+def format_gcal_time(time: datetime) -> str:
+    attrs = {
+        YEAR_ATTRIBUTE_NAME: time.year,
+        MONTH_ATTRIBUTE_NAME: time.month,
+        DAY_ATTRIBUTE_NAME: time.day,
+        HOUR_ATTRIBUTE_NAME: time.hour,
+        MINUTES_ATTRIBUTE_NAME: time.minute,
+        SECONDS_ATTRIBUTE_NAME: time.second,
+    }
+    return GCAL_DATETIME_TEMPLATE.format(**attrs)
