@@ -10,8 +10,10 @@ from django.views.generic.edit import UpdateView
 from django.utils import timezone
 
 from hknweb.utils import login_and_permission, method_login_and_permission, get_rand_photo, get_semester_bounds
+from .constants import GCAL_INVITE_TEMPLATE_ATTRIBUTE_NAME
 from .models import Event, EventType, Rsvp
 from .forms import EventForm, EventUpdateForm
+from .utils import create_gcal_link
 
 # views
 
@@ -82,6 +84,7 @@ def show_details(request, id):
     rsvps = event.admitted_set()
     waitlists = event.waitlist_set()
     limit = event.rsvp_limit
+    gcal_link = create_gcal_link(event)
     context = {
         'event': event,
         'rsvpd': rsvpd,
@@ -90,7 +93,8 @@ def show_details(request, id):
         'waitlist_position': waitlist_position,
         'waitlists': waitlists,
         'limit': limit,
-        'can_edit': request.user.has_perm('events.change_event')
+        'can_edit': request.user.has_perm('events.change_event'),
+        GCAL_INVITE_TEMPLATE_ATTRIBUTE_NAME: gcal_link,
     }
     return render(request, 'events/show_details.html', context)
 

@@ -18,6 +18,20 @@
             padding-bottom: 1em;
         }
     }
+    .info_img_info {
+      display: none;
+      margin-left: 0.05em;
+    }
+    .info_img:hover + .info_img_info {
+      display: inline-block;
+      color: red;
+    }
+    .info_img {
+      height: 1em;
+      width: 1em;
+      margin-left: 0.05em;
+      vertical-align: middle;
+    }
 </style>
 {% endblock %}
 
@@ -33,6 +47,16 @@
     <p><b>Date</b>: {{event.start_time|date:"D, N j, Y"}}</p>
     <p><b>Time</b>: {{event.start_time|time}} to {{event.end_time|time}}</p>
     <p><b>Semester</b>: {{event.semester}}</p>
+
+    <p>
+      <div>
+        <a href={{gcal_link}}>Add to Google calendar</a>
+        <div style="display: inline-block">
+          <img class="info_img" src="{% static "events/information.png" %}">
+          <span class="info_img_info">Event time changes will not update calendar invites.</span>
+        </div>
+      </div>
+    </p>
 
     {% if can_edit %}
       <p><a href="{% url 'events:edit' event.id %}">
