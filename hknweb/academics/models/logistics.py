@@ -12,10 +12,6 @@ class Course(AcademicEntity):
         return ICSR.recency_ordering(self.icsr_set).first().course_number
     def get_current_course_name(self):
         return ICSR.recency_ordering(self.icsr_set).first().course_name
-    def get_current_section_type(self):
-        return ICSR.recency_ordering(self.icsr_set).first().section_type
-    def get_current_section_number(self):
-        return ICSR.recency_ordering(self.icsr_set).first().section_number
 
 class Department(AcademicEntity):
     name = models.TextField(max_length=200)
