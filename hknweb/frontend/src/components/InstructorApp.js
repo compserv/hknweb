@@ -48,5 +48,5 @@ class InstructorApp extends Component {
 
 export default InstructorApp;
 
-const container = document.getElementById("instructors_app");
+const container = document.getElementById("InstructorApp");
 render(<InstructorApp />, container);

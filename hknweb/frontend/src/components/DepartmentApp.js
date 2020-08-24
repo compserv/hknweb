@@ -48,5 +48,5 @@ class DepartmentApp extends Component {
 
 export default DepartmentApp;
 
-const container = document.getElementById("departments_app");
+const container = document.getElementById("DepartmentApp");
 render(<DepartmentApp />, container);
