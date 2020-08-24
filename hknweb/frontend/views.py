@@ -1,5 +1,9 @@
-from django.shortcuts import render
+from django.views.generic import TemplateView
 
 
-def index(request):
-    return render(request, 'frontend/index.html')
+class DepartmentsView(TemplateView):
+    template_name = 'frontend/departments.html'
+
+
+class InstructorsView(TemplateView):
+    template_name = 'frontend/instructors.html'

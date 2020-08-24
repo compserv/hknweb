@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { render } from "react-dom";
 
-class App extends Component {
+class InstructorApp extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -12,7 +12,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    fetch("api/departments")
+    fetch("api/instructors")
       .then(response => {
         if (response.status > 400) {
           return this.setState(() => {
@@ -34,10 +34,10 @@ class App extends Component {
   render() {
     return (
       <ul>
-        {this.state.data.map(department => {
+        {this.state.data.map(instructor => {
           return (
-            <li key={department.id}>
-              {department.name} - {department.abbr}
+            <li key={instructor.instructor_id}>
+              {instructor.instructor_id}
             </li>
           );
         })}
@@ -46,7 +46,7 @@ class App extends Component {
   }
 }
 
-export default App;
+export default InstructorApp;
 
-const container = document.getElementById("app");
-render(<App />, container);
+const container = document.getElementById("instructors_app");
+render(<InstructorApp />, container);
