@@ -40,7 +40,19 @@
 <div class="centered">
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
+        {% for field in form %}
+            <div class="row">
+                {{ field.label }}
+                {% if field.field.required %}
+                    <span class="message">*</span>
+                {% endif %}
+                {{ field }}
+                <span class="message">
+                    {{ field.errors }}
+                </span>
+            </div>
+        {% endfor %}
+
         <input type="submit" value="Update">
         {% if messages %}
             {% for message in messages %}
