@@ -1,11 +1,12 @@
 from django.db import models
-from django.db.models import Case, When, Value
+from django.db.models import Case, When, Value, Model
 
 from .base_models import AcademicEntity
 
 
 
 class ICSR(AcademicEntity):
+
     """
     InstructorCourseSemesterRelation (ICSR)
     """
@@ -45,6 +46,35 @@ class ICSR(AcademicEntity):
             When(icsr_semester__year_section=Semester.SUMMER, then=Value(2)),
             When(icsr_semester__year_section=Semester.FALL, then=Value(3)))).order_by \
             ("-icsr_semester__year", "-numerical_semester")
+    def save(self, *args, **kwargs):
+        from .logistics import Semester
+
+
+        if self.pk is None:
+            l = [Semester.SPRING, Semester.SUMMER, Semester.FALL]
+            self_num_sem = l.index(self.icsr_semester.year_section) + 1
+            latest_instructor_icsr = ICSR.recency_ordering(ICSR.objects.filter(
+                icsr_instructor=self.icsr_instructor)).first()
+
+            if self.icsr_semester.year > latest_instructor_icsr.icsr_semester.year or (
+                    self.icsr_semester.year == latest_instructor_icsr.icsr_semester.year and
+                self_num_sem >= latest_instructor_icsr.numerical_semester):
+                self.icsr_instructor.current_first_name = self.first_name
+                self.icsr_instructor.current_last_name = self.last_name
+                self.icsr.current_instructor_type = self.instructor_type
+
+
+            latest_course_icsr = ICSR.recency_ordering(ICSR.objects.filter(
+                icsr_course=self.icsr_course)).first()
+
+            if self.icsr_semester.year > latest_course_icsr.icsr_semester.year or (
+                    self.icsr_semester.year == latest_course_icsr.icsr_semester.year and
+                    self_num_sem >= latest_course_icsr.numerical_semester):
+                self.icsr_course.current_name = self.course_name
+                self.icsr_instructor.current_number = self.course_number
+        return super(AcademicEntity, self).save(*args, **kwargs)
+
+
 
 
 
