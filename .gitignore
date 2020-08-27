@@ -109,3 +109,7 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# hknweb/frontend dev files
+hknweb/frontend/node_modules
+hknweb/frontend/static

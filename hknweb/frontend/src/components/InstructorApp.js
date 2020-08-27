@@ -1,35 +1,12 @@
-import React, { Component } from "react";
 import { render } from "react-dom";
+import React from "react";
 
-class InstructorApp extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      data: [],
-      loaded: false,
-      placeholder: "Loading"
-    };
-  }
+import BaseApp from "./BaseApp";
+import { INSTRUCTORAPP_NAME } from "./constants"
 
-  componentDidMount() {
-    fetch("api/instructors")
-      .then(response => {
-        if (response.status > 400) {
-          return this.setState(() => {
-            return { placeholder: "Something went wrong!" };
-          });
-        }
-        return response.json();
-      })
-      .then(data => {
-        this.setState(() => {
-          return {
-            data,
-            loaded: true
-          };
-        });
-      });
-  }
+
+class InstructorApp extends BaseApp {
+  API_PATH = "api/instructors"
 
   render() {
     return (
@@ -48,5 +25,5 @@ class InstructorApp extends Component {
 
 export default InstructorApp;
 
-const container = document.getElementById("InstructorApp");
+const container = document.getElementById(INSTRUCTORAPP_NAME);
 render(<InstructorApp />, container);

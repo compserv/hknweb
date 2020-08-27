@@ -1,35 +1,12 @@
-import React, { Component } from "react";
 import { render } from "react-dom";
+import React from "react";
 
-class DepartmentApp extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      data: [],
-      loaded: false,
-      placeholder: "Loading"
-    };
-  }
+import BaseApp from "./BaseApp";
+import { DEPARTMENTAPP_NAME } from "./constants";
 
-  componentDidMount() {
-    fetch("api/departments")
-      .then(response => {
-        if (response.status > 400) {
-          return this.setState(() => {
-            return { placeholder: "Something went wrong!" };
-          });
-        }
-        return response.json();
-      })
-      .then(data => {
-        this.setState(() => {
-          return {
-            data,
-            loaded: true
-          };
-        });
-      });
-  }
+
+class DepartmentApp extends BaseApp {
+  API_PATH = "api/departments"
 
   render() {
     return (
@@ -48,5 +25,5 @@ class DepartmentApp extends Component {
 
 export default DepartmentApp;
 
-const container = document.getElementById("DepartmentApp");
+const container = document.getElementById(DEPARTMENTAPP_NAME);
 render(<DepartmentApp />, container);
