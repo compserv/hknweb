@@ -9,7 +9,8 @@ from django.views.generic import TemplateView
 from django.views.generic.edit import UpdateView
 from django.utils import timezone
 
-from hknweb.utils import login_and_permission, method_login_and_permission, get_rand_photo, get_semester_bounds
+from hknweb.utils import login_and_permission, method_login_and_permission, get_rand_photo,\
+                         get_semester_bounds, DATETIME_12_HOUR_FORMAT
 from .constants import GCAL_INVITE_TEMPLATE_ATTRIBUTE_NAME
 from .models import Event, EventType, Rsvp
 from .forms import EventForm, EventUpdateForm
@@ -150,6 +151,14 @@ class EventUpdateView(UpdateView):
     model = Event
     form_class = EventUpdateForm
     template_name_suffix = '_edit'
+
+    def get_initial(self):
+        """ Override some prepopulated data with custom data; in this case, make times
+            the right format. """
+        initial = super().get_initial()
+        initial['start_time'] = self.object.start_time.strftime(DATETIME_12_HOUR_FORMAT)
+        initial['end_time'] = self.object.end_time.strftime(DATETIME_12_HOUR_FORMAT)
+        return initial
 
     def form_valid(self, form):
         if 'rsvp_limit' in form.changed_data:

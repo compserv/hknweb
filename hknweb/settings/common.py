@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 import os
 from django.conf.global_settings import DATETIME_INPUT_FORMATS
+from hknweb.utils import DATETIME_12_HOUR_FORMAT
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -138,7 +139,7 @@ LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'America/Los_Angeles'
 
-DATETIME_INPUT_FORMATS += ('%m/%d/%Y %I:%M %p')
+DATETIME_INPUT_FORMATS += (DATETIME_12_HOUR_FORMAT,)
 
 USE_I18N = True
 

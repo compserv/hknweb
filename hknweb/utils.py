@@ -5,6 +5,10 @@ from functools import wraps
 from random import randint
 from datetime import datetime
 
+# constants
+
+DATETIME_12_HOUR_FORMAT = '%m/%d/%Y %I:%M %p'
+
 # decorators
 
 def login_and_permission(permission_name):
