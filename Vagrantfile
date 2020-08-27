@@ -96,6 +96,10 @@ Vagrant.configure("2") do |config|
 
   $provision = <<-SHELL
     cd ~/hknweb; make setup
+
+    # !TODO Add in NVM, NPM==6.14.6, node==12.18.3 installation
+    # See https://github.com/bri25yu/hknweb/commit/8221c9b7d7d1b3ce146a7260041aaaffa4aad453
+    # or https://github.com/bri25yu/hknweb/commit/0e388879b39155e8d51e9a419aca97201d181c52
   SHELL
 
   # Setup pipenv and virtualenv
