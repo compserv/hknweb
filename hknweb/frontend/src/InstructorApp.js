@@ -1,8 +1,8 @@
 import { render } from "react-dom";
 import React from "react";
 
-import BaseApp from "./BaseApp";
-import { INSTRUCTORAPP_NAME } from "./constants"
+import BaseApp from "./components/BaseApp";
+import { INSTRUCTORAPP_NAME } from "./components/constants"
 
 
 class InstructorApp extends BaseApp {

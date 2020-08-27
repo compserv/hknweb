@@ -10,7 +10,7 @@ dev:
 
 .PHONY: devf
 devf:
-	cd hknweb/frontend/; npm run dev; cd ../../; make dev
+	npm run dev --prefix hknweb/frontend; make dev
 
 .PHONY: livereload
 livereload:

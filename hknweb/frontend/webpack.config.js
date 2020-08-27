@@ -11,8 +11,8 @@ module.exports = {
       ]
     },
     entry: {
-      InstructorApp: './src/components/InstructorApp.js',
-      DepartmentApp: './src/components/DepartmentApp.js'
+      InstructorApp: './src/InstructorApp.js',
+      DepartmentApp: './src/DepartmentApp.js'
     },
     output: {
       filename: '[name].js',

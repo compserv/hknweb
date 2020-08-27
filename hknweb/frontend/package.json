@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "webpack --mode development",
-    "build": "webpack --mode production",
+    "prod": "webpack --mode production",
     "provision": "npm i webpack webpack-cli @babel/core babel-loader @babel/preset-env @babel/preset-react react react-dom --save-dev"
   },
   "keywords": [],

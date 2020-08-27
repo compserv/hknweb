@@ -97,19 +97,7 @@ Vagrant.configure("2") do |config|
   $provision = <<-SHELL
     cd ~/hknweb; make setup
 
-    # Install nvm https://github.com/nvm-sh/nvm
-    echo "Installing nvm"
-    curl -o- https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
-    source ~/.nvm/nvm.sh
-
-    # Install Node
-    echo "Installing Node"
-    nvm install node
-    nvm use node
-
-    cd ~/hknweb/hknweb/frontend
-    npm run provision
-    npm run dev
+    ./provision_frontend.sh dev
   SHELL
 
   # Setup pipenv and virtualenv
