@@ -3,5 +3,5 @@ from . import views
 
 
 urlpatterns = [
-    path('', views.index),
+    path('academics/departments', views.index),
 ]
