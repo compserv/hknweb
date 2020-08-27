@@ -33,7 +33,7 @@ Vagrant.configure("2") do |config|
 
   # Shares the host folder "." to the guest mount point "/home/vagrant/hknweb",
   # with additional options.
-  config.vm.synced_folder ".", "/home/vagrant/hknweb", type: "virtualbox", mount_options: ["dmode=755", "fmode=644"]
+  config.vm.synced_folder ".", "/home/vagrant/hknweb", type: "virtualbox", mount_options: ["dmode=755", "fmode=744"]
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -97,9 +97,19 @@ Vagrant.configure("2") do |config|
   $provision = <<-SHELL
     cd ~/hknweb; make setup
 
-    # !TODO Add in NVM, NPM==6.14.6, node==12.18.3 installation
-    # See https://github.com/bri25yu/hknweb/commit/8221c9b7d7d1b3ce146a7260041aaaffa4aad453
-    # or https://github.com/bri25yu/hknweb/commit/0e388879b39155e8d51e9a419aca97201d181c52
+    # Install nvm https://github.com/nvm-sh/nvm
+    echo "Installing nvm"
+    curl -o- https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
+    source ~/.nvm/nvm.sh
+
+    # Install Node
+    echo "Installing Node"
+    nvm install node
+    nvm use node
+
+    cd ~/hknweb/hknweb/frontend
+    npm run provision
+    npm run dev
   SHELL
 
   # Setup pipenv and virtualenv

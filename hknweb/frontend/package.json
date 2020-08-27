@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "webpack --mode development ./src/index.js --output ./static/frontend/main.js",
-    "build": "webpack --mode production ./src/index.js --output ./static/frontend/main.js"
+    "build": "webpack --mode production ./src/index.js --output ./static/frontend/main.js",
+    "provision": "npm i webpack webpack-cli @babel/core babel-loader @babel/preset-env @babel/preset-react react react-dom --save-dev"
   },
   "keywords": [],
   "author": "",
