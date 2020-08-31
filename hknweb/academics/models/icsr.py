@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import Case, When, Value, Model
+from django.db.models import Case, When, Value
 
 from .base_models import AcademicEntity
 
