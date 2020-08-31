@@ -56,4 +56,4 @@ class ICSR(AcademicEntity):
                     self_num_sem >= latest_course_icsr.numerical_semester):
                 self.icsr_course.current_name = self.course_name
                 self.icsr_instructor.current_number = self.course_number
-        return super(AcademicEntity, self).save(*args, **kwargs)
+        return super(ICSR, self).save(*args, **kwargs)

@@ -1,9 +1,9 @@
 from django.db import models
 from django.core.validators import MinValueValidator
-from django.db.models import Count, Case, When, Value
+from django.db.models import Case, When, Value
 
 from .base_models import AcademicEntity
-from .icsr import ICSR
+
 
 
 class Question(AcademicEntity):
