@@ -5,10 +5,12 @@ from django.db.models import Count, Case, When, Value
 from .base_models import AcademicEntity
 from .icsr import ICSR
 
+
 class Course(AcademicEntity):
-    CHILDREN=["icsr"]
+    CHILDREN = ["icsr"]
     current_name = models.TextField()
     current_number = models.TextField()
+
 
 class Department(AcademicEntity):
     name = models.TextField(max_length=200)
@@ -21,24 +23,6 @@ class Instructor(AcademicEntity):
     current_last_name = models.TextField()
     current_instructor_type = models.TextField()
     CHILDREN = ["icsr"]
-    @staticmethod
-    def merge(primary, duplicates):
-        if len(duplicates) == 0:
-            raise Exception()
-        affected_icsrs = duplicates[0].icsr_instructor
-        for dup in duplicates[1:]:
-            affected_icsrs = affected_icsrs | dup.icsr_instructor
-        errors = affected_icsrs.values("icsr_course", "icsr_department", "icsr_semester").annotate(count=Count("id")).filter(count__gt=1)
-
-        if errors.exists():
-            print("Merge Conflict Instructor. ICSR ids: " + [x.id for x in errors])
-            return
-        affected_icsrs.update(icsr_instructor=primary)
-
-
-
-
-
 
 
 class Semester(AcademicEntity):

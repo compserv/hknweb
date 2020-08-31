@@ -8,24 +8,11 @@ from .icsr import ICSR
 
 class Question(AcademicEntity):
     CHILDREN = ["rating"]
-    @staticmethod
-    def merge(primary, duplicates):
-        if len(duplicates) == 0:
-            raise Exception()
-        affected_ratings = duplicates[0].rating_set
-        for dup in duplicates[1:]:
-            affected_ratings = affected_ratings | dup.rating_set
-        errors = affected_ratings.values("rating_survey").annotate(count=Count("id")).filter(count__gt=1)
 
-        if errors.exists():
-            print("Merge Conflict Question. Rating ids: " + [x.id for x in errors])
-            return
-        affected_ratings.update(rating_question=primary)
-    def get_current_question_text(self):
-        return Rating.recency_ordering(self.rating_set).first().question_text
+
 class Survey(AcademicEntity):
     # reference attributes
-    survey_icsr = models.ForeignKey('ICSR', on_delete=models.PROTECT) # note this is a 1-1 relationship
+    survey_icsr = models.ForeignKey('ICSR', on_delete=models.PROTECT)  # note this is a 1-1 relationship
     CHILDREN = ["rating"]
     # value attributes
     num_students = models.PositiveIntegerField()
