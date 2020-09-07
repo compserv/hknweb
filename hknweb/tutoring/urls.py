@@ -5,6 +5,7 @@ from . import views
 app_name = 'tutoring'
 urlpatterns = [
     path(r'', views.index, name='index'),
-    path('new', views.tutor_class_preference),
-    path(r'generate', views.generate_schedule),
+    path(r'generate', views.generate_schedule, name='generate'),
+    path(r'slotpref', views.tutor_slot_preference, name='slotpref'),
+    path(r'coursepref', views.tutor_course_preference, name='coursepref')
 ]

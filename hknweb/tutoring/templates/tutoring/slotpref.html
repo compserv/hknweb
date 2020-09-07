@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load static %}
+{% load tutor_tags %}
+
+{% block title %}Preference Form{% endblock %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static "tutoring/style.css" %}">
+<script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<link href="http://code.jquery.com/ui/1.12.0/themes/smoothness/jquery-ui.css" rel="stylesheet">
+<script src="http://code.jquery.com/ui/1.12.0/jquery-ui.min.js" ></script>
+</head>
+<style>
+    .heading {
+        display: none;
+    }
+    .content {
+        padding-top: 1em;
+        padding-bottom: 1em;
+    }
+    @media screen and (min-width: 1000px) {
+        .content {
+            padding-top: 1.5em;
+            padding-bottom: 1.5em;
+        }
+    }
+    .centered {
+        max-width: 700px;
+        margin: 0 auto;
+    }
+</style>
+{% endblock %}
+
+{% block heading %}Tutoring course preferences{% endblock %}
+
+{% block content %}
+<h1 id="add-event-title"> Sign up for tutoring hours </h1>
+<p>For each time slot below, indicate your preference level for office hours.
+<span style="color:green">Green</span> = "preferred," <span style="color:#E7D701">yellow</span> = "less preferred but can make it," and <span style="color:red">red</span> = "cannot make it."</p>
+<p>You can also indicate your office preference for individual time slots, or simply use the universal bar below to indicate for all slots.</p>
+Note that there are five levels of preference, which roughly translate to "strongly prefer," "slightly prefer," and "no preference."
+<span style="color:orange">Orange</span> = Cory, <span style="color:blue">blue</span> = Soda.</p>
+<p>Finally, you can also indicate your preference of adjacent time slots below.</p><br />
+
+<div class="left-align">
+<form method = "POST" action="/tutoring/slotpref">
+  {% csrf_token %}
+  <table>
+    <tr>
+      <th class="w3 pv2 bb b--light-gray">Hours</th>
+      {% for day in days %}
+      <th class="w4 pv2 bb b--light-gray">{{ day }}</th>
+      {% endfor %}
+    </tr>
+    {% for hour, hour_pretty in hours %}
+    <tr>
+        <td class="pv2 w3 bb b--near-white"> {{hour_pretty}} </td>
+        {% for slotfields in form|access_slotfields_at_hour:hour%}
+        <td class="pv2 w ba b--near-white">
+            {% for field in slotfields %}
+              {{ field }}
+            {% endfor %}
+        </td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+  </table>
+  <div id="submit">
+    <input type="submit" value="Submit" />
+    {% if messages %}
+        {% for message in messages %}
+            <br>
+            <span class="message">{{ message }}</span>
+        {% endfor %}
+    {% endif %}
+  </div>
+</form>
+
+
+{% endblock %}

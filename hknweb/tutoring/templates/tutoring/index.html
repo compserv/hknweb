@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
-{% load index %}
+{% load tutor_tags %}
 
 {% block title %}Tutoring{% endblock %}
 
@@ -89,8 +89,8 @@ li {
         {% endfor %}
     </table>
     {% endfor %}
-    <form action="new" method="GET" id="button">
-        <button type='submit'>Preference Form</button>
+    <form action="slotpref" method="GET" id="button">
+        <button type='submit'>Timeslot Preference Form</button>
     </form>
 </div>
 
