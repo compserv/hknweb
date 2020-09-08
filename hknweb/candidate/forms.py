@@ -4,10 +4,6 @@ from django.contrib.auth.models import User
 
 from dal import autocomplete
 
-# Pretty sure this is terrible coding practice but hey it works
-# Sorry Daddy DeNero
-User.__str__ = lambda self: "{} ({} {})".format(self.username, self.first_name, self.last_name)
-
 class ChallengeRequestForm(forms.ModelForm):
 
     class Meta:

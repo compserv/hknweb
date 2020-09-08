@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ subject }}</title>
+</head>
+<body>
+
+    <p>
+        {% if confirmed %}
+            Congratulations! VP/csec has confirmed your bit-byte activity!
+        {% else %}
+            Oh no! Your bit-byte activity request has been rejected by VP/csec.
+        {% endif %}
+        The following participants were part of this activity:
+    </p>
+    <p>
+        {% for part in participants %}
+            {{ part.first_name }} {{ part.last_name }} ({{ part.username }}) <br>
+        {% endfor %}
+    </p>
+    <p>
+        Click
+        <a href="{{ bitbyte_link }}">here</a>
+        to view VP/csec's feedback.
+    </p>
+
+    <p>
+        Have a nice day!
+    </p>
+
+    <img src="{{ img_link }}" alt="cute animal"><br>
+    <span style="font-size: 0.8em;"> Image source: pexels.com </span>
+
+</body>
+</html>
