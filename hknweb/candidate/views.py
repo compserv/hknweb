@@ -54,7 +54,8 @@ class IndexView(generic.TemplateView):
         # Both confirmed and unconfirmed rsvps have been sorted into event types
         confirmed_events = sort_rsvps_into_events(rsvps.filter(confirmed=True))
         unconfirmed_events = sort_rsvps_into_events(rsvps.filter(confirmed=False))
-        req_statuses = check_requirements(confirmed_events, num_confirmed, num_bitbytes)
+        confirmed_counts = generate_event_counts(confirmed_events)
+        req_statuses = check_requirements(confirmed_counts, num_confirmed, num_bitbytes)
         upcoming_events = Event.objects \
                 .filter(start_time__range=(today, today + timezone.timedelta(days=7))) \
                 .order_by('start_time')
@@ -65,9 +66,11 @@ class IndexView(generic.TemplateView):
             # anything not pending or rejected is confirmed
             'num_confirmed' : num_confirmed,
             'num_bitbytes' : num_bitbytes,
+            'req_list': req_list,
             'announcements' : announcements,
             'confirmed_events': confirmed_events,
             'unconfirmed_events': unconfirmed_events,
+            'confirmed_counts': confirmed_counts,
             'req_statuses' : req_statuses,
             'upcoming_events': upcoming_events,
             'candidate_forms': candidate_forms,
@@ -328,6 +331,7 @@ map_event_vars = {
     settings.SERV_EVENT: 'Serv',
     settings.PRODEV_EVENT: 'Prodev',
     settings.HANGOUT_EVENT: 'Hangout',
+    settings.MINI_FUN_EVENT: 'Mini Fun'
 }
 
 # TODO: support more flexible typing and string-to-var parsing/conversion
@@ -354,20 +358,55 @@ req_list = {
     settings.BITBYTE_ACTIVITY: 3,
 }
 
-def check_requirements(sorted_rsvps, num_challenges, num_bitbytes):
-    """ Checks which requirements have been fulfilled by a candidate. """
+def generate_event_counts(rsvps):
+    counts = dict.fromkeys(req_list.keys(), False)
+    for req_type, _ in req_list.items():
+        #mini funs count as half a fun event
+        if req_type == settings.FUN_EVENT:
+            funs = len(rsvps[req_type])
+            mini_funs = len(rsvps[settings.MINI_FUN_EVENT])
+            #handle displaying decimal or integer numbers for fun event counts
+            if (mini_funs % 2) == 0:
+                num = funs + int(mini_funs / 2)
+            else:
+                num = funs + (mini_funs * 1.0) / 2
+        #Bitbyte activities are not tracked through rsvps
+        elif req_type != settings.BITBYTE_ACTIVITY:
+            num = len(rsvps[req_type])
+        counts[req_type] = num
+    return counts
+
+def check_requirements(confirmed_counts, num_challenges, num_bitbytes):
     req_statuses = dict.fromkeys(req_list.keys(), False)
     for req_type, minimum in req_list.items():
         if req_type == settings.BITBYTE_ACTIVITY:
             num_confirmed = num_bitbytes
         else:
-            num_confirmed = len(sorted_rsvps[req_type])
-        # officer hangouts are special case
+            num_confirmed = confirmed_counts[req_type]
         if req_type == settings.HANGOUT_EVENT:
             req_statuses[req_type] = check_interactivity_requirements(num_confirmed, num_challenges)
         elif num_confirmed >= minimum:
             req_statuses[req_type] = True
     return req_statuses
+
+# def check_requirements(sorted_rsvps, num_challenges, num_bitbytes):
+#     """ Checks which requirements have been fulfilled by a candidate. """
+#     req_statuses = dict.fromkeys(req_list.keys(), False)
+#     for req_type, minimum in req_list.items():
+#         if req_type == settings.BITBYTE_ACTIVITY:
+#             num_confirmed = num_bitbytes
+#         #mini funs count as half a fun event
+#         elif req_type == settings.FUN_EVENT:
+#             num_confirmed = len(sorted_rsvps[req_type]) + (len(sorted_rsvps[settings.MINI_FUN_EVENT]) * 1.0) / 2
+#         else:
+#             num_confirmed = len(sorted_rsvps[req_type])
+        
+#         # officer hangouts are special case
+#         if req_type == settings.HANGOUT_EVENT:
+#             req_statuses[req_type] = check_interactivity_requirements(num_confirmed, num_challenges)
+#         elif num_confirmed >= minimum:
+#             req_statuses[req_type] = True
+#     return req_statuses
 
 def check_interactivity_requirements(hangouts, challenges):
     """ Returns whether officer interactivities are satisfied. """
