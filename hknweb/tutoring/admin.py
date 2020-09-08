@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Course, TimeSlot, Slot, Tutor
+from .models import Course, TimeSlot, Slot, Tutor, CoursePreference, TimeSlotPreference
 from django.contrib.admin.views.main import ChangeList
 
 @admin.register(Course)
@@ -27,4 +27,15 @@ class TutorAdmin(admin.ModelAdmin):
 	list_filter = ['name']
 	search_fields = ['name']
 	
+@admin.register(CoursePreference)
+class CoursePreferenceAdmin(admin.ModelAdmin):
+	list_display = ['tutor', 'course', 'preference']
+	list_filter = ['tutor', 'course', 'preference']
+	search_fields = ['tutor', 'course', 'preference']
+
+@admin.register(TimeSlotPreference)
+class TimeSlotPreferenceAdmin(admin.ModelAdmin):
+	list_display = ['tutor', 'timeslot', 'time_preference','office_preference']
+	list_filter = ['tutor', 'timeslot', 'time_preference','office_preference']
+	search_fields = ['tutor', 'timeslot', 'time_preference','office_preference']
 	    

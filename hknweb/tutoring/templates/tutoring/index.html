@@ -75,7 +75,7 @@ li {
                     <div class = "tooltip">
                         <p class="relative dib">{{tutor.name}}
                             <span class="tooltiptext">
-                                {% for course in tutor.courses.all %}
+                                {% for course in tutor.get_preferred_courses %}
                                     {{course.name}}
                                 {% endfor %}
                             </span>
@@ -91,6 +91,19 @@ li {
     {% endfor %}
     <form action="slotpref" method="GET" id="button">
         <button type='submit'>Timeslot Preference Form</button>
+    </form>
+    <form action="coursepref" method="GET" id="button">
+        <button type='submit'>Course Preference Form</button>
+    </form>
+    <form action="prepare-algorithm-input" method="GET" id="button">
+        <button type='submit'>Get Tutoring Algorithm JSON Input</button>
+    </form>
+    <form enctype="multipart/form-data" action="generate" method="POST">
+        {% csrf_token %}
+        {{form.as_p}}
+        <div id="submit">
+            <input type="submit" value="Submit" />
+          </div>
     </form>
 </div>
 

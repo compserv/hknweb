@@ -2,7 +2,7 @@
 {% load static %}
 {% load tutor_tags %}
 
-{% block title %}Preference Form{% endblock %}
+{% block title %}Slot Preference Form{% endblock %}
 
 {% block header %}
 <link rel="stylesheet" href="{% static "tutoring/style.css" %}">
@@ -31,20 +31,22 @@
 </style>
 {% endblock %}
 
-{% block heading %}Tutoring course preferences{% endblock %}
+{% block heading %}Tutoring slot preferences{% endblock %}
 
 {% block content %}
-<h1 id="add-event-title"> Sign up for tutoring hours </h1>
-<p>For each time slot below, indicate your preference level for office hours.
-<span style="color:green">Green</span> = "preferred," <span style="color:#E7D701">yellow</span> = "less preferred but can make it," and <span style="color:red">red</span> = "cannot make it."</p>
-<p>You can also indicate your office preference for individual time slots, or simply use the universal bar below to indicate for all slots.</p>
-Note that there are five levels of preference, which roughly translate to "strongly prefer," "slightly prefer," and "no preference."
-<span style="color:orange">Orange</span> = Cory, <span style="color:blue">blue</span> = Soda.</p>
-<p>Finally, you can also indicate your preference of adjacent time slots below.</p><br />
+<h1> Sign up for tutoring hours </h1>
 
 <div class="left-align">
 <form method = "POST" action="/tutoring/slotpref">
   {% csrf_token %}
+  <h2>Do you prefer for your slots to be adjacent?</h2> 
+  {{form.adjacent_pref}}
+  <h2> Enter the amount of hours you are tutoring for per week</h2>
+  {{form.num_assignments}}
+  <h2> Timeslot preferences </h2>
+  <p> For each slot below, select 2 for "preferred", 1 for "less preferred but can make it", and 0 for "cannot make it". 
+    For the slider, the values are as follows from left to right:
+    Strongly prefer Cory, slightly prefer Cory, no preference, slightly prefer Soda, strongly prefer Soda</p>
   <table>
     <tr>
       <th class="w3 pv2 bb b--light-gray">Hours</th>
@@ -67,14 +69,13 @@ Note that there are five levels of preference, which roughly translate to "stron
   </table>
   <div id="submit">
     <input type="submit" value="Submit" />
-    {% if messages %}
-        {% for message in messages %}
-            <br>
-            <span class="message">{{ message }}</span>
-        {% endfor %}
-    {% endif %}
   </div>
 </form>
-
+{% if messages %}
+  {% for message in messages %}
+      <br>
+      <span class="message">{{ message }}</span>
+  {% endfor %}
+{% endif %}
 
 {% endblock %}

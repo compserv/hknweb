@@ -2,15 +2,13 @@ from django.db import models
 from django.contrib.auth.models import User
 import json
 # Create your models here.
-
-
 class Course(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255, null=False)
-
+    cory_preference = models.IntegerField(default=0, null=True)
+    soda_preference = models.IntegerField(default=0, null=True)
     def __repr__(self):
         return "Course(name={})".format(self.name)
-
     def __str__(self):
         return str(self.name)
 
@@ -19,10 +17,18 @@ class Tutor(models.Model):
     user  = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     name = models.CharField(max_length=255)
     adjacent_pref = models.IntegerField(default=0)
+    num_assignments = models.IntegerField(default=2)
     def get_course_preferences(self):
-        return CoursePreference.objects.filter(tutor=self)
+        return CoursePreference.objects.filter(tutor=self).order_by('course__id')
     def get_slot_preferences(self):
-        return SlotPreference.objects.filter(tutor=self)
+        return TimeSlotPreference.objects.filter(tutor=self).order_by('timeslot_id')
+    def get_preferred_courses(self):
+        preferences = self.get_course_preferences()
+        courses = []
+        for pref in preferences:
+            if pref.preference == 2:
+                courses.append(pref.course)
+        return courses
     def __repr__(self):
         return "Tutor(name={})".format(self.name)
     def __str__(self):
@@ -88,6 +94,11 @@ class Slot(models.Model):
     slot_id = models.IntegerField(default=0)
     tutors = models.ManyToManyField(Tutor)
 
+    def get_office(self):
+        for room in self.ROOM_CHOICES:
+            if room[0] == self.room:
+                return room[1]
+
     def __repr__(self):
         tutor_string = ""
         for tutor in self.tutors.all():
@@ -100,13 +111,14 @@ class Slot(models.Model):
 class CoursePreference(models.Model):
     tutor = models.ForeignKey(Tutor, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    rating = models.IntegerField(default=0)
+    preference = models.IntegerField(default=-1)
 
 class TimeSlotPreference(models.Model):
     tutor = models.ForeignKey(Tutor, on_delete=models.CASCADE)
     timeslot = models.ForeignKey(TimeSlot, on_delete=models.CASCADE)
     time_preference = models.IntegerField(default=1)
     office_preference = models.IntegerField(default=2)
+
 
 
 
