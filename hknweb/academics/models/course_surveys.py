@@ -3,10 +3,12 @@ from django.core.validators import MinValueValidator
 from django.db.models import Case, When, Value
 
 from .base_models import AcademicEntity
-
+from .icsr import _chrono
 
 
 class Question(AcademicEntity):
+    recent_semester = models.ForeignKey("Semester", on_delete=models.PROTECT, blank=True, null=True)
+    current_text = models.TextField(blank=True, null=True)
     CHILDREN = ["rating"]
 
 
@@ -30,6 +32,15 @@ class Rating(AcademicEntity):
     inverted = models.BooleanField(default=False)
     range_max = models.IntegerField(default=7)
     rating_value = models.FloatField()
+
+    def save(self, *args, **kwargs):
+        this_semester = _chrono(self.rating_survey.survey_icsr.icsr_semester)
+        latest_text_sem = _chrono(self.rating_question.recent_semester)
+
+        if this_semester >= latest_text_sem:
+            self.rating_question.current_text = self.question_text
+            self.rating_question.save()
+        return super(Rating, self).save(*args, **kwargs)
 
     @staticmethod
     def recency_ordering(qs):

@@ -32,3 +32,5 @@ class AcademicEntity(models.Model):
                     entities_to_remove[0].__class__.__name__.lower(), child_class, child_class, [x.id for x in errors]))
                 return
             affected_children.update(**{child_class + "_" + entities_to_remove[0].__class__.__name__.lower(): to_keep})
+        for entity in entities_to_remove:
+            entity.delete()

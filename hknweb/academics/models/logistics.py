@@ -8,8 +8,9 @@ from .base_models import AcademicEntity
 
 class Course(AcademicEntity):
     CHILDREN = ["icsr"]
-    current_name = models.TextField()
-    current_number = models.TextField()
+    current_name = models.TextField(blank=True, null=True)
+    current_number = models.TextField(blank=True, null=True)
+    recent_semester = models.ForeignKey("Semester", on_delete=models.PROTECT, blank=True,null=True)
 
 
 class Department(AcademicEntity):
@@ -19,9 +20,10 @@ class Department(AcademicEntity):
 
 class Instructor(AcademicEntity):
     instructor_id = models.TextField(max_length=500)
-    current_first_name = models.TextField()
-    current_last_name = models.TextField()
-    current_instructor_type = models.TextField()
+    current_first_name = models.TextField(blank=True, null=True)
+    current_last_name = models.TextField(blank=True, null=True)
+    current_instructor_type = models.TextField(blank=True, null=True)
+    recent_semester = models.ForeignKey("Semester", on_delete=models.PROTECT, blank=True,null=True)
     CHILDREN = ["icsr"]
 
 

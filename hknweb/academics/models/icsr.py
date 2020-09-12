@@ -33,27 +33,34 @@ class ICSR(AcademicEntity):
             ("-icsr_semester__year", "-numerical_semester")
 
     def save(self, *args, **kwargs):
-        from .logistics import Semester
+        this_semester = _chrono(self.icsr_semester)
+        latest_instructor_sem = _chrono(self.icsr_instructor.recent_semester)
 
-        if self.pk is None:
-            l = [Semester.SPRING, Semester.SUMMER, Semester.FALL]
-            self_num_sem = l.index(self.icsr_semester.year_section) + 1
-            latest_instructor_icsr = ICSR.recency_ordering(ICSR.objects.filter(
-                icsr_instructor=self.icsr_instructor)).first()
+        if this_semester >= latest_instructor_sem:
+            self.icsr_instructor.current_first_name = self.first_name
+            self.icsr_instructor.current_last_name = self.last_name
+            self.icsr_instructor.current_instructor_type = self.instructor_type
+            self.icsr_instructor.recent_semester = this_semester
+            self.icsr_instructor.save()
+        latest_course_sem = _chrono(self.icsr_course.recent_semester)
 
-            if self.icsr_semester.year > latest_instructor_icsr.icsr_semester.year or (
-                    self.icsr_semester.year == latest_instructor_icsr.icsr_semester.year and
-                    self_num_sem >= latest_instructor_icsr.numerical_semester):
-                self.icsr_instructor.current_first_name = self.first_name
-                self.icsr_instructor.current_last_name = self.last_name
-                self.icsr.current_instructor_type = self.instructor_type
-
-            latest_course_icsr = ICSR.recency_ordering(ICSR.objects.filter(
-                icsr_course=self.icsr_course)).first()
-
-            if self.icsr_semester.year > latest_course_icsr.icsr_semester.year or (
-                    self.icsr_semester.year == latest_course_icsr.icsr_semester.year and
-                    self_num_sem >= latest_course_icsr.numerical_semester):
-                self.icsr_course.current_name = self.course_name
-                self.icsr_instructor.current_number = self.course_number
+        if this_semester >= latest_course_sem:
+            self.icsr_course.current_name = self.course_name
+            self.icsr_course.current_number = self.course_number
+            self.icsr_course.recent_semester = this_semester
+            self.icsr_course.save()
         return super(ICSR, self).save(*args, **kwargs)
+
+
+"""
+The purpose of this method is, given a semester, create a value that can be used to compare it to other semesters
+chronologically
+"""
+
+
+def _chrono(semester):
+    from .logistics import Semester
+    if semester:
+        l = [Semester.SPRING, Semester.SUMMER, Semester.FALL]
+        return 3 * semester.year + l.index(semester.year_section)
+    return 0
