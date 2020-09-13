@@ -5,7 +5,7 @@ from django.views import generic
 
 from hknweb.utils import login_and_permission, method_login_and_permission
 from .models import ReviewSession
-from .forms import ReviewSessionForm
+from .forms import ReviewSessionForm, ReviewSessionUpdateForm
 
 # views
 
@@ -38,13 +38,12 @@ def add_reviewsession(request):
             messages.success(request, 'Review session has been added!')
             return redirect('/reviewsessions')
         else:
-            print(form.errors)
-            messages.success(request, 'Something went wrong oops')
+            messages.error(request, 'Something went wrong oops')
             return render(request, 'reviewsessions/reviewsession_add.html', {'form': ReviewSessionForm(None)})
     return render(request, 'reviewsessions/reviewsession_add.html', {'form': ReviewSessionForm(None)})
 
 @method_login_and_permission('reviewsessions.change_review_session')
 class ReviewSessionUpdateView(generic.edit.UpdateView):
     model = ReviewSession
-    fields = ['name', 'slug', 'start_time', 'end_time', 'location', 'description']
+    form_class = ReviewSessionUpdateForm
     template_name_suffix = '_edit'
