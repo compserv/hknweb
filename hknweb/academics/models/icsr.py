@@ -56,8 +56,6 @@ class ICSR(AcademicEntity):
 The purpose of this method is, given a semester, create a value that can be used to compare it to other semesters
 chronologically
 """
-
-
 def _chrono(semester):
     from .logistics import Semester
     if semester:
