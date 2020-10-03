@@ -67,7 +67,9 @@ Candidate Portal
                         {% else %}
                             <span class="req not-done"></span>
                         {% endif %}
-                        Mandatory Meetings (ALL required)
+                        <span style="background:{{ req_colors.mandatory }}" class="req-title">
+                            Mandatory Meetings (ALL required)
+                        </span>
                     </li>
                     <ul class="conf-events">
                         {% for event in confirmed_events.mandatory %}
@@ -86,7 +88,9 @@ Candidate Portal
                         {% else %}
                             <span class="req not-done"></span>
                         {% endif %}
+                        <span style="background:{{ req_colors.fun }}" class="req-title">
                         Fun ({{ req_required.fun }} required, {{ req_remaining.fun }} remaining)
+                        </span>
                     <ul class="conf-events">
                         {% for event in confirmed_events.fun %}
                             <li>{{ event.name }}<br/></li>
@@ -104,7 +108,9 @@ Candidate Portal
                         {% else %}
                             <span class="req not-done"></span>
                         {% endif %}
+                        <span style="background:{{ req_colors.big_fun }}" class="req-title">
                         Big Fun ({{ req_required.big_fun }} required, {{ req_remaining.big_fun }} remaining)
+                        </span>
                     </li>
                     <ul class="conf-events">
                         {% for event in confirmed_events.big_fun %}
@@ -123,7 +129,9 @@ Candidate Portal
                         {% else %}
                             <span class="req not-done"></span>
                         {% endif %}
+                        <span style="background:{{ req_colors.serv }}" class="req-title">
                         Service ({{ req_required.serv }} required, {{ req_remaining.serv }} remaining)
+                        </span>
                     </li>
                     <ul class="conf-events">
                         {% for event in confirmed_events.serv %}
@@ -142,7 +150,9 @@ Candidate Portal
                         {% else %}
                             <span class="req not-done"></span>
                         {% endif %}
+                        <span style="background:{{ req_colors.prodev }}" class="req-title">
                         Prodev ({{ req_required.prodev }} required, {{ req_remaining.prodev }} remaining)
+                        </span>
                     </li>
                     <ul class="conf-events">
                         {% for event in confirmed_events.prodev %}
@@ -219,7 +229,7 @@ Candidate Portal
                     <ul class="events-sublist">
 
                         {% if not candidate_forms %}
-                            No candiate forms at this time.
+                            No candidate forms at this time.
                         {% endif %}
 
                         {% for form in candidate_forms %}

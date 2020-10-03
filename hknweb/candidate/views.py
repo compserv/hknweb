@@ -13,7 +13,7 @@ from dal import autocomplete
 
 from hknweb.utils import login_and_permission, method_login_and_permission, get_rand_photo
 from .models import OffChallenge, BitByteActivity, Announcement, CandidateForm
-from ..events.models import Event, Rsvp
+from ..events.models import Event, Rsvp, EventType
 from .forms import ChallengeRequestForm, ChallengeConfirmationForm, BitByteRequestForm
 
 # views
@@ -59,6 +59,11 @@ class IndexView(generic.TemplateView):
                 .filter(start_time__range=(today, today + timezone.timedelta(days=7))) \
                 .order_by('start_time')
 
+        req_colors = dict.fromkeys(map_event_vars.keys(), "grey")
+        for view_key, admin_key in map_event_vars.items():
+            event_type = EventType.objects.filter(type=admin_key).first()
+            if event_type: req_colors[view_key] = event_type.color
+
         context = {
             'num_pending' : num_pending,
             'num_rejected' : num_rejected,
@@ -73,6 +78,7 @@ class IndexView(generic.TemplateView):
             'candidate_forms': candidate_forms,
             'req_required': req_list,
             'req_remaining': req_remaining,
+            "req_colors": req_colors,
         }
         return context
 
