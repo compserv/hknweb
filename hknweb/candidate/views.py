@@ -1,6 +1,7 @@
 from django.views import generic
 from django.views.generic.edit import FormView
-from django.shortcuts import render, redirect, reverse
+from django.http import Http404
+from django.shortcuts import get_object_or_404, render, redirect, reverse
 from django.core.mail import EmailMultiAlternatives
 from django.core.exceptions import PermissionDenied
 from django.template.loader import render_to_string
@@ -220,6 +221,19 @@ def officer_confirm_view(request, pk):
         # or csec has already rejected
         return redirect('/cand/reviewconfirm/{}'.format(pk))
     return render(request, "candidate/challenge_confirm.html", context=context)
+
+@login_and_permission('candidate.change_offchallenge')
+def confirm_challenge(request, id):
+    print('hit')
+    if request.method != 'POST':
+        raise Http404()
+
+    offchallenge = get_object_or_404(OffChallenge, id=id)
+    offchallenge.officer_confirmed = True
+    offchallenge.save()
+
+    next_page = request.POST.get('next', '/')
+    return redirect(next_page)
 
 @login_and_permission('candidate.view_offchallenge')
 def officer_review_confirmation(request, pk):

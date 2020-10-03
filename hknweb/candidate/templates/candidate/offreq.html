@@ -25,6 +25,7 @@ Officer Challenges from You
                     <th>Requester</th>
                     <th>Overall Status</th>
                     <th>Your Response</th>
+                    <th></th>
                 </thead>
 
                 <tbody>
@@ -52,6 +53,15 @@ Officer Challenges from You
                                 <img src="{% static 'candidate/yes.png'%}" alt="confirmed" class="table-icon">
                             {% else %}
                                 <img src="{% static 'candidate/maybe.png'%}" alt="in progress" class="table-icon">
+                            {% endif %}
+                        </td>
+                        <td align="center">
+                            {% if challenge.officer_confirmed is not True %}
+                                <form action="{% url 'candidate:confirm' challenge.id %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="next" value="{{ request.path }}">
+                                    <input type="submit" value="Confirm" />
+                                </form>
                             {% endif %}
                         </td>
                     </tr>
