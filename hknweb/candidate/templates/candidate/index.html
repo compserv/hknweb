@@ -31,203 +31,6 @@ Candidate Portal
         </section>
         <br>
         <section>
-            <h2>Candidate Requirements</h2>
-            <ol class="events-list" type="1">
-                <li>Attend Candidate Meeting</li>
-                <li>Attend all 3 General Meetings</li>
-                <li>Attend 3+ Fun Events</li>
-                <li>Attend 1+ Big Fun Events</li>
-                <li>Attend 1+ Serv Events</li>
-                <li>Complete 3+ Interactivities</li>
-                <ul class="events-sublist">
-                    <li>Officer Challenges</li>
-                    <li>Officer Hangouts</li>
-                </ul>
-                <li>Attend 1+ Prodev Event</li>
-                <li>Administer 1-2 Course Surveys</li>
-                <li>Complete a Committee Project</li>
-                <li>Complete Bit-Byte Requirements</li>
-                <ul class="events-sublist">
-                    <li>2 Adventures</li>
-                    <li>1 Boba or Equivalent</li>
-                </ul>
-                <li>Pay all dues (2 sets)</li>
-                <li>Complete all required forms</li>
-                <ul class="events-sublist">
-
-                    {% if not candidate_forms %}
-                        No candiate forms at this time.
-                    {% endif %}
-
-                    {% for form in candidate_forms %}
-                        <li><a href={{ form.link }}>{{ form.name }}</a> (due {{ form.duedate }})</li>
-                    {% endfor %}
-
-                </ul>
-            </ol>
-        </section>
-    </div>
-    <div class="left-column">
-        <br id="break">
-        <section id="candidate-checklist">
-            <h2 class="events-list">Checklist</h2>
-
-            <div class="checklist-left-col">
-                <h4>Events</h4>
-                <ul class="checkboxes events-list">
-                    <li>
-                        {% if req_statuses.mandatory_meetings %}
-                            <span class="req done"></span>
-                        {% else %}
-                            <span class="req not-done"></span>
-                        {% endif %}
-                        Mandatory Meetings
-                    </li>
-                    <ul class="conf-events">
-                        {% for event in confirmed_events.mandatory_meetings %}
-                            <li>{{ event.name }}<br/></li>
-                        {% endfor %}
-                    </ul>
-                    <ul class="unconf-events">
-                        {% for event in unconfirmed_events.mandatory_meetings %}
-                            <li>{{ event.name }}<br/></li>
-                        {% endfor %}
-                    </ul>
-                    <br/>
-                    <li>
-                        {% if req_statuses.fun %}
-                            <span class="req done"></span>
-                        {% else %}
-                            <span class="req not-done"></span>
-                        {% endif %}
-                        Fun
-                    </li>
-                    <ul class="conf-events">
-                        {% for event in confirmed_events.fun %}
-                            <li>{{ event.name }}<br/></li>
-                        {% endfor %}
-                    </ul>
-                    <ul class="unconf-events">
-                        {% for event in unconfirmed_events.fun %}
-                            <li>{{ event.name }}<br/></li>
-                        {% endfor %}
-                    </ul>
-                    <br/>
-                    <li>
-                        {% if req_statuses.big_fun %}
-                            <span class="req done"></span>
-                        {% else %}
-                            <span class="req not-done"></span>
-                        {% endif %}
-                        Big Fun
-                    </li>
-                    <ul class="conf-events">
-                        {% for event in confirmed_events.big_fun %}
-                            <li>{{ event.name }}<br/></li>
-                        {% endfor %}
-                    </ul>
-                    <ul class="unconf-events">
-                        {% for event in unconfirmed_events.big_fun %}
-                            <li>{{ event.name }}<br/></li>
-                        {% endfor %}
-                    </ul>
-                    <br/>
-                    <li>
-                        {% if req_statuses.serv %}
-                            <span class="req done"></span>
-                        {% else %}
-                            <span class="req not-done"></span>
-                        {% endif %}
-                        Service
-                    </li>
-                    <ul class="conf-events">
-                        {% for event in confirmed_events.serv %}
-                            <li>{{ event.name }}<br/></li>
-                        {% endfor %}
-                    </ul>
-                    <ul class="unconf-events">
-                        {% for event in unconfirmed_events.serv %}
-                            <li>{{ event.name }}<br/></li>
-                        {% endfor %}
-                    </ul>
-                    <br/>
-                    <li>
-                        {% if req_statuses.prodev %}
-                            <span class="req done"></span>
-                        {% else %}
-                            <span class="req not-done"></span>
-                        {% endif %}
-                        Prodev
-                    </li>
-                    <ul class="conf-events">
-                        {% for event in confirmed_events.prodev %}
-                            <li>{{ event.name }}<br/></li>
-                        {% endfor %}
-                    </ul>
-                    <ul class="unconf-events">
-                        {% for event in unconfirmed_events.prodev %}
-                            <li>{{ event.name }}<br/></li>
-                        {% endfor %}
-                    </ul>
-                </ul>
-            </div>
-            <div class="checklist-right-col">
-                <h4>Interactivities</h4>
-                <ul class="checkboxes">
-                    <li>
-                        <!-- challenges and hangouts have the same done status-->
-                        {% if req_statuses.hangout %}
-                            <span class="req done"></span>
-                        {% else %}
-                            <span class="req not-done"></span>
-                        {% endif %}
-                        Officer Challenges
-                    </li>
-                    <a href="{% url 'candidate:candrequests' %}">
-                        (View/Request Officer Challenge Confirmations)</a>
-                    <ul>
-                        <li>{{ num_pending }} pending</li>
-                        <li>{{ num_rejected }} rejected</li>
-                        <li>{{ num_confirmed }} confirmed</li>
-                    </ul>
-                    <li>
-                        {% if req_statuses.hangout %}
-                            <span class="req done"></span>
-                        {% else %}
-                            <span class="req not-done"></span>
-                        {% endif %}
-                        Officer Hangouts
-                    </li>
-                    <ul class="conf-events">
-                        {% for event in confirmed_events.hangout %}
-                            <li>{{ event.name }}<br/></li>
-                        {% endfor %}
-                    </ul>
-                    <ul class="unconf-events">
-                        {% for event in unconfirmed_events.hangout %}
-                            <li>{{ event.name }}<br/></li>
-                        {% endfor %}
-                    </ul>
-                </ul>
-
-                <h4>Bit-Byte</h4>
-                <ul class="checkboxes">
-                    <li>
-                        <!-- do not distinguish between boba and adventures-->
-                        {% if req_statuses.bitbyte %}
-                            <span class="req done"></span>
-                        {% else %}
-                            <span class="req not-done"></span>
-                        {% endif %}
-                        {{ num_bitbytes }} Bit-Byte Activities Completed
-                    </li>
-                    <a href="{% url 'candidate:bitbyte' %}">
-                        (View/Request Bit-Byte Confirmations)</a>
-                </ul>
-            </div>
-        </section>
-        <br>
-        <section>
             <h2>Upcoming Events</h2>
             {% if upcoming_events %}
             <table class="full-table">
@@ -248,6 +51,184 @@ Candidate Portal
                 </tbody>
             </table>
             {% endif %}
+        </section>
+    </div>
+    <div class="left-column">
+        <br id="break">
+        <section id="candidate-checklist">
+            <h2 class="events-list">Checklist</h2>
+
+            <div class="checklist-left-col">
+                <h4>Events</h4>
+                <ul class="checkboxes events-list">
+                    <li>
+                        {% if req_statuses.mandatory %}
+                            <span class="req done"></span>
+                        {% else %}
+                            <span class="req not-done"></span>
+                        {% endif %}
+                        Mandatory Meetings (ALL required)
+                    </li>
+                    <ul class="conf-events">
+                        {% for event in confirmed_events.mandatory %}
+                            <li>{{ event.name }}<br/></li>
+                        {% endfor %}
+                    </ul>
+                    <ul class="unconf-events">
+                        {% for event in unconfirmed_events.mandatory %}
+                            <li>{{ event.name }}<br/></li>
+                        {% endfor %}
+                    </ul>
+                    <br/>
+                    <li>
+                        {% if req_statuses.fun %}
+                            <span class="req done"></span>
+                        {% else %}
+                            <span class="req not-done"></span>
+                        {% endif %}
+                        Fun ({{ req_required.fun }} required, {{ req_remaining.fun }} remaining)
+                    <ul class="conf-events">
+                        {% for event in confirmed_events.fun %}
+                            <li>{{ event.name }}<br/></li>
+                        {% endfor %}
+                    </ul>
+                    <ul class="unconf-events">
+                        {% for event in unconfirmed_events.fun %}
+                            <li>{{ event.name }}<br/></li>
+                        {% endfor %}
+                    </ul>
+                    <br/>
+                    <li>
+                        {% if req_statuses.big_fun %}
+                            <span class="req done"></span>
+                        {% else %}
+                            <span class="req not-done"></span>
+                        {% endif %}
+                        Big Fun ({{ req_required.big_fun }} required, {{ req_remaining.big_fun }} remaining)
+                    </li>
+                    <ul class="conf-events">
+                        {% for event in confirmed_events.big_fun %}
+                            <li>{{ event.name }}<br/></li>
+                        {% endfor %}
+                    </ul>
+                    <ul class="unconf-events">
+                        {% for event in unconfirmed_events.big_fun %}
+                            <li>{{ event.name }}<br/></li>
+                        {% endfor %}
+                    </ul>
+                    <br/>
+                    <li>
+                        {% if req_statuses.serv %}
+                            <span class="req done"></span>
+                        {% else %}
+                            <span class="req not-done"></span>
+                        {% endif %}
+                        Service ({{ req_required.serv }} required, {{ req_remaining.serv }} remaining)
+                    </li>
+                    <ul class="conf-events">
+                        {% for event in confirmed_events.serv %}
+                            <li>{{ event.name }}<br/></li>
+                        {% endfor %}
+                    </ul>
+                    <ul class="unconf-events">
+                        {% for event in unconfirmed_events.serv %}
+                            <li>{{ event.name }}<br/></li>
+                        {% endfor %}
+                    </ul>
+                    <br/>
+                    <li>
+                        {% if req_statuses.prodev %}
+                            <span class="req done"></span>
+                        {% else %}
+                            <span class="req not-done"></span>
+                        {% endif %}
+                        Prodev ({{ req_required.prodev }} required, {{ req_remaining.prodev }} remaining)
+                    </li>
+                    <ul class="conf-events">
+                        {% for event in confirmed_events.prodev %}
+                            <li>{{ event.name }}<br/></li>
+                        {% endfor %}
+                    </ul>
+                    <ul class="unconf-events">
+                        {% for event in unconfirmed_events.prodev %}
+                            <li>{{ event.name }}<br/></li>
+                        {% endfor %}
+                    </ul>
+                </ul>
+            </div>
+            <div class="checklist-right-col">
+                <h4>Interactivities ({{ req_required.hangout.either }} total required, {{ req_remaining.hangout.either }} remaining)</h4>
+                <ul class="checkboxes">
+                    <li>
+                        <!-- challenges and hangouts have the same done status-->
+                        {% if req_statuses.hangout %}
+                            <span class="req done"></span>
+                        {% else %}
+                            <span class="req not-done"></span>
+                        {% endif %}
+                        Officer Challenges ({{ req_required.hangout.challenge }} required, {{ req_remaining.hangout.challenge }} remaining)
+                    </li>
+                    <a href="{% url 'candidate:candrequests' %}">
+                        (View/Request Officer Challenge Confirmations)</a>
+                    <ul>
+                        <li>{{ num_pending }} pending</li>
+                        <li>{{ num_rejected }} rejected</li>
+                        <li>{{ num_confirmed }} confirmed</li>
+                    </ul>
+                    <li>
+                        {% if req_statuses.hangout %}
+                            <span class="req done"></span>
+                        {% else %}
+                            <span class="req not-done"></span>
+                        {% endif %}
+                        Officer Hangouts ({{ req_required.hangout.hangout }} required, {{ req_remaining.hangout.hangout }} remaining)
+                    </li>
+                    <ul class="conf-events">
+                        {% for event in confirmed_events.hangout %}
+                            <li>{{ event.name }}<br/></li>
+                        {% endfor %}
+                    </ul>
+                    <ul class="unconf-events">
+                        {% for event in unconfirmed_events.hangout %}
+                            <li>{{ event.name }}<br/></li>
+                        {% endfor %}
+                    </ul>
+                </ul>
+
+                <h4>Bit-Byte ({{ req_required.bitbyte }} required, {{ req_remaining.bitbyte }} remaining)</h4>
+                <ul class="checkboxes">
+                    <li>
+                        <!-- do not distinguish between boba and adventures-->
+                        {% if req_statuses.bitbyte %}
+                            <span class="req done"></span>
+                        {% else %}
+                            <span class="req not-done"></span>
+                        {% endif %}
+                        {{ num_bitbytes }} Bit-Byte Activities Completed
+                    </li>
+                    <a href="{% url 'candidate:bitbyte' %}">
+                        (View/Request Bit-Byte Confirmations)</a>
+                </ul>
+
+                <h4>Miscellaneous Requirements</h4>
+                <ul class="events-list" type="1">
+                    <li>Administer 1-2 Course Surveys</li>
+                    <li>Complete a Committee Project</li>
+                    <li>Pay all dues (2 sets)</li>
+                    <li>Complete all required forms</li>
+                    <ul class="events-sublist">
+
+                        {% if not candidate_forms %}
+                            No candiate forms at this time.
+                        {% endif %}
+
+                        {% for form in candidate_forms %}
+                            <li><a href={{ form.link }}>{{ form.name }}</a> (due {{ form.duedate }})</li>
+                        {% endfor %}
+
+                    </ul>
+                </ul>
+            </div>
         </section>
     </div>
 </div>

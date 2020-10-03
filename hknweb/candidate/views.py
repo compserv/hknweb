@@ -53,8 +53,8 @@ class IndexView(generic.TemplateView):
         rsvps = Rsvp.objects.filter(user__exact=self.request.user)
         # Both confirmed and unconfirmed rsvps have been sorted into event types
         confirmed_events = sort_rsvps_into_events(rsvps.filter(confirmed=True))
-        unconfirmed_events = sort_rsvps_into_events(rsvps.filter(confirmed=False))
-        req_statuses = check_requirements(confirmed_events, num_confirmed, num_bitbytes)
+        unconfirmed_events = get_unconfirmed_events(rsvps)
+        req_statuses, req_remaining = check_requirements(confirmed_events, unconfirmed_events, num_confirmed, num_bitbytes)
         upcoming_events = Event.objects \
                 .filter(start_time__range=(today, today + timezone.timedelta(days=7))) \
                 .order_by('start_time')
@@ -71,6 +71,8 @@ class IndexView(generic.TemplateView):
             'req_statuses' : req_statuses,
             'upcoming_events': upcoming_events,
             'candidate_forms': candidate_forms,
+            'req_required': req_list,
+            'req_remaining': req_remaining,
         }
         return context
 
@@ -343,6 +345,25 @@ def sort_rsvps_into_events(rsvps):
     return sorted_events
 
 
+def get_unconfirmed_events(rsvps):
+    unconfirmed_events = sort_rsvps_into_events(rsvps.filter(confirmed=False))
+
+    # We want to show all mandatory events, not just the events the candidate has RSVP'd to
+    # Get all mandatory events i.e. events with event type "Mandatory"
+    mandatory_events = Event.objects.filter(event_type__type=map_event_vars[settings.MANDATORY_EVENT])
+
+    # Initialize unconfirmed_events[settings.MANDATORY_EVENT]
+    if settings.MANDATORY_EVENT not in unconfirmed_events:
+        unconfirmed_events[settings.MANDATORY_EVENT] = []
+
+    for mandatory_event in mandatory_events:
+        # If no rsvps are found, add this mandatory event to the list of unconfirmed events
+        if rsvps.filter(event__id=mandatory_event.id).count() == 0:
+            unconfirmed_events[settings.MANDATORY_EVENT].append(mandatory_event)
+
+    return unconfirmed_events
+
+
 # TODO: increase flexibility by fetching event requirement count from database
 req_list = {
     settings.MANDATORY_EVENT: 3,
@@ -350,25 +371,49 @@ req_list = {
     settings.BIG_FUN_EVENT: 1,
     settings.SERV_EVENT: 1,
     settings.PRODEV_EVENT: 1,
-    settings.HANGOUT_EVENT: None,
+    settings.HANGOUT_EVENT: {
+        settings.HANGOUT_ATTRIBUTE_NAME: 1,
+        settings.CHALLENGE_ATTRIBUTE_NAME: 1,
+        settings.EITHER_ATTRIBUTE_NAME: 3,
+    },
     settings.BITBYTE_ACTIVITY: 3,
 }
 
-def check_requirements(sorted_rsvps, num_challenges, num_bitbytes):
+def check_requirements(confirmed_events, unconfirmed_events, num_challenges, num_bitbytes):
     """ Checks which requirements have been fulfilled by a candidate. """
     req_statuses = dict.fromkeys(req_list.keys(), False)
+    req_remaining = req_list.copy()
+
     for req_type, minimum in req_list.items():
         if req_type == settings.BITBYTE_ACTIVITY:
             num_confirmed = num_bitbytes
         else:
-            num_confirmed = len(sorted_rsvps[req_type])
-        # officer hangouts are special case
+            num_confirmed = len(confirmed_events[req_type])
+        # officer hangouts and mandatory events are special cases
         if req_type == settings.HANGOUT_EVENT:
-            req_statuses[req_type] = check_interactivity_requirements(num_confirmed, num_challenges)
+            interactivities = {
+                settings.HANGOUT_ATTRIBUTE_NAME: num_confirmed,
+                settings.CHALLENGE_ATTRIBUTE_NAME: num_challenges,
+                settings.EITHER_ATTRIBUTE_NAME: num_confirmed + num_challenges,
+            }
+            req_statuses[req_type], req_remaining[req_type] = check_interactivity_requirements(interactivities)
+        elif req_type == settings.MANDATORY_EVENT:
+            req_remaining[req_type] = len(unconfirmed_events[settings.MANDATORY_EVENT])
+            req_statuses[req_type] = req_remaining[req_type] == 0
         elif num_confirmed >= minimum:
             req_statuses[req_type] = True
-    return req_statuses
+            req_remaining[req_type]= max(minimum - num_confirmed, 0)
 
-def check_interactivity_requirements(hangouts, challenges):
+    return req_statuses, req_remaining
+
+INTERACTIVITY_REQUIREMENTS = req_list[settings.HANGOUT_EVENT]
+
+def check_interactivity_requirements(interactivities):
     """ Returns whether officer interactivities are satisfied. """
-    return hangouts >= 1 and challenges >= 1 and hangouts + challenges >= 3
+    req_remaining = {}
+    for req_type, num_required in INTERACTIVITY_REQUIREMENTS.items():
+        req_remaining[req_type] = max(num_required - interactivities[req_type], 0)
+
+    req_status = not any(req_remaining.values())
+
+    return req_status, req_remaining

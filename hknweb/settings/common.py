@@ -212,5 +212,8 @@ SERV_EVENT = 'serv'
 PRODEV_EVENT = 'prodev'
 HANGOUT_EVENT = 'hangout'
 BITBYTE_ACTIVITY = 'bitbyte'
+HANGOUT_ATTRIBUTE_NAME = "hangout"
+CHALLENGE_ATTRIBUTE_NAME = "challenge"
+EITHER_ATTRIBUTE_NAME = "either"
 
 # Note: both candidate and officer group should have permission to add officer challenges
