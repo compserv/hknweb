@@ -1,23 +1,45 @@
-from django.views import generic
-from django.views.generic.edit import FormView
-from django.http import Http404
-from django.shortcuts import get_object_or_404, render, redirect, reverse
-from django.core.mail import EmailMultiAlternatives
-from django.core.exceptions import PermissionDenied
-from django.template.loader import render_to_string
+from django.conf import settings
+
 from django.contrib import messages
 from django.contrib.auth.models import User
-from django.utils import timezone
-from django.conf import settings
+
+from django.core.mail import EmailMultiAlternatives
+from django.core.exceptions import PermissionDenied
+
 from django.db.models import Q
+
+from django.http import Http404
+
+from django.shortcuts import get_object_or_404, redirect, render, reverse
+
+from django.template.loader import render_to_string
+
+from django.utils import timezone
+
+from django.views import generic
+from django.views.generic.edit import FormView
+
 from dal import autocomplete
 
-from hknweb.utils import login_and_permission, method_login_and_permission, get_rand_photo
-from .models import OffChallenge, BitByteActivity, Announcement, CandidateForm
-from ..events.models import Event, Rsvp, EventType
-from .forms import ChallengeRequestForm, ChallengeConfirmationForm, BitByteRequestForm
+from hknweb.utils import get_rand_photo, login_and_permission, method_login_and_permission
 
-# views
+from ..events.models import Event, Rsvp
+
+from .constants import ATTR, REQUIREMENT_EVENTS
+from .forms import BitByteRequestForm, ChallengeConfirmationForm, ChallengeRequestForm
+from .models import Announcement, BitByteActivity, CandidateForm, OffChallenge
+from .utils import (
+    check_interactivity_requirements,
+    check_requirements,
+    create_title,
+    get_requirement_colors,
+    get_unconfirmed_events,
+    req_list,
+    send_bitbyte_confirm_email,
+    send_challenge_confirm_email,
+    sort_rsvps_into_events,
+)
+
 
 @method_login_and_permission('candidate.view_announcement')
 class IndexView(generic.TemplateView):
@@ -60,26 +82,50 @@ class IndexView(generic.TemplateView):
                 .filter(start_time__range=(today, today + timezone.timedelta(days=7))) \
                 .order_by('start_time')
 
-        req_colors = dict.fromkeys(map_event_vars.keys(), "grey")
-        for view_key, admin_key in map_event_vars.items():
-            event_type = EventType.objects.filter(type=admin_key).first()
-            if event_type: req_colors[view_key] = event_type.color
+        req_colors = get_requirement_colors()
+        req_titles = {req_type: create_title(req_type, req_remaining) for req_type in req_statuses}
+
+        events = []
+        for req_event in REQUIREMENT_EVENTS:
+            events.append({
+                ATTR.TITLE: req_titles[req_event],
+                ATTR.STATUS: req_statuses[req_event],
+                ATTR.COLOR: req_colors[req_event],
+                ATTR.CONFIRMED: confirmed_events[req_event],
+                ATTR.UNCONFIRMED: unconfirmed_events[req_event],
+            })
+
+        interactivities = {
+            ATTR.TITLE: req_titles[settings.HANGOUT_EVENT][settings.EITHER_ATTRIBUTE_NAME],
+            ATTR.STATUS: req_statuses[settings.HANGOUT_EVENT],
+            settings.CHALLENGE_ATTRIBUTE_NAME: {
+                ATTR.TITLE: req_titles[settings.HANGOUT_EVENT][settings.CHALLENGE_ATTRIBUTE_NAME],
+                ATTR.NUM_PENDING : num_pending,
+                ATTR.NUM_REJECTED : num_rejected,
+                # anything not pending or rejected is confirmed
+                ATTR.NUM_CONFIRMED : num_confirmed,
+            },
+            settings.HANGOUT_ATTRIBUTE_NAME: {
+                ATTR.TITLE: req_titles[settings.HANGOUT_EVENT][settings.HANGOUT_ATTRIBUTE_NAME],
+            },
+        }
+
+        bitbyte = {
+            ATTR.TITLE: req_titles[settings.BITBYTE_ACTIVITY],
+            ATTR.STATUS: req_statuses[settings.BITBYTE_ACTIVITY],
+            ATTR.NUM_BITBYTES : num_bitbytes,
+        }
 
         context = {
-            'num_pending' : num_pending,
-            'num_rejected' : num_rejected,
-            # anything not pending or rejected is confirmed
-            'num_confirmed' : num_confirmed,
-            'num_bitbytes' : num_bitbytes,
             'announcements' : announcements,
             'confirmed_events': confirmed_events,
             'unconfirmed_events': unconfirmed_events,
             'req_statuses' : req_statuses,
             'upcoming_events': upcoming_events,
             'candidate_forms': candidate_forms,
-            'req_required': req_list,
-            'req_remaining': req_remaining,
-            "req_colors": req_colors,
+            settings.EVENTS_ATTRIBUTE_NAME: events,
+            settings.INTERACTIVITIES_ATTRIBUTE_NAME: interactivities,
+            settings.BITBYTE_ACTIVITY: bitbyte,
         }
         return context
 
@@ -224,7 +270,6 @@ def officer_confirm_view(request, pk):
 
 @login_and_permission('candidate.change_offchallenge')
 def confirm_challenge(request, id):
-    print('hit')
     if request.method != 'POST':
         raise Http404()
 
@@ -294,146 +339,3 @@ class UserAutocomplete(autocomplete.Select2QuerySetView):
                 Q(first_name__icontains=self.q) |
                 Q(last_name__icontains=self.q))
         return qs
-
-# HELPERS
-
-def send_challenge_confirm_email(request, challenge, confirmed):
-    subject = '[HKN] Your officer challenge was reviewed'
-    candidate_email = challenge.requester.email
-
-    challenge_link = request.build_absolute_uri(
-            reverse("candidate:detail", kwargs={ 'pk': challenge.id }))
-    html_content = render_to_string(
-        'candidate/challenge_confirm_email.html',
-        {
-            'subject': subject,
-            'confirmed': confirmed,
-            'officer_name': challenge.officer.get_full_name(),
-            'officer_username': challenge.officer.username,
-            'challenge_link': challenge_link,
-            'img_link': get_rand_photo(),
-        }
-    )
-    msg = EmailMultiAlternatives(subject, subject,
-                settings.NO_REPLY_EMAIL, [candidate_email])
-    msg.attach_alternative(html_content, "text/html")
-    msg.send()
-
-def send_bitbyte_confirm_email(request, bitbyte, confirmed):
-    subject = '[HKN] Your bit-byte request was reviewed'
-    participant_emails = [part.email for part in bitbyte.participants.all()]
-
-    bitbyte_link = request.build_absolute_uri(
-        reverse("candidate:bitbyte"))
-    html_content = render_to_string(
-        'candidate/bitbyte_confirm_email.html',
-        {
-            'subject': subject,
-            'confirmed': confirmed,
-            'participants': bitbyte.participants.all(),
-            'bitbyte_link': bitbyte_link,
-            'img_link': get_rand_photo(),
-        }
-    )
-    msg = EmailMultiAlternatives(subject, subject,
-                settings.NO_REPLY_EMAIL, participant_emails)
-    msg.attach_alternative(html_content, "text/html")
-    msg.send()
-
-
-""" What the event types are called on admin site.
-    Code will not work if they're called something else!! """
-map_event_vars = {
-    settings.MANDATORY_EVENT: 'Mandatory',
-    settings.FUN_EVENT: 'Fun',
-    settings.BIG_FUN_EVENT: 'Big Fun',
-    settings.SERV_EVENT: 'Serv',
-    settings.PRODEV_EVENT: 'Prodev',
-    settings.HANGOUT_EVENT: 'Hangout',
-}
-
-# TODO: support more flexible typing and string-to-var parsing/conversion
-def sort_rsvps_into_events(rsvps):
-    """ Takes in all confirmed rsvps and sorts them into types, currently hard coded. """
-    # Events in admin are currently in a readable format, must convert them to callable keys for Django template
-    sorted_events = dict.fromkeys(map_event_vars.keys())
-    for event_key, event_type in map_event_vars.items():
-        temp = []
-        for rsvp in rsvps.filter(event__event_type__type=event_type):
-            temp.append(rsvp.event)
-        sorted_events[event_key] = temp
-    return sorted_events
-
-
-def get_unconfirmed_events(rsvps):
-    unconfirmed_events = sort_rsvps_into_events(rsvps.filter(confirmed=False))
-
-    # We want to show all mandatory events, not just the events the candidate has RSVP'd to
-    # Get all mandatory events i.e. events with event type "Mandatory"
-    mandatory_events = Event.objects.filter(event_type__type=map_event_vars[settings.MANDATORY_EVENT])
-
-    # Initialize unconfirmed_events[settings.MANDATORY_EVENT]
-    if settings.MANDATORY_EVENT not in unconfirmed_events:
-        unconfirmed_events[settings.MANDATORY_EVENT] = []
-
-    for mandatory_event in mandatory_events:
-        # If no rsvps are found, add this mandatory event to the list of unconfirmed events
-        if rsvps.filter(event__id=mandatory_event.id).count() == 0:
-            unconfirmed_events[settings.MANDATORY_EVENT].append(mandatory_event)
-
-    return unconfirmed_events
-
-
-# TODO: increase flexibility by fetching event requirement count from database
-req_list = {
-    settings.MANDATORY_EVENT: 3,
-    settings.FUN_EVENT: 3,
-    settings.BIG_FUN_EVENT: 1,
-    settings.SERV_EVENT: 1,
-    settings.PRODEV_EVENT: 1,
-    settings.HANGOUT_EVENT: {
-        settings.HANGOUT_ATTRIBUTE_NAME: 1,
-        settings.CHALLENGE_ATTRIBUTE_NAME: 1,
-        settings.EITHER_ATTRIBUTE_NAME: 3,
-    },
-    settings.BITBYTE_ACTIVITY: 3,
-}
-
-def check_requirements(confirmed_events, unconfirmed_events, num_challenges, num_bitbytes):
-    """ Checks which requirements have been fulfilled by a candidate. """
-    req_statuses = dict.fromkeys(req_list.keys(), False)
-    req_remaining = req_list.copy()
-
-    for req_type, minimum in req_list.items():
-        if req_type == settings.BITBYTE_ACTIVITY:
-            num_confirmed = num_bitbytes
-        else:
-            num_confirmed = len(confirmed_events[req_type])
-        # officer hangouts and mandatory events are special cases
-        if req_type == settings.HANGOUT_EVENT:
-            interactivities = {
-                settings.HANGOUT_ATTRIBUTE_NAME: num_confirmed,
-                settings.CHALLENGE_ATTRIBUTE_NAME: num_challenges,
-                settings.EITHER_ATTRIBUTE_NAME: num_confirmed + num_challenges,
-            }
-            req_statuses[req_type], req_remaining[req_type] = check_interactivity_requirements(interactivities)
-        elif req_type == settings.MANDATORY_EVENT:
-            req_remaining[req_type] = len(unconfirmed_events[settings.MANDATORY_EVENT])
-            req_statuses[req_type] = req_remaining[req_type] == 0
-        elif num_confirmed >= minimum:
-            req_statuses[req_type] = True
-            req_remaining[req_type]= max(minimum - num_confirmed, 0)
-
-    return req_statuses, req_remaining
-
-INTERACTIVITY_REQUIREMENTS = req_list[settings.HANGOUT_EVENT]
-
-def check_interactivity_requirements(interactivities):
-    """ Returns whether officer interactivities are satisfied. """
-    req_remaining = {}
-    for req_type, num_required in INTERACTIVITY_REQUIREMENTS.items():
-        req_remaining[req_type] = max(num_required - interactivities[req_type], 0)
-
-    req_status = not any(req_remaining.values())
-
-    return req_status, req_remaining

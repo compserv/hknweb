@@ -1,4 +1,7 @@
+import csv
+
 from django.contrib.auth.decorators import login_required, permission_required
+from django.http import HttpResponse
 from django.utils.decorators import method_decorator
 from django.contrib.staticfiles.finders import find
 from functools import wraps
@@ -58,3 +61,19 @@ def get_semester_bounds(date):
         return datetime(date.year, 1, 1), datetime(date.year, 7, 1)
     else:
         return datetime(date.year, 7, 1), datetime(date.year + 1, 1, 1)
+
+
+# Helper. @source: http://books.agiliq.com/projects/django-admin-cookbook/en/latest/export.html
+def export_model_as_csv(model, queryset):
+    meta = model.model._meta
+    field_names = [field.name for field in meta.fields]
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename={}.csv'.format(meta)
+    writer = csv.writer(response)
+
+    writer.writerow(field_names)
+    for obj in queryset:
+        writer.writerow([getattr(obj, field) for field in field_names])
+
+    return response

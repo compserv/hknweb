@@ -1,8 +1,10 @@
 from django import forms
-from .models import OffChallenge, BitByteActivity
 from django.contrib.auth.models import User
 
 from dal import autocomplete
+
+from .models import BitByteActivity, OffChallenge
+
 
 class ChallengeRequestForm(forms.ModelForm):
 

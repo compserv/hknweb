@@ -1,11 +1,10 @@
 from django.contrib import admin
 from django.contrib.auth.models import User
-from django.http import HttpResponse
 
-from .models import OffChallenge, BitByteActivity, Announcement, CandidateForm
-from .views import send_challenge_confirm_email, send_bitbyte_confirm_email
+from hknweb.utils import export_model_as_csv
 
-import csv
+from .models import Announcement, BitByteActivity, CandidateForm, OffChallenge
+from .views import send_bitbyte_confirm_email, send_challenge_confirm_email
 
 
 class OffChallengeAdmin(admin.ModelAdmin):
@@ -153,21 +152,6 @@ class CandidateFormAdmin(admin.ModelAdmin):
         queryset.update(visible=False)
 
     set_invisible.short_description = "Set selected as invisible"
-
-# Helper. @source: http://books.agiliq.com/projects/django-admin-cookbook/en/latest/export.html
-def export_model_as_csv(model, queryset):
-    meta = model.model._meta
-    field_names = [field.name for field in meta.fields]
-
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename={}.csv'.format(meta)
-    writer = csv.writer(response)
-
-    writer.writerow(field_names)
-    for obj in queryset:
-        writer.writerow([getattr(obj, field) for field in field_names])
-
-    return response
 
 
 admin.site.register(CandidateForm, CandidateFormAdmin)
