@@ -65,9 +65,22 @@
             <div class="tutoring-title">
                 Announcements
             </div>
+<<<<<<< HEAD
             {% if not announcements %}
                 No announcements at this time.
             {% endif %}
+=======
+                {% if not announcements %}
+                    No announcements at this time.
+                {% endif %}
+
+                {% for announcement in announcements %}
+                    <p>
+                    <strong>{{ announcement.title }}</strong> [{{ announcement.release_date|date:"m/d/Y" }}]<br>
+                    {{ announcement.text }}
+                    </p>
+                {% endfor %}
+>>>>>>> 6962040bdeea65059ea147f8e10d96609117304f
 
             {% for announcement in announcements %}
                 <p>
