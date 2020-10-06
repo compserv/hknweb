@@ -9,10 +9,9 @@ from django.utils import timezone
 MAX_STRLEN = 85 # default max length for char fields
 MAX_TXTLEN = 2000 # default max length for text fields
 
-from django.utils import timezone
-
-MAX_STRLEN = 85
-MAX_TXTLEN = 2000
+# Pretty sure this is terrible coding practice but hey it works
+# Sorry Daddy DeNero
+User.__str__ = lambda self: "{} ({} {})".format(self.username, self.first_name, self.last_name)
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, editable=False)

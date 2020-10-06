@@ -64,7 +64,6 @@
         <div class="tutoring-panel">
             <div class="tutoring-title">
                 Announcements
-
             </div>
             {% if not announcements %}
                 No announcements at this time.
@@ -138,12 +137,31 @@
             <ul>
                 {% for event in events %}
                     <li>
-                        {{ event.name }}
+                        <a href="{% url 'events:index' %}{{ event.id }}">{{ event.name }}</a>
                         <span class="events-card-time">{{event.start_time|date:"D m/d h:i A"}} - {{ event.end_time|date:"h:i A"}}</span>
                     </li>
                 {% endfor %}
             </ul>
         </div>
+
+        <br>
+
+        {% if reviewsessions %}
+        <div class="tutoring-panel">
+            <div class="tutoring-title">
+                Upcoming Review Sessions
+            </div>
+            <ul>
+                {% for reviewsession in reviewsessions %}
+                    <li>
+                        <a href="{% url 'reviewsessions:index' %}{{ reviewsession.id }}">{{ reviewsession.name }}</a>
+                        <span class="events-card-time">{{reviewsession.start_time|date:"D m/d h:i A"}} - {{ reviewsession.end_time|date:"h:i A"}}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
     </div>
 </div>
 

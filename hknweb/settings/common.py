@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 import os
 from django.conf.global_settings import DATETIME_INPUT_FORMATS
+from hknweb.utils import DATETIME_12_HOUR_FORMAT
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -31,7 +32,7 @@ INSTALLED_APPS = [
     'hknweb.elections',
     'hknweb.courses',
     'hknweb.exams',
-    'hknweb.tours',
+    'hknweb.reviewsessions',
     'dal', # must be before django.contrib.admin
     'dal_select2', # must be before django.contrib.admin
     'django.contrib.admin',
@@ -139,7 +140,7 @@ LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'America/Los_Angeles'
 
-DATETIME_INPUT_FORMATS += ('%m/%d/%Y %I:%M %p')
+DATETIME_INPUT_FORMATS += (DATETIME_12_HOUR_FORMAT,)
 
 USE_I18N = True
 
@@ -166,6 +167,7 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'hknwebsite@hkn.eecs.berkeley.edu'
 EMAIL_USE_TLS = True
 
+NO_REPLY_EMAIL = 'no-reply@hkn.eecs.berkeley.edu'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/

@@ -29,16 +29,18 @@ Candidate's Bit-Byte Activities
                 <span class="left">{{ field.label }}
                     {% if field.field.required %}<span class="red">* </span>{% endif %}
                 </span>&nbsp
+                {% if field.label == 'Proof' %}
+                <span class="tooltip">
+                    <img src="{% static 'candidate/more_info.png' %}" alt="more info" class="inline-icon">
+                    <span class="tooltiptext">
+                        Please send a photo to #bitbyte on Slack and paste the link here, along
+                        with any comments. You can obtain the link by clicking "More actions->Copy link"
+                        on Slack. The link should start with "https://hkn.slack.com/archives/"
+                    </span>
+                </span>
+                {% endif %}
                 {% if field|field_type == 'Textarea' %}
                     <br/>
-                {% endif %}
-                {% if field.label == 'Proof' %}
-                <span class="gray-note">
-                    Please send a photo to #bitbyte on Slack and paste the link here, along
-                    with any comments. You can obtain the link by clicking "More actions->Copy link"
-                    on Slack. The link should start with "https://hkn.slack.com/archives/"
-                </span>
-                <br>
                 {% endif %}
                 {{ field }}
                 {{ field.errors }}

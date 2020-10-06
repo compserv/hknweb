@@ -1,4 +1,4 @@
-<!-- {% extends "base.html" %} -->
+{% extends "base.html" %}
 {% load static %}
 
 {% block header %}
@@ -13,18 +13,16 @@ About HKN
 {% endblock %}
 
 {% block content %}
-
 <div class='centered'>
 <body>
   <div class='row'>
 
-    <div class='column left'>
+    <div class='column one'>
         <p class='what-about-subtitle'>Eta Kappa Nu (HKN) is the <a href='https://hkn.ieee.org/' target='_blank'>national Electrical and Computer Engineering honor society</a>. Founded in 1915, the Mu chapter at UC Berkeley is among the most active engineering societies at Berkeley. We strive to serve the Electrical Engineering and Computer Science (EECS) community at Berkeley by providing weekly tutoring hours, exam review sessions, department tours, course and staff evaluations, among many other services. Our two offices are located in 290 Cory and 345 Soda near the <a href='https://berkeley.edu/map' target='_blank'>northeastern corner of the UC Berkeley campus</a>.</p>
       </div>
-      <div class='column right'>
+      <div class='column two'>
         <a href="https://hkn.ieee.org/get-involved/awards/outstanding-chapter-award/" target="_blank" align='center'><p>
-          <img id="outstanding-chapter" src="{% static 'img/outstanding_chapter.png' %}" alt="2019 Outstanding Chapter Award" width=250></p>
-          </a>
+          <img id="outstanding-chapter" src="{% static 'img/outstanding_chapter.png' %}" alt="2019 Outstanding Chapter Award" width=100%></p></a>
       </div>
       
   </div>
@@ -42,37 +40,37 @@ About HKN
   
   <div class="tab-panels">
     <section id="services" class="tab-panel">
-      <div style='padding: 0% 5%;'>
-        <div class='row'>
-        <div class='column half'>
-          <h2>Student Services</h2>
-          
-          <p><strong>Tutoring:</strong> Students who need advice or tutoring in EE and CS courses are encouraged to drop by for free assistance. Officers hold office hours from 11am to 5pm every weekday.</p>
-
-          <p><strong>Exam Preparation:</strong> HKN provides a database of past exams and review problems to prepare students for midterms and finals. In addition, look out for exam review sessions for lower-division courses.</p>
-          
-          <p><strong>Course Surveys and Peer Advising:</strong> HKN conducts course surveys for all classes offered by the EECS department every semester. The results for all professors and TAs who have opted-in are available online. Students who need more advice in choosing classes are encouraged to consult our officers during office hours.</p>
-      </div>
-      <div class='column half'>
-        <p align='right'><img id="maker-workshop" src="{% static 'img/maker workshop.jpg' %}" alt="HKN Maker Workshop" width=500></p>
-      </div>
-    </div>
-  </div>
-  </section>
-    <section id="indrel" class="tab-panel">
-      <div style='padding: 0% 5%;'>
-        <h2>Industrial Relations</h2>
-        <p>HKN has strong ties with industry, linking students with companies by setting up info sessions where companies can give a presentation about themselves and provide a forum for students to talk to industry and find out more about the work environment. Additionally, we sell resume books containing the resumes of our members.</p>
-        <p align='center'><img id="sp19gm2" src="{% static 'img/sp19gm2.jpg' %}" alt="Spring 2019 GM2" width=500></p>
-
-    </div>
-
-    </section>
-    <section id="community" class="tab-panel">
-      <div style='padding: 0% 5%;'>
+      <div class='tabpadding'>
         <div class='row'>
           <div class='column half'>
-            <p align='left'><img id="retreat" src="{% static 'img/retreat.jpg' %}" alt="Fa19 Retreat" width=500></p>
+            <h2>Student Services</h2>
+            
+            <p><strong>Tutoring:</strong> Students who need advice or tutoring in EE and CS courses are encouraged to drop by for free assistance. Officers hold office hours from 11am to 5pm every weekday.</p>
+
+            <p><strong>Exam Preparation:</strong> HKN provides a database of past exams and review problems to prepare students for midterms and finals. In addition, look out for exam review sessions for lower-division courses.</p>
+            
+            <p><strong>Course Surveys and Peer Advising:</strong> HKN conducts course surveys for all classes offered by the EECS department every semester. The results for all professors and TAs who have opted-in are available online. Students who need more advice in choosing classes are encouraged to consult our officers during office hours.</p>
+          </div>
+          <div class='column half'>
+            <p align='right'><img id="maker-workshop" src="{% static 'img/maker workshop.jpg' %}" alt="HKN Maker Workshop" width=90%></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="indrel" class="tab-panel">
+      <div class='tabpadding'>
+        <h2>Industrial Relations</h2>
+        <p>HKN has strong ties with industry, linking students with companies by setting up info sessions where companies can give a presentation about themselves and provide a forum for students to talk to industry and find out more about the work environment. Additionally, we sell resume books containing the resumes of our members.</p>
+        <p align='center'><img id="sp19gm2" src="{% static 'img/sp19gm2.jpg' %}" alt="Spring 2019 GM2" width=45%></p>
+      </div>
+    </section>
+
+    <section id="community" class="tab-panel">
+      <div class='tabpadding'>
+        <div class='row'>
+          <div class='column half'>
+            <p align='left'><img id="retreat" src="{% static 'img/retreat.jpg' %}" alt="Fa19 Retreat" width=90%></p>
           </div>
           <div class='column half'>
             <h2>Community</h2>
@@ -81,10 +79,11 @@ About HKN
             <p><strong>Social:</strong> HKN hosts tons of social events for members, candidates, and alumni, and we partner with other engineering clubs to host fun destress events for the EECS community!</p>
           </div>
         </div>
-    </div>
+      </div>
     </section>
   </div>
   <br/>
+  </div>
 </body>
 </div>
 {% endblock %}

@@ -95,7 +95,7 @@
       <span class="slash">/</span>
       <a href="">Tutoring Hours</a>
       <span class="slash">/</span>
-      <a href="">Review Sessions</a>
+      <a href="/reviewsessions">Review Sessions</a>
       <span class="slash">/</span>
       <a href="">Course Surveys</a>
       <span class="slash">/</span>
@@ -143,6 +143,8 @@
     <div id="events-nav-bar" class="sub-nav-bar navi-container">
       <a href="/events">Calendar</a>
       <span class="slash">/</span>
+      <a href="/events/rsvps?option=semester">All RSVPs</a>
+      <span class="slash">/</span>
       <a href="https://www.flickr.com/people/berkeley_hkn/">Photos</a>
     </div>
     <div class="navi-container mobile-nav-bar" style="text-align: center;">
@@ -151,7 +153,7 @@
       </label>
     </div>
     <div id="about-nav-bar" class="sub-nav-bar navi-container">
-      <a href="/about">About HKN</a>
+      <a href="{% url 'about' %}">About HKN</a>
       <span class="slash">/</span>
       <a href="">Committees</a>
       <span class="slash">/</span>

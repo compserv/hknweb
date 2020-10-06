@@ -18,6 +18,20 @@
             padding-bottom: 1em;
         }
     }
+    .info_img_info {
+      display: none;
+      margin-left: 0.05em;
+    }
+    .info_img:hover + .info_img_info {
+      display: inline-block;
+      color: red;
+    }
+    .info_img {
+      height: 1em;
+      width: 1em;
+      margin-left: 0.05em;
+      vertical-align: middle;
+    }
 </style>
 {% endblock %}
 
@@ -32,6 +46,17 @@
     <p><b>Location</b>: {{ event.location }}</p>
     <p><b>Date</b>: {{event.start_time|date:"D, N j, Y"}}</p>
     <p><b>Time</b>: {{event.start_time|time}} to {{event.end_time|time}}</p>
+    <p><b>Semester</b>: {{event.semester}}</p>
+
+    <p>
+      <div>
+        <a href={{gcal_link}}>Add to Google calendar</a>
+        <div style="display: inline-block">
+          <img class="info_img" src="{% static "events/information.png" %}">
+          <span class="info_img_info">Event time changes will not update calendar invites.</span>
+        </div>
+      </div>
+    </p>
 
     {% if can_edit %}
       <p><a href="{% url 'events:edit' event.id %}">
@@ -47,44 +72,52 @@
   <div id='right-details'>
     {% if messages %}
       {% for message in messages %}
-        <h3 {% if messages.tags %} class="{{ message.tags }}" {% endif %}
-            style="color: #B78727;">{{ message }}</h3>
+        <h3 class="orange-messages {% if messages.tags %} {{ message.tags }} {% endif %}">
+          {{ message }}</h3>
       {% endfor %}
     {% endif %}
 
     <!-- RSVP/un-RSVP button -->
     {% if rsvpd %}
-      <form action={% url 'events:unrsvp' event.id %} method="post">
+      <form action="{% url 'events:unrsvp' event.id %}" method="post">
         {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.path }}">
         <input type="submit" value="un-RSVP" />
       </form>
     {% else %}
-      <form action={% url 'events:rsvp' event.id %} method="post">
+      <form action="{% url 'events:rsvp' event.id %}" method="post">
         {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.path }}">
         <input type="submit" value="RSVP" />
       </form>
     {% endif %}
-
-    {% if rsvpd %}
+    
+    {% if waitlisted %}
+      <p class="rsvp-list">You are at position {{waitlist_position}} on the waitlist. <img src="{% static 'candidate/maybe.png'%}" alt="waitlisted" class="table-icon"></p>
+    {% elif rsvpd %}
       <p class="rsvp-list">You have rsvp'd <img src="{% static 'candidate/yes.png'%}" alt="rsvp'd" class="table-icon"></p>
     {% else %}
-      <p class="rsvp-list">You have not rsvp'd</p>
+      <p class="rsvp-list">You have not rsvp'd </p>
     {% endif %}
 
     
     <h3 class="rsvp-list-title">RSVPs</h3>
     
-    {% if rsvps %}
-      {% if limit %}
-        <p class="rsvp-list"> Count: {{ rsvps.count }} / {{ limit }} </p>
-      {% else %}
-        <p class="rsvp-list"> Count: {{ rsvps.count }} </p>
-      {% endif %}
-      {% for rsvp in rsvps %}
-        <p class="rsvp-list">{{ rsvp.user.first_name }} {{ rsvp.user.last_name }} ({{ rsvp.user.username }})</p>
+    {% if limit %}
+      <p class="rsvp-list"> Count: {{ rsvps.count }} / {{ limit }} </p>
+    {% else %}
+      <p class="rsvp-list"> Count: {{ rsvps.count }} </p>
+    {% endif %}
+    {% for rsvp in rsvps %}
+      <p class="rsvp-list">{{ rsvp.user.first_name }} {{ rsvp.user.last_name }} ({{ rsvp.user.username }})</p>
+    {% endfor %}
+    {% if limit %}
+    <h3 class="rsvp-list-title">Waitlist</h3>
+
+      <p class="rsvp-list"> Count: {{waitlists.count}}</p>
+      {% for waitlist in waitlists %}
+        <p class="rsvp-list">{{ waitlist.user.first_name }} {{ waitlist.user.last_name }} ({{ waitlist.user.username }})</p>
       {% endfor %}
-    {% elif not rsvpd %}
-      <p class="rsvp-list">No rsvps.</p>
     {% endif %}
   </div>
 </div>

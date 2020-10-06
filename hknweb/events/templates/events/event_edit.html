@@ -3,7 +3,14 @@
 {% block title %}Edit {{ event.name }}{% endblock %}
 
 {% block header %}
-<link rel="stylesheet" href="{% static "events/style.css" %}">
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+
+<!-- XDSoft DateTimePicker -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" integrity="sha256-DOS9W6NR+NFe1fUhEE0PGKY/fubbUCnOfTje2JMDw3Y=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js" integrity="sha256-FEqEelWI3WouFOo2VWP/uJfs1y8KJ++FLh2Lbqc8SJk=" crossorigin="anonymous"></script>
+
+<link rel="stylesheet" href="{% static 'events/style.css' %}">
 <style>
     .heading {
         display: none;
@@ -33,7 +40,19 @@
 <div class="centered">
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
+        {% for field in form %}
+            <div class="row">
+                {{ field.label }}
+                {% if field.field.required %}
+                    <span class="message">*</span>
+                {% endif %}
+                {{ field }}
+                <span class="message">
+                    {{ field.errors }}
+                </span>
+            </div>
+        {% endfor %}
+
         <input type="submit" value="Update">
         {% if messages %}
             {% for message in messages %}
@@ -42,5 +61,22 @@
             {% endfor %}
         {% endif %}
     </form>
+
+    <script>
+        $(function () {
+            $("#id_start_time").datetimepicker({
+                format: 'm/d/Y g:i A',
+                formatTime: 'g:i A',
+                validateOnBlur: false,
+            });
+        });
+        $(function () {
+            $("#id_end_time").datetimepicker({
+                format: 'm/d/Y g:i A',
+                formatTime: 'g:i A',
+                validateOnBlur: false,
+            });
+        });
+    </script>
 </div>
 {% endblock %}
