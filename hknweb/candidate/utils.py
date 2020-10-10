@@ -3,7 +3,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.shortcuts import reverse
 from django.template.loader import render_to_string
 
-from hknweb.utils import get_rand_photo
+from hknweb.utils import get_rand_photo, get_semester_bounds
 
 from ..events.models import Event, EventType
 
@@ -79,12 +79,17 @@ def sort_rsvps_into_events(rsvps):
     return sorted_events
 
 
-def get_unconfirmed_events(rsvps):
+def get_unconfirmed_events(rsvps, date):
     unconfirmed_events = sort_rsvps_into_events(rsvps.filter(confirmed=False))
+    curr_sem_start, curr_sem_end = get_semester_bounds(date)
 
     # We want to show all mandatory events, not just the events the candidate has RSVP'd to
     # Get all mandatory events i.e. events with event type "Mandatory"
-    mandatory_events = Event.objects.filter(event_type__type=map_event_vars[settings.MANDATORY_EVENT])
+    mandatory_events = Event.objects.filter(
+        event_type__type=map_event_vars[settings.MANDATORY_EVENT],
+        start_time__gt=curr_sem_start,
+        end_time__lt=curr_sem_end,
+    )
 
     # Initialize unconfirmed_events[settings.MANDATORY_EVENT]
     if settings.MANDATORY_EVENT not in unconfirmed_events:

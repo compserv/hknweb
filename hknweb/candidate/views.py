@@ -76,7 +76,7 @@ class IndexView(generic.TemplateView):
         rsvps = Rsvp.objects.filter(user__exact=self.request.user)
         # Both confirmed and unconfirmed rsvps have been sorted into event types
         confirmed_events = sort_rsvps_into_events(rsvps.filter(confirmed=True))
-        unconfirmed_events = get_unconfirmed_events(rsvps)
+        unconfirmed_events = get_unconfirmed_events(rsvps, today)
         req_statuses, req_remaining = check_requirements(confirmed_events, unconfirmed_events, num_confirmed, num_bitbytes)
         upcoming_events = Event.objects \
                 .filter(start_time__range=(today, today + timezone.timedelta(days=7))) \
