@@ -5,10 +5,10 @@
 <link rel="stylesheet" href="{% static "candidate/style.css" %}">
 {% endblock %}
 
-{% block title %}Officer's Officer Challenges{% endblock %}
+{% block title %}Officer Portal{% endblock %}
 
 {% block heading %}
-Officer Challenges from You
+Officer Portal
 {% endblock %}
 
 {% block content %}
@@ -84,10 +84,20 @@ Officer Challenges from You
             Note: Both you and csec need to confirm a challenge for it to be valid.
         </p>
 
-        <!-- TODO: make officer portal and link here -->
-        <p class="link">
-            <a href="{% url 'home' %}">Back to officer portal [coming soon]</a>
-        </p>
+    </div>
+
+    <div class="table-div">
+        <h3>Add new candidates (this may take a few minutes!)</h3>
+        {% for message in messages %}
+            <span {% if messages.tags %} class="{{ message.tags }}" {% endif %}
+                class="blue">{{ message }}</span>
+        {% endfor %}
+        <form action="{% url 'candidate:add_cands' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.path }}">
+            <input type="file" name="cand_csv" />
+            <input type="submit" value="Add candidates" />
+        </form>
     </div>
 
 </div>

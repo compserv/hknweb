@@ -1,7 +1,9 @@
+import csv
+
 from django.conf import settings
 
 from django.contrib import messages
-from django.contrib.auth.models import User
+from django.contrib.auth.models import BaseUserManager, User
 
 from django.core.mail import EmailMultiAlternatives
 from django.core.exceptions import PermissionDenied
@@ -25,7 +27,7 @@ from hknweb.utils import get_rand_photo, login_and_permission, method_login_and_
 
 from ..events.models import Event, Rsvp
 
-from .constants import ATTR, REQUIREMENT_EVENTS
+from .constants import ATTR, DEFAULT_RANDOM_PASSWORD_LENGTH, REQUIREMENT_EVENTS, CandidateDTO
 from .forms import BitByteRequestForm, ChallengeConfirmationForm, ChallengeRequestForm
 from .models import Announcement, BitByteActivity, CandidateForm, OffChallenge
 from .utils import (
@@ -177,11 +179,13 @@ class CandRequestView(FormView, generic.ListView):
         return result
 
 @method_login_and_permission('candidate.view_offchallenge')
-class OffRequestView(generic.ListView):
-    """ List of past challenge requests for officer.
+class OfficerPortalView(generic.ListView):
+    """ Officer portal.
+        List of past challenge requests for officer.
         Non-officers can still visit this page by typing in the url,
-        but it will not have any new entries. """
-    template_name = 'candidate/offreq.html'
+        but it will not have any new entries. Option to add
+        new candidates. """
+    template_name = 'candidate/officer_portal.html'
 
     context_object_name = 'challenge_list'
 
@@ -190,6 +194,52 @@ class OffRequestView(generic.ListView):
                 .filter(officer__exact=self.request.user) \
                 .order_by('-request_date')
         return result
+
+@login_and_permission("auth.add_user")
+def add_cands(request):
+    if request.method != ATTR.POST:
+        raise Http404()
+    next_page = request.POST.get(ATTR.NEXT, '/')
+
+    cand_csv_file = request.FILES.get(ATTR.CAND_CSV, None)
+    if not cand_csv_file.name.endswith(ATTR.CSV_ENDING):
+        messages.error(request, "Please input a csv file!")
+    decoded_cand_csv_file = cand_csv_file.read().decode(ATTR.UTF8).splitlines()
+    cand_csv = csv.DictReader(decoded_cand_csv_file)
+    for row in cand_csv:
+        try:
+            candidatedto = CandidateDTO(row)
+        except AssertionError as e:
+            messages.error(request, "Invalid candidate information: " + str(e))
+            return redirect(next_page)
+
+        password = BaseUserManager.make_random_password()
+        User.objects.create_user(
+            candidatedto.username,
+            email=candidatedto.email,
+            password=password,
+        )
+
+        subject = "[HKN] Candidate account"
+        html_content = render_to_string(
+            "candidate/new_candidate_account_email.html",
+            {
+                "subject": subject,
+                "first_name": candidatedto.first_name,
+                "username": candidatedto.username,
+                "password": password,
+                "website_link": request.build_absolute_uri("/accounts/login/"),
+                "img_link": get_rand_photo(),
+            }
+        )
+        msg = EmailMultiAlternatives(subject, subject,
+                "no-reply@hkn.eecs.berkeley.edu", [candidatedto.email])
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
+
+    messages.success(request, "Successfully added candidates!")
+
+    return redirect(next_page)
 
 @method_login_and_permission('candidate.add_bitbyteactivity')
 class BitByteView(FormView, generic.ListView):
