@@ -14,6 +14,7 @@ REQUIREMENT_EVENTS = [
 
 class ATTR:
     CAND_CSV = "cand_csv"
+    CANDIDATE = "candidate"
     COLOR = "color"
     CONFIRMED = "confirmed"
     CSV_ENDING = ".csv"

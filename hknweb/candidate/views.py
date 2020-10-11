@@ -3,7 +3,7 @@ import csv
 from django.conf import settings
 
 from django.contrib import messages
-from django.contrib.auth.models import BaseUserManager, User
+from django.contrib.auth.models import BaseUserManager, Group, User
 
 from django.core.mail import EmailMultiAlternatives
 from django.core.exceptions import PermissionDenied
@@ -206,6 +206,9 @@ def add_cands(request):
         messages.error(request, "Please input a csv file!")
     decoded_cand_csv_file = cand_csv_file.read().decode(ATTR.UTF8).splitlines()
     cand_csv = csv.DictReader(decoded_cand_csv_file)
+
+    candidate_group = Group.objects.get(name=ATTR.CANDIDATE)
+
     for row in cand_csv:
         try:
             candidatedto = CandidateDTO(row)
@@ -213,12 +216,13 @@ def add_cands(request):
             messages.error(request, "Invalid candidate information: " + str(e))
             return redirect(next_page)
 
-        password = BaseUserManager.make_random_password()
-        User.objects.create_user(
+        password = BaseUserManager.make_random_password(None, length=DEFAULT_RANDOM_PASSWORD_LENGTH)
+        new_cand = User.objects.create_user(
             candidatedto.username,
             email=candidatedto.email,
             password=password,
         )
+        candidate_group.user_set.add(new_cand)
 
         subject = "[HKN] Candidate account"
         html_content = render_to_string(
