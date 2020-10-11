@@ -28,3 +28,15 @@ GCAL_DATETIME_TEMPLATE = "{%s:04n}{%s:02n}{%s:02n}T{%s:02n}{%s:02n}{%s:02n}Z" % 
     MINUTES_ATTRIBUTE_NAME,
     SECONDS_ATTRIBUTE_NAME,
 )
+
+
+class ATTR:
+    CREATED_BY = "created_by"
+    DESCRIPTION = "description"
+    END_TIME = "end_time"
+    EVENT_TYPE = "event_type"
+    LOCATION = "location"
+    NAME = "name"
+    RSVP_LIMIT = "rsvp_limit"
+    SLUG = "slug"
+    START_TIME = "start_time"

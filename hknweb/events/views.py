@@ -11,10 +11,10 @@ from django.utils import timezone
 
 from hknweb.utils import login_and_permission, method_login_and_permission, get_rand_photo,\
                          get_semester_bounds, DATETIME_12_HOUR_FORMAT
-from .constants import GCAL_INVITE_TEMPLATE_ATTRIBUTE_NAME
+from .constants import ATTR, GCAL_INVITE_TEMPLATE_ATTRIBUTE_NAME
 from .models import Event, EventType, Rsvp
 from .forms import EventForm, EventUpdateForm
-from .utils import create_gcal_link
+from .utils import create_event, create_gcal_link, generate_recurrence_times
 
 # views
 
@@ -135,16 +135,30 @@ def add_event(request):
     form = EventForm(request.POST or None)
     if request.method == 'POST':
         if form.is_valid():
-            event = form.save(commit=False)
-            event.created_by = request.user
-            event.save()
+            data = form.cleaned_data
+
+            times = generate_recurrence_times(
+                data[ATTR.START_TIME],
+                data["end_time"],
+                data["recurring_num_times"],
+                data["recurring_period"],
+            )
+
+            for start_time, end_time in times:
+                create_event(data, start_time, end_time, request.user)
+
             messages.success(request, 'Event has been added!')
             return redirect('/events')
         else:
-            print(form.errors)
-            messages.success(request, 'Something went wrong oops')
-            return render(request, 'events/event_add.html', {'form': EventForm(None)})
-    return render(request, 'events/event_add.html', {'form': EventForm(None)})
+            messages.error(request, "Something went wrong oops")
+    return render(
+        request,
+        "events/event_add.html",
+        {
+            "form": EventForm(None),
+            "admin_link": request.build_absolute_uri("/admin")
+        }
+    )
 
 @method_login_and_permission('events.change_event')
 class EventUpdateView(UpdateView):

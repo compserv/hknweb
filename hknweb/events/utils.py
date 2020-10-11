@@ -1,6 +1,7 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from .constants import (
+    ATTR,
     DAY_ATTRIBUTE_NAME,
     DESCRIPTION_ATTRIBUTE_NAME,
     END_TIME_ATTRIBUTE_NAME,
@@ -39,3 +40,43 @@ def format_gcal_time(time: datetime) -> str:
         SECONDS_ATTRIBUTE_NAME: time.second,
     }
     return GCAL_DATETIME_TEMPLATE.format(**attrs)
+
+
+def generate_repeated_slug(base_slug, start_time, end_time):
+    return "{base_slug}-{start_time}-{end_time}".format(
+        base_slug=base_slug,
+        start_time=format_gcal_time(start_time),
+        end_time=format_gcal_time(end_time),
+    )
+
+
+def create_event(data, start_time, end_time, user):
+    event = Event.objects.create(
+        name=data[ATTR.NAME],
+        slug=generate_repeated_slug(data[ATTR.SLUG], start_time, end_time),
+        start_time=start_time,
+        end_time=end_time,
+        location=data[ATTR.LOCATION],
+        event_type=data[ATTR.EVENT_TYPE],
+        description=data[ATTR.DESCRIPTION],
+        rsvp_limit=data[ATTR.RSVP_LIMIT],
+        created_by=user,
+    )
+    event.save()
+
+
+def generate_recurrence_times(start_time: datetime, end_time: datetime, num_times: int, period: int) -> list:
+    """
+    Parameters
+    ----------
+    period: int
+        The number of weeks between each occurrence, in weeks.
+
+    """
+    times = [(start_time, end_time)]
+    if num_times <= 0 or period <= 0: return times
+    time_diff = timedelta(period * 7)
+    for _ in range(num_times - 1):
+        start_time, end_time = start_time + time_diff, end_time + time_diff
+        times.append((start_time, end_time))
+    return times
