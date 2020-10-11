@@ -88,6 +88,9 @@ Officer Portal
 
     <div class="table-div">
         <h3>Add new candidates (this may take a few minutes!)</h3>
+         - Make sure you have permission to add users!<br>
+         - The uploaded CSV must have headers for "Email", "First Name", and "Last Name".
+        <br><br>
         {% for message in messages %}
             <span {% if messages.tags %} class="{{ message.tags }}" {% endif %}
                 class="blue">{{ message }}</span>
