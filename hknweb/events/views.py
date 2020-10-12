@@ -3,6 +3,7 @@ from django.http import Http404
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, reverse
 from django.core.mail import EmailMultiAlternatives
+from django.core.validators import URLValidator
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.views.generic import TemplateView
@@ -127,9 +128,18 @@ def show_details(request, id):
     waitlists = event.waitlist_set()
     limit = event.rsvp_limit
     gcal_link = create_gcal_link(event)
+
+    event_location = event.location
+    url_validator = URLValidator()
+    try:
+        url_validator(event_location)
+        event_location = "<a href='{link}'> {link} </a>".format(link=event_location)
+    except:
+        pass
     context = {
         'event': event,
         "event_description": markdownify(event.description),
+        "event_location": event_location,
         'rsvpd': rsvpd,
         'rsvps': rsvps,
         'waitlisted': waitlisted,
