@@ -80,3 +80,9 @@ def generate_recurrence_times(start_time: datetime, end_time: datetime, num_time
         start_time, end_time = start_time + time_diff, end_time + time_diff
         times.append((start_time, end_time))
     return times
+
+
+def get_padding(l1, l2):
+    l1, l2 = max(l1, 1), max(l2, 1)
+    p1, p2 = max(l1 - l2, 0), max(l2 - l1, 0)
+    return [None] * (p1 + 1), [None] * (p2 + 1)

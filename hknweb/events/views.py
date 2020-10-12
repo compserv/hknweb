@@ -14,7 +14,7 @@ from hknweb.utils import login_and_permission, method_login_and_permission, get_
 from .constants import ATTR, GCAL_INVITE_TEMPLATE_ATTRIBUTE_NAME
 from .models import Event, EventType, Rsvp
 from .forms import EventForm, EventUpdateForm
-from .utils import create_event, create_gcal_link, generate_recurrence_times
+from .utils import create_event, create_gcal_link, generate_recurrence_times, get_padding
 
 # views
 
@@ -53,11 +53,50 @@ class AllRsvpsView(TemplateView):
         for event in rsvpd_events:
             event.waitlisted = event.on_waitlist(self.request.user) # Is this bad practice? idk
 
-        event_types = EventType.objects.order_by('type')
+        event_types = EventType.objects.order_by('type').all()
+        event_types = sorted(event_types, key=lambda e: not (e.type == ATTR.MANDATORY))
+
+        rsvpd_data, not_rsvpd_data = [], []
+        for event_type in event_types:
+            typed_rsvpd_events = rsvpd_events.filter(event_type=event_type)
+            typed_not_rsvpd_events = not_rsvpd_events.filter(event_type=event_type)
+
+            rsvpd_padding, not_rsvpd_padding = get_padding(len(typed_not_rsvpd_events), len(typed_rsvpd_events))
+
+            rsvpd_data.append({
+                ATTR.EVENT_TYPE: event_type,
+                ATTR.EVENTS: [
+                    [event, reverse("events:unrsvp", args=[event.id])]
+                    for event in typed_rsvpd_events
+                ],
+                ATTR.PADDING: rsvpd_padding,
+            })
+            not_rsvpd_data.append({
+                ATTR.EVENT_TYPE: event_type,
+                ATTR.EVENTS: [
+                    [event, reverse("events:rsvp", args=[event.id])]
+                    for event in typed_not_rsvpd_events
+                ],
+                ATTR.PADDING: not_rsvpd_padding,
+            })
+
+        data = [
+            {
+                ATTR.CLASS: "right-half",
+                ATTR.TITLE: "RSVP'd / Waitlist",
+                ATTR.EVENTS_DATA: rsvpd_data,
+                ATTR.DISPLAY_VALUE: "un-RSVP",
+            },
+            {
+                ATTR.CLASS: "left-half",
+                ATTR.TITLE: "Not RSVP'd",
+                ATTR.EVENTS_DATA: not_rsvpd_data,
+                ATTR.DISPLAY_VALUE: "RSVP",
+            },
+        ]
+
         context = {
-            'rsvpd_events': rsvpd_events,
-            'not_rsvpd_events': not_rsvpd_events,
-            'event_types': event_types,
+            ATTR.DATA: data,
         }
         return context
 

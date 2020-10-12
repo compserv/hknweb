@@ -31,12 +31,23 @@ GCAL_DATETIME_TEMPLATE = "{%s:04n}{%s:02n}{%s:02n}T{%s:02n}{%s:02n}{%s:02n}Z" % 
 
 
 class ATTR:
+    ACTION = "action"
+    CLASS = "class"
     CREATED_BY = "created_by"
+    DATA = "data"
+    DISPLAY_VALUE = "display_value"
     DESCRIPTION = "description"
     END_TIME = "end_time"
+    EVENT = "event"
+    EVENTS = "events"
+    EVENTS_DATA = "events_data"
     EVENT_TYPE = "event_type"
+    EVENT_TYPES = "event_types"
     LOCATION = "location"
+    MANDATORY = "Mandatory"
     NAME = "name"
+    PADDING = "padding"
     RSVP_LIMIT = "rsvp_limit"
     SLUG = "slug"
     START_TIME = "start_time"
+    TITLE = "title"
