@@ -5,8 +5,8 @@ from hknweb.utils import DATETIME_12_HOUR_FORMAT
 class EventForm(forms.ModelForm):
     start_time = forms.DateTimeField(input_formats=(DATETIME_12_HOUR_FORMAT,))
     end_time = forms.DateTimeField(input_formats=(DATETIME_12_HOUR_FORMAT,))
-    recurring_num_times = forms.IntegerField(min_value=0, required=False, label="Number of occurences")
-    recurring_period = forms.IntegerField(min_value=0, required=False, label="How often this event re-occurs (in weeks)")
+    recurring_num_times = forms.IntegerField(min_value=0, required=False, label="Number of occurences", initial=0)
+    recurring_period = forms.IntegerField(min_value=0, required=False, label="How often this event re-occurs (in weeks)", initial=0)
 
     class Meta:
         model = Event
