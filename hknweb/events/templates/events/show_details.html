@@ -104,13 +104,30 @@
     <h3 class="rsvp-list-title">RSVPs</h3>
     
     {% if limit %}
-      <p class="rsvp-list"> Count: {{ rsvps.count }} / {{ limit }} </p>
+      <p class="rsvp-list"> Count: {{ rsvps_count }} / {{ limit }} </p>
     {% else %}
-      <p class="rsvp-list"> Count: {{ rsvps.count }} </p>
+      <p class="rsvp-list"> Count: {{ rsvps_count }} </p>
     {% endif %}
-    {% for rsvp in rsvps %}
+    {% for rsvp in rsvps_page %}
       <p class="rsvp-list">{{ rsvp.user.first_name }} {{ rsvp.user.last_name }} ({{ rsvp.user.username }})</p>
     {% endfor %}
+    <div class="pagination">
+        <span class="step-links">
+            {% if rsvps_page.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ rsvps_page.previous_page_number }}">previous</a>
+            {% endif %}
+    
+            <span class="current">
+                Page {{ rsvps_page.number }} of {{ rsvps_page.paginator.num_pages }}.
+            </span>
+    
+            {% if rsvps_page.has_next %}
+                <a href="?page={{ rsvps_page.next_page_number }}">next</a>
+                <a href="?page={{ rsvps_page.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
     {% if limit %}
     <h3 class="rsvp-list-title">Waitlist</h3>
 

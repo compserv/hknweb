@@ -51,3 +51,6 @@ class ATTR:
     SLUG = "slug"
     START_TIME = "start_time"
     TITLE = "title"
+
+
+RSVPS_PER_PAGE = 10

@@ -3,6 +3,7 @@ from django.http import Http404
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, reverse
 from django.core.mail import EmailMultiAlternatives
+from django.core.paginator import Paginator
 from django.core.validators import URLValidator
 from django.conf import settings
 from django.template.loader import render_to_string
@@ -14,7 +15,11 @@ from markdownx.utils import markdownify
 
 from hknweb.utils import login_and_permission, method_login_and_permission, get_rand_photo,\
                          get_semester_bounds, DATETIME_12_HOUR_FORMAT
-from .constants import ATTR, GCAL_INVITE_TEMPLATE_ATTRIBUTE_NAME
+from .constants import (
+    ATTR,
+    GCAL_INVITE_TEMPLATE_ATTRIBUTE_NAME,
+    RSVPS_PER_PAGE,
+)
 from .models import Event, EventType, Rsvp
 from .forms import EventForm, EventUpdateForm
 from .utils import create_event, create_gcal_link, generate_recurrence_times, get_padding
@@ -136,12 +141,18 @@ def show_details(request, id):
         event_location = "<a href='{link}'> {link} </a>".format(link=event_location)
     except:
         pass
+
+    rsvps_paginator = Paginator(rsvps, RSVPS_PER_PAGE)
+    rsvps_page_number = request.GET.get("page")
+    rsvps_page = rsvps_paginator.get_page(rsvps_page_number)
+
     context = {
         'event': event,
         "event_description": markdownify(event.description),
         "event_location": event_location,
         'rsvpd': rsvpd,
-        'rsvps': rsvps,
+        'rsvps_count': rsvps.count,
+        "rsvps_page": rsvps_page,
         'waitlisted': waitlisted,
         'waitlist_position': waitlist_position,
         'waitlists': waitlists,
