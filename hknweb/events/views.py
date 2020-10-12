@@ -16,18 +16,25 @@ from markdownx.utils import markdownify
 from hknweb.utils import login_and_permission, method_login_and_permission, get_rand_photo,\
                          get_semester_bounds, DATETIME_12_HOUR_FORMAT
 from .constants import (
+    ACCESSLEVEL_TO_DESCRIPTION,
     ATTR,
     GCAL_INVITE_TEMPLATE_ATTRIBUTE_NAME,
     RSVPS_PER_PAGE,
 )
 from .models import Event, EventType, Rsvp
 from .forms import EventForm, EventUpdateForm
-from .utils import create_event, create_gcal_link, generate_recurrence_times, get_padding
+from .utils import (
+    create_event,
+    create_gcal_link,
+    generate_recurrence_times,
+    get_access_level,
+    get_padding,
+)
 
 # views
 
 def index(request):
-    events = Event.objects.order_by('-start_time')
+    events = Event.objects.order_by('-start_time').filter(access_level__gte=get_access_level(request.user))
     event_types = EventType.objects.order_by('type')
 
     context = {
@@ -47,6 +54,7 @@ class AllRsvpsView(TemplateView):
         all_events = Event.objects \
                 .filter(start_time__gte=semester_start) \
                 .filter(start_time__lte=semester_end) \
+                .filter(access_level__gte=get_access_level(self.request.user)) \
                 .order_by('start_time')
         if view_option == "upcoming":
             all_events = all_events.filter(start_time__gte=timezone.now())
@@ -146,10 +154,13 @@ def show_details(request, id):
     rsvps_page_number = request.GET.get("page")
     rsvps_page = rsvps_paginator.get_page(rsvps_page_number)
 
+    access_level = ACCESSLEVEL_TO_DESCRIPTION[get_access_level(request.user)]
+
     context = {
         'event': event,
         "event_description": markdownify(event.description),
         "event_location": event_location,
+        "access_level": access_level,
         'rsvpd': rsvpd,
         'rsvps_count': rsvps.count,
         "rsvps_page": rsvps_page,

@@ -31,6 +31,7 @@ GCAL_DATETIME_TEMPLATE = "{%s:04n}{%s:02n}{%s:02n}T{%s:02n}{%s:02n}{%s:02n}Z" % 
 
 
 class ATTR:
+    ACCESS_LEVEL = "access_level"
     ACTION = "action"
     CLASS = "class"
     CREATED_BY = "created_by"
@@ -54,3 +55,17 @@ class ATTR:
 
 
 RSVPS_PER_PAGE = 10
+
+
+GROUP_TO_ACCESSLEVEL = {
+    "officer": 0,
+    "member": 0,
+    "candidate": 1,
+}
+
+ACCESSLEVEL_TO_DESCRIPTION = {
+    0: "Internal",
+    1: "Candidate",
+    2: "External",
+}
+    

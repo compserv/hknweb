@@ -10,7 +10,7 @@ class EventForm(forms.ModelForm):
 
     class Meta:
         model = Event
-        fields = ('name', 'slug', 'location', 'description', 'event_type', 'start_time', 'end_time', 'rsvp_limit')
+        fields = ('name', 'slug', 'location', 'description', 'event_type', 'start_time', 'end_time', 'rsvp_limit', 'access_level')
 
         widgets = {
             'slug': forms.TextInput(attrs={'placeholder': 'e.g. <semester>-<name>'}),
@@ -28,7 +28,7 @@ class EventUpdateForm(forms.ModelForm):
     class Meta:
         model = Event
         fields = ['name', 'slug', 'start_time', 'end_time', 'location', 'event_type',
-                  'description', 'rsvp_limit']
+                  'description', 'rsvp_limit', 'access_level']
 
         widgets = {
             'slug': forms.TextInput(attrs={'placeholder': 'e.g. <semester>-<name>'}),

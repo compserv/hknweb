@@ -26,6 +26,14 @@ class Event(models.Model):
     event_type  = models.ForeignKey(EventType, models.CASCADE)
     description = MarkdownxField()
     rsvp_limit  = models.PositiveIntegerField(null=True, blank=True)
+    access_level = models.IntegerField(
+        choices=[
+            (0, "internal"),
+            (1, "candidate"),
+            (2, "external"),
+        ],
+        default=0
+    )
     # need_transportation = models.BooleanField(default=False)
     # view_permission_group_id = models.IntegerField(null=True)
     # rsvp_permission_group_id = models.IntegerField(null=True)
