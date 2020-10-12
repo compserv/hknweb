@@ -193,14 +193,7 @@ def add_event(request):
             return redirect('/events')
         else:
             messages.error(request, "Something went wrong oops")
-    return render(
-        request,
-        "events/event_add.html",
-        {
-            "form": EventForm(None),
-            "admin_link": request.build_absolute_uri("/admin")
-        }
-    )
+    return render(request, "events/event_add.html", {"form": EventForm(None)})
 
 @method_login_and_permission('events.change_event')
 class EventUpdateView(UpdateView):
