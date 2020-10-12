@@ -91,8 +91,13 @@
 @media screen and (min-width: 700px) {
     .left-side {
         display: inline-block;
-        width: 50%;
+        width: 100%;
         text-align: right;
+    }
+    .right-side {
+        display: inline-block;
+        width: 100%;
+        text-align: left;
     }
     #submit {
         width: 100%;

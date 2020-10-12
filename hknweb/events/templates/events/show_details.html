@@ -41,7 +41,7 @@
 
   <div id="left-details">
 
-    <p>{{ event.description }}</p>
+    <p>{{ event_description | safe }}</p>
     <p><b>Event Type</b>: {{ event.event_type }}</p>
     <p><b>Location</b>: {{ event.location }}</p>
     <p><b>Date</b>: {{event.start_time|date:"D, N j, Y"}}</p>

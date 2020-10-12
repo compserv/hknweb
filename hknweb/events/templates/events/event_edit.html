@@ -26,7 +26,8 @@
         }
     }
     .centered {
-        max-width: 700px;
+        width: 90%;
+        text-align: center;
         margin: 0 auto;
     }
 </style>
@@ -40,26 +41,53 @@
 <div class="centered">
     <form method="post">
         {% csrf_token %}
-        {% for field in form %}
-            <div class="row">
-                {{ field.label }}
-                {% if field.field.required %}
-                    <span class="message">*</span>
-                {% endif %}
-                {{ field }}
-                <span class="message">
-                    {{ field.errors }}
-                </span>
-            </div>
-        {% endfor %}
+        <table style="margin: auto; text-align: center;">
+            <tbody>
+                <tr>
+                    <td style="padding-right: 5em;">
+                        {% for field in form %}
+                            {% if field.label != "Description" %}
+                                <div class="row">
+                                    <span class="left-side">
+                                        {{ field.label }}
+                                        {% if field.field.required %}
+                                            <span class="message">*</span>
+                                        {% endif %}
+                                        {{ field }}
+                                        {{ field.errors }}
+                                    </span>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>
+                        <div class="row right-side">
+                            <span>
+                                {{ form.description.label }}
+                                {% if form.description.field.required %}
+                                    <span class="message">*</span>
+                                {% endif %}
+                            </span>
+                            {{ form.description }}
+                            {{ form.description.errors }}
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+        Note: You can bulk delete recurring events through the websites <a href="{{ admin_link }}">admin</a>.
+        <br><br>
 
-        <input type="submit" value="Update">
-        {% if messages %}
-            {% for message in messages %}
-                <br>
-                <span class="message">{{ message }}</span>
-            {% endfor %}
-        {% endif %}
+        <div id="submit">
+            <input type="submit" value="Update" />
+            {% if messages %}
+                {% for message in messages %}
+                    <br>
+                    <span class="message">{{ message }}</span>
+                {% endfor %}
+            {% endif %}
+        </div>
     </form>
 
     <script>

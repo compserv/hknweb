@@ -9,6 +9,8 @@ from django.views.generic import TemplateView
 from django.views.generic.edit import UpdateView
 from django.utils import timezone
 
+from markdownx.utils import markdownify
+
 from hknweb.utils import login_and_permission, method_login_and_permission, get_rand_photo,\
                          get_semester_bounds, DATETIME_12_HOUR_FORMAT
 from .constants import ATTR, GCAL_INVITE_TEMPLATE_ATTRIBUTE_NAME
@@ -127,6 +129,7 @@ def show_details(request, id):
     gcal_link = create_gcal_link(event)
     context = {
         'event': event,
+        "event_description": markdownify(event.description),
         'rsvpd': rsvpd,
         'rsvps': rsvps,
         'waitlisted': waitlisted,

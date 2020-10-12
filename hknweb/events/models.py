@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+from markdownx.models import MarkdownxField
+
 from hknweb.utils import get_semester
 
 class EventType(models.Model):
@@ -22,7 +24,7 @@ class Event(models.Model):
     end_time    = models.DateTimeField()
     location    = models.CharField(max_length=255)
     event_type  = models.ForeignKey(EventType, models.CASCADE)
-    description = models.TextField()
+    description = MarkdownxField()
     rsvp_limit  = models.PositiveIntegerField(null=True, blank=True)
     # need_transportation = models.BooleanField(default=False)
     # view_permission_group_id = models.IntegerField(null=True)
