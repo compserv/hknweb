@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import Http404
+from django.http import Http404, HttpResponseForbidden
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, reverse
 from django.core.mail import EmailMultiAlternatives
@@ -150,24 +150,38 @@ def show_details(request, id):
     except:
         pass
 
-    rsvps_paginator = Paginator(rsvps, RSVPS_PER_PAGE)
-    rsvps_page_number = request.GET.get("page")
-    rsvps_page = rsvps_paginator.get_page(rsvps_page_number)
+    rsvps_page = Paginator(rsvps, RSVPS_PER_PAGE).get_page(request.GET.get("rsvps_page"))
+    waitlists_page = Paginator(waitlists, RSVPS_PER_PAGE).get_page(request.GET.get("waitlists_page"))
 
     access_level = ACCESSLEVEL_TO_DESCRIPTION[get_access_level(request.user)]
 
+    data = [
+        {
+            ATTR.TITLE: "RSVPs",
+            ATTR.DATA: rsvps_page,
+            ATTR.PAGE_PARAM: "rsvps_page",
+            ATTR.COUNT: str(rsvps.count()) + " / {limit}".format(limit=limit),
+        },
+    ]
+    if limit:
+        data.append(
+            {
+                ATTR.TITLE: "Waitlist",
+                ATTR.DATA: waitlists_page,
+                ATTR.PAGE_PARAM: "waitlists_page",
+                ATTR.COUNT: str(waitlists.count()),
+            }
+        )
+
     context = {
+        ATTR.DATA: data,
         'event': event,
         "event_description": markdownify(event.description),
         "event_location": event_location,
         "access_level": access_level,
         'rsvpd': rsvpd,
-        'rsvps_count': rsvps.count,
-        "rsvps_page": rsvps_page,
         'waitlisted': waitlisted,
         'waitlist_position': waitlist_position,
-        'waitlists': waitlists,
-        'limit': limit,
         'can_edit': request.user.has_perm('events.change_event'),
         GCAL_INVITE_TEMPLATE_ATTRIBUTE_NAME: gcal_link,
     }
@@ -226,6 +240,21 @@ def add_event(request):
         else:
             messages.error(request, "Something went wrong oops")
     return render(request, "events/event_add.html", {"form": EventForm(None)})
+
+def confirm_rsvp(request, id, operation):
+    if request.method != 'POST':
+        raise Http404()
+
+    access_level = get_access_level(request.user)
+    if access_level > 0:
+        raise HttpResponseForbidden()
+
+    rsvp = Rsvp.objects.get(id=id)
+    rsvp.confirmed = operation == 0  # { confirmed: 0, unconfirmed: 1 }
+    rsvp.save()
+
+    next_page = request.POST.get('next', '/')
+    return redirect(next_page)
 
 @method_login_and_permission('events.change_event')
 class EventUpdateView(UpdateView):

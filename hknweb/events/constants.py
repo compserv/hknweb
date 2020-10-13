@@ -34,6 +34,7 @@ class ATTR:
     ACCESS_LEVEL = "access_level"
     ACTION = "action"
     CLASS = "class"
+    COUNT = "count"
     CREATED_BY = "created_by"
     DATA = "data"
     DISPLAY_VALUE = "display_value"
@@ -48,6 +49,7 @@ class ATTR:
     MANDATORY = "Mandatory"
     NAME = "name"
     PADDING = "padding"
+    PAGE_PARAM = "page_param"
     RSVP_LIMIT = "rsvp_limit"
     SLUG = "slug"
     START_TIME = "start_time"
@@ -68,4 +70,3 @@ ACCESSLEVEL_TO_DESCRIPTION = {
     1: "Candidate",
     2: "External",
 }
-    
