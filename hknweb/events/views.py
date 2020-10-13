@@ -158,7 +158,7 @@ def show_details(request, id):
     data = [
         {
             ATTR.TITLE: "RSVPs",
-            ATTR.DATA: rsvps_page,
+            ATTR.DATA: rsvps_page if len(rsvps_page) > 0 else None,
             ATTR.PAGE_PARAM: "rsvps_page",
             ATTR.COUNT: str(rsvps.count()) + " / {limit}".format(limit=limit),
         },
@@ -167,7 +167,7 @@ def show_details(request, id):
         data.append(
             {
                 ATTR.TITLE: "Waitlist",
-                ATTR.DATA: waitlists_page,
+                ATTR.DATA: waitlists_page if len(waitlists_page) > 0 else None,
                 ATTR.PAGE_PARAM: "waitlists_page",
                 ATTR.COUNT: str(waitlists.count()),
             }
