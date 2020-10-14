@@ -113,7 +113,7 @@ req_list = {
     settings.HANGOUT_EVENT: {
         settings.HANGOUT_ATTRIBUTE_NAME: 1,
         settings.CHALLENGE_ATTRIBUTE_NAME: 1,
-        settings.EITHER_ATTRIBUTE_NAME: 3,
+        settings.EITHER_ATTRIBUTE_NAME: 2,
     },
     settings.BITBYTE_ACTIVITY: 3,
 }
