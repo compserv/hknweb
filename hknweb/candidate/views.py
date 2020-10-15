@@ -222,6 +222,9 @@ def add_cands(request):
             email=candidatedto.email,
             password=password,
         )
+        new_cand.first_name = candidatedto.first_name
+        new_cand.last_name = candidatedto.last_name
+        new_cand.save()
         candidate_group.user_set.add(new_cand)
 
         subject = "[HKN] Candidate account"
