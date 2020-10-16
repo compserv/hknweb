@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta
 
+from django import forms
+
 from .constants import (
     ATTR,
     DAY_ATTRIBUTE_NAME,
@@ -96,3 +98,6 @@ def get_access_level(user):
         if user.groups.filter(name=group_name).exists():
             access_level = min(access_level, access_value)
     return access_level
+
+
+DATETIME_WIDGET_NO_AUTOCOMPLETE = forms.DateTimeInput(attrs={'autocomplete':'off'})
