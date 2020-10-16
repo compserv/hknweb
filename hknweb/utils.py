@@ -8,9 +8,12 @@ from functools import wraps
 from random import randint
 from datetime import datetime
 
+from pytz import timezone
+
 # constants
 
-DATETIME_12_HOUR_FORMAT = '%m/%d/%Y %I:%M %p'
+DATETIME_12_HOUR_FORMAT = '%m/%d/%Y %I:%M %p %Z'
+PACIFIC_TIMEZONE = timezone('US/Pacific')
 
 # decorators
 

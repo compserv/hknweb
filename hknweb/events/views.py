@@ -13,8 +13,14 @@ from django.utils import timezone
 
 from markdownx.utils import markdownify
 
-from hknweb.utils import login_and_permission, method_login_and_permission, get_rand_photo,\
-                         get_semester_bounds, DATETIME_12_HOUR_FORMAT
+from hknweb.utils import (
+    login_and_permission,
+    method_login_and_permission,
+    get_rand_photo,
+    get_semester_bounds,
+    DATETIME_12_HOUR_FORMAT,
+    PACIFIC_TIMEZONE,
+)
 from .constants import (
     ACCESSLEVEL_TO_DESCRIPTION,
     ATTR,
@@ -266,8 +272,8 @@ class EventUpdateView(UpdateView):
         """ Override some prepopulated data with custom data; in this case, make times
             the right format. """
         initial = super().get_initial()
-        initial['start_time'] = self.object.start_time.strftime(DATETIME_12_HOUR_FORMAT)
-        initial['end_time'] = self.object.end_time.strftime(DATETIME_12_HOUR_FORMAT)
+        initial['start_time'] = self.object.start_time.astimezone(PACIFIC_TIMEZONE).strftime(DATETIME_12_HOUR_FORMAT)
+        initial['end_time'] = self.object.end_time.astimezone(PACIFIC_TIMEZONE).strftime(DATETIME_12_HOUR_FORMAT)
         return initial
 
     def form_valid(self, form):
