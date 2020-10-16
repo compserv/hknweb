@@ -25,101 +25,80 @@
     </div>
 
     <div class="right-half">
-        {% for event_type in event_types %}
-            <li class="rounded-text-box" style="background-color: {{ event_type.color }};">
-                {{ event_type.type }}</li>
-        {% endfor %}
         <img class="table-icon" src="{% static 'candidate/maybe.png'%}">
         waitlist
     </div>
 
     <div class="aligned">
         <!-- Left side of page, not-rsvp'd events -->
-        <div class="left-half">
+        {% for rsvp_type_data in data %}
+            <div class="{{ rsvp_type_data.class }}">
 
-            <h3>Not RSVP'd</h3>
+                <h3>{{ rsvp_type_data.title }}</h3>
 
-            {% if not_rsvpd_events %}
-                <table class="full-table">
-                    <thead>
-                        <th>Title</th>
-                        <th>Time</th>
-                        <th>Location</th>
-                        <th>Action</th>
-                    </thead>
-
+                <table class="full-table" style="text-align: center;">
                     <tbody>
-                    {% for event in not_rsvpd_events %}
-                        <tr>
-                            <td align="center">
-                                <a href="{% url 'events:detail' event.id %}" class="rounded-text-box"
-                                   style="background-color: {{ event.event_type.color }};">
-                                    {{ event.name }}
-                                </a>
-                            </td>
-                            <td align="center">{{ event.start_time }}</td>
-                            <td align="center">{{ event.location }}</td>
-                            <td align="center">
-                                <form action="{% url 'events:rsvp' event.id %}" method="POST">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="event" value="{{ event.id }}" />
-                                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                                    <input type="submit" value="RSVP" />
-                                </form>
-                            </td>
-                        </tr>
-                    {% endfor %}
+                        {% for event_data in rsvp_type_data.events_data %}
+                            <tr>
+                                <td colspan="4">
+                                    <span class="rounded-text-box" style="background-color: {{ event_data.event_type.color }};">
+                                        {{ event_data.event_type.type }}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Title</th>
+                                <th>Time</th>
+                                <th>Location</th>
+                                <th>Action</th>
+                            </tr>
+                            {% if event_data.events %}
+                                {% for event, action in event_data.events %}
+                                    <tr>
+                                        <td align="center">
+                                            <a href="{% url 'events:detail' event.id %}" class="rounded-text-box"
+                                            style="background-color: {{ event.event_type.color }};">
+                                                {{ event.name }}
+                                            </a>
+                                            {% if event.waitlisted %}
+                                                <img src="{% static 'candidate/maybe.png' %}" alt="waitlisted" class="table-icon">
+                                            {% endif %}
+                                        </td>
+                                        <td align="center">{{ event.start_time }}</td>
+                                        <td align="center">{{ event.location }}</td>
+                                        <td align="center">
+                                            <form action="{{ action }}" method="POST">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="event" value="{{ event.id }}" />
+                                                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                                <input type="submit" value="{{ rsvp_type_data.display_value }}" />
+                                            </form>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="4" align="center">
+                                        <span class="rounded-text-box" style="color: black">
+                                            No events to show.
+                                        </span>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                            {% for _ in event_data.padding %}
+                                <tr>
+                                    <td colspan="4" align="center">
+                                        <span class="rounded-text-box">
+                                            &nbsp;
+                                        </span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% endfor %}
                     </tbody>
                 </table>
-            {% else %}
-                <p>No events to show.</p>
-            {% endif %}
-        </div>
-
-        <!-- Right side of page, rsvp'd events -->
-        <div id='agenda' class="right-half">
-
-            <h3>RSVP'd / Waitlist</h3>
-
-            {% if rsvpd_events %}
-                <table class="full-table">
-                    <thead>
-                        <th>Title</th>
-                        <th>Time</th>
-                        <th>Location</th>
-                        <th>Action</th>
-                    </thead>
-
-                    <tbody>
-                    {% for event in rsvpd_events %}
-                        <tr>
-                            <td align="center">
-                                <a href="{% url 'events:detail' event.id %}" class="rounded-text-box"
-                                   style="background-color: {{ event.event_type.color }};">
-                                    {{ event.name }}
-                                </a>
-                                {% if event.waitlisted %}
-                                    <img src="{% static 'candidate/maybe.png' %}" alt="waitlisted" class="table-icon">
-                                {% endif %}
-                            </td>
-                            <td align="center">{{ event.start_time }}</td>
-                            <td align="center">{{ event.location }}</td>
-                            <td align="center">
-                                <form action="{% url 'events:unrsvp' event.id %}" method="POST">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="event" value="{{ event.id }}" />
-                                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                                    <input type="submit" value="un-RSVP" />
-                                </form>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            {% else %}
-                <p>No events to show.</p>
-            {% endif %}
-        </div>
+            </div>
+        {% endfor %}
     </div>
 
 </div>

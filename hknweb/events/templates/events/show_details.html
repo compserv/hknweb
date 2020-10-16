@@ -41,12 +41,13 @@
 
   <div id="left-details">
 
-    <p>{{ event.description }}</p>
+    <p>{{ event_description | safe }}</p>
     <p><b>Event Type</b>: {{ event.event_type }}</p>
-    <p><b>Location</b>: {{ event.location }}</p>
+    <p><b>Location</b>: {{ event_location | safe }}</p>
     <p><b>Date</b>: {{event.start_time|date:"D, N j, Y"}}</p>
     <p><b>Time</b>: {{event.start_time|time}} to {{event.end_time|time}}</p>
     <p><b>Semester</b>: {{event.semester}}</p>
+    <p><b>Access level</b>: {{ access_level }}</p>
 
     <p>
       <div>
@@ -99,26 +100,99 @@
     {% else %}
       <p class="rsvp-list">You have not rsvp'd </p>
     {% endif %}
-
     
-    <h3 class="rsvp-list-title">RSVPs</h3>
-    
-    {% if limit %}
-      <p class="rsvp-list"> Count: {{ rsvps.count }} / {{ limit }} </p>
-    {% else %}
-      <p class="rsvp-list"> Count: {{ rsvps.count }} </p>
-    {% endif %}
-    {% for rsvp in rsvps %}
-      <p class="rsvp-list">{{ rsvp.user.first_name }} {{ rsvp.user.last_name }} ({{ rsvp.user.username }})</p>
-    {% endfor %}
-    {% if limit %}
-    <h3 class="rsvp-list-title">Waitlist</h3>
-
-      <p class="rsvp-list"> Count: {{waitlists.count}}</p>
-      {% for waitlist in waitlists %}
-        <p class="rsvp-list">{{ waitlist.user.first_name }} {{ waitlist.user.last_name }} ({{ waitlist.user.username }})</p>
-      {% endfor %}
-    {% endif %}
+    <table style="margin: auto;">
+        {% for rsvp_type_data in data %}
+            <tr>
+                <td colspan="3">
+                    <h3 class="rsvp-list-title">{{ rsvp_type_data.title }}</h3>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <p class="rsvp-list"> Count: {{ rsvp_type_data.count }} </p>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Confirmed
+                </th>
+                {% if access_level == "Internal" %}
+                    <th>
+                        Action
+                    </th>
+                {% endif %}
+            </tr>
+            <tbody>
+                {% if rsvp_type_data.data %}
+                    {% for rsvp in rsvp_type_data.data %}
+                        <tr class="rsvp-list">
+                            <td>
+                                {{ rsvp.user.first_name }} {{ rsvp.user.last_name }} ({{ rsvp.user.username }})
+                            </td>
+                            {% if rsvp.confirmed %}
+                                <td>
+                                    <img src="{% static 'candidate/yes.png'%}" alt="confirmed" class="table-icon">
+                                </td>
+                                {% if access_level == "Internal" %}
+                                    <td>
+                                        <form action="{% url 'events:confirm_rsvp' rsvp.id 1 %}" method="POST">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                            <input type="submit" value="Un-confirm" />
+                                        </form>
+                                    </td>
+                                {% endif %}
+                            {% else %}
+                                <td>
+                                    <img src="{% static 'candidate/maybe.png'%}" alt="not yet confirmed" class="table-icon">
+                                </td>
+                                {% if access_level == "Internal" %}
+                                    <td>
+                                        <form action="{% url 'events:confirm_rsvp' rsvp.id 0 %}" method="POST">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                            <input type="submit" value="Confirm" />
+                                        </form>
+                                    </td>
+                                {% endif %}
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                    <tr>
+                        <td colspan="3">
+                            <div class="pagination">
+                                <span class="step-links">
+                                    {% if rsvp_type_data.data.has_previous %}
+                                        <a href="?{{ rsvp_type_data.page_param }}=1">&laquo; first</a>
+                                        <a href="?{{ rsvp_type_data.page_param }}={{ rsvp_type_data.data.previous_page_number }}">previous</a>
+                                    {% endif %}
+                            
+                                    <span class="current">
+                                        Page {{ rsvp_type_data.data.number }} of {{ rsvp_type_data.data.paginator.num_pages }}.
+                                    </span>
+                            
+                                    {% if rsvp_type_data.data.has_next %}
+                                        <a href="?{{ rsvp_type_data.page_param }}={{ rsvp_type_data.data.next_page_number }}">next</a>
+                                        <a href="?{{ rsvp_type_data.page_param }}={{ rsvp_type_data.data.paginator.num_pages }}">last &raquo;</a>
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="3">
+                            No RSVPs to show here!
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        {% endfor %}
+    </table>
   </div>
 </div>
 
