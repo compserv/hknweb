@@ -7,7 +7,8 @@ from ..models.icsr import ICSR
 class QuestionSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Question
-        fields = ['url', 'id']
+        fields = ['url', 'id', 'current_text',
+                  'recent_semester']
         extra_kwargs = {
             'url': {'view_name': 'academics:question-detail'},
         }
