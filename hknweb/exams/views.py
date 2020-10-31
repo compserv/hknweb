@@ -1,4 +1,4 @@
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect,HttpResponseBadRequest
 from django.shortcuts import render
 
 from hknweb.exams.forms import ExamUploadForm
@@ -28,9 +28,7 @@ def exams_for_course(request, department, number):
 			semesters = subSemesters
 		else:
 			specificSemester = ""
-
-	# print(semesters)
-
+	
 	context = {
 		'course': course,
 		'semesters': semesters,
@@ -49,16 +47,23 @@ def add_exam(request):
 			exam = form.cleaned_data['exam']
 			type = form.cleaned_data['type']
 
-			courseSemester = CourseSemester.objects.filter(course=course, semester=semester).first()
+			courseSemester = CourseSemester.objects.filter(course=course, semester=semester)
+			
+			examName = exam + ('_sol' if (type == 'sol') else '')
 
-			# print(courseSemester)
-			# print(exam + type)
+			if True or courseSemester.count != 1:
+				return HttpResponseBadRequest(('File {0} as {1} has been uploaded before already. '\
+					 + 'Please press the Back button on your browser to return to the form.').\
+					format(request.FILES['file'], examName), status=409)
 
-			setattr(courseSemester, exam + ('_sol' if (type == 'sol') else ''), request.FILES['file'])
+			courseSemester = courseSemester.first()
+
+			setattr(courseSemester, examName, request.FILES['file'])
 			courseSemester.save()
 
 			return HttpResponseRedirect('/')
 		else:
-			print(form.errors)
-
+			return HttpResponseBadRequest('An error has occured: {0}'.\
+                                      format(form.errors), status=400)
+	
 	return render(request, 'exams/exams_add.html', {'form': ExamUploadForm(None)})
