@@ -1,15 +1,19 @@
+from django.contrib.auth.decorators import login_required, permission_required
 from django.http import HttpResponseRedirect,HttpResponseBadRequest
 from django.shortcuts import render
 
 from hknweb.exams.forms import ExamUploadForm
-from .models import Course, Department, Instructor, Semester, CourseSemester
+from .models import Course, CourseSemester, Department, Semester
 
 def index(request):
 	courses = Course.objects.order_by('name')
+	departments = Department.objects.order_by("long_name")
+	print(departments.all())
 
 	context = {
 		'courses': courses,
-		'searchCourses': CourseSemester.objects.all()
+		'searchCourses': CourseSemester.objects.all(),
+		'departments': departments
 	}
 
 	return render(request, 'exams/index.html', context)
@@ -37,7 +41,7 @@ def exams_for_course(request, department, number):
 
 	return render(request, 'exams/exams-course.html', context)
 
-
+@permission_required('events.add_exam', login_url='/accounts/login/')
 def add_exam(request):
 	if request.method == 'POST':
 		form = ExamUploadForm(request.POST, request.FILES)
@@ -51,7 +55,7 @@ def add_exam(request):
 			
 			examName = exam + ('_sol' if (type == 'sol') else '')
 
-			if True or courseSemester.count != 1:
+			if courseSemester.count != 1:
 				return HttpResponseBadRequest(('File {0} as {1} has been uploaded before already. '\
 					 + 'Please press the Back button on your browser to return to the form.').\
 					format(request.FILES['file'], examName), status=409)
