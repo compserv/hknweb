@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect,HttpResponseBadRequest
 from django.shortcuts import render
 
 from hknweb.exams.forms import ExamUploadForm
-from .models import Course, CourseSemester, Department, Semester
+from .models import Course, CourseSemester, Department, Instructor, Semester
 
 def index(request):
 	courses = Course.objects.order_by('name')
