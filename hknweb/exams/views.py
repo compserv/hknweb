@@ -8,7 +8,6 @@ from .models import Course, CourseSemester, Department, Instructor, Semester
 def index(request):
 	courses = Course.objects.order_by('name')
 	departments = Department.objects.order_by("long_name")
-	print(departments.all())
 
 	context = {
 		'courses': courses,
