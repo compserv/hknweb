@@ -6,7 +6,7 @@ from ..models.logistics import Course, Department, Instructor, Semester
 class CourseSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Course
-        fields = ['url', 'id','current_name']
+        fields = ['url', 'id','current_name','current_number','recent_semester']
         extra_kwargs = {
             'url': {'view_name': 'academics:course-detail'},
         }
