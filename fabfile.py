@@ -93,6 +93,7 @@ def install_deps(c: Connection):
     print('-- Installing dependencies')
     with c.cd(c.release_path):
         c.run('source .venv/bin/activate && pipenv install --deploy', echo=True, env={'PIPENV_VENV_IN_PROJECT': 'true'})
+        c.run('./provision_frontend.sh prod')
 
 
 def django_migrate(c: Connection):

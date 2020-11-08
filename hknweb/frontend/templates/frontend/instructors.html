@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!DOCTYPE html>
+<html>
+    <body>
+        <div id="InstructorApp">
+            <!-- React will load here -->
+        </div>
+        {% load static %}
+        <script src="{% static "frontend/InstructorApp.js" %}"></script>
+    </body>
+</html>
+{% endblock %}

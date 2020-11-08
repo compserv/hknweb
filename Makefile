@@ -8,6 +8,10 @@ PORT ?= 3000
 dev:
 	HKNWEB_MODE='dev' pipenv run python ./manage.py runserver $(IP):$(PORT)
 
+.PHONY: devf
+devf:
+	npm run dev --prefix hknweb/frontend; make dev
+
 .PHONY: livereload
 livereload:
 	HKNWEB_MODE='dev' pipenv run python ./manage.py livereload $(IP):$(PORT)

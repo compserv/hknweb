@@ -33,7 +33,7 @@ Vagrant.configure("2") do |config|
 
   # Shares the host folder "." to the guest mount point "/home/vagrant/hknweb",
   # with additional options.
-  config.vm.synced_folder ".", "/home/vagrant/hknweb", type: "virtualbox", mount_options: ["dmode=755", "fmode=644"]
+  config.vm.synced_folder ".", "/home/vagrant/hknweb", type: "virtualbox", mount_options: ["dmode=755", "fmode=744"]
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -94,6 +94,12 @@ Vagrant.configure("2") do |config|
     cat "export HKNWEB_MODE=dev" >> /home/vagrant/.bashrc
   SHELL
 
+  $provision = <<-SHELL
+    cd ~/hknweb; make setup
+
+    ./provision_frontend.sh dev
+  SHELL
+
   # Setup pipenv and virtualenv
-  config.vm.provision "shell", privileged: false, inline: "cd ~/hknweb; make setup"
+  config.vm.provision "shell", privileged: false, inline: $provision
 end
