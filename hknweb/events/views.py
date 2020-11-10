@@ -161,7 +161,7 @@ def show_details(request, id):
     rsvps_page = Paginator(rsvps, RSVPS_PER_PAGE).get_page(request.GET.get("rsvps_page"))
     waitlists_page = Paginator(waitlists, RSVPS_PER_PAGE).get_page(request.GET.get("waitlists_page"))
 
-    access_level = ACCESSLEVEL_TO_DESCRIPTION[get_access_level(request.user)]
+    event_access_level = ACCESSLEVEL_TO_DESCRIPTION[event.access_level]
 
     data = [
         {
@@ -186,7 +186,7 @@ def show_details(request, id):
         'event': event,
         "event_description": markdownify(event.description),
         "event_location": event_location,
-        "access_level": access_level,
+        "access_level": event_access_level,
         'rsvpd': rsvpd,
         'waitlisted': waitlisted,
         'waitlist_position': waitlist_position,
