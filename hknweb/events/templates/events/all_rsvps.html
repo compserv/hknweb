@@ -7,8 +7,6 @@
 <style>
     .location-container {
         position: relative;
-        text-align: center;
-        background-color: white;
 
         white-space: nowrap;
         overflow: hidden;
@@ -18,17 +16,10 @@
     .location-container:hover {
         white-space: normal;
         overflow: visible;
-        background-color: white;
 
         height: 1.2em;
     }
 </style>
-<script>
-    if ($('#content').prop('scrollHeight') > $('#content').prop('clientHeight')) {
-        //if 'true', the content overflows the tab: we show the hidden link
-        $('#myLink').css('display', 'block');
-    }
-</script>
 {% endblock %}
 
 {% block heading %} Your RSVPs {% endblock %}
