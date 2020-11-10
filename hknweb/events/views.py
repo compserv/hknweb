@@ -4,7 +4,6 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404, reverse
 from django.core.mail import EmailMultiAlternatives
 from django.core.paginator import Paginator
-from django.core.validators import URLValidator
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.views.generic import TemplateView
@@ -32,6 +31,7 @@ from .forms import EventForm, EventUpdateForm
 from .utils import (
     create_event,
     create_gcal_link,
+    format_url,
     generate_recurrence_times,
     get_access_level,
     get_padding,
@@ -88,7 +88,11 @@ class AllRsvpsView(TemplateView):
             rsvpd_data.append({
                 ATTR.EVENT_TYPE: event_type,
                 ATTR.EVENTS: [
-                    [event, reverse("events:unrsvp", args=[event.id])]
+                    [
+                        event,
+                        reverse("events:unrsvp", args=[event.id]),
+                        format_url(event.location),
+                    ]
                     for event in typed_rsvpd_events
                 ],
                 ATTR.PADDING: rsvpd_padding,
@@ -96,7 +100,11 @@ class AllRsvpsView(TemplateView):
             not_rsvpd_data.append({
                 ATTR.EVENT_TYPE: event_type,
                 ATTR.EVENTS: [
-                    [event, reverse("events:rsvp", args=[event.id])]
+                    [
+                        event,
+                        reverse("events:rsvp", args=[event.id]),
+                        format_url(event.location),
+                    ]
                     for event in typed_not_rsvpd_events
                 ],
                 ATTR.PADDING: not_rsvpd_padding,
@@ -148,13 +156,7 @@ def show_details(request, id):
     limit = event.rsvp_limit
     gcal_link = create_gcal_link(event)
 
-    event_location = event.location
-    url_validator = URLValidator()
-    try:
-        url_validator(event_location)
-        event_location = "<a href='{link}'> {link} </a>".format(link=event_location)
-    except:
-        pass
+    event_location = format_url(event.location)
 
     rsvps_page = Paginator(rsvps, RSVPS_PER_PAGE).get_page(request.GET.get("rsvps_page"))
     waitlists_page = Paginator(waitlists, RSVPS_PER_PAGE).get_page(request.GET.get("waitlists_page"))

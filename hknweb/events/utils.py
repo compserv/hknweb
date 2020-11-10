@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 
 from django import forms
+from django.core.validators import URLValidator
 
 from .constants import (
     ATTR,
@@ -101,3 +102,11 @@ def get_access_level(user):
 
 
 DATETIME_WIDGET_NO_AUTOCOMPLETE = forms.DateTimeInput(attrs={'autocomplete':'off'})
+
+def format_url(s: str, max_width: int=None) -> str:
+    url_validator = URLValidator()
+    try:
+        url_validator(s)
+        return "<a href='{link}'> {link} </a>".format(link=s)
+    except:
+        return s

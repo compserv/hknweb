@@ -4,6 +4,38 @@
 
 {% block header %}
 <link rel="stylesheet" href="{% static 'events/style.css' %}">
+<style>
+    .location-container {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .location-container .location-tooltip {
+        visibility: hidden;
+        background-color: white;
+        text-align: center;
+        border-radius: 0;
+        padding: 0;
+        white-space: normal;
+
+        /* Position the tooltip */
+        position: relative;
+        margin-top: -1.3em;
+        margin-left: 0;
+        z-index: 1;
+    }
+
+    .location-container:hover .location-tooltip {
+        visibility: visible;
+    }
+</style>
+<script>
+    if ($('#content').prop('scrollHeight') > $('#content').prop('clientHeight')) {
+        //if 'true', the content overflows the tab: we show the hidden link
+        $('#myLink').css('display', 'block');
+    }
+</script>
 {% endblock %}
 
 {% block heading %} Your RSVPs {% endblock %}
@@ -36,7 +68,7 @@
 
                 <h3>{{ rsvp_type_data.title }}</h3>
 
-                <table class="full-table" style="text-align: center;">
+                <table class="full-table" style="text-align: center; table-layout:fixed">
                     <tbody>
                         {% for event_data in rsvp_type_data.events_data %}
                             <tr>
@@ -53,7 +85,7 @@
                                 <th>Action</th>
                             </tr>
                             {% if event_data.events %}
-                                {% for event, action in event_data.events %}
+                                {% for event, action, location in event_data.events %}
                                     <tr>
                                         <td align="center">
                                             <a href="{% url 'events:detail' event.id %}" class="rounded-text-box"
@@ -65,7 +97,14 @@
                                             {% endif %}
                                         </td>
                                         <td align="center">{{ event.start_time }}</td>
-                                        <td align="center">{{ event.location }}</td>
+                                        <td align="center" style="width: 30%">
+                                            <div class="location-container">
+                                                {{ location | safe }}
+                                                <div class="location-tooltip">
+                                                    {{ location | safe }}
+                                                </div>
+                                            </div>
+                                        </td>
                                         <td align="center">
                                             <form action="{{ action }}" method="POST">
                                                 {% csrf_token %}
