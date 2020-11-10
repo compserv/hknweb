@@ -6,28 +6,21 @@
 <link rel="stylesheet" href="{% static 'events/style.css' %}">
 <style>
     .location-container {
+        position: relative;
+        text-align: center;
+        background-color: white;
+
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
     }
 
-    .location-container .location-tooltip {
-        visibility: hidden;
-        background-color: white;
-        text-align: center;
-        border-radius: 0;
-        padding: 0;
+    .location-container:hover {
         white-space: normal;
+        overflow: visible;
+        background-color: white;
 
-        /* Position the tooltip */
-        position: relative;
-        margin-top: -1.3em;
-        margin-left: 0;
-        z-index: 1;
-    }
-
-    .location-container:hover .location-tooltip {
-        visibility: visible;
+        height: 1.2em;
     }
 </style>
 <script>
@@ -100,9 +93,6 @@
                                         <td align="center" style="width: 30%">
                                             <div class="location-container">
                                                 {{ location | safe }}
-                                                <div class="location-tooltip">
-                                                    {{ location | safe }}
-                                                </div>
                                             </div>
                                         </td>
                                         <td align="center">
