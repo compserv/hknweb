@@ -4,7 +4,6 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404, reverse
 from django.core.mail import EmailMultiAlternatives
 from django.core.paginator import Paginator
-from django.core.validators import URLValidator
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.views.generic import TemplateView
@@ -13,8 +12,14 @@ from django.utils import timezone
 
 from markdownx.utils import markdownify
 
-from hknweb.utils import login_and_permission, method_login_and_permission, get_rand_photo,\
-                         get_semester_bounds, DATETIME_12_HOUR_FORMAT
+from hknweb.utils import (
+    login_and_permission,
+    method_login_and_permission,
+    get_rand_photo,
+    get_semester_bounds,
+    DATETIME_12_HOUR_FORMAT,
+    PACIFIC_TIMEZONE,
+)
 from .constants import (
     ACCESSLEVEL_TO_DESCRIPTION,
     ATTR,
@@ -26,6 +31,7 @@ from .forms import EventForm, EventUpdateForm
 from .utils import (
     create_event,
     create_gcal_link,
+    format_url,
     generate_recurrence_times,
     get_access_level,
     get_padding,
@@ -82,7 +88,11 @@ class AllRsvpsView(TemplateView):
             rsvpd_data.append({
                 ATTR.EVENT_TYPE: event_type,
                 ATTR.EVENTS: [
-                    [event, reverse("events:unrsvp", args=[event.id])]
+                    [
+                        event,
+                        reverse("events:unrsvp", args=[event.id]),
+                        format_url(event.location),
+                    ]
                     for event in typed_rsvpd_events
                 ],
                 ATTR.PADDING: rsvpd_padding,
@@ -90,7 +100,11 @@ class AllRsvpsView(TemplateView):
             not_rsvpd_data.append({
                 ATTR.EVENT_TYPE: event_type,
                 ATTR.EVENTS: [
-                    [event, reverse("events:rsvp", args=[event.id])]
+                    [
+                        event,
+                        reverse("events:rsvp", args=[event.id]),
+                        format_url(event.location),
+                    ]
                     for event in typed_not_rsvpd_events
                 ],
                 ATTR.PADDING: not_rsvpd_padding,
@@ -142,18 +156,12 @@ def show_details(request, id):
     limit = event.rsvp_limit
     gcal_link = create_gcal_link(event)
 
-    event_location = event.location
-    url_validator = URLValidator()
-    try:
-        url_validator(event_location)
-        event_location = "<a href='{link}'> {link} </a>".format(link=event_location)
-    except:
-        pass
+    event_location = format_url(event.location)
 
     rsvps_page = Paginator(rsvps, RSVPS_PER_PAGE).get_page(request.GET.get("rsvps_page"))
     waitlists_page = Paginator(waitlists, RSVPS_PER_PAGE).get_page(request.GET.get("waitlists_page"))
 
-    access_level = ACCESSLEVEL_TO_DESCRIPTION[get_access_level(request.user)]
+    event_access_level = ACCESSLEVEL_TO_DESCRIPTION[event.access_level]
 
     data = [
         {
@@ -178,7 +186,7 @@ def show_details(request, id):
         'event': event,
         "event_description": markdownify(event.description),
         "event_location": event_location,
-        "access_level": access_level,
+        "access_level": event_access_level,
         'rsvpd': rsvpd,
         'waitlisted': waitlisted,
         'waitlist_position': waitlist_position,
@@ -266,8 +274,8 @@ class EventUpdateView(UpdateView):
         """ Override some prepopulated data with custom data; in this case, make times
             the right format. """
         initial = super().get_initial()
-        initial['start_time'] = self.object.start_time.strftime(DATETIME_12_HOUR_FORMAT)
-        initial['end_time'] = self.object.end_time.strftime(DATETIME_12_HOUR_FORMAT)
+        initial['start_time'] = self.object.start_time.astimezone(PACIFIC_TIMEZONE).strftime(DATETIME_12_HOUR_FORMAT)
+        initial['end_time'] = self.object.end_time.astimezone(PACIFIC_TIMEZONE).strftime(DATETIME_12_HOUR_FORMAT)
         return initial
 
     def form_valid(self, form):
