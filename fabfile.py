@@ -93,7 +93,11 @@ def install_deps(c: Connection):
     print('-- Installing dependencies')
     with c.cd(c.release_path):
         # TODO: Edit out pipenv dependency
-        c.run('source .venv/bin/activate && pipenv install --deploy', echo=True, env={'PIPENV_VENV_IN_PROJECT': 'true'})
+        c.run("python3 -m venv .venv")
+        c.run("source .venv/bin/activate")
+        c.run(".venv/bin/python -m pip install --upgrade pip")
+        c.run(".venv/bin/python -m pip install --upgrade setuptools")
+        c.run(".venv/bin/python -m pip install -r requirements.txt")
 
 
 def django_migrate(c: Connection):
