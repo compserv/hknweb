@@ -95,6 +95,6 @@ Vagrant.configure("2") do |config|
     cat "export HKNWEB_MODE=dev" >> /home/vagrant/.bashrc
   SHELL
 
-  # Setup pipenv and virtualenv
+  # Setup virtualenv
   config.vm.provision "shell", privileged: false, inline: "cd ~/hknweb; make setup"
 end
