@@ -14,9 +14,9 @@ livereload:
 
 .PHONY: setup
 setup:
-	python3 -m venv hknweb_dev
+	python3 -m venv .venv
 	# Left here as a reference :))
-	# source hknweb_dev/bin/activate
+	# source .venv/bin/activate
 
 .PHONY: install
 install:
