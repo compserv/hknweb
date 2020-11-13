@@ -4,7 +4,7 @@
 
 {% block header %}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js" integrity="sha256-AFAYEOkzB6iIKnTYZOdUf9FFje6lOTYdwRJKwTN5mks=" crossorigin="anonymous"></script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js" integrity="sha256-AFAYEOkzB6iIKnTYZOdUf9FFje6lOTYdwRJKwTN5mks=" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" integrity="sha256-FdatTf20PQr/rWg+cAKfl6j4/IY3oohFAJ7gVC3M34E=" crossorigin="anonymous" />
 <script>
     $(document).ready(function() {
@@ -15,7 +15,7 @@
             sel.selectedIndex = null;
         });
     });
-</script>
+</script> -->
 <style>
     .content {
         padding-top: 1em;
@@ -39,7 +39,7 @@
 <div id="actual-contents">
     <center>
         <select id="selectSemestercourses" style="width: 300px">
-            <option selected disabled>--- Search for Course ---</option>
+            <option selected hidden disabled>--- Search for Course ---</option>
             {% for coursesemester in searchCourses %}
             <option value="/exams/course/{{ coursesemester.course.department.abbreviated_name }}/{{ coursesemester.course.number }}/?term={{ coursesemester.semester.semester }}">{{coursesemester.semester.semester}} {{coursesemester.course.department.abbreviated_name}} {{coursesemester.course.number}}</option>
             {% endfor %}
