@@ -47,6 +47,10 @@ test: venv
 	pytest -v tests/
 	pre-commit run --all-files
 
+.PHONY: clean
+clean:
+	rm -rf .venv
+
 .PHONY: mysql
 mysql:
 	mysql -e "CREATE DATABASE IF NOT EXISTS hkn;"
