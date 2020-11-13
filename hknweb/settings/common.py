@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 import os
 from django.conf.global_settings import DATETIME_INPUT_FORMATS
+from hknweb.utils import DATETIME_12_HOUR_FORMAT
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -31,6 +32,7 @@ INSTALLED_APPS = [
     'hknweb.elections',
     'hknweb.courses',
     'hknweb.exams',
+    'hknweb.reviewsessions',
     'dal', # must be before django.contrib.admin
     'dal_select2', # must be before django.contrib.admin
     'django.contrib.admin',
@@ -138,7 +140,7 @@ LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'America/Los_Angeles'
 
-DATETIME_INPUT_FORMATS += ('%m/%d/%Y %I:%M %p')
+DATETIME_INPUT_FORMATS += (DATETIME_12_HOUR_FORMAT,)
 
 USE_I18N = True
 
@@ -210,5 +212,10 @@ SERV_EVENT = 'serv'
 PRODEV_EVENT = 'prodev'
 HANGOUT_EVENT = 'hangout'
 BITBYTE_ACTIVITY = 'bitbyte'
+HANGOUT_ATTRIBUTE_NAME = "officer_hangout"
+CHALLENGE_ATTRIBUTE_NAME = "officer_challenge"
+EITHER_ATTRIBUTE_NAME = "either"
+EVENTS_ATTRIBUTE_NAME = "events"
+INTERACTIVITIES_ATTRIBUTE_NAME = "interactivities"
 
 # Note: both candidate and officer group should have permission to add officer challenges

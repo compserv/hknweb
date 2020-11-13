@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static 'css/errors.css' %}">
+{% endblock %}
+
+{% block title %} 500 Internal Server Error {% endblock %}
+
+{% block heading %}
+Oops!
+{% endblock %}
+
+{% block content %}
+<!-- To test this page, set debug = False and run
+     HKNWEB_MODE='dev' pipenv run python ./manage.py runserver [::]:3000 --insecure -->
+
+<div class="parent">
+    <div class="confirm-text">
+        We messed up. Someone was stressed about their 189 midterm when writing this code
+        and let a bug slip though our extensive code reviews. If this issue persists,
+        contact Compserv.
+    </div>
+    <br>
+
+    <img id="hiding-cat" src="{% static 'img/hiding_cat.jpg' %}" alt="hiding cat">
+
+    <br>
+
+    <div class="links-div link">
+        <a href="{% url 'home' %}">Go to home</a>
+    </div>
+
+    <br>
+
+</div>
+
+
+
+{% endblock %}

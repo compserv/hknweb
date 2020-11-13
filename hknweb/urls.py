@@ -18,9 +18,10 @@ from django.urls import include
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
-from . import views
+
 from .views import landing
 from .views import users
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
@@ -29,6 +30,7 @@ urlpatterns = [
     path('accounts/activate/', users.activate),
     path('about/', landing.about, name='about'),
     path('events/', include('hknweb.events.urls')),
+    path('reviewsessions/', include('hknweb.reviewsessions.urls')),
     path('exams/', include('hknweb.exams.urls')),
     path('alumni/', include('hknweb.alumni.urls')),
     path('tutoring/', include('hknweb.tutoring.urls')),

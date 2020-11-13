@@ -6,14 +6,14 @@
 {% block header %}
 <!-- Scripts which make the calendar work:-->
 <link rel="stylesheet" href="{% static "events/style.css" %}">
-<link rel="stylesheet" href="https://unpkg.com/@fullcalendar/core/main.css" />
-<link rel="stylesheet" href="https://unpkg.com/@fullcalendar/daygrid/main.css" />
-<link rel="stylesheet" href="https://unpkg.com/@fullcalendar/timegrid/main.css" />
+<link rel="stylesheet" href="https://unpkg.com/@fullcalendar/core@4.4.0/main.css" />
+<link rel="stylesheet" href="https://unpkg.com/@fullcalendar/daygrid@4.4.0/main.css" />
+<link rel="stylesheet" href="https://unpkg.com/@fullcalendar/timegrid@4.4.0/main.css" />
 <link rel="stylesheet" href="{% static "css/tachyons.css" %}" />
 
-<script src="https://unpkg.com/@fullcalendar/core/main.js"></script>
-<script src="https://unpkg.com/@fullcalendar/daygrid/main.js"></script>
-<script src="https://unpkg.com/@fullcalendar/timegrid/main.js"></script>
+<script src="https://unpkg.com/@fullcalendar/core@4.4.0/main.js"></script>
+<script src="https://unpkg.com/@fullcalendar/daygrid@4.4.0/main.js"></script>
+<script src="https://unpkg.com/@fullcalendar/timegrid@4.4.0/main.js"></script>
 
 <script type="text/javascript">
     document.addEventListener('DOMContentLoaded', function() {
@@ -30,7 +30,7 @@
             },
             navLinks: true,
             eventLimit: true,
-            aspectRatio: 1.75,
+            aspectRatio: 1.25,
             views: {
                 dayGrid: {
                     fixedWeekCount: false,
@@ -86,10 +86,11 @@ Upcoming Events
     </ul>
 
     <!-- FullCalendar -->
-    <section class="pb3" id='calendar'></section>
+    <section id='calendar'></section>
 
     {% if perms.events.add_event %}
-    <form action="new" method="GET" id="button">
+    <br>
+    <form action="{% url 'events:new' %}" method="GET" id="button">
         <button type='submit'>Add an event</button>
     </form>
     {% endif %}

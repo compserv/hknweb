@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Review Sessions{% endblock %}
+
+{% block header %}
+<!-- Scripts which make the calendar work:-->
+<link rel="stylesheet" href="{% static "reviewsessions/style.css" %}">
+<link rel="stylesheet" href="https://unpkg.com/@fullcalendar/core@4.4.0/main.css" />
+<link rel="stylesheet" href="https://unpkg.com/@fullcalendar/daygrid@4.4.0/main.css" />
+<link rel="stylesheet" href="https://unpkg.com/@fullcalendar/timegrid@4.4.0/main.css" />
+<link rel="stylesheet" href="{% static "css/tachyons.css" %}" />
+
+<script src="https://unpkg.com/@fullcalendar/core@4.4.0/main.js"></script>
+<script src="https://unpkg.com/@fullcalendar/daygrid@4.4.0/main.js"></script>
+<script src="https://unpkg.com/@fullcalendar/timegrid@4.4.0/main.js"></script>
+
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            // General options
+            plugins: [ 'dayGrid', 'timeGrid' ],
+            defaultView: 'dayGridMonth',
+            defaultDate: "{% now 'c' %}",
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            navLinks: true,
+            eventLimit: true,
+            aspectRatio: 1.75,
+            views: {
+                dayGrid: {
+                    fixedWeekCount: false,
+                },
+                timeGrid: {
+                    minTime: "8:00:00",
+                    maxTime: "24:00:00",
+                    nowIndicator: true,
+                }
+            },
+            // Review sessions
+            events: [{% for reviewsession in reviewsessions %}
+                {
+                    title: "{{ reviewsession.name|safe }}",
+                    start: '{{ reviewsession.start_time|date:"c" }}',
+                    end: '{{ reviewsession.end_time|date:"c" }}',
+                    url: '{{ reviewsession.id }}',
+                },
+            {% endfor %}]
+        });
+
+        calendar.render();
+    });
+</script>
+<style>
+    .fc-center h2 {
+        font-family: 'Source Sans Pro', sans-serif;
+        font-size: 30px;
+        font-weight: 400;
+    }
+</style>
+
+{% endblock %}
+
+{% block heading %}
+Upcoming Review Sessions
+{% endblock %}
+
+{% block content %}
+<div class="center measure-verywide">
+    {% if messages %}
+        {% for message in messages %}
+            <h3  {% if messages.tags %} class="{{ message.tags }}" {% endif %} style="color: #0000A0;">{{ message }}</h3>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Event type legend -->
+    <!-- <ul class="list w-100 flex flex-wrap justify-end">
+    {% for event_type in event_types %}
+        <li class="dib pa2 ml1 br2 white" style="background-color: {{event_type.color}};">{{event_type.type}}</li>
+    {% endfor %}
+    </ul> -->
+
+    <!-- FullCalendar -->
+    <section class="pb3" id='calendar'></section>
+
+    {% if perms.reviewsessions.add_reviewsession %}
+    <form action="new" method="GET" id="button">
+        <button type='submit'>Add a review session</button>
+    </form>
+    {% endif %}
+    <br>
+</div>
+{% endblock %}
