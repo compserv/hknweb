@@ -18,8 +18,7 @@ livereload:
 .PHONY: setup
 setup:
 	python3 -m venv .venv
-	# Left here as a reference :))
-	# source .venv/bin/activate
+	@echo "When developing, activate the virtualenv with 'source hknweb_dev/bin/activate' so Python can access the installed dependencies."
 
 .PHONY: install
 install:
