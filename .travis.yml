@@ -11,4 +11,11 @@ env:
   # TODO: add test env (where DEBUG=False, secret key unencrypted)
   - HKNWEB_MODE=dev
 install:
+  - python3 -m venv .venv
+  - source .venv/bin/activate
+  - .venv/bin/python -m pip install --upgrade pip
+  - .venv/bin/python -m pip install --upgrade setuptools
+  - .venv/bin/python -m pip install -r requirements.txt
 script:
+  - .venv/bin/python ./manage.py migrate
+  - .venv/bin/python ./manage.py check
