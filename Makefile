@@ -24,6 +24,7 @@ setup:
 .PHONY: install
 install:
 	$(PYTHON) -m pip install --upgrade pip
+	# For issues with binary packages, consider https://pythonwheels.com/
 	$(PYTHON) -m pip install --upgrade setuptools
 	$(PYTHON) -m pip install -r requirements.txt
 
