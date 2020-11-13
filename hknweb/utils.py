@@ -12,7 +12,7 @@ from pytz import timezone
 
 # constants
 
-DATETIME_12_HOUR_FORMAT = '%m/%d/%Y %I:%M %p %Z'
+DATETIME_12_HOUR_FORMAT = '%m/%d/%Y %I:%M %p'
 PACIFIC_TIMEZONE = timezone('US/Pacific')
 
 # decorators
