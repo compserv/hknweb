@@ -6,53 +6,46 @@ PORT ?= 3000
 
 .PHONY: dev
 dev:
-	HKNWEB_MODE='dev' pipenv run python ./manage.py runserver $(IP):$(PORT)
+	HKNWEB_MODE='dev' python ./manage.py runserver $(IP):$(PORT)
 
 .PHONY: livereload
 livereload:
-	HKNWEB_MODE='dev' pipenv run python ./manage.py livereload $(IP):$(PORT)
+	HKNWEB_MODE='dev' python ./manage.py livereload $(IP):$(PORT)
 
-setup: pipenv venv migrate
+.PHONY: setup
+setup:
+	python3 -m venv hknweb_dev
+	# Left here as a reference :))
+	# source hknweb_dev/bin/activate
 
-.PHONY: pipenv
-pipenv:
-	pip3 install --user pipenv || pip install --user pipenv
-	@echo Please add $(PIP_HOME) to your PATH variable.
-
-.PHONY: venv
-venv: Pipfile Pipfile.lock
-	pipenv install --dev
+.PHONY: install
+install:
+	python -m pip install --upgrade pip
+	python -m pip install --upgrade setuptools
+	python -m pip install -r requirements.txt
 
 .PHONY: createsuperuser superuser
 superuser: createsuperuser
 createsuperuser:
-	HKNWEB_MODE='dev' pipenv run python ./manage.py createsuperuser
+	HKNWEB_MODE='dev' python ./manage.py createsuperuser
 
 .PHONY: migrate
 migrate:
-	HKNWEB_MODE='dev' pipenv run python ./manage.py migrate
+	HKNWEB_MODE='dev' python ./manage.py migrate
 
 .PHONY: makemigrations migrations
 migrations: makemigrations
 makemigrations:
-	HKNWEB_MODE='dev' pipenv run python ./manage.py makemigrations
+	HKNWEB_MODE='dev' python ./manage.py makemigrations
 
 .PHONY: shell
 shell:
-	HKNWEB_MODE='dev' pipenv run python ./manage.py shell
+	HKNWEB_MODE='dev' python ./manage.py shell
 
 .PHONY: test
 test: venv
-	pipenv run pytest -v tests/
-	pipenv run pre-commit run --all-files
-
-.PHONY: clean
-clean:
-	pipenv --rm
-
-.PHONY: update
-update: venv
-	pipenv update
+	pytest -v tests/
+	pre-commit run --all-files
 
 .PHONY: mysql
 mysql:
@@ -61,4 +54,4 @@ mysql:
 
 .PHONY: permissions
 permissions:
-	HKNWEB_MODE='dev' pipenv run python ./manage.py shell < hknweb/init_permissions.py
+	HKNWEB_MODE='dev' python ./manage.py shell < hknweb/init_permissions.py
