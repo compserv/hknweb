@@ -23,7 +23,7 @@ venv:
 	@echo "When developing, activate the virtualenv with 'source .venv/bin/activate' so Python can access the installed dependencies."
 
 .PHONY: install-prod
-install-prod
+install-prod:
 	# For issues with binary packages, consider https://pythonwheels.com/
 	$(PYTHON) -m pip install --upgrade pip setuptools
 	# TODO: pinned/unpinned dependency version.
