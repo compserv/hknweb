@@ -50,8 +50,8 @@ shell:
 
 .PHONY: test
 test: venv
-	pytest -v tests/
-	pre-commit run --all-files
+	$(BIN)/pytest -v tests/
+	$(BIN)/pre-commit run --all-files
 
 .PHONY: clean
 clean:
