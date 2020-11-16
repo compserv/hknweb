@@ -22,13 +22,18 @@ setup:
 	python3 -m venv $(VENV)
 	@echo "When developing, activate the virtualenv with 'source .venv/bin/activate' so Python can access the installed dependencies."
 
-.PHONY: install
-install:
+.PHONY: install-prod
+install-prod
 	# For issues with binary packages, consider https://pythonwheels.com/
 	$(PYTHON) -m pip install --upgrade pip setuptools
 	# TODO: pinned/unpinned dependency version.
 	# See https://hkn-mu.atlassian.net/browse/COMPSERV-110
-	$(PYTHON) -m pip install -r requirements.txt requirements-dev.txt
+	$(PYTHON) -m pip install -r requirements.txt
+
+.PHONY: install
+install:
+	make install-prod
+	$(PYTHON) -m pip install -r requirements-dev.txt
 
 .PHONY: createsuperuser superuser
 superuser: createsuperuser
