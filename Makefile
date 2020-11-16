@@ -1,24 +1,26 @@
 PIP_HOME = $(shell python3 -c "import site; import os; print(os.path.join(site.USER_BASE, 'bin'))" \
 	|| python -c "import site; import os; print(os.path.join(site.USER_BASE, 'bin'))")
 
-BIN := .venv/bin
+VENV := .venv
+BIN := $(VENV)/bin
 PYTHON := $(BIN)/python
+MANAGE := HKNWEB_MODE='dev' $(PYTHON) ./manage.py
 
 IP ?= 127.0.0.1
 PORT ?= 3000
 
 .PHONY: dev
 dev:
-	HKNWEB_MODE='dev' $(PYTHON) ./manage.py runserver $(IP):$(PORT)
+	$(MANAGE) runserver $(IP):$(PORT)
 
 .PHONY: livereload
 livereload:
-	HKNWEB_MODE='dev' $(PYTHON) ./manage.py livereload $(IP):$(PORT)
+	$(MANAGE) livereload $(IP):$(PORT)
 
 .PHONY: setup
 setup:
-	python3 -m venv .venv
-	@echo "When developing, activate the virtualenv with 'source hknweb_dev/bin/activate' so Python can access the installed dependencies."
+	python3 -m venv $(VENV)
+	@echo "When developing, activate the virtualenv with 'source .venv/bin/activate' so Python can access the installed dependencies."
 
 .PHONY: install
 install:
@@ -33,20 +35,20 @@ install:
 .PHONY: createsuperuser superuser
 superuser: createsuperuser
 createsuperuser:
-	HKNWEB_MODE='dev' $(PYTHON) ./manage.py createsuperuser
+	$(MANAGE) createsuperuser
 
 .PHONY: migrate
 migrate:
-	HKNWEB_MODE='dev' $(PYTHON) ./manage.py migrate
+	$(MANAGE) migrate
 
 .PHONY: makemigrations migrations
 migrations: makemigrations
 makemigrations:
-	HKNWEB_MODE='dev' $(PYTHON) ./manage.py makemigrations
+	$(MANAGE) makemigrations
 
 .PHONY: shell
 shell:
-	HKNWEB_MODE='dev' $(PYTHON) ./manage.py shell
+	$(MANAGE) shell
 
 .PHONY: test
 test: venv
@@ -55,7 +57,7 @@ test: venv
 
 .PHONY: clean
 clean:
-	rm -rf .venv
+	rm -rf $(VENV)
 
 .PHONY: mysql
 mysql:
@@ -64,4 +66,4 @@ mysql:
 
 .PHONY: permissions
 permissions:
-	HKNWEB_MODE='dev' $(PYTHON) ./manage.py shell < hknweb/init_permissions.py
+	$(MANAGE) shell < hknweb/init_permissions.py
