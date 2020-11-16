@@ -24,13 +24,11 @@ setup:
 
 .PHONY: install
 install:
-	$(PYTHON) -m pip install --upgrade pip
 	# For issues with binary packages, consider https://pythonwheels.com/
-	$(PYTHON) -m pip install --upgrade setuptools
+	$(PYTHON) -m pip install --upgrade pip setuptools
 	# TODO: pinned/unpinned dependency version.
 	# See https://hkn-mu.atlassian.net/browse/COMPSERV-110
-	$(PYTHON) -m pip install -r requirements.txt
-	$(PYTHON) -m pip install -r requirements-dev.txt
+	$(PYTHON) -m pip install -r requirements.txt requirements-dev.txt
 
 .PHONY: createsuperuser superuser
 superuser: createsuperuser
