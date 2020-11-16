@@ -92,10 +92,7 @@ def decrypt_secrets(c):
 def install_deps(c: Connection):
     print('-- Installing dependencies')
     with c.cd(c.release_path):
-        # TODO: Edit out pipenv dependency
-        c.run("make venv")
-        c.run("source .venv/bin/activate")
-        c.run("make install-prod")
+        c.run("make venv && source .venv/bin/activate && make install-prod")
 
 
 def django_migrate(c: Connection):
