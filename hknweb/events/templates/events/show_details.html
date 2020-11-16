@@ -47,7 +47,7 @@
     <p><b>Date</b>: {{event.start_time|date:"D, N j, Y"}}</p>
     <p><b>Time</b>: {{event.start_time|time}} to {{event.end_time|time}}</p>
     <p><b>Semester</b>: {{event.semester}}</p>
-    <p><b>Access level</b>: {{ access_level }}</p>
+    <p><b>Access level</b>: {{ event_access_level }}</p>
 
     <p>
       <div>
@@ -120,7 +120,7 @@
                 <th>
                     Confirmed
                 </th>
-                {% if access_level == "Internal" %}
+                {% if user_access_level == "Internal" %}
                     <th>
                         Action
                     </th>
@@ -137,7 +137,7 @@
                                 <td>
                                     <img src="{% static 'candidate/yes.png'%}" alt="confirmed" class="table-icon">
                                 </td>
-                                {% if access_level == "Internal" %}
+                                {% if user_access_level == "Internal" %}
                                     <td>
                                         <form action="{% url 'events:confirm_rsvp' rsvp.id 1 %}" method="POST">
                                             {% csrf_token %}
@@ -150,7 +150,7 @@
                                 <td>
                                     <img src="{% static 'candidate/maybe.png'%}" alt="not yet confirmed" class="table-icon">
                                 </td>
-                                {% if access_level == "Internal" %}
+                                {% if user_access_level == "Internal" %}
                                     <td>
                                         <form action="{% url 'events:confirm_rsvp' rsvp.id 0 %}" method="POST">
                                             {% csrf_token %}
