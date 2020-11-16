@@ -139,8 +139,8 @@ def check_requirements(confirmed_events, unconfirmed_events, num_challenges, num
         elif req_type == settings.MANDATORY_EVENT:
             req_remaining[req_type] = len(unconfirmed_events[settings.MANDATORY_EVENT])
             req_statuses[req_type] = req_remaining[req_type] == 0
-        elif num_confirmed >= minimum:
-            req_statuses[req_type] = True
+        else:
+            req_statuses[req_type] = num_confirmed >= minimum
             req_remaining[req_type]= max(minimum - num_confirmed, 0)
 
     return req_statuses, req_remaining
@@ -163,11 +163,11 @@ def check_interactivity_requirements(interactivities):
     return req_status, req_remaining
 
 
-def create_title(req_type: str, req_remaining: int, names: dict=map_event_vars, num_required:dict=req_list) -> str:
+def create_title(req_type: str, req_remaining: dict, names: dict=map_event_vars, num_required:dict=req_list) -> str:
     if req_type == settings.MANDATORY_EVENT:
         return REQUIREMENT_TITLES_MANDATORY
     elif req_type == settings.HANGOUT_EVENT:
-        return {name: create_title(name, num_required[req_type], INTERACTIVITY_NAMES, num_required[req_type]) for name in INTERACTIVITY_NAMES}
+        return {name: create_title(name, req_remaining[req_type], INTERACTIVITY_NAMES, num_required[req_type]) for name in INTERACTIVITY_NAMES}
     else:
         return REQUIREMENT_TITLES_TEMPLATE.format(
             name=names[req_type],
