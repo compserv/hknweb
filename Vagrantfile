@@ -96,5 +96,5 @@ Vagrant.configure("2") do |config|
   SHELL
 
   # Setup virtualenv
-  config.vm.provision "shell", privileged: false, inline: "cd ~/hknweb; make setup"
+  config.vm.provision "shell", privileged: false, inline: "cd ~/hknweb; make venv"
 end

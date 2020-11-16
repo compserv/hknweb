@@ -45,7 +45,7 @@ and GNU Make installed (i.e. most GNU/Linux machines.)
 
 Developing on `hknweb` requires a virtual environment so that every developer has the exact same development environment i.e. any errors that a developer has is not due to difference in configuration. We will be using Python's built-on [`venv`](https://docs.python.org/3/library/venv.html) to make our virtual environment.
 ```sh
-$ make setup
+$ make venv
 ```
 
 This command will also install the Python dev environment (Python dependencies, a virtualenv).

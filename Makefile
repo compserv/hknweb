@@ -17,8 +17,8 @@ dev:
 livereload:
 	$(MANAGE) livereload $(IP):$(PORT)
 
-.PHONY: setup
-setup:
+.PHONY: venv
+venv:
 	python3 -m venv $(VENV)
 	@echo "When developing, activate the virtualenv with 'source .venv/bin/activate' so Python can access the installed dependencies."
 

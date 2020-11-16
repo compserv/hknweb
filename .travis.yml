@@ -11,7 +11,7 @@ env:
   # TODO: add test env (where DEBUG=False, secret key unencrypted)
   - HKNWEB_MODE=dev
 install:
-  - make setup
+  - make venv
   - source .venv/bin/activate
   - make install
 script:
