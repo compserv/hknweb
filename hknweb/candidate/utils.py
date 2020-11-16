@@ -111,9 +111,9 @@ req_list = {
     settings.SERV_EVENT: 1,
     settings.PRODEV_EVENT: 1,
     settings.HANGOUT_EVENT: {
-        settings.HANGOUT_ATTRIBUTE_NAME: 1,
+        settings.HANGOUT_ATTRIBUTE_NAME: 2,
         settings.CHALLENGE_ATTRIBUTE_NAME: 1,
-        settings.EITHER_ATTRIBUTE_NAME: 2,
+        settings.EITHER_ATTRIBUTE_NAME: 3,
     },
     settings.BITBYTE_ACTIVITY: 3,
 }
