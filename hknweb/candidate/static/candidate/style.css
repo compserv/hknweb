@@ -29,6 +29,13 @@
     background-size: 1.25em 1.25em;
 }
 
+.req-title {
+    color: white;
+    border-radius: 1em;
+    padding-left: 0.4em;
+    padding-right: 0.4em;
+}
+
 .done {
     background-image: url('yes.png');
 }

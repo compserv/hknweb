@@ -1,25 +1,46 @@
 from django.shortcuts import render, redirect
-from django.http import Http404
+from django.http import Http404, HttpResponseForbidden
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, reverse
 from django.core.mail import EmailMultiAlternatives
+from django.core.paginator import Paginator
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.views.generic import TemplateView
 from django.views.generic.edit import UpdateView
 from django.utils import timezone
 
-from hknweb.utils import login_and_permission, method_login_and_permission, get_rand_photo,\
-                         get_semester_bounds, DATETIME_12_HOUR_FORMAT
-from .constants import GCAL_INVITE_TEMPLATE_ATTRIBUTE_NAME
+from markdownx.utils import markdownify
+
+from hknweb.utils import (
+    login_and_permission,
+    method_login_and_permission,
+    get_rand_photo,
+    get_semester_bounds,
+    DATETIME_12_HOUR_FORMAT,
+    PACIFIC_TIMEZONE,
+)
+from .constants import (
+    ACCESSLEVEL_TO_DESCRIPTION,
+    ATTR,
+    GCAL_INVITE_TEMPLATE_ATTRIBUTE_NAME,
+    RSVPS_PER_PAGE,
+)
 from .models import Event, EventType, Rsvp
 from .forms import EventForm, EventUpdateForm
-from .utils import create_gcal_link
+from .utils import (
+    create_event,
+    create_gcal_link,
+    format_url,
+    generate_recurrence_times,
+    get_access_level,
+    get_padding,
+)
 
 # views
 
 def index(request):
-    events = Event.objects.order_by('-start_time')
+    events = Event.objects.order_by('-start_time').filter(access_level__gte=get_access_level(request.user))
     event_types = EventType.objects.order_by('type')
 
     context = {
@@ -39,6 +60,7 @@ class AllRsvpsView(TemplateView):
         all_events = Event.objects \
                 .filter(start_time__gte=semester_start) \
                 .filter(start_time__lte=semester_end) \
+                .filter(access_level__gte=get_access_level(self.request.user)) \
                 .order_by('start_time')
         if view_option == "upcoming":
             all_events = all_events.filter(start_time__gte=timezone.now())
@@ -53,11 +75,58 @@ class AllRsvpsView(TemplateView):
         for event in rsvpd_events:
             event.waitlisted = event.on_waitlist(self.request.user) # Is this bad practice? idk
 
-        event_types = EventType.objects.order_by('type')
+        event_types = EventType.objects.order_by('type').all()
+        event_types = sorted(event_types, key=lambda e: not (e.type == ATTR.MANDATORY))
+
+        rsvpd_data, not_rsvpd_data = [], []
+        for event_type in event_types:
+            typed_rsvpd_events = rsvpd_events.filter(event_type=event_type)
+            typed_not_rsvpd_events = not_rsvpd_events.filter(event_type=event_type)
+
+            rsvpd_padding, not_rsvpd_padding = get_padding(len(typed_not_rsvpd_events), len(typed_rsvpd_events))
+
+            rsvpd_data.append({
+                ATTR.EVENT_TYPE: event_type,
+                ATTR.EVENTS: [
+                    [
+                        event,
+                        reverse("events:unrsvp", args=[event.id]),
+                        format_url(event.location),
+                    ]
+                    for event in typed_rsvpd_events
+                ],
+                ATTR.PADDING: rsvpd_padding,
+            })
+            not_rsvpd_data.append({
+                ATTR.EVENT_TYPE: event_type,
+                ATTR.EVENTS: [
+                    [
+                        event,
+                        reverse("events:rsvp", args=[event.id]),
+                        format_url(event.location),
+                    ]
+                    for event in typed_not_rsvpd_events
+                ],
+                ATTR.PADDING: not_rsvpd_padding,
+            })
+
+        data = [
+            {
+                ATTR.CLASS: "right-half",
+                ATTR.TITLE: "RSVP'd / Waitlist",
+                ATTR.EVENTS_DATA: rsvpd_data,
+                ATTR.DISPLAY_VALUE: "un-RSVP",
+            },
+            {
+                ATTR.CLASS: "left-half",
+                ATTR.TITLE: "Not RSVP'd",
+                ATTR.EVENTS_DATA: not_rsvpd_data,
+                ATTR.DISPLAY_VALUE: "RSVP",
+            },
+        ]
+
         context = {
-            'rsvpd_events': rsvpd_events,
-            'not_rsvpd_events': not_rsvpd_events,
-            'event_types': event_types,
+            ATTR.DATA: data,
         }
         return context
 
@@ -86,14 +155,43 @@ def show_details(request, id):
     waitlists = event.waitlist_set()
     limit = event.rsvp_limit
     gcal_link = create_gcal_link(event)
+
+    event_location = format_url(event.location)
+
+    rsvps_page = Paginator(rsvps, RSVPS_PER_PAGE).get_page(request.GET.get("rsvps_page"))
+    waitlists_page = Paginator(waitlists, RSVPS_PER_PAGE).get_page(request.GET.get("waitlists_page"))
+
+    user_access_level = ACCESSLEVEL_TO_DESCRIPTION[get_access_level(request.user)]
+    event_access_level = ACCESSLEVEL_TO_DESCRIPTION[event.access_level]
+
+    data = [
+        {
+            ATTR.TITLE: "RSVPs",
+            ATTR.DATA: rsvps_page if len(rsvps_page) > 0 else None,
+            ATTR.PAGE_PARAM: "rsvps_page",
+            ATTR.COUNT: str(rsvps.count()) + " / {limit}".format(limit=limit),
+        },
+    ]
+    if limit:
+        data.append(
+            {
+                ATTR.TITLE: "Waitlist",
+                ATTR.DATA: waitlists_page if len(waitlists_page) > 0 else None,
+                ATTR.PAGE_PARAM: "waitlists_page",
+                ATTR.COUNT: str(waitlists.count()),
+            }
+        )
+
     context = {
+        ATTR.DATA: data,
         'event': event,
+        "event_description": markdownify(event.description),
+        "event_location": event_location,
+        "user_access_level": user_access_level,
+        "event_access_level": event_access_level,
         'rsvpd': rsvpd,
-        'rsvps': rsvps,
         'waitlisted': waitlisted,
         'waitlist_position': waitlist_position,
-        'waitlists': waitlists,
-        'limit': limit,
         'can_edit': request.user.has_perm('events.change_event'),
         GCAL_INVITE_TEMPLATE_ATTRIBUTE_NAME: gcal_link,
     }
@@ -135,16 +233,38 @@ def add_event(request):
     form = EventForm(request.POST or None)
     if request.method == 'POST':
         if form.is_valid():
-            event = form.save(commit=False)
-            event.created_by = request.user
-            event.save()
+            data = form.cleaned_data
+
+            times = generate_recurrence_times(
+                data[ATTR.START_TIME],
+                data["end_time"],
+                data["recurring_num_times"],
+                data["recurring_period"],
+            )
+
+            for start_time, end_time in times:
+                create_event(data, start_time, end_time, request.user)
+
             messages.success(request, 'Event has been added!')
             return redirect('/events')
         else:
-            print(form.errors)
-            messages.success(request, 'Something went wrong oops')
-            return render(request, 'events/event_add.html', {'form': EventForm(None)})
-    return render(request, 'events/event_add.html', {'form': EventForm(None)})
+            messages.error(request, "Something went wrong oops")
+    return render(request, "events/event_add.html", {"form": EventForm(None)})
+
+def confirm_rsvp(request, id, operation):
+    if request.method != 'POST':
+        raise Http404()
+
+    access_level = get_access_level(request.user)
+    if access_level > 0:
+        raise HttpResponseForbidden()
+
+    rsvp = Rsvp.objects.get(id=id)
+    rsvp.confirmed = operation == 0  # { confirmed: 0, unconfirmed: 1 }
+    rsvp.save()
+
+    next_page = request.POST.get('next', '/')
+    return redirect(next_page)
 
 @method_login_and_permission('events.change_event')
 class EventUpdateView(UpdateView):
@@ -156,8 +276,8 @@ class EventUpdateView(UpdateView):
         """ Override some prepopulated data with custom data; in this case, make times
             the right format. """
         initial = super().get_initial()
-        initial['start_time'] = self.object.start_time.strftime(DATETIME_12_HOUR_FORMAT)
-        initial['end_time'] = self.object.end_time.strftime(DATETIME_12_HOUR_FORMAT)
+        initial['start_time'] = self.object.start_time.astimezone(PACIFIC_TIMEZONE).strftime(DATETIME_12_HOUR_FORMAT)
+        initial['end_time'] = self.object.end_time.astimezone(PACIFIC_TIMEZONE).strftime(DATETIME_12_HOUR_FORMAT)
         return initial
 
     def form_valid(self, form):

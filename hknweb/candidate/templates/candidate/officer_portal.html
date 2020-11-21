@@ -5,10 +5,10 @@
 <link rel="stylesheet" href="{% static "candidate/style.css" %}">
 {% endblock %}
 
-{% block title %}Officer's Officer Challenges{% endblock %}
+{% block title %}Officer Portal{% endblock %}
 
 {% block heading %}
-Officer Challenges from You
+Officer Portal
 {% endblock %}
 
 {% block content %}
@@ -25,6 +25,7 @@ Officer Challenges from You
                     <th>Requester</th>
                     <th>Overall Status</th>
                     <th>Your Response</th>
+                    <th></th>
                 </thead>
 
                 <tbody>
@@ -54,6 +55,15 @@ Officer Challenges from You
                                 <img src="{% static 'candidate/maybe.png'%}" alt="in progress" class="table-icon">
                             {% endif %}
                         </td>
+                        <td align="center">
+                            {% if challenge.officer_confirmed is not True %}
+                                <form action="{% url 'candidate:confirm' challenge.id %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="next" value="{{ request.path }}">
+                                    <input type="submit" value="Confirm" />
+                                </form>
+                            {% endif %}
+                        </td>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -74,10 +84,23 @@ Officer Challenges from You
             Note: Both you and csec need to confirm a challenge for it to be valid.
         </p>
 
-        <!-- TODO: make officer portal and link here -->
-        <p class="link">
-            <a href="{% url 'home' %}">Back to officer portal [coming soon]</a>
-        </p>
+    </div>
+
+    <div class="table-div">
+        <h3>Add new candidates (this may take a few minutes!)</h3>
+         - Make sure you have permission to add users!<br>
+         - The uploaded CSV must have headers for "Email", "First Name", and "Last Name".
+        <br><br>
+        {% for message in messages %}
+            <span {% if messages.tags %} class="{{ message.tags }}" {% endif %}
+                class="blue">{{ message }}</span>
+        {% endfor %}
+        <form action="{% url 'candidate:add_cands' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.path }}">
+            <input type="file" name="cand_csv" />
+            <input type="submit" value="Add candidates" />
+        </form>
     </div>
 
 </div>
