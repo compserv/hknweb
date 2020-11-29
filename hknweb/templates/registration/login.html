@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="small-margin">
+    {% if form.errors %}
+      <p class="red-text">
+          Your username and password didn't match. Please try again.</p>
+    {% endif %}
+
+    {% if next %}
+      {% if user.is_authenticated %}
+        <p>Your account doesn't have access to this page. To proceed,
+        please login with an account that has access.</p>
+      {% else %}
+        <p>Please login to see this page.</p>
+      {% endif %}
+    {% endif %}
+
+    <form method="post" action="{% url 'login' %}">
+      {% csrf_token %}
+      {{ form.as_p }}
+
+    <input type="submit" value="login" />
+    <input type="hidden" name="next" value="{{ next }}" />
+    </form>
+
+    <a href="{% url 'account-create' %}">Sign up</a>
+    <p><a href="{% url 'password_reset' %}">Forgot your password?</a></p>
+    <a href="{% url 'social:begin' 'google-oauth2' %}">Login with Google</a>
+    <br><br><br>
+</div>
+{% endblock %}

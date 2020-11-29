@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static "candidate/style.css" %}">
+{% endblock %}
+
+{% block title %}Officer Portal{% endblock %}
+
+{% block heading %}
+Officer Portal
+{% endblock %}
+
+{% block content %}
+<div class="parent">
+
+    <!-- list of requested challenges -->
+    <div id='agenda' class="table-div">
+        <h3>Past Officer Challenges</h3>
+
+        {% if challenge_list %}
+            <table class="full-table">
+                <thead>
+                    <th>Title</th>
+                    <th>Requester</th>
+                    <th>Overall Status</th>
+                    <th>Your Response</th>
+                    <th></th>
+                </thead>
+
+                <tbody>
+                {% for challenge in challenge_list %}
+                    <tr>
+                        <td align="center">
+                            <a href="{% url 'candidate:detail' challenge.id%}">
+                                {{ challenge.name }}
+                            </a>
+                        </td>
+                        <td align="center">{{ challenge.requester }}</td>
+                        <td align="center">
+                            {% if challenge.confirmed %}
+                                <img src="{% static 'candidate/yes.png'%}" alt="confirmed" class="table-icon">
+                            {% elif challenge.rejected %}
+                                <img src="{% static 'candidate/no.png'%}" alt="rejected" class="table-icon">
+                            {% else %}
+                                <img src="{% static 'candidate/maybe.png'%}" alt="in progress" class="table-icon">
+                            {% endif %}
+                        </td>
+                        <td align="center">
+                            {% if challenge.officer_confirmed is False %}
+                                <img src="{% static 'candidate/no.png'%}" alt="declined" class="table-icon">
+                            {% elif challenge.officer_confirmed is True %}
+                                <img src="{% static 'candidate/yes.png'%}" alt="confirmed" class="table-icon">
+                            {% else %}
+                                <img src="{% static 'candidate/maybe.png'%}" alt="in progress" class="table-icon">
+                            {% endif %}
+                        </td>
+                        <td align="center">
+                            {% if challenge.officer_confirmed is not True %}
+                                <form action="{% url 'candidate:confirm' challenge.id %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="next" value="{{ request.path }}">
+                                    <input type="submit" value="Confirm" />
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+        {% else %}
+            <p>No requests to show.</p>
+        {% endif %}
+
+        <!-- Legend for status of challenge request -->
+        <p>
+        Confirmed <img src="{% static 'candidate/yes.png'%}" alt="confirmed" class="inline-icon">
+        Declined <img src="{% static 'candidate/no.png'%}" alt="declined" class="inline-icon">
+        Waiting for response <img src="{% static 'candidate/maybe.png'%}" alt="in progress" class="inline-icon">
+        </p>
+
+        <p>
+            Note: Both you and csec need to confirm a challenge for it to be valid.
+        </p>
+
+    </div>
+
+    <div class="table-div">
+        <h3>Add new candidates (this may take a few minutes!)</h3>
+         - Make sure you have permission to add users!<br>
+         - The uploaded CSV must have headers for "Email", "First Name", and "Last Name".
+        <br><br>
+        {% for message in messages %}
+            <span {% if messages.tags %} class="{{ message.tags }}" {% endif %}
+                class="blue">{{ message }}</span>
+        {% endfor %}
+        <form action="{% url 'candidate:add_cands' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.path }}">
+            <input type="file" name="cand_csv" />
+            <input type="submit" value="Add candidates" />
+        </form>
+    </div>
+
+</div>
+
+{% endblock %}

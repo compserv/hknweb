@@ -4,38 +4,66 @@
 {% block title %}Events{% endblock %}
 
 {% block header %}
-  <!-- Random scripts which make the calendar work: -->
-  <link rel='stylesheet' href="http://unpkg.com/fullcalendar/dist/fullcalendar.min.css" />
-  <script src="http://unpkg.com/moment/min/moment.min.js"></script>
-  <script src="http://unpkg.com/jquery/dist/jquery.slim.min.js"></script>
-  <script src="http://unpkg.com/fullcalendar/dist/fullcalendar.min.js"></script>
+<!-- Scripts which make the calendar work:-->
+<link rel="stylesheet" href="{% static "events/style.css" %}">
+<link rel="stylesheet" href="https://unpkg.com/@fullcalendar/core@4.4.0/main.css" />
+<link rel="stylesheet" href="https://unpkg.com/@fullcalendar/daygrid@4.4.0/main.css" />
+<link rel="stylesheet" href="https://unpkg.com/@fullcalendar/timegrid@4.4.0/main.css" />
+<link rel="stylesheet" href="{% static "css/tachyons.css" %}" />
 
-  <script type="text/javascript">
-    $(document).ready(function () {
-      $('#calendar').fullCalendar({
-        header: {
-          left: 'prev,next today',
-          center: 'title',
-          right: 'month,basicWeek,basicDay'
-        },
-        defaultDate: new Date(),
-        navLinks: true, // can click day/week names to navigate views
-        editable: false,
-        eventLimit: true, // allow "more" link when too many events
-        fixedWeekCount: false,
-        aspectRatio: 1.75,
-        events: [ {% for event in events %}
-          {
-            title: '{{ event.name }}',
-            start: '{{ event.start_time|date:"c" }}', // date:"c" renders the dates in ISO format, as fullcalendar needs them
-            end: '{{ event.end_time|date:"c" }}',
-            url: '{{ event.id }}'
-          },
-        {% endfor %}
-        ]
-      })
-    })
-  </script>
+<script src="https://unpkg.com/@fullcalendar/core@4.4.0/main.js"></script>
+<script src="https://unpkg.com/@fullcalendar/daygrid@4.4.0/main.js"></script>
+<script src="https://unpkg.com/@fullcalendar/timegrid@4.4.0/main.js"></script>
+
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            // General options
+            plugins: [ 'dayGrid', 'timeGrid' ],
+            defaultView: 'dayGridMonth',
+            defaultDate: "{% now 'c' %}",
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            navLinks: true,
+            eventLimit: true,
+            aspectRatio: 1.25,
+            views: {
+                dayGrid: {
+                    fixedWeekCount: false,
+                },
+                timeGrid: {
+                    minTime: "8:00:00",
+                    maxTime: "24:00:00",
+                    nowIndicator: true,
+                }
+            },
+            // Events
+            events: [{% for event in events %}
+                {
+                    title: "{{ event.name|safe }}",
+                    start: '{{ event.start_time|date:"c" }}',
+                    end: '{{ event.end_time|date:"c" }}',
+                    url: '{{ event.id }}',
+                    color: '{{ event.event_type.color }}'
+                },
+            {% endfor %}]
+        });
+
+        calendar.render();
+    });
+</script>
+<style>
+    .fc-center h2 {
+        font-family: 'Source Sans Pro', sans-serif;
+        font-size: 30px;
+        font-weight: 400;
+    }
+</style>
+
 {% endblock %}
 
 {% block heading %}
@@ -43,26 +71,29 @@ Upcoming Events
 {% endblock %}
 
 {% block content %}
-<div class="center measure-very-wide pv4">
+<div class="center measure-verywide">
     {% if messages %}
         {% for message in messages %}
             <h3  {% if messages.tags %} class="{{ message.tags }}" {% endif %} style="color: #0000A0;">{{ message }}</h3>
         {% endfor %}
     {% endif %}
 
+    <!-- Event type legend -->
+    <ul class="list w-100 flex flex-wrap justify-end">
+    {% for event_type in event_types %}
+        <li class="dib pa2 ml1 br2 white" style="background-color: {{event_type.color}};">{{event_type.type}}</li>
+    {% endfor %}
+    </ul>
+
+    <!-- FullCalendar -->
     <section id='calendar'></section>
-    
-    <style>
-        .fc-center h2 {
-            font-family: 'Source Sans Pro', sans-serif;
-            font-size: 30px;
-            font-weight: 400;
-        }
-    </style>
-    
+
+    {% if perms.events.add_event %}
     <br>
-    <form action="new" method="GET">
-        <button type='submit'>New event</button>
+    <form action="{% url 'events:new' %}" method="GET" id="button">
+        <button type='submit'>Add an event</button>
     </form>
+    {% endif %}
+    <br>
 </div>
 {% endblock %}

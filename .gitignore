@@ -100,6 +100,8 @@ Icon
 .Trashes
 .VolumeIcon.icns
 .com.apple.timemachine.donotpresent
+.vscode/
+.idea/
 
 # Directories potentially created on remote AFP share
 .AppleDB
@@ -107,3 +109,6 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# VirtualEnv
+.venv

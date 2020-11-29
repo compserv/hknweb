@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 import os
 from django.conf.global_settings import DATETIME_INPUT_FORMATS
-#from .secrets import EMAIL_HOST_PASSWORD
+from hknweb.utils import DATETIME_12_HOUR_FORMAT
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -32,6 +32,9 @@ INSTALLED_APPS = [
     'hknweb.elections',
     'hknweb.courses',
     'hknweb.exams',
+    'hknweb.reviewsessions',
+    'dal', # must be before django.contrib.admin
+    'dal_select2', # must be before django.contrib.admin
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -39,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'markdownx',
+    'social_django',
 ]
 
 MIDDLEWARE = [
@@ -54,6 +58,17 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'hknweb.urls'
 
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.auth_allowed',
+    'social_core.pipeline.social_auth.social_user',
+    'social_core.pipeline.social_auth.associate_by_email',
+    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.social_auth.load_extra_data',
+    'social_core.pipeline.user.user_details',
+)
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -65,6 +80,9 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
+                'hknweb.views.users.add_officer_context',
             ],
         },
     },
@@ -72,6 +90,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'hknweb.wsgi.application'
 
+AUTHENTICATION_BACKENDS = (
+ 'social_core.backends.open_id.OpenIdAuth',  # for Google authentication
+ 'social_core.backends.google.GoogleOpenId',  # for Google authentication
+ 'social_core.backends.google.GoogleOAuth2',  # for Google authentication
+
+ 'django.contrib.auth.backends.ModelBackend',
+)
 
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
@@ -113,9 +138,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Los_Angeles'
 
-DATETIME_INPUT_FORMATS += ('%m/%d/%Y %I:%M %p')
+DATETIME_INPUT_FORMATS += (DATETIME_12_HOUR_FORMAT,)
 
 USE_I18N = True
 
@@ -142,6 +167,7 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'hknwebsite@hkn.eecs.berkeley.edu'
 EMAIL_USE_TLS = True
 
+NO_REPLY_EMAIL = 'no-reply@hkn.eecs.berkeley.edu'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
@@ -149,7 +175,47 @@ EMAIL_USE_TLS = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'hknweb', 'static'),
 ]
 
+# placeholder for now, replace with home page when it exists
+LOGIN_URL = 'accounts/login'
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'home'
+
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+
 # STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+#SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = ['hkn.eecs.berkeley.edu']
+
+# Recaptcha: public and private key
+RECAPTCHA_PUBLIC_KEY = '6LeYTKAUAAAAADooVC_FG9ua47PnwP_gGWOSwauK'
+
+# python-social-auth: MySQL InnoDB index limits
+# https://python-social-auth-docs.readthedocs.io/en/latest/configuration/settings.html#tweaking-some-fields-length
+SOCIAL_AUTH_UID_LENGTH = 223
+SOCIAL_AUTH_NONCE_SERVER_URL_LENGTH = 100
+SOCIAL_AUTH_ASSOCIATION_SERVER_URL_LENGTH  = 100
+
+# Constants for backend code
+
+# user groups
+CAND_GROUP = 'candidate'
+OFFICER_GROUP = 'officer'
+
+# default hard-coded event types for candidate semester
+# NOTE: these strings are also hard-coded in candidate/index.html
+MANDATORY_EVENT = 'mandatory'
+FUN_EVENT = 'fun'
+BIG_FUN_EVENT = 'big_fun'
+SERV_EVENT = 'serv'
+PRODEV_EVENT = 'prodev'
+HANGOUT_EVENT = 'hangout'
+BITBYTE_ACTIVITY = 'bitbyte'
+HANGOUT_ATTRIBUTE_NAME = "officer_hangout"
+CHALLENGE_ATTRIBUTE_NAME = "officer_challenge"
+EITHER_ATTRIBUTE_NAME = "either"
+EVENTS_ATTRIBUTE_NAME = "events"
+INTERACTIVITIES_ATTRIBUTE_NAME = "interactivities"
+
+# Note: both candidate and officer group should have permission to add officer challenges

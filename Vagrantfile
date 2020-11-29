@@ -75,6 +75,7 @@ Vagrant.configure("2") do |config|
         python3 \
         python3-dev \
         python3-pip \
+        python3-venv \
         tmux \
         vim
 
@@ -94,6 +95,6 @@ Vagrant.configure("2") do |config|
     cat "export HKNWEB_MODE=dev" >> /home/vagrant/.bashrc
   SHELL
 
-  # Setup pipenv and virtualenv
-  config.vm.provision "shell", privileged: false, inline: "cd ~/hknweb; make setup"
+  # Setup virtualenv
+  config.vm.provision "shell", privileged: false, inline: "cd ~/hknweb; make venv"
 end

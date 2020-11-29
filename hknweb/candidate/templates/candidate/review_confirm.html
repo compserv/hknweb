@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static "candidate/style.css" %}">
+{% endblock %}
+
+{% block title %}{{ challenge.name }}{% endblock %}
+
+{% block heading %}
+Confirm Officer Challenge
+{% endblock %}
+
+{% block content %}
+
+<div class="parent">
+    <div class="confirm-text">
+        You have successfully reviewed the challenge requested by {{ requester_name }}!
+    </div>
+    <br>
+
+    <img id="sunny" src="{% static 'candidate/seal_sunny.jpg'%}" alt="cute dog">
+    <span id="sunny-caption">
+        Sunny, the world's cutest dog (according to Sarah Sun)
+    </span>
+
+    <br>
+
+    <div class="links-div link">
+        <a href="{% url 'candidate:officer' %}">Go to portal</a>
+        <a href="{% url 'candidate:detail' challenge.id %}" class="right">View this challenge</a>
+    </div>
+    <br><br>
+
+    <!-- <strong>Jay Chou</strong><br>
+    <br>
+    Read a touching <a href="https://www.facebook.com/872077979472664/photos/the-touching-story-of-how-jay-chou-struggled-before-he-became-todays-pop-icon-__/1193876557292803/">story</a>
+    of him!<br>
+    <em> Here's an image to look at: </em><br>
+    <img src="http://img02.abroad.imgcdc.com/english/autograb/20170215/15261487121708.jpeg"><br>
+
+    <ul>
+        <li>Jay Chou is the best Chinese singer</li>
+        <li>Jay Chou is so freaking talented</li>
+        <li>Jay Chou is so cute and sometimes hot f</li>
+        <li>His movie <em> Secret </em> made me cry THREE times!</li>
+        <li>I've loved him for 8+ years!</li>
+        <li>I dreamed of dating (the 20 year-old) him last week. <br>
+            There was a hot blond but I still chose my shy Jay. </li>
+    </ul> -->
+    <!-- Author: Catherine Hu -->
+</div>
+
+
+
+{% endblock %}

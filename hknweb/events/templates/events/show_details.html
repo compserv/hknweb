@@ -3,49 +3,197 @@
 
 {% block title %}{{ event.name }}{% endblock %}
 
-{% block header %}
+{% block heading %}
 {{ event.name }}
 {% endblock %}
 
-{% block content %}
-<div class="center measure-very-wide pv4">
-
-  {% if messages %}
-    {% for message in messages %}
-      <h3 {% if messages.tags %} class="{{ message.tags }}" {% endif %} style="color: #B78727;">{{ message }}</h3>
-    {% endfor %}
-  {% endif %}
-
-  <!-- RSVP/un-RSVP button -->
-  {% if rsvp %}
-    <form action="{{ event.id }}/unrsvp" method="post">
-      {% csrf_token %}
-      <input type="submit" value="un-RSVP" />
-    </form>
-  {% else %}
-    <form action="{{ event.id }}/rsvp" method="post">
-      {% csrf_token %}
-      <input type="submit" value="RSVP" />
-    </form>
-  {% endif %}
-  
-  <p>{{ event.description }}</p>
-
-  <p><b>Location</b>: {{ event.location }}</p>
-  
-  <div id="date-and-time"></div>
-  <!-- Script to render dates prettily -->
-  <script>
-    var start = new Date('{{ event.start_time|date:"c" }}');
-    var end = new Date('{{ event.end_time|date:"c" }}');
-    var sameDayEvent = start.getDate() === end.getDate() && start.getMonth() === end.getMonth() && start.getYear() === end.getYear();
-    
-    if (sameDayEvent) {
-      var HTMLtext = '<p><b>Date</b>: ' + start.toLocaleDateString() + '</p> <p><b>Time</b>: ' + start.toLocaleTimeString() + ' to ' + end.toLocaleTimeString();
-    } else { // Event starts and ends on different days
-      var HTMLtext = '<p><b>Starts</b>: ' + start.toLocaleString() + '</p> <p><b>Ends</b>: ' + start.toLocaleString();
+{% block header %}
+<link rel="stylesheet" href="{% static "events/style.css" %}">
+<style>
+    .heading {
+        display: none;
     }
-    document.getElementById("date-and-time").innerHTML = HTMLtext;
-  </script>
+    @media screen and (min-width: 1000px) {
+        .content {
+            padding-bottom: 1em;
+        }
+    }
+    .info_img_info {
+      display: none;
+      margin-left: 0.05em;
+    }
+    .info_img:hover + .info_img_info {
+      display: inline-block;
+      color: red;
+    }
+    .info_img {
+      height: 1em;
+      width: 1em;
+      margin-left: 0.05em;
+      vertical-align: middle;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="parent">
+  <h1 id="event-detail-title"> {{ event.name }} </h1>
+
+  <div id="left-details">
+
+    <p>{{ event_description | safe }}</p>
+    <p><b>Event Type</b>: {{ event.event_type }}</p>
+    <p><b>Location</b>: {{ event_location | safe }}</p>
+    <p><b>Date</b>: {{event.start_time|date:"D, N j, Y"}}</p>
+    <p><b>Time</b>: {{event.start_time|time}} to {{event.end_time|time}}</p>
+    <p><b>Semester</b>: {{event.semester}}</p>
+    <p><b>Access level</b>: {{ event_access_level }}</p>
+
+    <p>
+      <div>
+        <a href={{gcal_link}}>Add to Google calendar</a>
+        <div style="display: inline-block">
+          <img class="info_img" src="{% static "events/information.png" %}">
+          <span class="info_img_info">Event time changes will not update calendar invites.</span>
+        </div>
+      </div>
+    </p>
+
+    {% if can_edit %}
+      <p><a href="{% url 'events:edit' event.id %}">
+          Edit This Event
+      </a></p>
+    {% endif %}
+
+    <p><a href="{% url 'events:index' %}">
+        Go Back to Calendar
+    </a></p>
+  </div>
+
+  <div id='right-details'>
+    {% if messages %}
+      {% for message in messages %}
+        <h3 class="orange-messages {% if messages.tags %} {{ message.tags }} {% endif %}">
+          {{ message }}</h3>
+      {% endfor %}
+    {% endif %}
+
+    <!-- RSVP/un-RSVP button -->
+    {% if rsvpd %}
+      <form action="{% url 'events:unrsvp' event.id %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.path }}">
+        <input type="submit" value="un-RSVP" />
+      </form>
+    {% else %}
+      <form action="{% url 'events:rsvp' event.id %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.path }}">
+        <input type="submit" value="RSVP" />
+      </form>
+    {% endif %}
+    
+    {% if waitlisted %}
+      <p class="rsvp-list">You are at position {{waitlist_position}} on the waitlist. <img src="{% static 'candidate/maybe.png'%}" alt="waitlisted" class="table-icon"></p>
+    {% elif rsvpd %}
+      <p class="rsvp-list">You have rsvp'd <img src="{% static 'candidate/yes.png'%}" alt="rsvp'd" class="table-icon"></p>
+    {% else %}
+      <p class="rsvp-list">You have not rsvp'd </p>
+    {% endif %}
+    
+    <table style="margin: auto;">
+        {% for rsvp_type_data in data %}
+            <tr>
+                <td colspan="3">
+                    <h3 class="rsvp-list-title">{{ rsvp_type_data.title }}</h3>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <p class="rsvp-list"> Count: {{ rsvp_type_data.count }} </p>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Confirmed
+                </th>
+                {% if user_access_level == "Internal" %}
+                    <th>
+                        Action
+                    </th>
+                {% endif %}
+            </tr>
+            <tbody>
+                {% if rsvp_type_data.data %}
+                    {% for rsvp in rsvp_type_data.data %}
+                        <tr class="rsvp-list">
+                            <td>
+                                {{ rsvp.user.first_name }} {{ rsvp.user.last_name }} ({{ rsvp.user.username }})
+                            </td>
+                            {% if rsvp.confirmed %}
+                                <td>
+                                    <img src="{% static 'candidate/yes.png'%}" alt="confirmed" class="table-icon">
+                                </td>
+                                {% if user_access_level == "Internal" %}
+                                    <td>
+                                        <form action="{% url 'events:confirm_rsvp' rsvp.id 1 %}" method="POST">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                            <input type="submit" value="Un-confirm" />
+                                        </form>
+                                    </td>
+                                {% endif %}
+                            {% else %}
+                                <td>
+                                    <img src="{% static 'candidate/maybe.png'%}" alt="not yet confirmed" class="table-icon">
+                                </td>
+                                {% if user_access_level == "Internal" %}
+                                    <td>
+                                        <form action="{% url 'events:confirm_rsvp' rsvp.id 0 %}" method="POST">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                            <input type="submit" value="Confirm" />
+                                        </form>
+                                    </td>
+                                {% endif %}
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                    <tr>
+                        <td colspan="3">
+                            <div class="pagination">
+                                <span class="step-links">
+                                    {% if rsvp_type_data.data.has_previous %}
+                                        <a href="?{{ rsvp_type_data.page_param }}=1">&laquo; first</a>
+                                        <a href="?{{ rsvp_type_data.page_param }}={{ rsvp_type_data.data.previous_page_number }}">previous</a>
+                                    {% endif %}
+                            
+                                    <span class="current">
+                                        Page {{ rsvp_type_data.data.number }} of {{ rsvp_type_data.data.paginator.num_pages }}.
+                                    </span>
+                            
+                                    {% if rsvp_type_data.data.has_next %}
+                                        <a href="?{{ rsvp_type_data.page_param }}={{ rsvp_type_data.data.next_page_number }}">next</a>
+                                        <a href="?{{ rsvp_type_data.page_param }}={{ rsvp_type_data.data.paginator.num_pages }}">last &raquo;</a>
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="3">
+                            No RSVPs to show here!
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        {% endfor %}
+    </table>
+  </div>
 </div>
+
 {% endblock %}

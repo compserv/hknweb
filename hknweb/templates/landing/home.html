@@ -1,12 +1,14 @@
+{% extends "base.html" %}
 {% load static from staticfiles %}
 <html>
     <head>
+
         <!-- Base CSS -->
         <link rel="stylesheet" href="{% static "css/home.css" %}">
-        
+
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,600,700,800,900|Open+Sans|PT+Sans:700|Roboto:400,500,700,900|Source+Sans+Pro:300,400,600,700" rel="stylesheet">
-        
+
         <!-- Materialize -->
         <!-- Compiled and minified CSS -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
@@ -29,329 +31,236 @@
             <div class="navi-menu-container">
                 <div class='navi-menu'>
 
-                    <label for="toggle"><div class="navi-menu-item">Student Services</div></label>
-                    <label for="toggle"><div class="navi-menu-item">Industrial Relations</div></label>
-                    <label for="toggle"><div class="navi-menu-item">Events</div></label>
-                    <label for="toggle"><div class="navi-menu-item">Services</div></label>
-                    <label for="toggle"><div class="navi-menu-item">People</div></label>
-                    <label for="toggle"><div class="navi-menu-item">About</div></label>
-                </div>
-            </div>
-        </div><input type="checkbox" name="toggle" id="toggle" />
-        <div class="navi-extension">
-            <div class="navi-extension-container">
-                <div class="navi-ext-logo">
-                    <img src="{% static "img/hkn-bear-white.png" %}" class="navi-logo-img">
-                    <div class="navi-logo-text">
-                        <div class="navi-logo-title">
-                            Eta Kappa Nu
-                        </div>
-                        <div class="navi-logo-subtitle">
-                            UC Berkeley
-                        </div>
-                    </div>
-                </div>
-                <div class="navi-ext-container">
-                    <div class="navi-ext-item">
-                        <div class="navi-menu-ext-item">Student Services</div>
-                        <div class="navi-extension-item">Tutoring Hours</div>
-                        <div class="navi-extension-item">Review Sessions</div>
-                        <div class="navi-extension-item">Exam Archive</div>
-                        <div class="navi-extension-item">Course Surveys</div>
-                        <div class="navi-extension-item">Course Guide</div>
-                        <div class="navi-extension-item">Department Tours</div>
-                    </div>
-                    <div class="navi-ext-item">
-                        <div class="navi-menu-ext-item">Industrial Relations</div>
-                        <div class="navi-extension-item">Why HKN?</div>
-                        <div class="navi-extension-item">Resume Books</div>
-                        <div class="navi-extension-item">Infosessions</div>
-                        <div class="navi-extension-item">Career Fair</div>
-                        <div class="navi-extension-item">Contact Us</div>
-                    </div>
-                    <div class="navi-ext-item">
-                        <div class="navi-menu-ext-item">Events</div>
-                        <div class="navi-extension-item">Events Calendar</div>
-                        <div class="navi-extension-item">Upcoming Events</div>
-                        <div class="navi-extension-item">Past Events</div>
-                    </div>
-                    <div class="navi-ext-item">
-                        <div class="navi-menu-ext-item">Services</div>
-                        <div class="navi-extension-item">Service</div>
-                        <div class="navi-extension-item">Junior EECS Day</div>
-                        <div class="navi-extension-item">Maker Workshops</div>
-                        <div class="navi-extension-item">EECS Day</div>
-                        <div class="navi-extension-item">Bear Hacks</div>
-                        <div class="navi-extension-item">Cal Day Workshops</div>
-                    </div>
-                    <div class="navi-ext-item">
-                        <div class="navi-menu-ext-item">People</div>
-                        <div class="navi-extension-item">Alumni</div>
-                        <div class="navi-extension-item">Officers</div>
-                        <div class="navi-extension-item">Committees</div>
-                    </div>
-                    <div class="navi-ext-item">
-                        <div class="navi-menu-ext-item">About</div>
-                        <div class="navi-extension-item">Contact Info</div>
-                        <div class="navi-extension-item">Photo Gallery</div>
-                        <div class="navi-extension-item">Yearbooks</div>
-                        <div class="navi-extension-item">Slideshows</div>
-                    </div>
-                </div>
-                <div class="exit-ext-menu">
-                    <label for=toggle><img src="{% static "img/close.png" %}"></label>
-                </div>
-            </div>
+{% block header %}
+<link rel="stylesheet" href="{% static "css/home.css" %}">
+<!-- Materialize -->
+<!-- Compiled and minified CSS -->
+<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"> -->
+<!-- Compiled and minified JavaScript -->
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script> -->
+
+<title>Berkeley HKN</title>
+{% endblock %}
+
+{% block content %}
+<div class="banner">
+    <div class="banner-heading">
+        <div class="banner-title">
+            Eta Kappa Nu
         </div>
-        <div class="banner">
-            <div class="banner-title">
-                Eta Kappa Nu
-            </div>
-            <div class="banner-subtitle">
-                Mu Chapter
-            </div>
-            <div class="banner-text">
-                Electrical Engineering and Computer Science <br/>
-                Honors Society in University California, Berkeley
-            </div>
+        <div class="banner-subtitle">
+            Mu Chapter
         </div>
-
-
-        <div class="boxes">
-            <div class="box">
-                <img src="{% static "img/box1.png" %}" class="box-img"/>
-                <div class="box-title">Tutoring Hours</div>
-                <div class="box-subtitle">
-                    We are here to help you with homeworks and concepts.
-                </div>
-            </div>
-
-            <div class="box">
-                <img src="{% static "img/box2.png" %}" class="box-img"/>
-                <div class="box-title">Exam Archives</div>
-                <div class="box-subtitle">
-                        Find past exams and solutions from various EE and CS classes.
-                </div>
-            </div>
-
-            <div class="box">
-                <img src="{% static "img/box3.png" %}" class="box-img"/>
-                <div class="box-title">Course Guides</div>
-                <div class="box-subtitle">
-                    Find related courses to help you plan your next classes.
-                </div>
-            </div>
+        <div class="banner-text">
+            UC Berkeley's Electrical Engineering and Computer Sciences honor society
         </div>
-
-        <div class="tutoring">
-            <div class="tutoring-container">
-                <div class="tutoring-text">
-                    <div class="tutoring-title">Tutoring Hours</div>
-                    <div class="tutoring-subtitle">
-                        Students who need advice or tutoring in
-                        EE and CS courses are encouraged to
-                        drop by for free assistance. Officers hold
-                        office hours from 11am to 5pm
-                        every weekday.
-                    </div>
-                    <div class="tutoring-seemore">
-                        <a href="/">See weekly schedule</a>
-                    </div>
-                </div>
-                <div class="tutoring-schedule">
-                    <div class="tutoring-top">
-                        <div class="tutoring-day">Friday, Apr 4</div>
-                        <hr class="tutoring-hr">
-                        <div class="tutoring-office">
-                            <div class="tutoring-office-1">290 CORY</div>
-                            <div class="tutoring-office-1">345 SODA</div>
-                        </div>
-                    </div>
-
-                    <div class="tutoring-bottom">
-                        <div class="tutoring-time">
-                            <div class="tutoring-time-item">11:00</div>
-                            <div class="tutoring-time-item">12:00</div>
-                            <div class="tutoring-time-item">13:00</div>
-                            <div class="tutoring-time-item time-selected">14:00</div>
-                            <div class="tutoring-time-item">15:00</div>
-                            <div class="tutoring-time-item">16:00</div>
-                        </div>
-
-                        <div class="tutoring-people">
-                            <div class="tutoring-people-item">
-                                <div class="people">James Z</div>
-                                <div class="people">Jessie Y, Michael W</div>
-                            </div>
-                            <div class="tutoring-people-item">
-                                <div class="people">James Z</div>
-                                <div class="people">Jessie Y, Michael W</div>
-                            </div>
-                            <div class="tutoring-people-item">
-                                <div class="people">James Z</div>
-                                <div class="people">Jessie Y, Michael W</div>
-                            </div>
-                            <div class="tutoring-people-item people-selected">
-                                <div class="people">James Z</div>
-                                <div class="people">Jessie Y, Michael W</div>
-                            </div>
-                            <div class="tutoring-people-item">
-                                <div class="people">James Z</div>
-                                <div class="people">Jessie Y, Michael W</div>
-                            </div>
-                            <div class="tutoring-people-item">
-                                <div class="people">James Z</div>
-                                <div class="people">Jessie Y, Michael W</div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
+        <div class="banner-text">
+            <a href="/exams">Exams</a> &#8226; <a href="">course guides and surveys</a> &#8226; <a href="">course map</a>
         </div>
+    </div>
 
-
-        <div class="what">
-            <div class="whatpic what_1"></div>
-            <div class="whatpic what_2"></div>
-            <div class="what-about">
-                <div class="what-about-title">What is HKN?</div>
-                <div class="what-about-subtitle">
-                        Eta Kappa Nu (HKN) is the national Electrical
-                        and Computer Engineering honor society.
-                        The Berkeley chapter is among the most
-                        active engineering societies at Berkeley,
-                        providing academic services to fellow
-                        undergraduates.
-                </div>
+    <div class="tutoring-column">
+        <div class="tutoring-panel">
+            <div class="tutoring-title">
+                Announcements
             </div>
-            <div class="whatpic what_3"></div>
-        </div>
+                {% if not announcements %}
+                    No announcements at this time.
+                {% endif %}
 
-
-        <div class="events">
-            <div class="events-container">
-                <div class="events-text">
-                    <div class="events-title">
-                        Upcoming Events
-                    </div>
-                    <div class="events-subtitle">
-                            Students who need advice or tutoring in
-                            EE and CS courses are encouraged to
-                            drop by for free assistance. Officers hold
-                            office hours from 11am to 5pm
-                            every weekday.
-                    </div>
-                    <div class="events-seemore"><a href="/">See more events</a></div>
-                </div>
-                <div class="events-card">
-                    <div class="events-card-item">
-                        <div class="events-card-title">
-                            Junior EECS Day
-                        </div>
-                        <div class="events-card-day">
-                            Sat 4/14
-                            <span class="events-card-time">10:00 - 15:00</span>
-                        </div>
-                    </div>
-
-                    <div class="events-card-item">
-                        <div class="events-card-title">
-                            Cal Day + Workshops
-                        </div>
-                        <div class="events-card-day">
-                            Sat 4/21
-                            <span class="events-card-time">10:00 - 15:00</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="services">
-            <div class="services-leftright">
-                <div class="services-title">Our Services</div>
-                <div class="services-subtitle">
-                    We’re hosting various educative events
-                        to help grow our EECS community</div>
-                <div class="servicespic services-1">
-                    <div class="services-text">
-                        Maker Workshops
-                    </div>
-                </div>
-            </div>
-
-            <div class="services-leftright">
-                <div class="servicespic services-2">
-                    <div class="services-text">
-                        EECS Stack Decal
-                    </div>
-                </div>
-
-                <div class="servicespic services-3">
-                    <div class="services-text">
-                        Course Surveys
-                    </div>
-                </div>
-            </div>
+                {% for announcement in announcements %}
+                    <p>
+                    <strong>{{ announcement.title }}</strong> [{{ announcement.release_date|date:"m/d/Y" }}]<br>
+                    {{ announcement.text }}
+                    </p>
+                {% endfor %}
 
         </div>
-
-        <div class="footer">
-            <div class="footer-container">
-                <div class="footer-form">
-                    <div class="form-title">We're <span class="here">here</span> to help.</div>
-                    <form class="col s12">
-                        <div class="row">
-                            <div class="input-field col s6">
-                                <input id="first_name" type="text" class="validate">
-                                <label for="first_name">Your Name</label>
-                            </div>
-                            <div class="input-field col s6">
-                                <input id="last_name" type="text" class="validate">
-                                <label for="last_name">Your Email</label>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="input-field col s12">
-                                <input id="last_name" type="text" class="validate">
-                                <label for="last_name">How can we help?</label>
-                            </div>
-                        </div>
-                    </form>
-
-                </div>
-
-                <div class="footer-contact">
-                    <div class="contact-block">
-                        <div class="contact-title">
-                            Our Offices
-                        </div>
-                        <div class="contact-text">
-                            290 Cory Hall / (510) 642-7346 <br/>
-                            345 Soda Hall / (510) 642-9952 <br/>
-                            Berkeley, CA 94720-1770
-                        </div>
-                    </div>
-
-
-                    <div class="contact-block">
-                        <div class="contact-title">
-                            Email
-                        </div>
-                        <div class="contact-text">
-                            General: <br/>
-                            hkn@hkn.eecs.berkeley.edu<br/>
-                            Industrial Relations: <br/>
-                            indrel@hkn.eecs.berkeley.edu<br/>
-                            Officer Contacts: <br/>
-                            Refer to <a href="/">Officers page</a>.
-                        </div>
-                    </div>
-                </div>
+        <br>
+        <div class="tutoring-panel">
+            <div class="tutoring-title">
+                Today's Tutoring Hours
             </div>
+            <span class="tutoring-date"><div>April 22, 2019</div></span>
+            <table>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th class="tutoring-office">
+                            345&nbsp;SODA
+                        </th>
+                        <th class="tutoring-office">
+                            290&nbsp;CORY
+                        </th>
+                    </tr>
+                </thead>
+                <tr>
+                    <td>11:00</td>
+                    <td>James&nbsp;Z.</td>
+                    <td>Jessie Y. Michael W. Jessie Y. Michael W. Jessie Y. Michael W. Jessie Y. Michael W.</td>
+                </tr>
+                <tr>
+                    <td id="curr-hour">12:00</td>
+                    <td>James Z.</td>
+                    <td>Jessie Y. <br> Michael W.</td>
+                </tr>
+                <tr>
+                    <td>1:00</td>
+                    <td>James Z.</td>
+                    <td>Michael W.</td>
+                </tr>
+                <tr>
+                    <td>2:00</td>
+                    <td>James Z.</td>
+                    <td>Dalton O.</td>
+                </tr>
+                <tr>
+                    <td>3:00</td>
+                    <td>James Z.</td>
+                    <td>James Z.</td>
+                </tr>
+                <tr>
+                    <td>4:00</td>
+                    <td>James Z.</td>
+                    <td>Alex.eecs</td>
+                </tr>
+            </table>
         </div>
 
-    </body>
-</html>
+        <br>
+
+        <div class="tutoring-panel">
+            <div class="tutoring-title">
+                Upcoming Events
+            </div>
+            <ul>
+                {% for event in events %}
+                    <li>
+                        <a href="{% url 'events:index' %}{{ event.id }}">{{ event.name }}</a>
+                        <span class="events-card-time">{{event.start_time|date:"D m/d h:i A"}} - {{ event.end_time|date:"h:i A"}}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <br>
+
+        {% if reviewsessions %}
+        <div class="tutoring-panel">
+            <div class="tutoring-title">
+                Upcoming Review Sessions
+            </div>
+            <ul>
+                {% for reviewsession in reviewsessions %}
+                    <li>
+                        <a href="{% url 'reviewsessions:index' %}{{ reviewsession.id }}">{{ reviewsession.name }}</a>
+                        <span class="events-card-time">{{reviewsession.start_time|date:"D m/d h:i A"}} - {{ reviewsession.end_time|date:"h:i A"}}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+
+<div class="what">
+    <div class="whatpic what_1"></div>
+    <div class="whatpic what_2"></div>
+    <div class="what-about">
+        <div class="what-about-title">What is HKN?</div>
+        <div class="what-about-subtitle">
+                Eta Kappa Nu (HKN) is the national Electrical and Computer Engineering honor society. The Berkeley chapter is among the most active engineering societies at Berkeley, providing services to fellow undergraduates. Welcome to our website!
+        </div>
+    </div>
+    <div class="whatpic what_3"></div>
+</div>
+
+<div class="services">
+    <div class="services-leftright">
+        <div class="services-heading">
+            <div class="services-title">Our Services</div>
+            <div class="services-subtitle">
+                We host a variety of acdemic, industry, and service events to help grow our EECS community. Here's a look at what we do.
+            </div>
+        </div>
+        <a href="">
+            <div class="servicespic" style="width: 90%; background-image: url({% static "img/services-tutoring.png" %})">
+                <div class="servicespic-gradient" style="padding-bottom: 76.304023845%;"></div>
+                <div class="services-text">
+                    <b>Tutoring hours</b> <br>
+                    Questions about your classes? We're here to help!
+                </div>
+            </div>
+        </a>
+        <a href="">
+            <div class="servicespic" style="width: 100%; background-image: url({% static "img/services-maker-workshops.jpg" %});">
+                <div class="servicespic-gradient" style="padding-bottom: 66.25%;"></div>
+                <div class="services-text">
+                    <b>Maker workshops</b> <br>
+                    Students from around the Bay Area learn about EECS through hands-on projects.
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="services-leftright">
+        <a href="">
+            <div class="servicespic" style="width: 90%; background-image: url({% static "img/services-decal.jpg" %});">
+                <div class="servicespic-gradient" style="padding-bottom: 66.25%;"></div>
+                <div class="services-text">
+                    <b>EECS Stack DeCal</b> <br>
+                    Our DeCal provides an overview of the EECS department.
+                </div>
+            </div>
+        </a>
+        <a href="">
+            <div class="servicespic"  style="width: 85%; background-image: url({% static "img/services-exam-bank.png" %});">
+                <div class="servicespic-gradient" style="padding-bottom: 55.7515337423%;"></div>
+                <div class="services-text">
+                    <b>Exam archives</b> <br>
+                    Find past exams and solutions from EE and CS classes.
+                </div>
+            </div>
+        </a>
+        <a href="">
+            <div class="servicespic" style="width: 70%; background-image: url({% static "img/services-course-map.png" %});">
+                <div class="servicespic-gradient" style="padding-bottom: 102.1035598706%;"></div>
+                <div class="services-text">
+                    <b>Course map</b> <br>
+                    See what prerequisites you'll need to pursue a concentration.
+                </div>
+            </div>
+        </a>
+        <a href="">
+            <div class="servicespic"  style="width: 93%; background-image: url({% static "img/services-course-guides.png" %});">
+                <div class="servicespic-gradient" style="padding-bottom: 50.7030603805%;"></div>
+                <div class="services-text">
+                    <b>Course guides and surveys</b> <br>
+                    Discover your future classes, while hearing reviews of different courses by your peers.
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra-footer %}
+<div class="help-form-container">
+    <div class="help-form">
+        <div class="form-title">We're here for <span style="border-bottom: 5px solid #FDB515;">you</span>.</div>
+        <form class="footer-block-text">
+            <input id="first_name" type="text" class="validate">
+            <label for="first_name">Your name</label>
+            <br>
+
+            <input id="last_name" type="text" class="validate">
+            <label for="last_name">Your email</label>
+            <br>
+
+            <input id="last_name" type="text" class="validate">
+            <label for="last_name">How can we help?</label>
+        </form>
+    </div>
+</div>
+{% endblock %}
