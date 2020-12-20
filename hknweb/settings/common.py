@@ -179,7 +179,6 @@ STATICFILES_DIRS = [
 ]
 
 # placeholder for now, replace with home page when it exists
-LOGIN_URL = 'accounts/login'
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
 
