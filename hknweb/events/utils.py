@@ -109,4 +109,4 @@ def format_url(s: str, max_width: int=None) -> str:
         url_validator(s)
         return "<a href='{link}' style='background-color: white'> {link} </a>".format(link=s)
     except:
-        return s
+        return "<div style='background-color: white'>{s}</div>".format(s=s)
