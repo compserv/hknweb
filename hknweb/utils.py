@@ -10,6 +10,18 @@ from datetime import datetime
 
 from pytz import timezone
 
+### For Markdownx Security Patch
+from functools import partial
+
+
+from django.conf import settings
+from django.utils.safestring import mark_safe
+
+import markdown
+import bleach
+###
+
+
 # constants
 
 DATETIME_12_HOUR_FORMAT = '%m/%d/%Y %I:%M %p'
@@ -81,16 +93,6 @@ def export_model_as_csv(model, queryset):
 
     return response
 
-from functools import partial
-
-
-from django.conf import settings
-from django.utils.safestring import mark_safe
-
-import markdown
-import bleach
-
-
 def markdownify(text):
 
     # Bleach settings
@@ -132,12 +134,7 @@ def markdownify(text):
                                  strip=strip,
                                  filters=linkify,
                                  )
-        print("Original html")
-        print(html)
-        print("-----")
+        
         html = cleaner.clean(html)
-        print("cleaned html")
-        print(html)
-        print("-----")
 
     return mark_safe(html)
