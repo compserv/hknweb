@@ -1,7 +1,7 @@
 django==2.2.8
 mysqlclient==1.4.5
 whitenoise==4.1.1
-pillow==6.2.0
+pillow==7.1.0
 django-markdownx==2.0.27
 bleach==3.2.1
 gunicorn==19.9.0
