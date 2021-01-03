@@ -5,7 +5,7 @@
 {% block header %}
 <link rel="stylesheet" href="{% static 'events/style.css' %}">
 <style>
-    .location-container {
+    .long-text-container {
         position: relative;
 
         white-space: nowrap;
@@ -13,11 +13,13 @@
         text-overflow: ellipsis;
     }
 
-    .location-container:hover {
+    .long-text-container:hover {
         white-space: normal;
         overflow: visible;
 
-        height: 1.2em;
+        height: 1.3em;
+
+        z-index: 10;
     }
 </style>
 {% endblock %}
@@ -72,17 +74,19 @@
                                 {% for event, action, location in event_data.events %}
                                     <tr>
                                         <td align="center">
-                                            <a href="{% url 'events:detail' event.id %}" class="rounded-text-box"
-                                            style="background-color: {{ event.event_type.color }};">
-                                                {{ event.name }}
-                                            </a>
+                                            <div class="long-text-container">
+                                                <a href="{% url 'events:detail' event.id %}" class="rounded-text-box"
+                                                style="background-color: {{ event.event_type.color }};">
+                                                    {{ event.name }}
+                                                </a>
+                                            </div>
                                             {% if event.waitlisted %}
                                                 <img src="{% static 'candidate/maybe.png' %}" alt="waitlisted" class="table-icon">
                                             {% endif %}
                                         </td>
                                         <td align="center">{{ event.start_time }}</td>
                                         <td align="center" style="width: 30%">
-                                            <div class="location-container">
+                                            <div class="long-text-container">
                                                 {{ location | safe }}
                                             </div>
                                         </td>

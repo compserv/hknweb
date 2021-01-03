@@ -11,11 +11,9 @@ env:
   # TODO: add test env (where DEBUG=False, secret key unencrypted)
   - HKNWEB_MODE=dev
 install:
-  # Dependencies
-  - pip install pipenv
-  - pipenv install
-  # Dev dependencies
-  - pipenv install --dev
+  - make venv
+  - source .venv/bin/activate
+  - make install
 script:
-  - pipenv run python ./manage.py migrate
-  - pipenv run python ./manage.py check
+  - make migrate
+  - .venv/bin/python ./manage.py check
