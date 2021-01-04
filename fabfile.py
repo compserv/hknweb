@@ -7,6 +7,10 @@ from invoke.config import merge_dicts
 from deploy import git
 from deploy import path
 
+import sys
+
+TARGET_FLAG = "--target"
+DEFAULT_TARGET = "prod"
 
 def timestamp(c: Connection) -> str:
     """
@@ -92,7 +96,7 @@ def decrypt_secrets(c):
 def install_deps(c: Connection):
     print('-- Installing dependencies')
     with c.cd(c.release_path):
-        c.run("make venv && source .venv/bin/activate && make install-prod")
+        c.run("source .venv/bin/activate && make install-prod")
 
 
 def django_migrate(c: Connection):
@@ -165,9 +169,13 @@ def publish(c: Connection):
 def finish(c):
     pass
 
+# For the following @task functions, "target" is an ignored parameter
+#  It is a workaround to allow for use in using command line arguments
+#  For selecting a "target" in ns.configure
+# Otherwise, fabfile will claim to not recognize it
 
 @task
-def deploy(c, target=None, commit=None):
+def deploy(c, target=DEFAULT_TARGET, commit=None):
     with Connection(c.deploy.host, user=c.deploy.user, config=c.config) as c:
         setup(c, commit=commit)
         update(c)
@@ -176,13 +184,52 @@ def deploy(c, target=None, commit=None):
 
 
 @task
-def rollback(c, release=None):
+def rollback(c, target=DEFAULT_TARGET, release=None):
     with Connection(c.deploy.host, user=c.deploy.user, config=c.config) as c:
         setup(c, release=release)
         update(c)
         publish(c)
         finish(c)
 
+# Please add the "target" parameter if you are adding more @task functions
+#  to allow custom targets to be used (regardless if your function itself will use it or not)
+
+
+# Source: https://realpython.com/python-command-line-arguments/#a-few-methods-for-parsing-python-command-line-arguments
+def parseArgs(systemArgs, argStart=1):
+    opts = {"":[]}
+    cmdLineLength = len(systemArgs)
+    i = argStart
+
+    while i < cmdLineLength:
+        cmdArg = systemArgs[i]
+        if cmdArg.startswith("-"):
+            cmdArg2 = systemArgs[i + 1] if (i + 1) < cmdLineLength else ""
+            if cmdArg2.startswith("-"):
+                cmdArg2 = ""
+            else:
+                i += 1
+            # cmdArg2 = cmdArg.split("=", 1)
+            # cmdArg2 = cmdArg2[1] if len(cmdArg2) == 2 else ""
+            if cmdArg not in opts:
+                opts[cmdArg] = cmdArg2
+        else:
+            opts[""].append(cmdArg)
+        i += 1
+    
+    return opts
+
+def getTarget(options, default=DEFAULT_TARGET):
+    target = options.get(TARGET_FLAG, default)
+    if target not in configs:
+        message = "\n\tTarget Configuration at {} is not a valid entry".format(TARGET_FLAG)
+        message += "\n\tInvalid Entry: " + target
+        assert target in configs, message
+    return target
+
+options = parseArgs(sys.argv)
+targetKey = getTarget(options)
+print("Target Set:", targetKey)
 
 ns = Collection(deploy, rollback)
-ns.configure(configs['prod'])
+ns.configure(configs[targetKey])

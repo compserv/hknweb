@@ -97,4 +97,9 @@ Vagrant.configure("2") do |config|
 
   # Setup virtualenv
   config.vm.provision "shell", privileged: false, inline: "cd ~/hknweb; make venv"
+
+  # Give Permission to the ".venv" to allow Execution of files in the folder, using "create: true" to make the folder if it doesn't exist
+  #  -> Main purpose: Allow execution of Pip Packages (especially "fab")
+  config.vm.synced_folder "./.venv/bin", "/home/vagrant/hknweb/.venv/bin", create: true, type: "virtualbox", mount_options: ["dmode=755", "fmode=744"]
+
 end
