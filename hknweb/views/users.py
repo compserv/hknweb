@@ -69,23 +69,28 @@ def account_settings(request):
         #elif user_form.is_valid() and profile_form.is_valid() and password_form.is_valid():
         if verify_form.is_valid():
             if password_form.is_valid():
-                password_form.save()
-                update_session_auth_hash(request, current_user)
-                messages.success(request, ('Your password was successfully updated!'))
-                return HttpResponseRedirect(request.path_info)
-            if profile_form.is_valid():
-                #user_form.save()
-                profile_form.save()
-                #user = password_form.save()
-                update_session_auth_hash(request, current_user)
-                messages.success(request, ('Your profile was successfully updated!'))
-                return HttpResponseRedirect(request.path_info)
+                if password_form.has_changed():
+                    current_user = password_form.save()
+                    update_session_auth_hash(request, current_user)
+                    messages.success(request, ('Your password was successfully updated!'))
             else:
-                messages.error(request, ('Please correct the errors.'))
-                return HttpResponseRedirect(request.path_info)
+                messages.error(request, ('Please correct the errors in your Password: {}'.format(list(password_form.errors.values()))))
+
+            if profile_form.is_valid():
+                if profile_form.has_changed():
+                    #user_form.save()
+                    profile = profile_form.save(commit=False)
+                    profile.user = request.user
+                    profile.save()
+                    #user = password_form.save()
+                    update_session_auth_hash(request, current_user)
+                    messages.success(request, ('Your profile was successfully updated!'))
+            else:
+                messages.error(request, ('Please correct the errors in your Profile data: {}'.format(list(profile_form.errors.values()))))
         else:
             messages.error(request, ('Please enter current current password.'))
-            return HttpResponseRedirect(request.path_info)
+        
+        return HttpResponseRedirect(request.path_info)
     else:
         # user_form = SettingsForm(instance = current_user)
         password_form = UpdatePasswordForm(current_user)

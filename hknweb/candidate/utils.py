@@ -3,12 +3,17 @@ from django.core.mail import EmailMultiAlternatives
 from django.shortcuts import reverse
 from django.template.loader import render_to_string
 
+import itertools
+
 from hknweb.utils import get_rand_photo, get_semester_bounds
 
 from ..events.models import Event, EventType
 
-from .constants import REQUIREMENT_TITLES_TEMPLATE, REQUIREMENT_TITLES_MANDATORY
+from .constants import REQUIREMENT_TITLES_TEMPLATE, REQUIREMENT_TITLES_ALL
 
+from .models import RequriementEvent, RequirementHangout
+
+MANDATORY = "Mandatory"
 
 def send_challenge_confirm_email(request, challenge, confirmed):
     subject = '[HKN] Your officer challenge was reviewed'
@@ -56,77 +61,95 @@ def send_bitbyte_confirm_email(request, bitbyte, confirmed):
 
 """ What the event types are called on admin site.
     Code will not work if they're called something else!! """
-map_event_vars = {
-    settings.MANDATORY_EVENT: 'Mandatory',
-    settings.FUN_EVENT: 'Fun',
-    settings.BIG_FUN_EVENT: 'Big Fun',
-    settings.SERV_EVENT: 'Serv',
-    settings.PRODEV_EVENT: 'Prodev',
-    settings.HANGOUT_EVENT: 'Hangout',
-    settings.BITBYTE_ACTIVITY: "Bit-Byte",
-}
+# map_event_vars = {
+#     settings.MANDATORY_EVENT: 'Mandatory',
+#     settings.FUN_EVENT: 'Fun',
+#     settings.BIG_FUN_EVENT: 'Big Fun',
+#     settings.SERV_EVENT: 'Serv',
+#     settings.PRODEV_EVENT: 'Prodev',
+#     settings.HANGOUT_EVENT: 'Hangout',
+#     settings.BITBYTE_ACTIVITY: "Bit-Byte",
+# }
 
 # TODO: support more flexible typing and string-to-var parsing/conversion
-def sort_rsvps_into_events(rsvps):
+def sort_rsvps_into_events(rsvps, requiredEvents):
     """ Takes in all confirmed rsvps and sorts them into types, currently hard coded. """
     # Events in admin are currently in a readable format, must convert them to callable keys for Django template
-    sorted_events = dict.fromkeys(map_event_vars.keys())
-    for event_key, event_type in map_event_vars.items():
+    # sorted_events = dict.fromkeys(map_event_vars.keys())
+    sorted_events = {}
+    for event_type in requiredEvents:
         temp = []
         for rsvp in rsvps.filter(event__event_type__type=event_type):
             temp.append(rsvp.event)
-        sorted_events[event_key] = temp
+        sorted_events[event_type] = temp
     return sorted_events
 
 
-def get_unconfirmed_events(rsvps, date):
-    unconfirmed_events = sort_rsvps_into_events(rsvps.filter(confirmed=False))
+def get_unconfirmed_events(rsvps, date, requiredEvents, candidateSemester, requirementMandatory):
+    unconfirmed_events = sort_rsvps_into_events(rsvps.filter(confirmed=False), requiredEvents)
     curr_sem_start, curr_sem_end = get_semester_bounds(date)
 
     # We want to show all mandatory events, not just the events the candidate has RSVP'd to
     # Get all mandatory events i.e. events with event type "Mandatory"
-    mandatory_events = Event.objects.filter(
-        event_type__type=map_event_vars[settings.MANDATORY_EVENT],
-        start_time__gt=curr_sem_start,
-        end_time__lt=curr_sem_end,
-    )
+    if candidateSemester and requirementMandatory:
+        mandatory_events = requirementMandatory.events.all()
+        if requirementMandatory.eventsDateStart and requirementMandatory.eventsDateEnd:
+            mandatory_events = itertools.chain(mandatory_events, \
+                Event.objects.filter(
+                    event_type__type=MANDATORY,
+                    start_time__gt=requirementMandatory.eventsDateStart,
+                    end_time__lt=requirementMandatory.eventsDateEnd,
+                )
+            )
+    else:
+        mandatory_events = Event.objects.filter(
+            event_type__type=MANDATORY,
+            start_time__gt=curr_sem_start,
+            end_time__lt=curr_sem_end,
+        )
 
     # Initialize unconfirmed_events[settings.MANDATORY_EVENT]
-    if settings.MANDATORY_EVENT not in unconfirmed_events:
-        unconfirmed_events[settings.MANDATORY_EVENT] = []
+    if MANDATORY not in unconfirmed_events:
+        unconfirmed_events[MANDATORY] = []
 
+    mandatorySet = {}
     for mandatory_event in mandatory_events:
+        print(mandatory_event)
         # If no rsvps are found, add this mandatory event to the list of unconfirmed events
         if rsvps.filter(event__id=mandatory_event.id).count() == 0:
-            unconfirmed_events[settings.MANDATORY_EVENT].append(mandatory_event)
+            mandatorySet[mandatory_event.id] = mandatory_event
+
+    unconfirmed_events[MANDATORY].extend(mandatorySet.values())
 
     return unconfirmed_events
 
 
 # TODO: increase flexibility by fetching event requirement count from database
-req_list = {
-    settings.MANDATORY_EVENT: 3,
-    settings.FUN_EVENT: 3,
-    settings.BIG_FUN_EVENT: 1,
-    settings.SERV_EVENT: 1,
-    settings.PRODEV_EVENT: 1,
-    settings.HANGOUT_EVENT: {
-        settings.HANGOUT_ATTRIBUTE_NAME: 2,
-        settings.CHALLENGE_ATTRIBUTE_NAME: 1,
-        settings.EITHER_ATTRIBUTE_NAME: 3,
-    },
-    settings.BITBYTE_ACTIVITY: 3,
-}
+# req_list = {
+#     settings.MANDATORY_EVENT: 3,
+#     settings.FUN_EVENT: 3,
+#     settings.BIG_FUN_EVENT: 1,
+#     settings.SERV_EVENT: 1,
+#     settings.PRODEV_EVENT: 1,
+#     settings.HANGOUT_EVENT: {
+#         settings.HANGOUT_ATTRIBUTE_NAME: 2,
+#         settings.CHALLENGE_ATTRIBUTE_NAME: 1,
+#         settings.EITHER_ATTRIBUTE_NAME: 3,
+#     },
+#     settings.BITBYTE_ACTIVITY: 3,
+# }
 
-def check_requirements(confirmed_events, unconfirmed_events, num_challenges, num_bitbytes):
+def check_requirements(confirmed_events, unconfirmed_events, num_challenges, \
+                        num_bitbytes, requiredEvents, req_list):
     """ Checks which requirements have been fulfilled by a candidate. """
     req_statuses = dict.fromkeys(req_list.keys(), False)
-    req_remaining = req_list.copy()
+    req_remaining = {**req_list} # Makes deep copy of "req_list"
 
     for req_type, minimum in req_list.items():
+        num_confirmed = 0
         if req_type == settings.BITBYTE_ACTIVITY:
             num_confirmed = num_bitbytes
-        else:
+        elif req_type in confirmed_events:
             num_confirmed = len(confirmed_events[req_type])
         # officer hangouts and mandatory events are special cases
         if req_type == settings.HANGOUT_EVENT:
@@ -135,9 +158,9 @@ def check_requirements(confirmed_events, unconfirmed_events, num_challenges, num
                 settings.CHALLENGE_ATTRIBUTE_NAME: num_challenges,
                 settings.EITHER_ATTRIBUTE_NAME: num_confirmed + num_challenges,
             }
-            req_statuses[req_type], req_remaining[req_type] = check_interactivity_requirements(interactivities)
-        elif req_type == settings.MANDATORY_EVENT:
-            req_remaining[req_type] = len(unconfirmed_events[settings.MANDATORY_EVENT])
+            req_statuses[req_type], req_remaining[req_type] = check_interactivity_requirements(interactivities, req_list[settings.HANGOUT_EVENT])
+        elif minimum < 0 or minimum == None: #settings.MANDATORY_EVENT:
+            req_remaining[req_type] = len(unconfirmed_events[req_type]) #len(unconfirmed_events[settings.MANDATORY_EVENT])
             req_statuses[req_type] = req_remaining[req_type] == 0
         else:
             req_statuses[req_type] = num_confirmed >= minimum
@@ -145,17 +168,17 @@ def check_requirements(confirmed_events, unconfirmed_events, num_challenges, num
 
     return req_statuses, req_remaining
 
-INTERACTIVITY_REQUIREMENTS = req_list[settings.HANGOUT_EVENT]
+# INTERACTIVITY_REQUIREMENTS = req_list[settings.HANGOUT_EVENT]
 INTERACTIVITY_NAMES = {
     settings.EITHER_ATTRIBUTE_NAME: "Interactivities",
     settings.HANGOUT_ATTRIBUTE_NAME: "Officer Hangouts",
     settings.CHALLENGE_ATTRIBUTE_NAME: "Officer Challenges",
 }
 
-def check_interactivity_requirements(interactivities):
+def check_interactivity_requirements(interactivities, interactivity_requirements):
     """ Returns whether officer interactivities are satisfied. """
     req_remaining = {}
-    for req_type, num_required in INTERACTIVITY_REQUIREMENTS.items():
+    for req_type, num_required in interactivity_requirements.items():
         req_remaining[req_type] = max(num_required - interactivities[req_type], 0)
 
     req_status = not any(req_remaining.values())
@@ -163,24 +186,26 @@ def check_interactivity_requirements(interactivities):
     return req_status, req_remaining
 
 
-def create_title(req_type: str, req_remaining: dict, names: dict=map_event_vars, num_required:dict=req_list) -> str:
-    if req_type == settings.MANDATORY_EVENT:
-        return REQUIREMENT_TITLES_MANDATORY
+def create_title(req_type: str, req_remaining: dict, name: str, num_required: int, num_required_hangouts: dict) -> str:
+    if type(num_required) == int and (num_required < 0 or num_required == None): #settings.MANDATORY_EVENT:
+        return REQUIREMENT_TITLES_ALL.format(name=name)
     elif req_type == settings.HANGOUT_EVENT:
-        return {name: create_title(name, req_remaining[req_type], INTERACTIVITY_NAMES, num_required[req_type]) for name in INTERACTIVITY_NAMES}
+        return {name: create_title(name, req_remaining[req_type], INTERACTIVITY_NAMES[name], num_required_hangouts[name], None) for name in num_required_hangouts}
     else:
         return REQUIREMENT_TITLES_TEMPLATE.format(
-            name=names[req_type],
-            num_required=num_required[req_type],
+            name=name,
+            num_required=num_required,
             num_remaining=req_remaining[req_type],
         )
 
 
-def get_requirement_colors() -> dict:
-    req_colors = dict.fromkeys(map_event_vars.keys(), "grey")
-    for view_key, admin_key in map_event_vars.items():
-        event_type = EventType.objects.filter(type=admin_key).first()
+def get_requirement_colors(requiredEvents) -> dict:
+    req_colors = {}
+    for view_key in requiredEvents:
+        event_type = EventType.objects.get(type=view_key)
         if event_type:
             req_colors[view_key] = event_type.color
+        else:
+            req_colors[view_key] = "grey"
     
     return req_colors

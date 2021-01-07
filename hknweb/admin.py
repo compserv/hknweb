@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.admin import UserAdmin
 from django.conf import settings
-from .models import Announcement
+from .models import Announcement, Profile, Semester
 
 
 
@@ -74,3 +74,5 @@ class AnnouncementAdmin(admin.ModelAdmin):
     set_invisible.short_description = "Set selected as invisible"
 
 admin.site.register(Announcement, AnnouncementAdmin)
+admin.site.register(Profile)
+admin.site.register(Semester)

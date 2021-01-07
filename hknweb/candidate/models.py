@@ -1,10 +1,10 @@
+from django.apps import apps
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
 
 MAX_STRLEN = 150 # default max length for char fields
 MAX_TXTLEN = 2000 # default max length for text fields
-
 
 class OffChallenge(models.Model):
     """
@@ -109,3 +109,43 @@ class CandidateForm(models.Model):
 
     def __str__(self):
         return self.name
+
+class RequriementEvent(models.Model):    
+    eventType = models.ForeignKey('events.EventType', on_delete=models.CASCADE)
+    numberRequired = models.IntegerField(default=0)
+    enable = models.BooleanField(default=False)
+    candidateSemesterActive = models.ForeignKey('hknweb.Semester', on_delete=models.SET_NULL, null=True)
+    eventsDateStart = models.DateTimeField(null=True, blank=True)
+    eventsDateEnd = models.DateTimeField(null=True, blank=True)
+    
+    def __str__(self):
+        numReqText = self.numberRequired
+        if self.numberRequired < 0 or self.numberRequired == None:
+            numReqText = "All"
+        return "{} Event - Number Required: {}{}".format(self.eventType, numReqText, "" if self.enable else " [Off]")
+
+class RequirementHangout(models.Model):
+    eventType = models.CharField(max_length=255, choices=[ \
+        (settings.HANGOUT_ATTRIBUTE_NAME, "Officer Hangouts"),
+        (settings.CHALLENGE_ATTRIBUTE_NAME, "Officer Challenges"),
+        (settings.EITHER_ATTRIBUTE_NAME, "Either")
+    ])
+    numberRequired = models.IntegerField(default=0)
+    enable = models.BooleanField(default=False)
+    candidateSemesterActive = models.ForeignKey('hknweb.Semester', on_delete=models.SET_NULL, null=True)
+    hangoutsDateStart = models.DateTimeField(null=True, blank=True)
+    hangoutsDateEnd = models.DateTimeField(null=True, blank=True)
+    
+    def __str__(self):
+        return "{} - Number Required: {}{}".format(self.eventType, self.numberRequired, "" if self.enable else " [Off]")
+
+class RequirementMandatory(models.Model):
+    enable = models.BooleanField(default=False)
+    events = models.ManyToManyField('events.Event')
+    candidateSemesterActive = models.ForeignKey('hknweb.Semester', on_delete=models.SET_NULL, null=True, unique=True)
+    eventsDateStart = models.DateTimeField(null=True, blank=True)
+    eventsDateEnd = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return "{} Mandatory - {} to {}".format(self.candidateSemesterActive, self.eventsDateStart, self.eventsDateEnd)
+

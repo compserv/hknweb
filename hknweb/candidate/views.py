@@ -27,16 +27,17 @@ from hknweb.utils import get_rand_photo, login_and_permission, method_login_and_
 
 from ..events.models import Event, Rsvp
 
-from .constants import ATTR, DEFAULT_RANDOM_PASSWORD_LENGTH, REQUIREMENT_EVENTS, CandidateDTO
+from .constants import ATTR, DEFAULT_RANDOM_PASSWORD_LENGTH, CandidateDTO
 from .forms import BitByteRequestForm, ChallengeConfirmationForm, ChallengeRequestForm
-from .models import Announcement, BitByteActivity, CandidateForm, OffChallenge
+from .models import Announcement, BitByteActivity, CandidateForm, OffChallenge, RequriementEvent, \
+    RequirementHangout, RequirementMandatory
 from .utils import (
     check_interactivity_requirements,
     check_requirements,
     create_title,
     get_requirement_colors,
     get_unconfirmed_events,
-    req_list,
+    # req_list,
     send_bitbyte_confirm_email,
     send_challenge_confirm_email,
     sort_rsvps_into_events,
@@ -49,6 +50,12 @@ class IndexView(generic.TemplateView):
     template_name = 'candidate/index.html'
     context_object_name = 'my_favorite_publishers'
 
+    def getEventTypesMap(self, candidateSemester):
+        if candidateSemester != None:
+            for requirementEvent in RequriementEvent.objects.filter(candidateSemesterActive=candidateSemester.id):
+                if requirementEvent.enable:
+                    yield requirementEvent.eventType.type
+
     def get_context_data(self):
         challenges = OffChallenge.objects \
                 .filter(requester__exact=self.request.user)
@@ -60,6 +67,35 @@ class IndexView(generic.TemplateView):
                 .filter(Q(officer_confirmed=False) | Q(csec_confirmed=False)) \
                 .count()
         num_pending = challenges.count() - num_confirmed - num_rejected
+
+        candidateSemester = self.request.user.profile.candidate_Semester
+
+        requiredEvents = []
+        for eventType in self.getEventTypesMap(candidateSemester):
+            requiredEvents.append(eventType)
+        
+        req_list = {}
+        # Can't use "get", since no guarantee that the Mandatory object of a semester always exist
+        requirementMandatory = RequirementMandatory.objects.filter(candidateSemesterActive=candidateSemester.id).first()
+        
+        if candidateSemester != None:
+            for requirementEvent in RequriementEvent.objects.filter(candidateSemesterActive=candidateSemester.id):
+                if requirementEvent.enable:
+                    req_list[requirementEvent.eventType.type] = requirementEvent.numberRequired
+
+        req_list[settings.HANGOUT_EVENT] = {
+            settings.HANGOUT_ATTRIBUTE_NAME : 0,
+            settings.CHALLENGE_ATTRIBUTE_NAME : 0,
+            settings.EITHER_ATTRIBUTE_NAME : 0
+        }
+        
+        num_required_hangouts = req_list[settings.HANGOUT_EVENT]
+        if candidateSemester != None:
+            for requirementHangout in RequirementHangout.objects.filter(candidateSemesterActive=candidateSemester.id):
+                if requirementHangout.enable:
+                    num_required_hangouts[requirementHangout.eventType.type] = requirementHangout.numberRequired
+
+        req_list[settings.BITBYTE_ACTIVITY] = 3
 
         num_bitbytes = BitByteActivity.objects \
                 .filter(participants__exact=self.request.user) \
@@ -77,25 +113,28 @@ class IndexView(generic.TemplateView):
         today = timezone.now()
         rsvps = Rsvp.objects.filter(user__exact=self.request.user)
         # Both confirmed and unconfirmed rsvps have been sorted into event types
-        confirmed_events = sort_rsvps_into_events(rsvps.filter(confirmed=True))
-        unconfirmed_events = get_unconfirmed_events(rsvps, today)
-        req_statuses, req_remaining = check_requirements(confirmed_events, unconfirmed_events, num_confirmed, num_bitbytes)
+        confirmed_events = sort_rsvps_into_events(rsvps.filter(confirmed=True), requiredEvents)
+        unconfirmed_events = get_unconfirmed_events(rsvps, today, requiredEvents, candidateSemester, requirementMandatory)
+        req_statuses, req_remaining = check_requirements(confirmed_events, unconfirmed_events, num_confirmed, num_bitbytes, requiredEvents, req_list)
         upcoming_events = Event.objects \
                 .filter(start_time__range=(today, today + timezone.timedelta(days=7))) \
                 .order_by('start_time')
 
-        req_colors = get_requirement_colors()
-        req_titles = {req_type: create_title(req_type, req_remaining) for req_type in req_statuses}
+        req_colors = get_requirement_colors(requiredEvents)
+        req_titles = {req_type: create_title(req_type, req_remaining, req_type, req_list[req_type], req_list.get(settings.HANGOUT_EVENT, {})) for req_type in req_statuses}
 
         events = []
-        for req_event in REQUIREMENT_EVENTS:
-            events.append({
-                ATTR.TITLE: req_titles[req_event],
-                ATTR.STATUS: req_statuses[req_event],
-                ATTR.COLOR: req_colors[req_event],
-                ATTR.CONFIRMED: confirmed_events[req_event],
-                ATTR.UNCONFIRMED: unconfirmed_events[req_event],
-            })
+        for req_event in self.getEventTypesMap(candidateSemester):
+            try:
+                events.append({
+                    ATTR.TITLE: req_titles[req_event],
+                    ATTR.STATUS: req_statuses[req_event],
+                    ATTR.COLOR: req_colors[req_event],
+                    ATTR.CONFIRMED: confirmed_events[req_event],
+                    ATTR.UNCONFIRMED: unconfirmed_events[req_event],
+                })
+            except:
+                print(req_event, "is not a key")
 
         interactivities = {
             ATTR.TITLE: req_titles[settings.HANGOUT_EVENT][settings.EITHER_ATTRIBUTE_NAME],
@@ -111,7 +150,7 @@ class IndexView(generic.TemplateView):
                 ATTR.TITLE: req_titles[settings.HANGOUT_EVENT][settings.HANGOUT_ATTRIBUTE_NAME],
             },
         }
-
+        
         bitbyte = {
             ATTR.TITLE: req_titles[settings.BITBYTE_ACTIVITY],
             ATTR.STATUS: req_statuses[settings.BITBYTE_ACTIVITY],
@@ -125,9 +164,9 @@ class IndexView(generic.TemplateView):
             'req_statuses' : req_statuses,
             'upcoming_events': upcoming_events,
             'candidate_forms': candidate_forms,
-            settings.EVENTS_ATTRIBUTE_NAME: events,
-            settings.INTERACTIVITIES_ATTRIBUTE_NAME: interactivities,
-            settings.BITBYTE_ACTIVITY: bitbyte,
+            'events': events,
+            'interactivities': interactivities,
+            'bitbyte': bitbyte,
         }
         return context
 

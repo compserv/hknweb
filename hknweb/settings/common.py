@@ -205,10 +205,10 @@ OFFICER_GROUP = 'officer'
 # default hard-coded event types for candidate semester
 # NOTE: these strings are also hard-coded in candidate/index.html
 MANDATORY_EVENT = 'mandatory'
-FUN_EVENT = 'fun'
-BIG_FUN_EVENT = 'big_fun'
-SERV_EVENT = 'serv'
-PRODEV_EVENT = 'prodev'
+# FUN_EVENT = 'fun'                 # These currently commented strings are not
+# BIG_FUN_EVENT = 'big_fun'
+# SERV_EVENT = 'serv'
+# PRODEV_EVENT = 'prodev'
 HANGOUT_EVENT = 'hangout'
 BITBYTE_ACTIVITY = 'bitbyte'
 HANGOUT_ATTRIBUTE_NAME = "officer_hangout"

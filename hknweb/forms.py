@@ -18,7 +18,7 @@ class ProfileForm(forms.ModelForm):
 
     class Meta:
         model = Profile
-        fields = ('picture', 'private', 'phone_number', 'date_of_birth', 'resume', 'graduation_date')
+        fields = ('picture', 'private', 'phone_number', 'date_of_birth', 'resume', 'graduation_date', 'candidate_Semester')
 
 class SignupForm(UserCreationForm):
      first_name = forms.CharField(max_length=30, required=True)

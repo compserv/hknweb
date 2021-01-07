@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 
 from hknweb.utils import export_model_as_csv
 
-from .models import Announcement, BitByteActivity, CandidateForm, OffChallenge
+from .models import Announcement, BitByteActivity, CandidateForm, OffChallenge, RequriementEvent, RequirementHangout, RequirementMandatory
 from .views import send_bitbyte_confirm_email, send_challenge_confirm_email
 
 
@@ -153,8 +153,13 @@ class CandidateFormAdmin(admin.ModelAdmin):
 
     set_invisible.short_description = "Set selected as invisible"
 
+class RequirementMandatoryAdmin(admin.ModelAdmin):
+    filter_horizontal = ('events',)
 
 admin.site.register(CandidateForm, CandidateFormAdmin)
 admin.site.register(OffChallenge, OffChallengeAdmin)
 admin.site.register(BitByteActivity, BitByteActivityAdmin)
 admin.site.register(Announcement, AnnouncementAdmin)
+admin.site.register(RequriementEvent)
+admin.site.register(RequirementHangout)
+admin.site.register(RequirementMandatory, RequirementMandatoryAdmin)
