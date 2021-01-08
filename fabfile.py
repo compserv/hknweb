@@ -7,7 +7,7 @@ from invoke.config import merge_dicts
 from deploy import git
 from deploy import path
 
-import sys
+import argparse
 
 TARGET_FLAG = "--target"
 DEFAULT_TARGET = "prod"
@@ -194,42 +194,20 @@ def rollback(c, target=DEFAULT_TARGET, release=None):
 # Please add the "target" parameter if you are adding more @task functions
 #  to allow custom targets to be used (regardless if your function itself will use it or not)
 
-
-# Source: https://realpython.com/python-command-line-arguments/#a-few-methods-for-parsing-python-command-line-arguments
-def parseArgs(systemArgs, argStart=1):
-    opts = {"":[]}
-    cmdLineLength = len(systemArgs)
-    i = argStart
-
-    while i < cmdLineLength:
-        cmdArg = systemArgs[i]
-        if cmdArg.startswith("-"):
-            cmdArg2 = systemArgs[i + 1] if (i + 1) < cmdLineLength else ""
-            if cmdArg2.startswith("-"):
-                cmdArg2 = ""
-            else:
-                i += 1
-            # cmdArg2 = cmdArg.split("=", 1)
-            # cmdArg2 = cmdArg2[1] if len(cmdArg2) == 2 else ""
-            if cmdArg not in opts:
-                opts[cmdArg] = cmdArg2
-        else:
-            opts[""].append(cmdArg)
-        i += 1
-    
-    return opts
-
-def getTarget(options, default=DEFAULT_TARGET):
-    target = options.get(TARGET_FLAG, default)
+def get_target(args):
+    target = args.target
     if target not in configs:
-        message = "\n\tTarget Configuration at {} is not a valid entry".format(TARGET_FLAG)
+        message = "\n\tTarget Configuration \"{}\" is not a valid entry".format(TARGET_FLAG)
         message += "\n\tInvalid Entry: " + target
         assert target in configs, message
     return target
 
-options = parseArgs(sys.argv)
-targetKey = getTarget(options)
-print("Target Set:", targetKey)
+parser = argparse.ArgumentParser(description='Target parameters for the fab file through the \"fab\" library')
+parser.add_argument('--target', default="prod", help='The Target Configuration key to set the deployment setting')
+args, unknown = parser.parse_known_args()
+
+target_key = get_target(args)
+print("Target Set:", target_key)
 
 ns = Collection(deploy, rollback)
-ns.configure(configs[targetKey])
+ns.configure(configs[target_key])
