@@ -12,6 +12,22 @@ Candidate Portal
 {% endblock %}
 
 {% block content %}
+<style>
+    .conf-events a {
+        text-decoration: none;
+        color: #535353;
+    }
+    .conf-events a:hover {
+        text-decoration: underline;
+    }
+    .unconf-events a {
+        text-decoration: none;
+        color: #535353;
+    }
+    .unconf-events a:hover {
+        text-decoration: underline;
+    }
+</style>
 <div class="parent centered">
     <section>
         <h2>Announcements</h2>
@@ -52,7 +68,7 @@ Candidate Portal
     </section>
     <br>
     <section id="candidate-checklist">
-        <h2 class="events-list">Checklist</h2>
+        <h2 class="events-list">Candidate Checklist - {{ candidate_semester }}</h2>
 
         <div class="checklist-left-col">
             <h4>Events</h4>
@@ -70,12 +86,12 @@ Candidate Portal
                     </li>
                     <ul class="conf-events">
                         {% for confirmed in event.confirmed %}
-                            <li>{{ confirmed.name }}<br/></li>
+                            <li><a href="{% url 'events:detail' confirmed.id %}">{{ confirmed.name }}</a><br/></li>
                         {% endfor %}
                     </ul>
                     <ul class="unconf-events">
                         {% for unconfirmed in event.unconfirmed %}
-                            <li>{{ unconfirmed.name }}<br/></li>
+                            <li><a href="{% url 'events:detail' unconfirmed.id %}">{{ unconfirmed.name }}</a><br/></li>
                         {% endfor %}
                     </ul>
                     <br/>
@@ -111,12 +127,12 @@ Candidate Portal
                 </li>
                 <ul class="conf-events">
                     {% for event in confirmed_events.hangout %}
-                        <li>{{ event.name }}<br/></li>
+                        <li><a href="{% url 'events:detail' event.id %}">{{ event.name }}</a><br/></li>
                     {% endfor %}
                 </ul>
                 <ul class="unconf-events">
                     {% for event in unconfirmed_events.hangout %}
-                        <li>{{ event.name }}<br/></li>
+                        <li><a href="{% url 'events:detail' event.id %}">{{ event.name }}</a><br/></li>
                     {% endfor %}
                 </ul>
             </ul>

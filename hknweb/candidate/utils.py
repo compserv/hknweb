@@ -11,8 +11,6 @@ from ..events.models import Event, EventType
 
 from .constants import REQUIREMENT_TITLES_TEMPLATE, REQUIREMENT_TITLES_ALL
 
-from .models import RequriementEvent
-
 MANDATORY = "Mandatory"
 
 def send_challenge_confirm_email(request, challenge, confirmed):
@@ -71,7 +69,7 @@ def send_bitbyte_confirm_email(request, bitbyte, confirmed):
 #     settings.BITBYTE_ACTIVITY: "Bit-Byte",
 # }
 
-# TODO: support more flexible typing and string-to-var parsing/conversion
+# Done: support more flexible typing and string-to-var parsing/conversion
 def sort_rsvps_into_events(rsvps, requiredEvents):
     """ Takes in all confirmed rsvps and sorts them into types, currently hard coded. """
     # Events in admin are currently in a readable format, must convert them to callable keys for Django template
@@ -84,9 +82,9 @@ def sort_rsvps_into_events(rsvps, requiredEvents):
         sorted_events[event_type] = temp
     return sorted_events
 
-
-def get_unconfirmed_events(rsvps, date, requiredEvents, candidateSemester, requirementMandatory):
-    unconfirmed_events = sort_rsvps_into_events(rsvps.filter(confirmed=False), requiredEvents)
+def get_events(rsvps, date, requiredEvents, candidateSemester, requirementMandatory, confirmed):
+    event_models = rsvps.filter(confirmed=confirmed)
+    events = sort_rsvps_into_events(event_models, requiredEvents)
     curr_sem_start, curr_sem_end = get_semester_bounds(date)
 
     # We want to show all mandatory events, not just the events the candidate has RSVP'd to
@@ -95,36 +93,35 @@ def get_unconfirmed_events(rsvps, date, requiredEvents, candidateSemester, requi
         mandatory_events = requirementMandatory.events.all()
         if requirementMandatory.eventsDateStart and requirementMandatory.eventsDateEnd:
             mandatory_events = itertools.chain(mandatory_events, \
-                Event.objects.filter(
+                event_models.filter(
                     event_type__type=MANDATORY,
                     start_time__gt=requirementMandatory.eventsDateStart,
                     end_time__lt=requirementMandatory.eventsDateEnd,
                 )
             )
     else:
-        mandatory_events = Event.objects.filter(
+        mandatory_events = event_models.filter(
             event_type__type=MANDATORY,
             start_time__gt=curr_sem_start,
             end_time__lt=curr_sem_end,
         )
 
-    # Initialize unconfirmed_events[settings.MANDATORY_EVENT]
-    if MANDATORY not in unconfirmed_events:
-        unconfirmed_events[MANDATORY] = []
+    # Initialize events[settings.MANDATORY_EVENT]
+    if MANDATORY not in events:
+        events[MANDATORY] = []
 
     mandatorySet = {}
     for mandatory_event in mandatory_events:
-        print(mandatory_event)
-        # If no rsvps are found, add this mandatory event to the list of unconfirmed events
+        # If no rsvps are found, add this mandatory event to the list of (un)confirmed events
         if rsvps.filter(event__id=mandatory_event.id).count() == 0:
             mandatorySet[mandatory_event.id] = mandatory_event
 
-    unconfirmed_events[MANDATORY].extend(mandatorySet.values())
+    events[MANDATORY].extend(mandatorySet.values())
+    events[MANDATORY].sort(key=lambda x: x.start_time)
 
-    return unconfirmed_events
+    return events
 
-
-# TODO: increase flexibility by fetching event requirement count from database
+# Done: increase flexibility by fetching event requirement count from database
 # req_list = {
 #     settings.MANDATORY_EVENT: 3,
 #     settings.FUN_EVENT: 3,

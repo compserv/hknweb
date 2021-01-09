@@ -36,7 +36,7 @@ from .utils import (
     check_requirements,
     create_title,
     get_requirement_colors,
-    get_unconfirmed_events,
+    get_events,
     # req_list,
     send_bitbyte_confirm_email,
     send_challenge_confirm_email,
@@ -68,7 +68,7 @@ class IndexView(generic.TemplateView):
                 .count()
         num_pending = challenges.count() - num_confirmed - num_rejected
 
-        candidateSemester = self.request.user.profile.candidate_Semester
+        candidateSemester = self.request.user.profile.candidate_semester
 
         requiredEvents = []
         for eventType in self.getEventTypesMap(candidateSemester):
@@ -76,7 +76,7 @@ class IndexView(generic.TemplateView):
         
         req_list = {}
         # Can't use "get", since no guarantee that the Mandatory object of a semester always exist
-        requirementMandatory = RequirementMandatory.objects.filter(candidateSemesterActive=candidateSemester.id).first()
+        requirementMandatory = candidateSemester and RequirementMandatory.objects.filter(candidateSemesterActive=candidateSemester.id).first()
         
         if candidateSemester != None:
             for requirementEvent in RequriementEvent.objects.filter(candidateSemesterActive=candidateSemester.id):
@@ -113,8 +113,8 @@ class IndexView(generic.TemplateView):
         today = timezone.now()
         rsvps = Rsvp.objects.filter(user__exact=self.request.user)
         # Both confirmed and unconfirmed rsvps have been sorted into event types
-        confirmed_events = sort_rsvps_into_events(rsvps.filter(confirmed=True), requiredEvents)
-        unconfirmed_events = get_unconfirmed_events(rsvps, today, requiredEvents, candidateSemester, requirementMandatory)
+        confirmed_events = get_events(rsvps, today, requiredEvents, candidateSemester, requirementMandatory, confirmed=True)
+        unconfirmed_events = get_events(rsvps, today, requiredEvents, candidateSemester, requirementMandatory, confirmed=False)
         req_statuses, req_remaining = check_requirements(confirmed_events, unconfirmed_events, num_confirmed, num_bitbytes, requiredEvents, req_list)
         upcoming_events = Event.objects \
                 .filter(start_time__range=(today, today + timezone.timedelta(days=7))) \
@@ -125,16 +125,13 @@ class IndexView(generic.TemplateView):
 
         events = []
         for req_event in self.getEventTypesMap(candidateSemester):
-            try:
-                events.append({
-                    ATTR.TITLE: req_titles[req_event],
-                    ATTR.STATUS: req_statuses[req_event],
-                    ATTR.COLOR: req_colors[req_event],
-                    ATTR.CONFIRMED: confirmed_events[req_event],
-                    ATTR.UNCONFIRMED: unconfirmed_events[req_event],
-                })
-            except KeyError:
-                print(req_event, "is not a key")
+            events.append({
+                ATTR.TITLE: req_titles[req_event],
+                ATTR.STATUS: req_statuses[req_event],
+                ATTR.COLOR: req_colors[req_event],
+                ATTR.CONFIRMED: confirmed_events[req_event],
+                ATTR.UNCONFIRMED: unconfirmed_events[req_event],
+            })
 
         interactivities = {
             ATTR.TITLE: req_titles[settings.HANGOUT_EVENT][settings.EITHER_ATTRIBUTE_NAME],
@@ -167,6 +164,7 @@ class IndexView(generic.TemplateView):
             'events': events,
             'interactivities': interactivities,
             'bitbyte': bitbyte,
+            'candidate_semester': candidateSemester or "Please set your candidate semester in your Account Settings"
         }
         return context
 

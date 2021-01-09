@@ -22,7 +22,7 @@ class Profile(models.Model):
     phone_number = models.CharField(validators=[phone_regex], max_length=15, blank=True)
     resume = models.FileField(blank=True)
     graduation_date = models.DateField(null=True, blank=True)
-    candidate_Semester = models.ForeignKey('hknweb.Semester', on_delete=models.SET_NULL, null=True)
+    candidate_semester = models.ForeignKey('hknweb.Semester', on_delete=models.SET_NULL, null=True)
 
     @receiver(post_save, sender=User)
     def create_user_profile(sender, instance, created, **kwargs):

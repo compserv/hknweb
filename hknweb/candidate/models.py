@@ -141,7 +141,7 @@ class RequirementHangout(models.Model):
 class RequirementMandatory(models.Model):
     enable = models.BooleanField(default=False)
     events = models.ManyToManyField('events.Event')
-    candidateSemesterActive = models.ForeignKey('hknweb.Semester', on_delete=models.SET_NULL, null=True, unique=True)
+    candidateSemesterActive = models.OneToOneField('hknweb.Semester', on_delete=models.SET_NULL, null=True)
     eventsDateStart = models.DateTimeField(null=True, blank=True)
     eventsDateEnd = models.DateTimeField(null=True, blank=True)
 

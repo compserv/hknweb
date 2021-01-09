@@ -10,6 +10,8 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.conf import settings
+from hknweb.models import Profile, Semester
+import datetime
 
 # context processor for base to know whether a user is in the officer group
 def add_officer_context(request):
@@ -32,6 +34,21 @@ def account_create(request):
             username = form.cleaned_data.get('username')
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username = username, password = raw_password)
+            
+            profile = Profile.objects.get(user=user)
+            now = datetime.datetime.now()
+            sem = ""
+            month = now.month
+            if (1 <= month) and (month <= 5):
+                sem = "Spring"
+            elif (6 <= month) and (month < 8):
+                sem = "Summer"
+            elif (8 <= month) and (month <= 12):
+                sem = "Fall"
+            # The "first" function will put a "None" for me if semester not created yet
+            profile.candidate_semester = Semester.objects.filter(semester=sem, year=str(now.year)).first()
+            profile.save()
+
             login(request, user)
             return redirect('home')
     else:
