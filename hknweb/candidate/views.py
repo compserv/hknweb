@@ -93,7 +93,7 @@ class IndexView(generic.TemplateView):
         if candidateSemester != None:
             for requirementHangout in RequirementHangout.objects.filter(candidateSemesterActive=candidateSemester.id):
                 if requirementHangout.enable:
-                    num_required_hangouts[requirementHangout.eventType.type] = requirementHangout.numberRequired
+                    num_required_hangouts[requirementHangout.eventType] = requirementHangout.numberRequired
 
         req_list[settings.BITBYTE_ACTIVITY] = 3
 
