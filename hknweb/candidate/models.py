@@ -1,4 +1,3 @@
-from django.apps import apps
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
@@ -120,7 +119,7 @@ class RequriementEvent(models.Model):
     
     def __str__(self):
         numReqText = self.numberRequired
-        if self.numberRequired < 0 or self.numberRequired == None:
+        if self.numberRequired < 0 or (self.numberRequired is None):
             numReqText = "All"
         return "{} Event - Number Required: {}{}".format(self.eventType, numReqText, "" if self.enable else " [Off]")
 

@@ -1,4 +1,4 @@
-from django.conf import settings
+# from django.conf import settings
 
 
 REQUIREMENT_TITLES_TEMPLATE = "{name} ({num_required} required, {num_remaining} remaining)"

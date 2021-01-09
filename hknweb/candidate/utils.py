@@ -11,7 +11,7 @@ from ..events.models import Event, EventType
 
 from .constants import REQUIREMENT_TITLES_TEMPLATE, REQUIREMENT_TITLES_ALL
 
-from .models import RequriementEvent, RequirementHangout
+from .models import RequriementEvent
 
 MANDATORY = "Mandatory"
 
@@ -159,7 +159,7 @@ def check_requirements(confirmed_events, unconfirmed_events, num_challenges, \
                 settings.EITHER_ATTRIBUTE_NAME: num_confirmed + num_challenges,
             }
             req_statuses[req_type], req_remaining[req_type] = check_interactivity_requirements(interactivities, req_list[settings.HANGOUT_EVENT])
-        elif minimum < 0 or minimum == None: #settings.MANDATORY_EVENT:
+        elif ((minimum < 0) or (minimum is None)): #settings.MANDATORY_EVENT:
             req_remaining[req_type] = len(unconfirmed_events[req_type]) #len(unconfirmed_events[settings.MANDATORY_EVENT])
             req_statuses[req_type] = req_remaining[req_type] == 0
         else:
@@ -187,7 +187,7 @@ def check_interactivity_requirements(interactivities, interactivity_requirements
 
 
 def create_title(req_type: str, req_remaining: dict, name: str, num_required: int, num_required_hangouts: dict) -> str:
-    if type(num_required) == int and (num_required < 0 or num_required == None): #settings.MANDATORY_EVENT:
+    if type(num_required) == int and (num_required < 0 or (num_required is None)): #settings.MANDATORY_EVENT:
         return REQUIREMENT_TITLES_ALL.format(name=name)
     elif req_type == settings.HANGOUT_EVENT:
         return {name: create_title(name, req_remaining[req_type], INTERACTIVITY_NAMES[name], num_required_hangouts[name], None) for name in num_required_hangouts}

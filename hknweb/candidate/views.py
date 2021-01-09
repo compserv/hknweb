@@ -133,7 +133,7 @@ class IndexView(generic.TemplateView):
                     ATTR.CONFIRMED: confirmed_events[req_event],
                     ATTR.UNCONFIRMED: unconfirmed_events[req_event],
                 })
-            except:
+            except KeyError:
                 print(req_event, "is not a key")
 
         interactivities = {
