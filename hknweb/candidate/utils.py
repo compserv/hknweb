@@ -7,7 +7,7 @@ import itertools
 
 from hknweb.utils import get_rand_photo, get_semester_bounds
 
-from ..events.models import Event, EventType
+from ..events.models import EventType
 
 from .constants import REQUIREMENT_TITLES_TEMPLATE, REQUIREMENT_TITLES_ALL
 
