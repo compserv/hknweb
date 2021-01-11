@@ -7,7 +7,7 @@ from hknweb.models import Semester
 
 from .models import Announcement, BitByteActivity, CandidateForm, OffChallenge, \
     RequirementBitByteActivity, RequriementEvent, RequirementHangout, \
-        RequirementMandatory, RequirementMergeRequirements
+        RequirementMandatory, RequirementMergeRequirement
 from .views import send_bitbyte_confirm_email, send_challenge_confirm_email
 
 import datetime
@@ -230,5 +230,5 @@ admin.site.register(Announcement, AnnouncementAdmin)
 admin.site.register(RequriementEvent, RequirementAdminGeneral)
 admin.site.register(RequirementHangout, RequirementAdminGeneral)
 admin.site.register(RequirementMandatory, RequirementMandatoryAdmin)
-admin.site.register(RequirementMergeRequirements, RequirementMergeAdmin)
+admin.site.register(RequirementMergeRequirement, RequirementMergeAdmin)
 admin.site.register(RequirementBitByteActivity, RequirementAdminGeneral)

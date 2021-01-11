@@ -157,7 +157,7 @@ class RequirementBitByteActivity(models.Model):
     def __str__(self):
         return "{} - Number Required: {}{}".format(self.candidateSemesterActive, self.numberRequired, "" if self.enable else " [Off]")
 
-class RequirementMergeRequirements(models.Model):
+class RequirementMergeRequirement(models.Model):
     enable = models.BooleanField(default=False)
     candidateSemesterActive = models.ForeignKey('hknweb.Semester', on_delete=models.SET_NULL, null=True)
 

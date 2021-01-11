@@ -31,7 +31,7 @@ from .constants import ATTR, DEFAULT_RANDOM_PASSWORD_LENGTH, CandidateDTO
 from .forms import BitByteRequestForm, ChallengeConfirmationForm, ChallengeRequestForm
 from .models import Announcement, BitByteActivity, CandidateForm, OffChallenge, \
     RequirementBitByteActivity, RequriementEvent, RequirementHangout, RequirementMandatory, \
-        RequirementMergeRequirements
+        RequirementMergeRequirement
 from .utils import (
     check_interactivity_requirements,
     check_requirements,
@@ -44,9 +44,6 @@ from .utils import (
     sort_rsvps_into_events,
     MergedEvents
 )
-
-import itertools
-
 
 @method_login_and_permission('candidate.view_announcement')
 class IndexView(generic.TemplateView):
@@ -128,7 +125,7 @@ class IndexView(generic.TemplateView):
         
         seen_merger_nodes = set()
         merger_nodes = []
-        for merger in RequirementMergeRequirements.objects.filter(candidateSemesterActive=candidateSemester.id):
+        for merger in RequirementMergeRequirement.objects.filter(candidateSemesterActive=candidateSemester.id):
             if merger.enable:
                 merger_nodes.append(MergedEvents(merger, candidateSemester, seen_merger_nodes))
 

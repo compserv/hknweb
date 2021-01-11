@@ -5,12 +5,11 @@ from django.template.loader import render_to_string
 
 import itertools
 from typing import Union
-import math
 
 from hknweb.utils import get_rand_photo, get_semester_bounds
 
 from ..events.models import EventType
-from .models import RequirementMergeRequirements
+from .models import RequirementMergeRequirement
 
 from .constants import REQUIREMENT_TITLES_TEMPLATE, REQUIREMENT_TITLES_ALL
 
@@ -80,10 +79,8 @@ def sort_rsvps_into_events(rsvps, required_events):
     sorted_events = {}
     for event_type in required_events:
         temp = []
-        print("event_type", event_type)
         for rsvp in rsvps.filter(event__event_type__type=event_type):
             temp.append(rsvp.event)
-        print("temp", temp)
         sorted_events[event_type] = temp
     return sorted_events
 
@@ -216,7 +213,7 @@ def get_requirement_colors(required_events, \
     return req_colors
 
 class MergedEvents():
-    def __init__(self, merger_node: RequirementMergeRequirements, candidateSemester, seen_merger_nodes=set()):
+    def __init__(self, merger_node: RequirementMergeRequirement, candidateSemester, seen_merger_nodes=set()):
         assert merger_node.enable, "The first Merger Node must be enabled"
         
         seen_merger_nodes.clear()
@@ -237,7 +234,7 @@ class MergedEvents():
                 eventTypeKey2 = current_merger_node.event2.type
                 self.multiplier_event[eventTypeKey2] = self.multiplier_event.get(eventTypeKey2, 0) + current_merger_node.multiplier2
             if current_merger_node.linkedRequirement:
-                current_merger_node = RequirementMergeRequirements.objects.filter(candidateSemesterActive=candidateSemester.id, id=current_merger_node.linkedRequirement.id).first()
+                current_merger_node = RequirementMergeRequirement.objects.filter(candidateSemesterActive=candidateSemester.id, id=current_merger_node.linkedRequirement.id).first()
             else:
                 current_merger_node = None
     
@@ -250,7 +247,10 @@ class MergedEvents():
     def get_events_str(self):
         text = []
         for event, multiplier in zip(self.events(), self.multiplier()):
-            text.append(str(multiplier) + " x " + event)
+            if multiplier != 1.0:
+                text.append(str(multiplier) + " x " + event)
+            else:
+                text.append(event)
         return " + ".join(text)
     
     def get_counts(self, req_remaining, req_list):
@@ -266,6 +266,3 @@ class MergedEvents():
     
     def multiplier(self):
         return self.multiplier_event.values()
-
-    def __hash__(self):
-        return hash(self.__str__())
