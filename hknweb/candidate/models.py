@@ -121,7 +121,8 @@ class RequriementEvent(models.Model):
         numReqText = self.numberRequired
         if self.numberRequired < 0 or (self.numberRequired is None):
             numReqText = "All"
-        return "{} Event - Number Required: {}{}".format(self.eventType, numReqText, "" if self.enable else " [Off]")
+        return "{} {} Event - Number Required: {}{}".format(self.candidateSemesterActive, \
+            self.eventType, numReqText, "" if self.enable else " [Off]")
 
 class RequirementHangout(models.Model):
     eventType = models.CharField(max_length=255, choices=[ \
@@ -136,7 +137,7 @@ class RequirementHangout(models.Model):
     hangoutsDateEnd = models.DateTimeField(null=True, blank=True)
     
     def __str__(self):
-        return "{} - Number Required: {}{}".format(self.eventType, self.numberRequired, "" if self.enable else " [Off]")
+        return "{} {} - Number Required: {}{}".format(self.candidateSemesterActive, self.eventType, self.numberRequired, "" if self.enable else " [Off]")
 
 class RequirementMandatory(models.Model):
     enable = models.BooleanField(default=False)
@@ -146,5 +147,41 @@ class RequirementMandatory(models.Model):
     eventsDateEnd = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
-        return "{} Mandatory - {} to {}".format(self.candidateSemesterActive, self.eventsDateStart, self.eventsDateEnd)
+        return "{} Mandatory - {} to {}{}".format(self.candidateSemesterActive, self.eventsDateStart, self.eventsDateEnd, "" if self.enable else " [Off]")
+
+class RequirementBitByteActivity(models.Model):
+    enable = models.BooleanField(default=False)
+    candidateSemesterActive = models.OneToOneField('hknweb.Semester', on_delete=models.SET_NULL, null=True)
+    numberRequired = models.IntegerField(default=0)
+
+    def __str__(self):
+        return "{} - Number Required: {}{}".format(self.candidateSemesterActive, self.numberRequired, "" if self.enable else " [Off]")
+
+class RequirementMergeRequirements(models.Model):
+    enable = models.BooleanField(default=False)
+    candidateSemesterActive = models.ForeignKey('hknweb.Semester', on_delete=models.SET_NULL, null=True)
+
+    event1 = models.ForeignKey('events.EventType', on_delete=models.SET_NULL, null=True, related_name='event1')
+    multiplier1 = models.FloatField(default=1)
+    
+    event2 = models.ForeignKey('events.EventType', on_delete=models.SET_NULL, null=True, related_name='event2', blank=True)
+    multiplier2 = models.FloatField(default=1)
+
+    # Default color: CS61A blue
+    color = models.CharField(max_length=7, default="#0072c1")
+
+    linkedRequirement = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True)
+
+    def __str__(self):
+        event2Text = ""
+        if self.event2 is not None:
+            event2Text = " + {} x {}".format(self.multiplier2, self.event2)
+        linkedRequirementText = ""
+        if self.linkedRequirement is not None:
+            linkedRequirementText = " - Linked with: {}".format(self.linkedRequirement.id)
+        return "{}: {} - {} x {}{}{}{}".format(self.id, \
+            self.candidateSemesterActive, \
+            self.multiplier1, self.event1, event2Text, \
+                linkedRequirementText, \
+                "" if self.enable else " [Off]")
 

@@ -1,11 +1,16 @@
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.contrib.auth.models import User
+from django.utils.translation import ngettext
 
 from hknweb.utils import export_model_as_csv
+from hknweb.models import Semester
 
-from .models import Announcement, BitByteActivity, CandidateForm, OffChallenge, RequriementEvent, RequirementHangout, RequirementMandatory
+from .models import Announcement, BitByteActivity, CandidateForm, OffChallenge, \
+    RequirementBitByteActivity, RequriementEvent, RequirementHangout, \
+        RequirementMandatory, RequirementMergeRequirements
 from .views import send_bitbyte_confirm_email, send_challenge_confirm_email
 
+import datetime
 
 class OffChallengeAdmin(admin.ModelAdmin):
 
@@ -153,13 +158,77 @@ class CandidateFormAdmin(admin.ModelAdmin):
 
     set_invisible.short_description = "Set selected as invisible"
 
-class RequirementMandatoryAdmin(admin.ModelAdmin):
+class RequirementAdminGeneral(admin.ModelAdmin):
+    actions = ["set_enable", "set_disable", "set_fall_this_year", "set_spring_this_year", "set_summer_this_year"]
+
+    def set_enable(self, request, queryset):
+        queryset.update(enable=True)
+
+    set_enable.short_description = "Enable selected"
+
+    def set_disable(self, request, queryset):
+        queryset.update(enable=False)
+
+    set_disable.short_description = "Disable selected"
+
+    def set_current_semester(self, request, queryset, sem):
+        now = datetime.datetime.now()
+        candidateSemester = Semester.objects.filter(semester=sem, year=now.year).first()
+        if candidateSemester is None:
+            result_text = "Requirements failed to set to {} {}. Please make sure a Semester object for it exist under HKNWEB.".format(sem, now.year)
+            self.message_user(request, ngettext(
+                result_text,
+                result_text,
+                0,
+            ), messages.ERROR)
+            return
+        updated = queryset.update(candidateSemesterActive=candidateSemester)
+        result_text = "%d requirement{} successfully set to {} {}.".format("{}", sem, now.year)
+        self.message_user(request, ngettext(
+            result_text.format(""),
+            result_text.format("s"),
+            updated,
+        ) % updated, messages.SUCCESS)
+    
+    def set_fall_this_year(self, request, queryset):
+        self.set_current_semester(request, queryset, "Fall")
+
+    def set_spring_this_year(self, request, queryset):
+        self.set_current_semester(request, queryset, "Spring")
+    
+    def set_summer_this_year(self, request, queryset):
+        self.set_current_semester(request, queryset, "Summer")
+
+    set_fall_this_year.short_description = "Set to Fall semester of this year ({})".format(datetime.datetime.now().year)
+    set_spring_this_year.short_description = "Set to Spring semester of this year ({})".format(datetime.datetime.now().year)
+    set_summer_this_year.short_description = "Set to Summer semester of this year ({})".format(datetime.datetime.now().year)
+
+class RequirementMandatoryAdmin(RequirementAdminGeneral):
     filter_horizontal = ('events',)
+
+class RequirementMergeAdmin(RequirementAdminGeneral):
+    actions = RequirementAdminGeneral.actions + ["link", "clear_links"]
+
+    def link(self, request, queryset):
+        queryset = list(queryset)
+        for i, node in enumerate(queryset):
+            print(i, node)
+            node.linkedRequirement = queryset[i + 1] if (i + 1 < len(queryset)) else None
+            node.save()
+    
+    link.short_description = "Link together selected (overwrites current links)"
+    
+    def clear_links(self, request, queryset):
+        queryset.update(linkedRequirement=None)
+
+    clear_links.short_description = "Clear links of Merges"
 
 admin.site.register(CandidateForm, CandidateFormAdmin)
 admin.site.register(OffChallenge, OffChallengeAdmin)
 admin.site.register(BitByteActivity, BitByteActivityAdmin)
 admin.site.register(Announcement, AnnouncementAdmin)
-admin.site.register(RequriementEvent)
-admin.site.register(RequirementHangout)
+admin.site.register(RequriementEvent, RequirementAdminGeneral)
+admin.site.register(RequirementHangout, RequirementAdminGeneral)
 admin.site.register(RequirementMandatory, RequirementMandatoryAdmin)
+admin.site.register(RequirementMergeRequirements, RequirementMergeAdmin)
+admin.site.register(RequirementBitByteActivity, RequirementAdminGeneral)

@@ -4,10 +4,13 @@ from django.shortcuts import reverse
 from django.template.loader import render_to_string
 
 import itertools
+from typing import Union
+import math
 
 from hknweb.utils import get_rand_photo, get_semester_bounds
 
 from ..events.models import EventType
+from .models import RequirementMergeRequirements
 
 from .constants import REQUIREMENT_TITLES_TEMPLATE, REQUIREMENT_TITLES_ALL
 
@@ -70,33 +73,35 @@ def send_bitbyte_confirm_email(request, bitbyte, confirmed):
 # }
 
 # Done: support more flexible typing and string-to-var parsing/conversion
-def sort_rsvps_into_events(rsvps, requiredEvents):
+def sort_rsvps_into_events(rsvps, required_events):
     """ Takes in all confirmed rsvps and sorts them into types, currently hard coded. """
     # Events in admin are currently in a readable format, must convert them to callable keys for Django template
     # sorted_events = dict.fromkeys(map_event_vars.keys())
     sorted_events = {}
-    for event_type in requiredEvents:
+    for event_type in required_events:
         temp = []
+        print("event_type", event_type)
         for rsvp in rsvps.filter(event__event_type__type=event_type):
             temp.append(rsvp.event)
+        print("temp", temp)
         sorted_events[event_type] = temp
     return sorted_events
 
-def get_events(rsvps, date, requiredEvents, candidateSemester, requirementMandatory, confirmed):
+def get_events(rsvps, date, required_events, candidateSemester, requirement_mandatory, confirmed):
     event_models = rsvps.filter(confirmed=confirmed)
-    events = sort_rsvps_into_events(event_models, requiredEvents)
+    events = sort_rsvps_into_events(event_models, required_events)
     curr_sem_start, curr_sem_end = get_semester_bounds(date)
 
     # We want to show all mandatory events, not just the events the candidate has RSVP'd to
     # Get all mandatory events i.e. events with event type "Mandatory"
-    if candidateSemester and requirementMandatory:
-        mandatory_events = requirementMandatory.events.all()
-        if requirementMandatory.eventsDateStart and requirementMandatory.eventsDateEnd:
+    if candidateSemester and requirement_mandatory:
+        mandatory_events = requirement_mandatory.events.all()
+        if requirement_mandatory.eventsDateStart and requirement_mandatory.eventsDateEnd:
             mandatory_events = itertools.chain(mandatory_events, \
                 event_models.filter(
                     event_type__type=MANDATORY,
-                    start_time__gt=requirementMandatory.eventsDateStart,
-                    end_time__lt=requirementMandatory.eventsDateEnd,
+                    start_time__gt=requirement_mandatory.eventsDateStart,
+                    end_time__lt=requirement_mandatory.eventsDateEnd,
                 )
             )
     else:
@@ -137,7 +142,7 @@ def get_events(rsvps, date, requiredEvents, candidateSemester, requirementMandat
 # }
 
 def check_requirements(confirmed_events, unconfirmed_events, num_challenges, \
-                        num_bitbytes, requiredEvents, req_list):
+                        num_bitbytes, required_events, req_list):
     """ Checks which requirements have been fulfilled by a candidate. """
     req_statuses = dict.fromkeys(req_list.keys(), False)
     req_remaining = {**req_list} # Makes deep copy of "req_list"
@@ -183,26 +188,84 @@ def check_interactivity_requirements(interactivities, interactivity_requirements
     return req_status, req_remaining
 
 
-def create_title(req_type: str, req_remaining: dict, name: str, num_required: int, num_required_hangouts: dict) -> str:
+def create_title(req_type: str, req_remaining: Union[dict, int], name: str, num_required: int, num_required_hangouts: dict) -> str:
     if type(num_required) == int and (num_required < 0 or (num_required is None)): #settings.MANDATORY_EVENT:
         return REQUIREMENT_TITLES_ALL.format(name=name)
     elif req_type == settings.HANGOUT_EVENT:
-        return {name: create_title(name, req_remaining[req_type], INTERACTIVITY_NAMES[name], num_required_hangouts[name], None) for name in num_required_hangouts}
+        return {name: create_title(name, req_remaining[name], INTERACTIVITY_NAMES[name], num_required_hangouts[name], None) for name in num_required_hangouts}
     else:
         return REQUIREMENT_TITLES_TEMPLATE.format(
             name=name,
             num_required=num_required,
-            num_remaining=req_remaining[req_type],
+            num_remaining=req_remaining,
         )
 
 
-def get_requirement_colors(requiredEvents) -> dict:
+def get_requirement_colors(required_events, \
+    color_source=lambda view_key:EventType.objects.get(type=view_key),
+    get_key=lambda x:x) -> dict:
     req_colors = {}
-    for view_key in requiredEvents:
-        event_type = EventType.objects.get(type=view_key)
+    for event in required_events:
+        view_key = get_key(event)
+        event_type = color_source(event)
         if event_type:
             req_colors[view_key] = event_type.color
         else:
             req_colors[view_key] = "grey"
     
     return req_colors
+
+class MergedEvents():
+    def __init__(self, merger_node: RequirementMergeRequirements, candidateSemester, seen_merger_nodes=set()):
+        assert merger_node.enable, "The first Merger Node must be enabled"
+        
+        seen_merger_nodes.clear()
+        current_merger_node = merger_node
+        
+        self.multiplier_event = {}
+        self.all_required = False
+        self.color = merger_node.color
+
+        while (current_merger_node is not None):
+            if (current_merger_node.id in seen_merger_nodes):
+                self.all_required = True
+                break
+            seen_merger_nodes.add(current_merger_node.id)
+            eventTypeKey = current_merger_node.event1.type
+            self.multiplier_event[eventTypeKey] = self.multiplier_event.get(eventTypeKey, 0) + current_merger_node.multiplier1
+            if current_merger_node.event2 is not None:
+                eventTypeKey2 = current_merger_node.event2.type
+                self.multiplier_event[eventTypeKey2] = self.multiplier_event.get(eventTypeKey2, 0) + current_merger_node.multiplier2
+            if current_merger_node.linkedRequirement:
+                current_merger_node = RequirementMergeRequirements.objects.filter(candidateSemesterActive=candidateSemester.id, id=current_merger_node.linkedRequirement.id).first()
+            else:
+                current_merger_node = None
+    
+    def __str__(self):
+        text = self.get_events_str()
+        all_required_text = "self.all_required = {}".format(self.all_required)
+        all_color_text = "self.color = {}".format(self.color)
+        return "{}, {}, {}".format(text, all_required_text, all_color_text)
+    
+    def get_events_str(self):
+        text = []
+        for event, multiplier in zip(self.events(), self.multiplier()):
+            text.append(str(multiplier) + " x " + event)
+        return " + ".join(text)
+    
+    def get_counts(self, req_remaining, req_list):
+        remaining_count = 0
+        grand_total = 0
+        for event, multiplier in zip(self.events(), self.multiplier()):
+            remaining_count += multiplier * req_remaining.get(event, 0)
+            grand_total += multiplier * req_list.get(event, 0)
+        return remaining_count, grand_total
+    
+    def events(self):
+        return self.multiplier_event.keys()
+    
+    def multiplier(self):
+        return self.multiplier_event.values()
+
+    def __hash__(self):
+        return hash(self.__str__())

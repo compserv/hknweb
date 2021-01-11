@@ -29,8 +29,9 @@ from ..events.models import Event, Rsvp
 
 from .constants import ATTR, DEFAULT_RANDOM_PASSWORD_LENGTH, CandidateDTO
 from .forms import BitByteRequestForm, ChallengeConfirmationForm, ChallengeRequestForm
-from .models import Announcement, BitByteActivity, CandidateForm, OffChallenge, RequriementEvent, \
-    RequirementHangout, RequirementMandatory
+from .models import Announcement, BitByteActivity, CandidateForm, OffChallenge, \
+    RequirementBitByteActivity, RequriementEvent, RequirementHangout, RequirementMandatory, \
+        RequirementMergeRequirements
 from .utils import (
     check_interactivity_requirements,
     check_requirements,
@@ -41,7 +42,10 @@ from .utils import (
     send_bitbyte_confirm_email,
     send_challenge_confirm_email,
     sort_rsvps_into_events,
+    MergedEvents
 )
+
+import itertools
 
 
 @method_login_and_permission('candidate.view_announcement')
@@ -50,11 +54,59 @@ class IndexView(generic.TemplateView):
     template_name = 'candidate/index.html'
     context_object_name = 'my_favorite_publishers'
 
-    def getEventTypesMap(self, candidateSemester):
-        if candidateSemester != None:
+    def get_event_types_map(self, candidateSemester):
+        if candidateSemester is not None:
             for requirementEvent in RequriementEvent.objects.filter(candidateSemesterActive=candidateSemester.id):
                 if requirementEvent.enable:
                     yield requirementEvent.eventType.type
+
+    def process_events(self, rsvps, today, required_events, candidateSemester, requirement_mandatory, num_confirmed, num_bitbytes, req_list):
+        # Confirmed (confirmed=True)
+        confirmed_events = get_events(rsvps, today, required_events, candidateSemester, requirement_mandatory, confirmed=True)
+        
+        # Unconfirmed (confirmed=False)
+        unconfirmed_events = get_events(rsvps, today, required_events, candidateSemester, requirement_mandatory, confirmed=False)
+        
+        req_statuses, req_remaining = check_requirements(confirmed_events, unconfirmed_events, num_confirmed, num_bitbytes, required_events, req_list)
+
+        return confirmed_events, unconfirmed_events, req_statuses, req_remaining
+    
+    def process_merge_node(self, node, req_titles, req_remaining, req_list, req_colors, \
+                                 req_statuses, confirmed_events, unconfirmed_events, \
+                                 merge_names):
+        node_string = node.get_events_str()
+        remaining_count, grand_total = 0, 0
+        
+        node_string_key = node_string
+        count = 2
+        if node_string_key in req_titles:
+            while node_string_key in req_titles:
+                node_string_key = "{} {}".format(node_string, count)
+                count += 1
+            req_colors[node_string_key] = req_colors[node_string]
+        
+        req_statuses[node_string_key] = True
+        if node.all_required:
+            grand_total = -1
+            for event in node.events:
+                req_statuses[node_string_key] = req_statuses[node_string_key] and req_statuses[event]
+                if not req_statuses[node_string_key]:
+                    break
+        else:
+            remaining_count, grand_total = node.get_counts(req_remaining, req_list)
+            req_statuses[node_string_key] = round(remaining_count, 2) < 0.05
+        
+        req_titles[node_string_key] = \
+            create_title("", remaining_count, node_string, grand_total, None) 
+
+        confirmed_events[node_string_key] = []
+        unconfirmed_events[node_string_key] = []
+        for event in node.events():
+            confirmed_events[node_string_key].extend(confirmed_events[event])
+            unconfirmed_events[node_string_key].extend(unconfirmed_events[event])
+        
+        merge_names.append(node_string_key)
+        # req_statuses, confirmed_events, unconfirmed_events
 
     def get_context_data(self):
         challenges = OffChallenge.objects \
@@ -70,19 +122,29 @@ class IndexView(generic.TemplateView):
 
         candidateSemester = self.request.user.profile.candidate_semester
 
-        requiredEvents = []
-        for eventType in self.getEventTypesMap(candidateSemester):
-            requiredEvents.append(eventType)
+        required_events = set()
+        for eventType in self.get_event_types_map(candidateSemester):
+            required_events.add(eventType)
+        
+        seen_merger_nodes = set()
+        merger_nodes = []
+        for merger in RequirementMergeRequirements.objects.filter(candidateSemesterActive=candidateSemester.id):
+            if merger.enable:
+                merger_nodes.append(MergedEvents(merger, candidateSemester, seen_merger_nodes))
+
+        for node in merger_nodes:
+            for eventType in node.events():
+                required_events.add(eventType)
         
         req_list = {}
         # Can't use "get", since no guarantee that the Mandatory object of a semester always exist
-        requirementMandatory = candidateSemester and RequirementMandatory.objects.filter(candidateSemesterActive=candidateSemester.id).first()
+        requirement_mandatory = candidateSemester and RequirementMandatory.objects.filter(candidateSemesterActive=candidateSemester.id).first()
         
-        if candidateSemester != None:
+        if candidateSemester is not None:
             for requirementEvent in RequriementEvent.objects.filter(candidateSemesterActive=candidateSemester.id):
-                if requirementEvent.enable:
+                if requirementEvent.enable or (requirementEvent.eventType.type in required_events):
                     req_list[requirementEvent.eventType.type] = requirementEvent.numberRequired
-
+        
         req_list[settings.HANGOUT_EVENT] = {
             settings.HANGOUT_ATTRIBUTE_NAME : 0,
             settings.CHALLENGE_ATTRIBUTE_NAME : 0,
@@ -90,12 +152,16 @@ class IndexView(generic.TemplateView):
         }
         
         num_required_hangouts = req_list[settings.HANGOUT_EVENT]
-        if candidateSemester != None:
+        if candidateSemester is not None:
             for requirementHangout in RequirementHangout.objects.filter(candidateSemesterActive=candidateSemester.id):
                 if requirementHangout.enable:
                     num_required_hangouts[requirementHangout.eventType] = requirementHangout.numberRequired
 
-        req_list[settings.BITBYTE_ACTIVITY] = 3
+        req_list[settings.BITBYTE_ACTIVITY] = 0
+        # Can't use "get", since no guarantee that the object of this semester always exist
+        bitbyte_requirement = RequirementBitByteActivity.objects.filter(candidateSemesterActive=candidateSemester.id).first()
+        if bitbyte_requirement is not None and bitbyte_requirement.enable:
+            req_list[settings.BITBYTE_ACTIVITY] = bitbyte_requirement.numberRequired
 
         num_bitbytes = BitByteActivity.objects \
                 .filter(participants__exact=self.request.user) \
@@ -113,18 +179,39 @@ class IndexView(generic.TemplateView):
         today = timezone.now()
         rsvps = Rsvp.objects.filter(user__exact=self.request.user)
         # Both confirmed and unconfirmed rsvps have been sorted into event types
-        confirmed_events = get_events(rsvps, today, requiredEvents, candidateSemester, requirementMandatory, confirmed=True)
-        unconfirmed_events = get_events(rsvps, today, requiredEvents, candidateSemester, requirementMandatory, confirmed=False)
-        req_statuses, req_remaining = check_requirements(confirmed_events, unconfirmed_events, num_confirmed, num_bitbytes, requiredEvents, req_list)
+        
+        # Process Events here
+        confirmed_events, unconfirmed_events, req_statuses, req_remaining = \
+            self.process_events(rsvps, today, required_events, candidateSemester, \
+                                requirement_mandatory, num_confirmed, num_bitbytes, req_list)
+        
+        req_colors = get_requirement_colors(self.get_event_types_map(candidateSemester))
+
+        req_titles = {req_type: create_title(req_type, req_remaining[req_type], req_type, req_list[req_type], req_list.get(settings.HANGOUT_EVENT, {})) for req_type in req_statuses}
+        
+        # Process Merged Events here
+        req_colors.update(get_requirement_colors(merger_nodes, lambda x: x, lambda get_key: get_key.get_events_str()))
+        merge_names = []
+        for node in merger_nodes:
+            self.process_merge_node(node, req_titles, req_remaining, req_list, req_colors, \
+                                    req_statuses, confirmed_events, unconfirmed_events, \
+                                        merge_names)
+        
+
         upcoming_events = Event.objects \
                 .filter(start_time__range=(today, today + timezone.timedelta(days=7))) \
                 .order_by('start_time')
 
-        req_colors = get_requirement_colors(requiredEvents)
-        req_titles = {req_type: create_title(req_type, req_remaining, req_type, req_list[req_type], req_list.get(settings.HANGOUT_EVENT, {})) for req_type in req_statuses}
-
         events = []
-        for req_event in self.getEventTypesMap(candidateSemester):
+        for req_event in self.get_event_types_map(candidateSemester):
+            events.append({
+                ATTR.TITLE: req_titles[req_event],
+                ATTR.STATUS: req_statuses[req_event],
+                ATTR.COLOR: req_colors[req_event],
+                ATTR.CONFIRMED: confirmed_events[req_event],
+                ATTR.UNCONFIRMED: unconfirmed_events[req_event],
+            })
+        for req_event in merge_names:
             events.append({
                 ATTR.TITLE: req_titles[req_event],
                 ATTR.STATUS: req_statuses[req_event],
@@ -156,9 +243,9 @@ class IndexView(generic.TemplateView):
 
         context = {
             'announcements' : announcements,
-            'confirmed_events': confirmed_events,
-            'unconfirmed_events': unconfirmed_events,
-            'req_statuses' : req_statuses,
+            'confirmed_events': {event_key:confirmed_events[event_key] for event_key in self.get_event_types_map(candidateSemester)},
+            'unconfirmed_events': {event_key:unconfirmed_events[event_key] for event_key in self.get_event_types_map(candidateSemester)},
+            'req_statuses' : {event_key:req_statuses[event_key] for event_key in self.get_event_types_map(candidateSemester)},
             'upcoming_events': upcoming_events,
             'candidate_forms': candidate_forms,
             'events': events,

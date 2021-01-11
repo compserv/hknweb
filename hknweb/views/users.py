@@ -46,7 +46,7 @@ def account_create(request):
             elif (8 <= month) and (month <= 12):
                 sem = "Fall"
             # The "first" function will put a "None" for me if semester not created yet
-            profile.candidate_semester = Semester.objects.filter(semester=sem, year=str(now.year)).first()
+            profile.candidate_semester = Semester.objects.filter(semester=sem, year=now.year).first()
             profile.save()
 
             login(request, user)
