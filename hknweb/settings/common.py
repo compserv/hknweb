@@ -16,7 +16,6 @@ from hknweb.utils import DATETIME_12_HOUR_FORMAT
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 # Application definition
@@ -32,6 +31,7 @@ INSTALLED_APPS = [
     'hknweb.elections',
     'hknweb.courses',
     'hknweb.exams',
+    'hknweb.reviewsessions',
     'dal', # must be before django.contrib.admin
     'dal_select2', # must be before django.contrib.admin
     'django.contrib.admin',
@@ -178,7 +178,6 @@ STATICFILES_DIRS = [
 ]
 
 # placeholder for now, replace with home page when it exists
-LOGIN_URL = 'accounts/login'
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
 
@@ -211,5 +210,52 @@ SERV_EVENT = 'serv'
 PRODEV_EVENT = 'prodev'
 HANGOUT_EVENT = 'hangout'
 BITBYTE_ACTIVITY = 'bitbyte'
+HANGOUT_ATTRIBUTE_NAME = "officer_hangout"
+CHALLENGE_ATTRIBUTE_NAME = "officer_challenge"
+EITHER_ATTRIBUTE_NAME = "either"
+EVENTS_ATTRIBUTE_NAME = "events"
+INTERACTIVITIES_ATTRIBUTE_NAME = "interactivities"
 
 # Note: both candidate and officer group should have permission to add officer challenges
+
+# Markdown settings
+MARKDOWNX_MARKDOWNIFY_FUNCTION = 'hknweb.utils.markdownify'
+MARKDOWNIFY_STRIP = False
+
+## markdownify
+MARKDOWNIFY_WHITELIST_TAGS = [
+  'a',
+  'abbr',
+  'acronym',
+  'b',
+  'blockquote',
+  'em',
+  'i',
+  'li',
+  'ol',
+  'p',
+  'strong',
+  'ul',
+  'pre',
+  'code',
+  'img',
+  'h1', 'h2', 'h3', 'h4', 'h5', 'h6'
+]
+MARKDOWNIFY_WHITELIST_PROTOCOLS = [
+    'http',
+    'https',
+]
+MARKDOWNIFY_LINKIFY_PARSE_EMAIL = True
+MARKDOWNIFY_LINKIFY_SKIP_TAGS = ['pre', 'code', ]
+
+# Allowing certain Attributes that define the behavior
+#  of a Tag
+# Examples:
+#  -> <a href=...>, href is allowed here
+#  -> <img src="..." onload="...">), src is allowed here, but not onload
+MARKDOWNIFY_WHITELIST_ATTRS = [
+    'href',
+    'src',
+    'alt',
+    'class',
+]

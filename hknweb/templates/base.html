@@ -95,7 +95,7 @@
       <span class="slash">/</span>
       <a href="/tutoring">Tutoring Hours</a>
       <span class="slash">/</span>
-      <a href="">Review Sessions</a>
+      <a href="/reviewsessions">Review Sessions</a>
       <span class="slash">/</span>
       <a href="">Course Surveys</a>
       <span class="slash">/</span>
@@ -172,7 +172,7 @@
       </div>
       <div id="account-nav-bar" class="sub-nav-bar navi-container">
         {% if viewer_is_an_officer %}
-          <a href="/cand/offreq">Officer Portal</a>
+          <a href="{% url 'candidate:officer' %}">Officer Portal</a>
           <span class="slash">/</span>
         {% endif %}
         <a href="/cand">Candidate Portal</a>

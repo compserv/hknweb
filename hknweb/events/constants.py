@@ -28,3 +28,45 @@ GCAL_DATETIME_TEMPLATE = "{%s:04n}{%s:02n}{%s:02n}T{%s:02n}{%s:02n}{%s:02n}Z" % 
     MINUTES_ATTRIBUTE_NAME,
     SECONDS_ATTRIBUTE_NAME,
 )
+
+
+class ATTR:
+    ACCESS_LEVEL = "access_level"
+    ACTION = "action"
+    CLASS = "class"
+    COUNT = "count"
+    CREATED_BY = "created_by"
+    DATA = "data"
+    DISPLAY_VALUE = "display_value"
+    DESCRIPTION = "description"
+    END_TIME = "end_time"
+    EVENT = "event"
+    EVENTS = "events"
+    EVENTS_DATA = "events_data"
+    EVENT_TYPE = "event_type"
+    EVENT_TYPES = "event_types"
+    LOCATION = "location"
+    MANDATORY = "Mandatory"
+    NAME = "name"
+    PADDING = "padding"
+    PAGE_PARAM = "page_param"
+    RSVP_LIMIT = "rsvp_limit"
+    SLUG = "slug"
+    START_TIME = "start_time"
+    TITLE = "title"
+
+
+RSVPS_PER_PAGE = 10
+
+
+GROUP_TO_ACCESSLEVEL = {
+    "officer": 0,
+    "member": 0,
+    "candidate": 1,
+}
+
+ACCESSLEVEL_TO_DESCRIPTION = {
+    0: "Internal",
+    1: "Candidate",
+    2: "External",
+}
