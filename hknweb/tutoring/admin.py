@@ -10,7 +10,7 @@ class CourseAdmin(admin.ModelAdmin):
 	search_fields = ['name']
 
 @admin.register(TimeSlot)
-class SlotAdmin(admin.ModelAdmin):
+class TimeSlotAdmin(admin.ModelAdmin):
 	list_display = ['day', 'hour']
 	list_filter = ['day', 'hour']
 	search_fields = ['day', 'hour']
@@ -38,4 +38,3 @@ class TimeSlotPreferenceAdmin(admin.ModelAdmin):
 	list_display = ['tutor', 'timeslot', 'time_preference','office_preference']
 	list_filter = ['tutor', 'timeslot', 'time_preference','office_preference']
 	search_fields = ['tutor', 'timeslot', 'time_preference','office_preference']
-	    

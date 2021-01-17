@@ -118,9 +118,3 @@ class TimeSlotPreference(models.Model):
     timeslot = models.ForeignKey(TimeSlot, on_delete=models.CASCADE)
     time_preference = models.IntegerField(default=1)
     office_preference = models.IntegerField(default=2)
-
-
-
-
-
-

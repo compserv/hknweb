@@ -168,7 +168,6 @@ def get_adjacent_slot_ids(slot_id):
         adjacent.append(slot_id + 10)
     return adjacent
 
-#Take in json data and 
 def generate_schedule(request):
     if request.method == 'POST':
         form = TutoringAlgorithmOutputForm(request.POST, request.FILES)
@@ -182,18 +181,3 @@ def generate_schedule(request):
                     tutor = Tutor.objects.get(id=id)
                     slot.tutors.add(tutor)
     return redirect('/tutoring/')
-    # if request.method == 'POST':
-    #     json_data = json.loads(request.body)
-    #     id = 121
-    #     Slot.objects.all().delete()
-    #     for hour, _ in Slot.HOUR_CHOICES:
-    #         for day, _ in Slot.DAY_CHOICES:
-    #             for office, _ in Slot.ROOM_CHOICES:
-    #                 slot = Slot(hour = hour, day = day, room = office, slot_id = id)
-    #                 tutor_ids = json_data[slot_id]
-    #                 for tutor_id in tutor_ids:
-    #                     tutor = Tutor.objects.get(id=tutor_id)
-    #                     slot.tutors.add(tutor)
-    #                 slot.save()
-    #                 id += 1
-    # return index(request)
