@@ -8,7 +8,7 @@ from typing import Union
 
 from hknweb.utils import get_rand_photo, get_semester_bounds
 
-from ..events.models import EventType
+from ..events.models import Event, EventType
 from .models import RequirementMergeRequirement
 
 from .constants import REQUIREMENT_TITLES_TEMPLATE, REQUIREMENT_TITLES_ALL
@@ -87,7 +87,6 @@ def sort_rsvps_into_events(rsvps, required_events):
 def get_events(rsvps, date, required_events, candidateSemester, requirement_mandatory, confirmed):
     event_models = rsvps.filter(confirmed=confirmed)
     events = sort_rsvps_into_events(event_models, required_events)
-    curr_sem_start, curr_sem_end = get_semester_bounds(date)
 
     # We want to show all mandatory events, not just the events the candidate has RSVP'd to
     # Get all mandatory events i.e. events with event type "Mandatory"
@@ -95,14 +94,15 @@ def get_events(rsvps, date, required_events, candidateSemester, requirement_mand
         mandatory_events = requirement_mandatory.events.all()
         if requirement_mandatory.eventsDateStart and requirement_mandatory.eventsDateEnd:
             mandatory_events = itertools.chain(mandatory_events, \
-                event_models.filter(
+                Event.objects.filter(
                     event_type__type=MANDATORY,
                     start_time__gt=requirement_mandatory.eventsDateStart,
                     end_time__lt=requirement_mandatory.eventsDateEnd,
                 )
             )
     else:
-        mandatory_events = event_models.filter(
+        curr_sem_start, curr_sem_end = get_semester_bounds(date)
+        mandatory_events = Event.objects.filter(
             event_type__type=MANDATORY,
             start_time__gt=curr_sem_start,
             end_time__lt=curr_sem_end,
@@ -222,6 +222,9 @@ class MergedEvents():
         self.multiplier_event = {}
         self.all_required = False
         self.color = merger_node.color
+        self.title = ""
+        if merger_node.enableTitle:
+            self.title = merger_node.title
 
         while (current_merger_node is not None):
             if (current_merger_node.id in seen_merger_nodes):
@@ -245,13 +248,16 @@ class MergedEvents():
         return "{}, {}, {}".format(text, all_required_text, all_color_text)
     
     def get_events_str(self):
+        if self.title:
+            return self.title
         text = []
         for event, multiplier in zip(self.events(), self.multiplier()):
             if multiplier != 1.0:
                 text.append(str(multiplier) + " x " + event)
             else:
                 text.append(event)
-        return " + ".join(text)
+        self.title = " + ".join(text)
+        return self.title
     
     def get_counts(self, req_remaining, req_list):
         remaining_count = 0

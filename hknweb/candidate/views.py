@@ -29,7 +29,9 @@ from ..events.models import Event, Rsvp
 
 from .constants import ATTR, DEFAULT_RANDOM_PASSWORD_LENGTH, CandidateDTO
 from .forms import BitByteRequestForm, ChallengeConfirmationForm, ChallengeRequestForm
-from .models import Announcement, BitByteActivity, CandidateForm, OffChallenge, \
+from .models import Announcement, BitByteActivity, CandidateForm, CandidateFormDoneEntry, \
+    CommitteeProject, CommitteeProjectDoneEntry, \
+    DuePayment, DuePaymentPaidEntry, OffChallenge, \
     RequirementBitByteActivity, RequriementEvent, RequirementHangout, RequirementMandatory, \
         RequirementMergeRequirement
 from .utils import (
@@ -105,6 +107,51 @@ class IndexView(generic.TemplateView):
         merge_names.append(node_string_key)
         # req_statuses, confirmed_events, unconfirmed_events
 
+    def process_status(self, title, requirements, completed_roster_model, user, completed_process, \
+        all_done_processor=lambda all_done, other_bool: all_done and other_bool, all_done = True):
+        """
+        requriements - the QuerySet of the requirements
+        completed_roster - the Model of the entire entires of those who completed requirements
+        user - the current User (as the User Model type)
+        completed_process - function or lambda function to check if the requirement is completed,
+                            with two parameters with the "requirement" and "completed_roster" of
+                            the current user 
+        """
+        completed_roster = completed_roster_model.objects.all()
+        resulting_statuses = []
+        if requirements is not None:
+            for requirement in requirements:
+                is_completed = completed_process(requirement, completed_roster)
+                all_done = all_done_processor(all_done, is_completed)
+                resulting_statuses.append({
+                    "requirement"   : requirement,
+                    "status"     : is_completed
+                })
+        result = {
+            "title" : title,
+            "resulting_statuses" : resulting_statuses,
+            "all_done" : all_done
+        }
+        return result
+
+    def check_due(self, due_required, completed_roster):
+        entry = completed_roster.filter(duePayment=due_required.id).first()
+        if entry is None:
+            return False
+        return self.request.user in entry.users.all()
+    
+    def check_form(self, form_required, completed_roster):
+        entry = completed_roster.filter(form=form_required.id).first()
+        if entry is None:
+            return False
+        return self.request.user in entry.users.all()
+    
+    def check_committee_project(self, committee_project_required, completed_roster):
+        entry = completed_roster.filter(committeeProject=committee_project_required.id).first()
+        if entry is None:
+            return False
+        return self.request.user in entry.users.all()
+
     def get_context_data(self):
         challenges = OffChallenge.objects \
                 .filter(requester__exact=self.request.user)
@@ -125,9 +172,10 @@ class IndexView(generic.TemplateView):
         
         seen_merger_nodes = set()
         merger_nodes = []
-        for merger in RequirementMergeRequirement.objects.filter(candidateSemesterActive=candidateSemester.id):
-            if merger.enable:
-                merger_nodes.append(MergedEvents(merger, candidateSemester, seen_merger_nodes))
+        if candidateSemester is not None:
+            for merger in RequirementMergeRequirement.objects.filter(candidateSemesterActive=candidateSemester.id):
+                if merger.enable:
+                    merger_nodes.append(MergedEvents(merger, candidateSemester, seen_merger_nodes))
 
         for node in merger_nodes:
             for eventType in node.events():
@@ -156,7 +204,7 @@ class IndexView(generic.TemplateView):
 
         req_list[settings.BITBYTE_ACTIVITY] = 0
         # Can't use "get", since no guarantee that the object of this semester always exist
-        bitbyte_requirement = RequirementBitByteActivity.objects.filter(candidateSemesterActive=candidateSemester.id).first()
+        bitbyte_requirement = candidateSemester and RequirementBitByteActivity.objects.filter(candidateSemesterActive=candidateSemester.id).first()
         if bitbyte_requirement is not None and bitbyte_requirement.enable:
             req_list[settings.BITBYTE_ACTIVITY] = bitbyte_requirement.numberRequired
 
@@ -168,10 +216,42 @@ class IndexView(generic.TemplateView):
         announcements = Announcement.objects \
                 .filter(visible=True) \
                 .order_by('-release_date')
-
-        candidate_forms = CandidateForm.objects \
-                .filter(visible=True) \
+        
+        ### Candidate Forms
+        candidate_forms = candidateSemester and CandidateForm.objects \
+                .filter(visible=True, candidateSemesterActive=candidateSemester.id) \
                 .order_by('duedate')
+
+        candidate_forms_with_completed = \
+            self.process_status("Complete all required forms", candidate_forms, CandidateFormDoneEntry, \
+                self.request.user, \
+            lambda form_required, completed_roster: self.check_form(form_required, completed_roster))
+        ###
+
+        ### Due Payments
+        due_payments = candidateSemester and DuePayment.objects \
+                .filter(visible=True, candidateSemesterActive=candidateSemester.id) \
+                .order_by('duedate')
+        
+        due_payments_with_completed = \
+            self.process_status("Pay dues", due_payments, DuePaymentPaidEntry, self.request.user, \
+            lambda due_required, completed_roster: self.check_due(due_required, completed_roster))
+        ###
+
+        ### Committee Projects
+        committee_project = candidateSemester and CommitteeProject.objects \
+                .filter(visible=True, candidateSemesterActive=candidateSemester.id) \
+                .order_by('name')
+
+        committee_project_with_completed = \
+            self.process_status("Complete a Committee Project", committee_project, CommitteeProjectDoneEntry, \
+                self.request.user, \
+            lambda committee_project_required, completed_roster: \
+                self.check_committee_project(committee_project_required, completed_roster), \
+            all_done_processor=lambda all_done, other_bool: all_done or other_bool, all_done = False)
+        ###
+
+        # miscellaneous_requirements = [due_payments_with_completed, candidate_forms_with_completed]
 
         today = timezone.now()
         rsvps = Rsvp.objects.filter(user__exact=self.request.user)
@@ -244,7 +324,9 @@ class IndexView(generic.TemplateView):
             'unconfirmed_events': {event_key:unconfirmed_events[event_key] for event_key in self.get_event_types_map(candidateSemester)},
             'req_statuses' : {event_key:req_statuses[event_key] for event_key in self.get_event_types_map(candidateSemester)},
             'upcoming_events': upcoming_events,
-            'candidate_forms': candidate_forms,
+            'committee_project': committee_project_with_completed,
+            'candidate_forms': candidate_forms_with_completed,
+            'due_payments': due_payments_with_completed,
             'events': events,
             'interactivities': interactivities,
             'bitbyte': bitbyte,

@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
 
@@ -97,17 +98,71 @@ class Announcement(models.Model):
     def __str__(self):
         return self.title if self.title != '' else self.text
 
-
 class CandidateForm(models.Model):
-
     name           = models.CharField(max_length=MAX_STRLEN, default='')
     duedate        = models.DateTimeField(default=timezone.now)
     link           = models.CharField(max_length=MAX_STRLEN, default='')
     # if visible == False, then admins can see candiate form but it's not displayed on portal
-    visible         = models.BooleanField(default=False)
+    visible        = models.BooleanField(default=False)
+    candidateSemesterActive = models.ForeignKey('hknweb.Semester', on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
-        return self.name
+        return "{} - {}".format(self.name, self.candidateSemesterActive)
+
+class CandidateFormDoneEntry(models.Model):
+    users      = models.ManyToManyField(User)
+    form       = models.OneToOneField(CandidateForm, models.CASCADE)
+    notes      = models.TextField(blank=True, default="")
+
+    class Meta:
+        verbose_name_plural = "Candidate Form Done Entries"
+    
+    def __str__(self):
+        return "Forms filled for: {}".format(self.form)
+
+class DuePayment(models.Model):
+    name           = models.CharField(max_length=MAX_STRLEN, default='')
+    duedate        = models.DateTimeField(default=timezone.now)
+    instructions   = models.CharField(max_length=MAX_STRLEN, default='', blank=True)
+    # if visible == False, then admins can see candiate form but it's not displayed on portal
+    visible        = models.BooleanField(default=False)
+    candidateSemesterActive = models.ForeignKey('hknweb.Semester', on_delete=models.SET_NULL, null=True)
+
+    def __str__(self):
+        return "{} - {}".format(self.name, self.candidateSemesterActive)
+
+class DuePaymentPaidEntry(models.Model):
+    users           = models.ManyToManyField(User)
+    duePayment      = models.OneToOneField(DuePayment, models.CASCADE)
+    notes           = models.TextField(blank=True, default="")
+
+    class Meta:
+        verbose_name_plural = "Due Payment Paid Entries"
+    
+    def __str__(self):
+        return "Payments for: {}".format(self.duePayment)
+
+class CommitteeProject(models.Model):
+    name           = models.CharField(max_length=MAX_STRLEN, default='')
+    duedate        = models.DateTimeField(default=timezone.now)
+    instructions   = models.CharField(max_length=MAX_STRLEN, default='', blank=True)
+    # if visible == False, then admins can see candiate form but it's not displayed on portal
+    visible        = models.BooleanField(default=False)
+    candidateSemesterActive = models.ForeignKey('hknweb.Semester', on_delete=models.SET_NULL, null=True)
+
+    def __str__(self):
+        return "{} - {}".format(self.name, self.candidateSemesterActive)
+
+class CommitteeProjectDoneEntry(models.Model):
+    users                  = models.ManyToManyField(User)
+    committeeProject       = models.OneToOneField(CommitteeProject, models.CASCADE)
+    notes                  = models.TextField(blank=True, default="")
+
+    class Meta:
+        verbose_name_plural = "Committee Project Done Entries"
+    
+    def __str__(self):
+        return "Committee Project completed for: {}".format(self.committeeProject)
 
 class RequriementEvent(models.Model):    
     eventType = models.ForeignKey('events.EventType', on_delete=models.CASCADE)
@@ -158,6 +213,9 @@ class RequirementBitByteActivity(models.Model):
         return "{} - Number Required: {}{}".format(self.candidateSemesterActive, self.numberRequired, "" if self.enable else " [Off]")
 
 class RequirementMergeRequirement(models.Model):
+    enableTitle = models.BooleanField(default=False)
+    title = models.CharField(max_length=MAX_STRLEN, default='', blank=True)
+
     enable = models.BooleanField(default=False)
     candidateSemesterActive = models.ForeignKey('hknweb.Semester', on_delete=models.SET_NULL, null=True)
 
@@ -179,8 +237,15 @@ class RequirementMergeRequirement(models.Model):
         linkedRequirementText = ""
         if self.linkedRequirement is not None:
             linkedRequirementText = " - Linked with: {}".format(self.linkedRequirement.id)
-        return "{}: {} - {} x {}{}{}{}".format(self.id, \
-            self.candidateSemesterActive, \
+        titleText = ""
+        if self.title:
+            titleText = " - " + self.title
+            if not self.enableTitle:
+                titleText += " (Title not used)"
+        elif self.enableTitle:
+            titleText = " - (Title is blank)"
+        return "{}: {}{} - {} x {}{}{}{}".format(self.id, \
+            self.candidateSemesterActive, titleText, \
             self.multiplier1, self.event1, event2Text, \
                 linkedRequirementText, \
                 "" if self.enable else " [Off]")

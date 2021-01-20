@@ -5,7 +5,9 @@ from django.utils.translation import ngettext
 from hknweb.utils import export_model_as_csv
 from hknweb.models import Semester
 
-from .models import Announcement, BitByteActivity, CandidateForm, OffChallenge, \
+from .models import Announcement, BitByteActivity, CandidateForm, CandidateFormDoneEntry, \
+    CommitteeProject, CommitteeProjectDoneEntry, \
+    DuePayment, DuePaymentPaidEntry, OffChallenge, \
     RequirementBitByteActivity, RequriementEvent, RequirementHangout, \
         RequirementMandatory, RequirementMergeRequirement
 from .views import send_bitbyte_confirm_email, send_challenge_confirm_email
@@ -141,12 +143,12 @@ class AnnouncementAdmin(admin.ModelAdmin):
     set_invisible.short_description = "Set selected as invisible"
 
 class CandidateFormAdmin(admin.ModelAdmin):
-    fields = ['name', 'link', 'visible', 'duedate']
-    list_display = ('name', 'link', 'visible', 'duedate')
-    list_filter = ['visible', 'duedate']
+    fields = ['name', 'link', 'visible', 'duedate', 'candidateSemesterActive']
+    list_display = ('name', 'link', 'visible', 'duedate', 'candidateSemesterActive')
+    list_filter = ['visible', 'duedate', 'candidateSemesterActive']
     search_fields = ['name', 'link']
 
-    actions = ["set_visible", "set_invisible"]
+    actions = ["set_visible", "set_invisible", "set_fall_this_year", "set_spring_this_year", "set_summer_this_year"]
 
     def set_visible(self, request, queryset):
         queryset.update(visible=True)
@@ -157,6 +159,50 @@ class CandidateFormAdmin(admin.ModelAdmin):
         queryset.update(visible=False)
 
     set_invisible.short_description = "Set selected as invisible"
+
+    def set_fall_this_year(self, request, queryset):
+        RequirementAdminGeneral.set_current_semester(self, request, queryset, "Fall")
+
+    def set_spring_this_year(self, request, queryset):
+        RequirementAdminGeneral.set_current_semester(self, request, queryset, "Spring")
+    
+    def set_summer_this_year(self, request, queryset):
+        RequirementAdminGeneral.set_current_semester(self, request, queryset, "Summer")
+
+    set_fall_this_year.short_description = "Set to Fall semester of this year ({})".format(datetime.datetime.now().year)
+    set_spring_this_year.short_description = "Set to Spring semester of this year ({})".format(datetime.datetime.now().year)
+    set_summer_this_year.short_description = "Set to Summer semester of this year ({})".format(datetime.datetime.now().year)
+
+class MiscRequirementAdmin(admin.ModelAdmin):
+    fields = ['name', 'instructions', 'visible', 'duedate', 'candidateSemesterActive']
+    list_display = ('name', 'instructions', 'visible', 'duedate', 'candidateSemesterActive')
+    list_filter = ['visible', 'duedate', 'candidateSemesterActive']
+    search_fields = ['name', 'instructions']
+
+    actions = ["set_visible", "set_invisible", "set_fall_this_year", "set_spring_this_year", "set_summer_this_year"]
+
+    def set_visible(self, request, queryset):
+        queryset.update(visible=True)
+
+    set_visible.short_description = "Set selected as visible"
+
+    def set_invisible(self, request, queryset):
+        queryset.update(visible=False)
+
+    set_invisible.short_description = "Set selected as invisible"
+
+    def set_fall_this_year(self, request, queryset):
+        RequirementAdminGeneral.set_current_semester(self, request, queryset, "Fall")
+
+    def set_spring_this_year(self, request, queryset):
+        RequirementAdminGeneral.set_current_semester(self, request, queryset, "Spring")
+    
+    def set_summer_this_year(self, request, queryset):
+        RequirementAdminGeneral.set_current_semester(self, request, queryset, "Summer")
+
+    set_fall_this_year.short_description = "Set to Fall semester of this year ({})".format(datetime.datetime.now().year)
+    set_spring_this_year.short_description = "Set to Spring semester of this year ({})".format(datetime.datetime.now().year)
+    set_summer_this_year.short_description = "Set to Summer semester of this year ({})".format(datetime.datetime.now().year)
 
 class RequirementAdminGeneral(admin.ModelAdmin):
     actions = ["set_enable", "set_disable", "set_fall_this_year", "set_spring_this_year", "set_summer_this_year"]
@@ -223,7 +269,15 @@ class RequirementMergeAdmin(RequirementAdminGeneral):
 
     clear_links.short_description = "Clear links of Merges"
 
-admin.site.register(CandidateForm, CandidateFormAdmin)
+class DuePaymentPaidEntryAdmin(admin.ModelAdmin):
+    filter_horizontal = ('users',)
+
+class CandidateFormDoneEntryAdmin(admin.ModelAdmin):
+    filter_horizontal = ('users',)
+
+class CommitteeProjectDoneEntryAdmin(admin.ModelAdmin):
+    filter_horizontal = ('users',)
+
 admin.site.register(OffChallenge, OffChallengeAdmin)
 admin.site.register(BitByteActivity, BitByteActivityAdmin)
 admin.site.register(Announcement, AnnouncementAdmin)
@@ -232,3 +286,12 @@ admin.site.register(RequirementHangout, RequirementAdminGeneral)
 admin.site.register(RequirementMandatory, RequirementMandatoryAdmin)
 admin.site.register(RequirementMergeRequirement, RequirementMergeAdmin)
 admin.site.register(RequirementBitByteActivity, RequirementAdminGeneral)
+
+admin.site.register(CandidateForm, CandidateFormAdmin)
+admin.site.register(CandidateFormDoneEntry, CandidateFormDoneEntryAdmin)
+
+admin.site.register(DuePayment, MiscRequirementAdmin)
+admin.site.register(DuePaymentPaidEntry, DuePaymentPaidEntryAdmin)
+
+admin.site.register(CommitteeProject, MiscRequirementAdmin)
+admin.site.register(CommitteeProjectDoneEntry, CommitteeProjectDoneEntryAdmin)
