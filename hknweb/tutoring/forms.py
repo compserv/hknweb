@@ -1,5 +1,5 @@
 from django import forms
-from .models import TimeSlot, Slot, Course, Tutor, TimeSlotPreference, CoursePreference
+from .models import TimeSlot, Slot, TutorCourse, Tutor, TimeSlotPreference, CoursePreference
 
 COURSE_PREFERENCE_CHOICES = [
     (-1, 'Have not yet taken course'),
@@ -11,24 +11,24 @@ class CoursePreferenceForm(forms.Form):
     def __init__(self, *args, **kwargs):
         self.tutor = kwargs.pop('tutor')
         super().__init__(*args, **kwargs)
-        courses = Course.objects.all().order_by('id')
+        courses = TutorCourse.objects.all().order_by('id')
         for course in courses:
             pref = CoursePreference.objects.get(tutor=self.tutor, course=course)
             field_name = 'course_preference_%s' % (course.id,)
-            self.fields[field_name] = forms.IntegerField(label=course.name, widget=forms.RadioSelect(choices=COURSE_PREFERENCE_CHOICES))
+            self.fields[field_name] = forms.IntegerField(label=str(course.course), widget=forms.RadioSelect(choices=COURSE_PREFERENCE_CHOICES))
             self.fields[field_name].initial = pref.preference
     def save_course_preference_data(self):
         for name, value in self.cleaned_data.items():
             id = int(name.replace('course_preference_', ''))
-            course = Course.objects.get(id=id)
+            course = TutorCourse.objects.get(id=id)
             pref = CoursePreference.objects.get(course=course, tutor=self.tutor)
             pref.preference = value
             pref.save()
 
 SLOT_PREFERENCE_CHOICES= [
-        (0, '0'),
-        (1, '1'),
-        (2, '2'),
+        (0, 'Unavailable'),
+        (2, 'Available'),
+        (1, 'Preferred'),
     ]
 ADJACENT_PREFERENCE_CHOIES = [
     (-1, 'No'),

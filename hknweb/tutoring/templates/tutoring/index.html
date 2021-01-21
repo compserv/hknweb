@@ -76,7 +76,7 @@ li {
                         <p class="relative dib">{{tutor.name}}
                             <span class="tooltiptext">
                                 {% for course in tutor.get_preferred_courses %}
-                                    {{course.name}}
+                                    {{course}}
                                 {% endfor %}
                             </span>
                         </p>

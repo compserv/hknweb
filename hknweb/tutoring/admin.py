@@ -1,13 +1,13 @@
 from django.contrib import admin
 
-from .models import Course, TimeSlot, Slot, Tutor, CoursePreference, TimeSlotPreference
+from .models import TutorCourse, TimeSlot, Slot, Tutor, CoursePreference, TimeSlotPreference
 from django.contrib.admin.views.main import ChangeList
 
-@admin.register(Course)
-class CourseAdmin(admin.ModelAdmin):
-	list_display = ['name']
-	list_filter = ['name']
-	search_fields = ['name']
+@admin.register(TutorCourse)
+class TutorCourseAdmin(admin.ModelAdmin):
+	list_display = ['course']
+	list_filter = ['course']
+	search_fields = ['course']
 
 @admin.register(TimeSlot)
 class TimeSlotAdmin(admin.ModelAdmin):

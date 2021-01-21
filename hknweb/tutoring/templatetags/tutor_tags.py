@@ -1,6 +1,8 @@
 from django import template
+from django.apps import apps
 
 register = template.Library()
+TimeSlot = apps.get_model('tutoring', 'TimeSlot')
 
 @register.filter
 def access_slot_at_hour(slots, hour):
@@ -9,7 +11,13 @@ def access_slot_at_hour(slots, hour):
 @register.filter
 def access_slotfields_at_hour(form, hour):
     slotfields = []
-    for timeslot_id in range((hour-11)* 5, (hour-10) * 5):
+    hour_index = 0
+    for hour_choice in TimeSlot.HOUR_CHOICES:
+        if hour == hour_choice[0]:
+            break
+        hour_index += 1
+    row_interval = len(TimeSlot.DAY_CHOICES)
+    for timeslot_id in range(hour_index * row_interval, (hour_index + 1) * row_interval):
         fieldname = 'timeslot_time_preference_%s' % (timeslot_id,)
         time_pref_field = form.fields[fieldname].get_bound_field(form, fieldname)
         fieldname = 'timeslot_office_preference_%s' % (timeslot_id,)

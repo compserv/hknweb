@@ -2,13 +2,17 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import permission_required
 from django.contrib import messages
 from django.http import JsonResponse
-from .models import TimeSlot, Slot, Tutor, Course, TimeSlotPreference, CoursePreference
+from hknweb.coursesemester.models import Course
+from .models import TimeSlot, Slot, Tutor, TutorCourse, TimeSlotPreference, CoursePreference
 from .forms import TimeSlotPreferenceForm, CoursePreferenceForm, TutoringAlgorithmOutputForm
 import json
 
 def index(request):
     if Slot.objects.all().count() == 0:
         generate_all_slots()
+    if TutorCourse.objects.all().count() == 0:
+        print("HERE")
+        generate_all_courses()
     days = [name for _, name in TimeSlot.DAY_CHOICES]
     hours = TimeSlot.HOUR_CHOICES
     cory_slots = {hour: Slot.objects.filter(room=Slot.CORY, timeslot__hour=hour).order_by('timeslot__hour').order_by('timeslot__day') for hour, _ in hours}
@@ -70,6 +74,11 @@ def tutor_slot_preference(request):
             form.save_slot_preference_data()
     return render(request, 'tutoring/slotpref.html', context)
 
+def generate_all_courses():
+    for course in Course.objects.all():
+        tutor_course = TutorCourse(course=course)
+        tutor_course.save()
+
 def generate_all_slots():
     id = 0
     timeslot_id = 0
@@ -89,12 +98,12 @@ def initialize_slot_preferences(tutor):
         pref.save()
 
 def initialize_course_preferences(tutor):
-    for course in Course.objects.all():
+    for course in TutorCourse.objects.all():
         pref = CoursePreference(tutor=tutor, course=course)
         pref.save()
 
 def get_office_course_preferences(office):
-    courses = Course.objects.all()
+    courses = TutorCourse.objects.all()
     prefs = []
     #Cory
     if office == 0:
@@ -111,8 +120,8 @@ def get_office_course_preferences(office):
 def prepare_algorithm_input(request):
     input = {}
     courses = []
-    for course in Course.objects.all():
-        courses.append(course.name)
+    for course in TutorCourse.objects.all():
+        courses.append(str(course.course))
     input["courseName"] = courses
     tutors = []
     for tutor in Tutor.objects.all():
@@ -156,14 +165,16 @@ def prepare_algorithm_input(request):
     return JsonResponse(input)
 
 def get_adjacent_slot_ids(slot_id):
+    row_interval = 2 * len(TimeSlot.DAY_CHOICES)
+    hours_threshold = (len(TimeSlot.HOUR_CHOICES) - 1) * row_interval
     adjacent = []
-    if slot_id < 10:
-        adjacent.append(slot_id + 10)
-    elif slot_id >= 50:
-        adjacent.append(slot_id - 10)
+    if slot_id < row_interval:
+        adjacent.append(slot_id + row_interval)
+    elif slot_id >= hours_threshold:
+        adjacent.append(slot_id - row_interval)
     else:
-        adjacent.append(slot_id + 10)
-        adjacent.append(slot_id + 10)
+        adjacent.append(slot_id + row_interval)
+        adjacent.append(slot_id + row_interval)
     return adjacent
 
 @permission_required('tutoring.add_slot', login_url='/accounts/login/')

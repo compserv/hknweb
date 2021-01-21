@@ -2,15 +2,14 @@ from django.db import models
 from django.contrib.auth.models import User
 import json
 # Create your models here.
-class Course(models.Model):
-    id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=255, null=False)
+class TutorCourse(models.Model):
+    course = models.ForeignKey("coursesemester.Course", on_delete=models.CASCADE)
     cory_preference = models.IntegerField(default=0, null=True)
-    soda_preference = models.IntegerField(default=0, null=True)
+    soda_preference = models.IntegerField(default=1, null=True)
     def __repr__(self):
         return "Course(name={})".format(self.name)
     def __str__(self):
-        return str(self.name)
+        return str(self.course)
 
 class Tutor(models.Model):
     id = models.AutoField(primary_key=True)
@@ -42,18 +41,27 @@ class TimeSlot(models.Model):
     FRI = 5
     DAY_CHOICES = [
         (MON, 'Mon'),
-        (TUE, 'Tue'),
+        # (TUE, 'Tue'),
         (WED, 'Wed'),
-        (THU, 'Thu'),
+        # (THU, 'Thu'),
         (FRI, 'Fri'),
     ]
+    # HOUR_CHOICES = [
+    #     (11, '11am'),
+    #     (12, '12pm'),
+    #     (13, '1pm'),
+    #     (14, '2pm'),
+    #     (15, '3pm'),
+    #     (16, '4pm'),
+    # ]
     HOUR_CHOICES = [
-        (11, '11am'),
-        (12, '12pm'),
         (13, '1pm'),
         (14, '2pm'),
         (15, '3pm'),
-        (16, '4pm'),
+        (19, '7pm'),
+        (20, '8pm'),
+        (21, '9pm'),
+        (22, '10pm')
     ]
     hour = models.IntegerField(choices=HOUR_CHOICES)
     day = models.IntegerField(choices=DAY_CHOICES)
@@ -61,10 +69,14 @@ class TimeSlot(models.Model):
 
     @staticmethod
     def time(hour):
-        if hour < 12:
+        if hour == 0:
+            return '12am'
+        elif hour < 12:
             return '{}am'.format(hour)
+        elif hour == 12:
+            return '12pm'
         else:
-            return '{}pm'.format(hour)
+            return '{}pm'.format(hour-12)
 
     def get_day(self):
         for day in self.DAY_CHOICES:
@@ -110,7 +122,7 @@ class Slot(models.Model):
 
 class CoursePreference(models.Model):
     tutor = models.ForeignKey(Tutor, on_delete=models.CASCADE)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    course = models.ForeignKey(TutorCourse, on_delete=models.CASCADE)
     preference = models.IntegerField(default=-1)
 
 class TimeSlotPreference(models.Model):
