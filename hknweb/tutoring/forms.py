@@ -1,6 +1,5 @@
 from django import forms
 from .models import TimeSlot, Slot, Course, Tutor, TimeSlotPreference, CoursePreference
-from django_range_slider.fields import RangeSliderField
 
 COURSE_PREFERENCE_CHOICES = [
     (-1, 'Have not yet taken course'),

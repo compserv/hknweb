@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import permission_required
 from django.contrib import messages
-from django.forms import formset_factory
 from django.http import JsonResponse
 from .models import TimeSlot, Slot, Tutor, Course, TimeSlotPreference, CoursePreference
 from .forms import TimeSlotPreferenceForm, CoursePreferenceForm, TutoringAlgorithmOutputForm
@@ -31,8 +30,7 @@ def index(request):
     }
     return render(request, 'tutoring/index.html', context)
     
-# @permission_required('events.add_event', login_url='/accounts/login/')
-@login_required(login_url='/accounts/login/')
+@permission_required('tutoring.add_timeslotpreference', login_url='/accounts/login/')
 def tutor_course_preference(request):
     if Tutor.objects.filter(user = request.user).exists():
         tutor = Tutor.objects.get(user=request.user)
@@ -51,8 +49,7 @@ def tutor_course_preference(request):
             form.save_course_preference_data()
     return render(request, 'tutoring/coursepref.html', context)
 
-# @permission_required('events.add_event', login_url='/accounts/login/')
-@login_required(login_url='/accounts/login/')
+@permission_required('tutoring.add_timeslotpreference', login_url='/accounts/login/')
 def tutor_slot_preference(request):
     if Tutor.objects.filter(user = request.user).exists():
         tutor = Tutor.objects.get(user=request.user)
@@ -110,6 +107,7 @@ def get_office_course_preferences(office):
     return prefs
 
 # Generates file that will be fed into algorithm
+@permission_required('tutoring.add_slot', login_url='/accounts/login/')
 def prepare_algorithm_input(request):
     input = {}
     courses = []
@@ -168,6 +166,7 @@ def get_adjacent_slot_ids(slot_id):
         adjacent.append(slot_id + 10)
     return adjacent
 
+@permission_required('tutoring.add_slot', login_url='/accounts/login/')
 def generate_schedule(request):
     if request.method == 'POST':
         form = TutoringAlgorithmOutputForm(request.POST, request.FILES)
