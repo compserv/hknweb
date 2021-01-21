@@ -164,6 +164,7 @@ def prepare_algorithm_input(request):
     input["slots"] = slots
     return JsonResponse(input)
 
+#Hardcoded because of the break between 3PM and 7PM for virtual semester, change back to below when in person
 def get_adjacent_slot_ids(slot_id):
     row_interval = 2 * len(TimeSlot.DAY_CHOICES)
     hours_threshold = (len(TimeSlot.HOUR_CHOICES) - 1) * row_interval
@@ -172,10 +173,26 @@ def get_adjacent_slot_ids(slot_id):
         adjacent.append(slot_id + row_interval)
     elif slot_id >= hours_threshold:
         adjacent.append(slot_id - row_interval)
-    else:
+    elif slot_id >= 12 and slot_id < 18:
+        adjacent.append(slot_id - row_interval)
+    elif slot_id >= 18 and slot_id < 24:
         adjacent.append(slot_id + row_interval)
+    else:
+        adjacent.append(slot_id - row_interval)
         adjacent.append(slot_id + row_interval)
     return adjacent
+
+    # row_interval = 2 * len(TimeSlot.DAY_CHOICES)
+    # hours_threshold = (len(TimeSlot.HOUR_CHOICES) - 1) * row_interval
+    # adjacent = []
+    # if slot_id < row_interval:
+    #     adjacent.append(slot_id + row_interval)
+    # elif slot_id >= hours_threshold:
+    #     adjacent.append(slot_id - row_interval)
+    # else:
+    #     adjacent.append(slot_id + row_interval)
+    #     adjacent.append(slot_id + row_interval)
+    # return adjacent
 
 @permission_required('tutoring.add_slot', login_url='/accounts/login/')
 def generate_schedule(request):

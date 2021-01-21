@@ -33,6 +33,7 @@ class Tutor(models.Model):
     def __str__(self):
         return str(self.name)
 
+#Hour and day choices changed because of virtual semester, remember to change back when in person
 class TimeSlot(models.Model):
     MON = 1
     TUE = 2
