@@ -50,7 +50,7 @@ class TimeSlotPreferenceForm(forms.Form):
             self.fields[field_name] = forms.IntegerField(widget=forms.RadioSelect(choices=SLOT_PREFERENCE_CHOICES))
             self.fields[field_name].initial = pref.time_preference
             field_name = 'timeslot_office_preference_%s' % (timeslot.timeslot_id,)
-            self.fields[field_name] = forms.IntegerField(widget=forms.NumberInput(attrs={'type':'range', 'min':'0', 'max': 4, 'step': '1'}))
+            self.fields[field_name] = forms.IntegerField(widget=forms.NumberInput(attrs={'type':'range', 'min':-2, 'max': 2, 'step': 1}))
             self.fields[field_name].initial = pref.office_preference
     def save_slot_preference_data(self):
         for name, value in self.cleaned_data.items():

@@ -130,4 +130,4 @@ class TimeSlotPreference(models.Model):
     tutor = models.ForeignKey(Tutor, on_delete=models.CASCADE)
     timeslot = models.ForeignKey(TimeSlot, on_delete=models.CASCADE)
     time_preference = models.IntegerField(default=1)
-    office_preference = models.IntegerField(default=2)
+    office_preference = models.IntegerField(default=0)
