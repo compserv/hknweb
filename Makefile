@@ -25,7 +25,8 @@ venv:
 .PHONY: install-prod
 install-prod:
 	# For issues with binary packages, consider https://pythonwheels.com/
-	$(PYTHON) -m pip install --upgrade pip "setuptools<=51.2.0"
+	$(PYTHON) -m pip install --upgrade "pip<=20.3.4"
+	$(PYTHON) -m pip install --upgrade "setuptools<=51.2.0"
 	# TODO: pinned/unpinned dependency version.
 	# See https://hkn-mu.atlassian.net/browse/COMPSERV-110
 	$(PYTHON) -m pip install -r requirements.txt
