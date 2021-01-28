@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-import json
+
 # Create your models here.
 class TutorCourse(models.Model):
     course = models.ForeignKey("coursesemester.Course", on_delete=models.CASCADE)

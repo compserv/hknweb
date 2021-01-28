@@ -2,7 +2,6 @@ from django.contrib import admin
 
 from .models import TutorCourse, TimeSlot, Slot, Tutor, CoursePreference, \
 	Room, TimeSlotPreference
-from django.contrib.admin.views.main import ChangeList
 
 @admin.register(TutorCourse)
 class TutorCourseAdmin(admin.ModelAdmin):

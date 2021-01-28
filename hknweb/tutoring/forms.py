@@ -1,6 +1,6 @@
 from django import forms
-from .models import CoursePreference, Slot, TimeSlot, \
-    TutorCourse, Tutor, TimeSlotPreference
+from .models import CoursePreference, Room, TimeSlot, \
+    TutorCourse, TimeSlotPreference
 
 COURSE_PREFERENCE_CHOICES = [
     (-1, 'Have not yet taken course'),
@@ -41,10 +41,6 @@ class TimeSlotPreferenceForm(forms.Form):
     num_assignments = forms.IntegerField()
     tutor_name = forms.CharField()
     def __init__(self, *args, **kwargs):
-
-        # Online only semester (HARDCODED)
-        only_online = True
-
         self.tutor = kwargs.pop('tutor')
         super().__init__(*args, **kwargs)
         self.fields['tutor_name'].initial = self.tutor.name
@@ -57,10 +53,18 @@ class TimeSlotPreferenceForm(forms.Form):
             self.fields[field_name] = forms.IntegerField(widget=forms.RadioSelect(choices=SLOT_PREFERENCE_CHOICES))
             self.fields[field_name].initial = pref.time_preference
 
-            if not only_online:
+            number_of_tutor_rooms = Room.objects.all().count()
+
+            if number_of_tutor_rooms == 1:
+                # Doesn't matter preference, there's only one room anyway
+                pass
+            elif number_of_tutor_rooms == 2:
                 field_name = 'timeslot_office_preference_%s' % (timeslot.timeslot_id,)
                 self.fields[field_name] = forms.IntegerField(widget=forms.NumberInput(attrs={'type':'range', 'min':-2, 'max': 2, 'step': 1}))
                 self.fields[field_name].initial = pref.office_preference
+            else:
+                # TODO: In the event there is multiple rooms (low priority)
+                pass
         
     def save_slot_preference_data(self):
         for name, value in self.cleaned_data.items():
