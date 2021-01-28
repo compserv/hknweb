@@ -3,33 +3,33 @@ from django.contrib.auth.decorators import permission_required
 from django.contrib import messages
 from django.http import JsonResponse
 from hknweb.coursesemester.models import Course
-from .models import TimeSlot, Slot, Tutor, TutorCourse, TimeSlotPreference, CoursePreference
+from .models import TimeSlot, Slot, Tutor, TutorCourse, TimeSlotPreference, CoursePreference, Room
 from .forms import TimeSlotPreferenceForm, CoursePreferenceForm, TutoringAlgorithmOutputForm
 import json
 
 def index(request):
+    if Room.objects.all().count() == 0:
+        generate_all_rooms()
     if Slot.objects.all().count() == 0:
         generate_all_slots()
     if TutorCourse.objects.all().count() == 0:
-        print("HERE")
         generate_all_courses()
     days = [name for _, name in TimeSlot.DAY_CHOICES]
     hours = TimeSlot.HOUR_CHOICES
-    cory_slots = {hour: Slot.objects.filter(room=Slot.CORY, timeslot__hour=hour).order_by('timeslot__hour').order_by('timeslot__day') for hour, _ in hours}
-    soda_slots = {hour: Slot.objects.filter(room=Slot.SODA, timeslot__hour=hour).order_by('timeslot__hour').order_by('timeslot__day') for hour, _ in hours}
+    offices = []
+    for room in Room.objects.all():
+        slot = {hour: Slot.objects.filter(room=room, timeslot__hour=hour).order_by('timeslot__hour').order_by('timeslot__day') for hour, _ in hours}
+        office = {
+                'room': str(room),
+                'slots': slot,
+            }
+        offices.append(office)
+    
     context = {
+        
         'days': days,
         'hours': hours,
-        'offices': [
-            {
-                'room': '290 Cory',
-                'slots': cory_slots,
-            },
-            {
-                'room': '345 Soda',
-                'slots': soda_slots,
-            },
-        ],
+        'offices': offices,
         'form': TutoringAlgorithmOutputForm()
     }
     return render(request, 'tutoring/index.html', context)
@@ -67,12 +67,21 @@ def tutor_slot_preference(request):
     context = {
         'form': form,
         'days': [name for _, name in TimeSlot.DAY_CHOICES],
-        'hours': TimeSlot.HOUR_CHOICES
+        'hours': TimeSlot.HOUR_CHOICES,
+        'message': ""
     }
     if request.method == 'POST':
         if form.is_valid():
             form.save_slot_preference_data()
+            context['message'] = "Sign up form saved! (Don't forget to screenshot your selections)"
+        else:
+            context['message'] = "An error occured, please screenshot your current entries and contact CompServ"
     return render(request, 'tutoring/slotpref.html', context)
+
+def generate_all_rooms():
+    for rooms in Room.DEFAULT_ROOM_CHOICES:
+        room_model = Room(id=rooms[0], building=rooms[1], room_num=rooms[2])
+        room_model.save()
 
 def generate_all_courses():
     for course in Course.objects.all():
@@ -82,13 +91,14 @@ def generate_all_courses():
 def generate_all_slots():
     id = 0
     timeslot_id = 0
+    room_querySet = Room.objects.all()
     for hour, _ in TimeSlot.HOUR_CHOICES:
         for day, _ in TimeSlot.DAY_CHOICES:
             timeslot = TimeSlot(hour=hour, day=day, timeslot_id = timeslot_id)
             timeslot_id += 1
             timeslot.save()
-            for office, _ in Slot.ROOM_CHOICES:
-                slot = Slot(timeslot=timeslot, room = office, slot_id = id)
+            for room in room_querySet:
+                slot = Slot(timeslot=timeslot, room = room, slot_id = id)
                 slot.save()
                 id += 1
 
@@ -118,11 +128,11 @@ def get_office_course_preferences(office):
 # Generates file that will be fed into algorithm
 @permission_required('tutoring.add_slot', login_url='/accounts/login/')
 def prepare_algorithm_input(request):
-    input = {}
+    input_data = {}
     courses = []
     for course in TutorCourse.objects.all():
         courses.append(str(course.course))
-    input["courseName"] = courses
+    input_data["courseName"] = courses
     tutors = []
     for tutor in Tutor.objects.all():
         tutor_dict = {}
@@ -144,7 +154,7 @@ def prepare_algorithm_input(request):
         tutor_dict["adjacentPref"] = tutor.adjacent_pref
         tutor_dict["numAssignments"] = tutor.num_assignments
         tutors.append(tutor_dict)
-    input["tutors"] = tutors
+    input_data["tutors"] = tutors
     slots = []
     cory_course_prefs = get_office_course_preferences(0)
     soda_office_prefs = get_office_course_preferences(1)
@@ -161,8 +171,8 @@ def prepare_algorithm_input(request):
         slot_dict["hour"] = slot.timeslot.hour
         slot_dict["office"] = slot.get_office()
         slots.append(slot_dict)
-    input["slots"] = slots
-    return JsonResponse(input)
+    input_data["slots"] = slots
+    return JsonResponse(input_data)
 
 #Hardcoded because of the break between 3PM and 7PM for virtual semester, change back to below when in person
 def get_adjacent_slot_ids(slot_id):
@@ -193,6 +203,9 @@ def get_adjacent_slot_ids(slot_id):
     #     adjacent.append(slot_id + row_interval)
     #     adjacent.append(slot_id + row_interval)
     # return adjacent
+
+def get_adjacent_times():
+    Slot.objects.all()
 
 @permission_required('tutoring.add_slot', login_url='/accounts/login/')
 def generate_schedule(request):

@@ -36,6 +36,8 @@
 {% block content %}
 <h1> Sign up for tutoring hours </h1>
 
+<mark>{{ message }}</mark>
+
 <div class="left-align">
 <form method = "POST" action="/tutoring/slotpref">
   {% csrf_token %}
@@ -43,10 +45,14 @@
   {{form.adjacent_pref}}
   <h2> Enter the amount of hours you are tutoring for per week</h2>
   {{form.num_assignments}}
+  <h2> Enter the name as it appears in the <a href="https://hkn.eecs.berkeley.edu/about/officers" target="_blank" rel="noopener noreferrer">hkn.mu website</a></h2>
+  <p> If your name is not listed as one of the Officers, please use the name in your account on the top right when you login in as Sentence Case.</p>
+  <p> Example: BOB BOBERTSON becomes Bob Bobertson. </p>
+  {{form.tutor_name}}
   <h2> Timeslot preferences </h2>
   <p> For each slot below, select preferred, available, or unavailable. 
-    For the slider, the values are as follows from left to right:
-    Strongly prefer Cory, slightly prefer Cory, no preference, slightly prefer Soda, strongly prefer Soda</p>
+    <!-- For the slider, the values are as follows from left to right:
+    Strongly prefer Cory, slightly prefer Cory, no preference, slightly prefer Soda, strongly prefer Soda</p> -->
   <table>
     <tr>
       <th class="w3 pv2 bb b--light-gray">Hours</th>

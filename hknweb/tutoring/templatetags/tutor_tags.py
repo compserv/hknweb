@@ -10,6 +10,10 @@ def access_slot_at_hour(slots, hour):
 
 @register.filter
 def access_slotfields_at_hour(form, hour):
+
+    # Online only semester (HARDCODED)
+    only_online = True
+
     slotfields = []
     hour_index = 0
     for hour_choice in TimeSlot.HOUR_CHOICES:
@@ -20,7 +24,11 @@ def access_slotfields_at_hour(form, hour):
     for timeslot_id in range(hour_index * row_interval, (hour_index + 1) * row_interval):
         fieldname = 'timeslot_time_preference_%s' % (timeslot_id,)
         time_pref_field = form.fields[fieldname].get_bound_field(form, fieldname)
-        fieldname = 'timeslot_office_preference_%s' % (timeslot_id,)
-        office_pref_field = form.fields[fieldname].get_bound_field(form, fieldname)
-        slotfields.append([time_pref_field, office_pref_field])
+
+        if not only_online:
+            fieldname = 'timeslot_office_preference_%s' % (timeslot_id,)
+            office_pref_field = form.fields[fieldname].get_bound_field(form, fieldname)
+            slotfields.append([time_pref_field, office_pref_field])
+        else:
+            slotfields.append([time_pref_field])
     return slotfields

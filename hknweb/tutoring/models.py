@@ -16,7 +16,7 @@ class Tutor(models.Model):
     user  = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     name = models.CharField(max_length=255)
     adjacent_pref = models.IntegerField(default=0)
-    num_assignments = models.IntegerField(default=2)
+    num_assignments = models.IntegerField(default=1)
     def get_course_preferences(self):
         return CoursePreference.objects.filter(tutor=self).order_by('course__id')
     def get_slot_preferences(self):
@@ -95,22 +95,42 @@ class TimeSlot(models.Model):
     def __str__(self):
         return str(self.get_day()) + ' ' + str(self.start_time()) + ' to ' + str(self.end_time())
 
-class Slot(models.Model):
-    CORY = 0
-    SODA = 1
-    ROOM_CHOICES = [
-        (CORY, 'Cory'),
-        (SODA, 'Soda'),
+class Room(models.Model):
+    DEFAULT_ROOM_CHOICES = [
+        # (0, 'Cory', '290'),
+        # (1, 'Soda', '345'),
+        (0, 'Online', '')
     ]
+    building = models.CharField(max_length=255)
+    room_num = models.CharField(max_length=255, blank=True)
+
+    def get_num_building(self):
+        room_num_str = ""
+        if self.room_num:
+            room_num_str = self.room_num + " "
+        return room_num_str + self.building
+
+    def __str__(self):
+        return self.get_num_building()
+
+class Slot(models.Model):
+    # CORY = 0
+    # SODA = 1
+    # ROOM_CHOICES = [
+    #     (CORY, 'Cory'),
+    #     (SODA, 'Soda'),
+    # ]
     timeslot = models.ForeignKey(TimeSlot, on_delete=models.CASCADE, null=True)
-    room = models.IntegerField(choices=ROOM_CHOICES)
+    # room = models.IntegerField(choices=ROOM_CHOICES)
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, null=True)
     slot_id = models.IntegerField(default=0)
     tutors = models.ManyToManyField(Tutor)
 
     def get_office(self):
-        for room in self.ROOM_CHOICES:
-            if room[0] == self.room:
-                return room[1]
+        return self.room.building
+        # for room in self.ROOM_CHOICES:
+        #     if room[0] == self.room:
+        #         return room[1]
 
     def __repr__(self):
         tutor_string = ""

@@ -1,5 +1,6 @@
 from django import forms
-from .models import TimeSlot, Slot, TutorCourse, Tutor, TimeSlotPreference, CoursePreference
+from .models import CoursePreference, Slot, TimeSlot, \
+    TutorCourse, Tutor, TimeSlotPreference
 
 COURSE_PREFERENCE_CHOICES = [
     (-1, 'Have not yet taken course'),
@@ -27,8 +28,8 @@ class CoursePreferenceForm(forms.Form):
 
 SLOT_PREFERENCE_CHOICES= [
         (0, 'Unavailable'),
-        (2, 'Available'),
-        (1, 'Preferred'),
+        (1, 'Available'),
+        (2, 'Preferred'),
     ]
 ADJACENT_PREFERENCE_CHOIES = [
     (-1, 'No'),
@@ -38,9 +39,15 @@ ADJACENT_PREFERENCE_CHOIES = [
 class TimeSlotPreferenceForm(forms.Form):
     adjacent_pref = forms.IntegerField(widget=forms.RadioSelect(choices=ADJACENT_PREFERENCE_CHOIES))
     num_assignments = forms.IntegerField()
+    tutor_name = forms.CharField()
     def __init__(self, *args, **kwargs):
+
+        # Online only semester (HARDCODED)
+        only_online = True
+
         self.tutor = kwargs.pop('tutor')
         super().__init__(*args, **kwargs)
+        self.fields['tutor_name'].initial = self.tutor.name
         self.fields['adjacent_pref'].initial = self.tutor.adjacent_pref
         self.fields['num_assignments'].initial = self.tutor.num_assignments
         timeslots = TimeSlot.objects.all().order_by('timeslot_id')
@@ -49,9 +56,12 @@ class TimeSlotPreferenceForm(forms.Form):
             field_name = 'timeslot_time_preference_%s' % (timeslot.timeslot_id,)
             self.fields[field_name] = forms.IntegerField(widget=forms.RadioSelect(choices=SLOT_PREFERENCE_CHOICES))
             self.fields[field_name].initial = pref.time_preference
-            field_name = 'timeslot_office_preference_%s' % (timeslot.timeslot_id,)
-            self.fields[field_name] = forms.IntegerField(widget=forms.NumberInput(attrs={'type':'range', 'min':-2, 'max': 2, 'step': 1}))
-            self.fields[field_name].initial = pref.office_preference
+
+            if not only_online:
+                field_name = 'timeslot_office_preference_%s' % (timeslot.timeslot_id,)
+                self.fields[field_name] = forms.IntegerField(widget=forms.NumberInput(attrs={'type':'range', 'min':-2, 'max': 2, 'step': 1}))
+                self.fields[field_name].initial = pref.office_preference
+        
     def save_slot_preference_data(self):
         for name, value in self.cleaned_data.items():
             if name.startswith('timeslot_time_preference_'):
@@ -59,19 +69,20 @@ class TimeSlotPreferenceForm(forms.Form):
                 timeslot = TimeSlot.objects.get(timeslot_id=timeslot_id)
                 pref = TimeSlotPreference.objects.get(timeslot=timeslot, tutor=self.tutor)
                 pref.time_preference = value
-                pref.save()
+                pref.save(update_fields=["time_preference"])
             elif name.startswith('timeslot_office_preference_'):
                 timeslot_id = int(name.replace('timeslot_office_preference_', ''))
                 timeslot = TimeSlot.objects.get(timeslot_id=timeslot_id)
                 pref = TimeSlotPreference.objects.get(timeslot=timeslot, tutor=self.tutor)
                 pref.office_preference = value
-                pref.save()
+                pref.save(update_fields=["office_preference"])
             elif name == "adjacent_pref":
                 self.tutor.adjacent_pref = value
-                self.tutor.save()
             elif name == "num_assignments":
                 self.tutor.num_assignments = value
-                self.tutor.save()
+            elif name == "tutor_name":
+                self.tutor.name = value
+        self.tutor.save(update_fields=["adjacent_pref", "num_assignments", "name"])
 
 class TutoringAlgorithmOutputForm(forms.Form):
     output = forms.FileField(label="Upload tutoring algorithm output file")
