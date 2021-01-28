@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load tutor_tags %}
 
 {% block title %}Tutoring{% endblock %}
 
@@ -14,6 +15,12 @@ td {
 
 .slider-container {
     padding: 10px 15px;
+}
+
+/* Tooltip container */
+.tooltip {
+  position: relative;
+  display: inline-block;
 }
 
 /* Tooltip text */
@@ -40,10 +47,11 @@ li {
 }
 /* Show the tooltip text when you mouse over the tooltip container */
 .tooltip:hover .tooltiptext {
-    visibility: visible;
+  visibility: visible;
 }
 
 </style>
+
 
 <div class="center measure-narrow measure-wide-m measure-very-wide-l pv4">
     <h1 class="font-title f3 f2-ns tc">Tutoring Schedule</h1>
@@ -60,17 +68,19 @@ li {
         {% for hour, hour_pretty in hours %}
         <tr>
             <td class="pv2 w3 bb b--near-white"> {{hour_pretty}} </td>
-            {% for slot in office.slots.hour %}
+            {% for slot in office.slots|access_slot_at_hour:hour%}
             <td class="pv2 w ba b--near-white">
                 <ul class="list">
-                    {% for tutor in slot.tutor_set.all %}
-                    <li class="relative dib">{{tutor.name}}
-                        <span class="tooltiptext">
-                        {% for course in tutor.courses.all %}
-                        {{course.name}}
-                        {% endfor %}
-                        </span>
-                    </li>
+                    {% for tutor in slot.tutors.all %}
+                    <div class = "tooltip">
+                        <p class="relative dib">{{tutor.name}}
+                            <span class="tooltiptext">
+                                {% for course in tutor.get_preferred_courses %}
+                                    {{course}}
+                                {% endfor %}
+                            </span>
+                        </p>
+                    </div>
                 {% endfor %}
                 </ul>
             </td>
@@ -79,6 +89,22 @@ li {
         {% endfor %}
     </table>
     {% endfor %}
+    <form action="slotpref" method="GET" id="button">
+        <button type='submit'>Timeslot Preference Form</button>
+    </form>
+    <form action="coursepref" method="GET" id="button">
+        <button type='submit'>Course Preference Form</button>
+    </form>
+    <form action="prepare-algorithm-input" method="GET" id="button">
+        <button type='submit'>Get Tutoring Algorithm JSON Input</button>
+    </form>
+    <form enctype="multipart/form-data" action="generate" method="POST">
+        {% csrf_token %}
+        {{form.as_p}}
+        <div id="submit">
+            <input type="submit" value="Submit" />
+          </div>
+    </form>
 </div>
 
 {% endblock %}
