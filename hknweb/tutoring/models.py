@@ -132,6 +132,16 @@ class Slot(models.Model):
         #     if room[0] == self.room:
         #         return room[1]
 
+    def get_previous_hour_slot(self, hours_back=1):
+        # Returns None if no slot exist
+        return Slot.objects.filter(timeslot__day=self.timeslot.day, room=self.room.id, \
+            timeslot__hour=(self.timeslot.hour - hours_back)).first()
+    
+    def get_after_hour_slot(self, hours_forward=1):
+        # Returns None if no slot exist
+        return Slot.objects.filter(timeslot__day=self.timeslot.day, room=self.room.id, \
+            timeslot__hour=(self.timeslot.hour + hours_forward)).first()
+
     def __repr__(self):
         tutor_string = ""
         for tutor in self.tutors.all():

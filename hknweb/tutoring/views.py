@@ -158,11 +158,12 @@ def prepare_algorithm_input(request):
     slots = []
     cory_course_prefs = get_office_course_preferences(0)
     soda_office_prefs = get_office_course_preferences(1)
+    time_gaps = get_slot_time_gaps()
     for slot in Slot.objects.all().order_by('slot_id'):
         slot_dict = {}
         slot_dict["sid"] = slot.slot_id
         slot_dict["name"] = "Slot {}".format(slot.slot_id)
-        slot_dict["adjacentSlotIDs"] = get_adjacent_slot_ids(slot.slot_id)
+        slot_dict["adjacentSlotIDs"] = get_adjacent_slot_ids(slot, time_gaps)
         if slot.room == 0:
             slot_dict["courses"] = cory_course_prefs
         else:
@@ -174,35 +175,72 @@ def prepare_algorithm_input(request):
     input_data["slots"] = slots
     return JsonResponse(input_data)
 
-#Hardcoded because of the break between 3PM and 7PM for virtual semester, change back to below when in person
-def get_adjacent_slot_ids(slot_id):
-    row_interval = 2 * len(TimeSlot.DAY_CHOICES)
-    hours_threshold = (len(TimeSlot.HOUR_CHOICES) - 1) * row_interval
-    adjacent = []
-    if slot_id < row_interval:
-        adjacent.append(slot_id + row_interval)
-    elif slot_id >= hours_threshold:
-        adjacent.append(slot_id - row_interval)
-    elif slot_id >= 12 and slot_id < 18:
-        adjacent.append(slot_id - row_interval)
-    elif slot_id >= 18 and slot_id < 24:
-        adjacent.append(slot_id + row_interval)
-    else:
-        adjacent.append(slot_id - row_interval)
-        adjacent.append(slot_id + row_interval)
-    return adjacent
+def get_day_range_dict(time_gaps, day, slot_hour, last_hour):
+    if day not in time_gaps:
+        time_gaps[day] = {}
+    
+    day_range_dict = time_gaps[day]
 
+    if slot_hour not in day_range_dict:
+        day_range_dict[slot_hour] = {"Before" : False, "After" : False}
+    if last_hour not in day_range_dict:
+        day_range_dict[last_hour] = {"Before" : False, "After" : False}
+    
+    return day_range_dict
+
+def get_slot_time_gaps():
+    time_gaps = {} # Day : {Hour : {"Before" : bool, "After" : bool}}
+    last_day = -1 # Days of the week: 0 to 6, Sunday to Saturday (see tutoring/models.py)
+    last_hour = -1
+    for slot in Slot.objects.all().order_by('timeslot__day', 'timeslot__hour'):
+        if last_day != slot.timeslot.day:
+            if last_hour != -1 and last_day != -1:
+                day_range_dict = get_day_range_dict(time_gaps, last_day, slot.timeslot.hour, last_hour)
+                day_range_dict[last_hour]["After"] = True
+
+            last_day = slot.timeslot.day
+            last_hour = -1
+            
+        if last_hour == -1:
+            last_hour = slot.timeslot.hour
+            day_range_dict = get_day_range_dict(time_gaps, slot.timeslot.day, slot.timeslot.hour, last_hour)
+            day_range_dict[last_hour]["Before"] = True
+            continue
+        if last_hour + 1 != slot.timeslot.hour:
+            # Otherwise, there is a break in time (note that times should have been sorted)
+            # Get the boolean dictionary (pass-by-refs anyway), or make a new one
+            day_range_dict = get_day_range_dict(time_gaps, slot.timeslot.day, slot.timeslot.hour, last_hour)
+            
+            day_range_dict[slot.timeslot.hour]["Before"] = True
+            day_range_dict[last_hour]["After"] = True
+        
+        last_hour = slot.timeslot.hour
+    if last_hour != -1 and last_day != -1:
+        day_range_dict = get_day_range_dict(time_gaps, last_day, slot.timeslot.hour, last_hour)
+        day_range_dict[last_hour]["After"] = True
+    return time_gaps
+
+def get_adjacent_slot_ids(slot, time_gaps):
     # row_interval = 2 * len(TimeSlot.DAY_CHOICES)
     # hours_threshold = (len(TimeSlot.HOUR_CHOICES) - 1) * row_interval
-    # adjacent = []
-    # if slot_id < row_interval:
-    #     adjacent.append(slot_id + row_interval)
-    # elif slot_id >= hours_threshold:
-    #     adjacent.append(slot_id - row_interval)
-    # else:
-    #     adjacent.append(slot_id + row_interval)
-    #     adjacent.append(slot_id + row_interval)
-    # return adjacent
+    # time_gaps = {Day : {Hour : {"Before" : bool, "After" : bool}}}
+    adjacent = []
+
+    gap_before = time_gaps.get(slot.timeslot.day, {}).get(slot.timeslot.hour, {}).get("Before", False)
+    gap_after  = time_gaps.get(slot.timeslot.day, {}).get(slot.timeslot.hour, {}).get("After", False)
+
+    if gap_after and (not gap_before):
+        adjacent.append(slot.get_previous_hour_slot().slot_id)
+    elif gap_before and (not gap_after):
+        adjacent.append(slot.get_after_hour_slot().slot_id)
+    elif (not gap_before) and (not gap_after):
+        adjacent.append(slot.get_previous_hour_slot().slot_id)
+        adjacent.append(slot.get_after_hour_slot().slot_id)
+    else:
+        # Gap on both directions
+        # Adjacent will be empty
+        pass
+    return adjacent
 
 def get_adjacent_times():
     Slot.objects.all()
