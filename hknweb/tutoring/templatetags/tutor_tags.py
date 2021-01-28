@@ -3,6 +3,7 @@ from django.apps import apps
 
 register = template.Library()
 TimeSlot = apps.get_model('tutoring', 'TimeSlot')
+Room = apps.get_model('tutoring', 'Room')
 
 @register.filter
 def access_slot_at_hour(slots, hour):
