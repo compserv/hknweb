@@ -220,8 +220,6 @@ def get_slot_time_gaps():
     return time_gaps
 
 def get_adjacent_slot_ids(slot, time_gaps):
-    # row_interval = 2 * len(TimeSlot.DAY_CHOICES)
-    # hours_threshold = (len(TimeSlot.HOUR_CHOICES) - 1) * row_interval
     # time_gaps = {Day : {Hour : {"Before" : bool, "After" : bool}}}
     adjacent = []
 
