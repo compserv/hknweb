@@ -134,19 +134,29 @@ def prepare_algorithm_input(request):
         courses.append(str(course.course))
     input_data["courseName"] = courses
     tutors = []
+    num_rooms = Room.objects.all().count()
     for tutor in Tutor.objects.all():
         tutor_dict = {}
         tutor_dict["tid"] = tutor.id
         tutor_dict["name"] = tutor.name
         slot_time_prefs = []
-        slot_office_prefs = []
-        slot_opposite_office_prefs = []
+        slot_office_prefs_each_room = []
+        
+        for _ in range(num_rooms):
+            slot_office_prefs_each_room.append([])
+
         for pref in tutor.get_slot_preferences():
             slot_time_prefs.append(pref.time_preference)
-            slot_office_prefs.append(pref.office_preference)
-            slot_opposite_office_prefs.append(-pref.office_preference)
-        tutor_dict["timeSlots"] = slot_time_prefs + slot_time_prefs
-        tutor_dict["officePrefs"] = slot_office_prefs + slot_opposite_office_prefs
+            # TODO: ID of which room is this
+            #  Gonna need to add which "office" relates to "pref.office_preference"
+            room_index = 0
+            slot_office_prefs_each_room[room_index].append(pref.office_preference)
+            for i, slot_office_pref in enumerate(slot_office_prefs_each_room):
+                if i == room_index:
+                    continue
+                slot_office_pref.append(-pref.office_preference)
+        tutor_dict["timeSlots"] = slot_time_prefs * num_rooms
+        tutor_dict["officePrefs"] = sum(slot_office_prefs_each_room, [])
         course_prefs = []
         for pref in tutor.get_course_preferences():
             course_prefs.append(pref.preference)
