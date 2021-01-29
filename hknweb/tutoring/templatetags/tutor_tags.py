@@ -37,5 +37,5 @@ def access_slotfields_at_hour(form, hour):
             slotfields.append([time_pref_field, office_pref_field])
         else:
             # TODO: In the event there is multiple rooms (low priority)
-                pass
+            pass
     return slotfields

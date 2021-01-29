@@ -63,11 +63,18 @@ def tutor_slot_preference(request):
     if TimeSlotPreference.objects.filter(tutor=tutor).count() == 0:
         initialize_slot_preferences(tutor)
     form = TimeSlotPreferenceForm(request.POST or None, tutor=tutor)
-
+    
+    day_of_weeks_model = TimeSlot.objects.values_list('day', flat=True).distinct()
+    day_of_weeks = []
+    for day in day_of_weeks_model:
+        day_of_weeks.append(TimeSlot.DAYS_OF_WEEK[day])
+    hours = []
+    for hour in TimeSlot.objects.values_list('hour', flat=True).distinct():
+        hours.append((hour, TimeSlot.time(hour)))
     context = {
         'form': form,
-        'days': [name for _, name in TimeSlot.DAY_CHOICES],
-        'hours': TimeSlot.HOUR_CHOICES,
+        'days': day_of_weeks,
+        'hours': hours,
         'message': ""
     }
     if request.method == 'POST':

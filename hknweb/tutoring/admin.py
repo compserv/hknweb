@@ -19,6 +19,19 @@ class SlotAdmin(admin.ModelAdmin):
 	list_display = ['timeslot', 'room']
 	list_filter = ['room', 'timeslot', 'tutors']
 	search_fields = ['room', 'timeslot', 'tutors']
+	actions = ['resync_slot_id']
+
+	def resync_slot_id(self, request, queryset):
+		queryset_ordered = queryset.order_by('timeslot__day', 'timeslot__hour')
+		id_num = 0
+		for slot_query in queryset_ordered:
+			slot_query.slot_id = id_num
+			slot_query.timeslot.timeslot_id = id_num
+			slot_query.timeslot.save()
+			slot_query.save()
+			id_num += 1
+	
+	resync_slot_id.short_description = "Resync Slot ID (and Time Slot) in order of time (day then hour)"
 
 @admin.register(Tutor)
 class TutorAdmin(admin.ModelAdmin):

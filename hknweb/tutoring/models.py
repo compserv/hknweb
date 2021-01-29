@@ -58,7 +58,7 @@ class TimeSlot(models.Model):
     HOUR_CHOICES = [
         (13, '1pm'),
         (14, '2pm'),
-        (15, '3pm'),
+        # (15, '3pm'),
         (19, '7pm'),
         (20, '8pm'),
         (21, '9pm'),
@@ -79,10 +79,9 @@ class TimeSlot(models.Model):
         else:
             return '{}pm'.format(hour-12)
 
+    DAYS_OF_WEEK = ["Sun", "Mon", "Tues", "Wed", "Thus", "Fri"]
     def get_day(self):
-        for day in self.DAY_CHOICES:
-            if day[0] == self.day:
-                return day[1]
+        return self.DAYS_OF_WEEK[self.day]
 
     def start_time(self):
         return self.time(self.hour)
