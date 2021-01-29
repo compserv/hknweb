@@ -79,7 +79,7 @@ class TimeSlot(models.Model):
         else:
             return '{}pm'.format(hour-12)
 
-    DAYS_OF_WEEK = ["Sun", "Mon", "Tues", "Wed", "Thus", "Fri"]
+    DAYS_OF_WEEK = ["Sun", "Mon", "Tues", "Wed", "Thus", "Fri", "Sat"]
     def get_day(self):
         return self.DAYS_OF_WEEK[self.day]
 
