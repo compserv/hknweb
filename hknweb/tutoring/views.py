@@ -239,9 +239,6 @@ def get_adjacent_slot_ids(slot, time_gaps):
         pass
     return adjacent
 
-def get_adjacent_times():
-    Slot.objects.all()
-
 @permission_required('tutoring.add_slot', login_url='/accounts/login/')
 def generate_schedule(request):
     if request.method == 'POST':
