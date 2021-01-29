@@ -13,12 +13,37 @@ class TutorCourseAdmin(admin.ModelAdmin):
 class TimeSlotAdmin(admin.ModelAdmin):
 	list_filter = ['day', 'hour']
 	search_fields = ['day', 'hour']
+	actions = ['resync_timeslot_id']
+
+	def resync_timeslot_id(self, request, queryset):
+		queryset_ordered = queryset.order_by('hour', 'day')
+		id_num = 0
+		for timeslot_query in queryset_ordered:
+			timeslot_query.timeslot_id = id_num
+			timeslot_query.save()
+			id_num += 1
+	
+	resync_timeslot_id.short_description = "Resync Time Slot ID in order of time (hour then day)"
 
 @admin.register(Slot)
 class SlotAdmin(admin.ModelAdmin):
 	list_display = ['timeslot', 'room']
 	list_filter = ['room', 'timeslot', 'tutors']
 	search_fields = ['room', 'timeslot', 'tutors']
+	actions = ['resync_slot_id']
+
+	def resync_slot_id(self, request, queryset):
+		queryset_ordered = queryset.order_by('room__id', 'timeslot__hour', 'timeslot__day')
+		id_num = -1
+		last_room_id = float('inf')
+		for slot_query in queryset_ordered:
+			if slot_query.room.id <= last_room_id:
+				id_num += 1
+			slot_query.slot_id = id_num
+			slot_query.save()
+			last_room_id = slot_query.room.id
+	
+	resync_slot_id.short_description = "Resync Slot ID in order of time (hour then day)"
 
 @admin.register(Tutor)
 class TutorAdmin(admin.ModelAdmin):
