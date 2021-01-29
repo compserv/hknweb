@@ -62,7 +62,7 @@ class TimeSlot(models.Model):
         (19, '7pm'),
         (20, '8pm'),
         (21, '9pm'),
-        (22, '10pm')
+        # (22, '10pm')
     ]
     hour = models.IntegerField(choices=HOUR_CHOICES)
     day = models.IntegerField(choices=DAY_CHOICES)
