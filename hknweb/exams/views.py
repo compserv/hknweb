@@ -40,7 +40,7 @@ def exams_for_course(request, department, number):
 
 	return render(request, 'exams/exams-course.html', context)
 
-@permission_required('events.add_exam', login_url='/accounts/login/')
+@permission_required('exams.add_coursesemester', login_url='/accounts/login/')
 def add_exam(request):
 	if request.method == 'POST':
 		form = ExamUploadForm(request.POST, request.FILES)

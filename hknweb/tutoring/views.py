@@ -63,6 +63,7 @@ def tutor_slot_preference(request):
     if TimeSlotPreference.objects.filter(tutor=tutor).count() == 0:
         initialize_slot_preferences(tutor)
     form = TimeSlotPreferenceForm(request.POST or None, tutor=tutor)
+
     context = {
         'form': form,
         'days': [name for _, name in TimeSlot.DAY_CHOICES],
@@ -238,9 +239,6 @@ def get_adjacent_slot_ids(slot, time_gaps):
         # Adjacent will be empty
         pass
     return adjacent
-
-def get_adjacent_times():
-    Slot.objects.all()
 
 @permission_required('tutoring.add_slot', login_url='/accounts/login/')
 def generate_schedule(request):
