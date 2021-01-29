@@ -66,7 +66,9 @@
         {% for slotfields in form|access_slotfields_at_hour:hour%}
         <td class="pv2 w ba b--near-white">
             {% for field in slotfields %}
-              {{ field }}
+              {% if field %}
+                {{ field }}
+              {% endif %}
             {% endfor %}
         </td>
         {% endfor %}

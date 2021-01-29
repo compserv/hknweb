@@ -63,6 +63,7 @@ def tutor_slot_preference(request):
     if TimeSlotPreference.objects.filter(tutor=tutor).count() == 0:
         initialize_slot_preferences(tutor)
     form = TimeSlotPreferenceForm(request.POST or None, tutor=tutor)
+
     context = {
         'form': form,
         'days': [name for _, name in TimeSlot.DAY_CHOICES],
