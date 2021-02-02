@@ -24,8 +24,10 @@ class Course(models.Model):
         return "{} {}".format(self.department.abbreviated_name, self.number)
 
 class Semester(models.Model):
-     semester = models.CharField(max_length=255)
+    semester   = models.CharField(max_length=10)
+    year = models.IntegerField()
 
-     def __str__(self):
-         return "{}".format(self.semester)
+    def __str__(self):
+         return "{} {}".format(self.semester, self.year)
+
 

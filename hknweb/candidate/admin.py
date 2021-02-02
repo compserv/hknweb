@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.utils.translation import ngettext
 
 from hknweb.utils import export_model_as_csv
-from hknweb.models import Semester
+from hknweb.coursesemester.models import Semester
 
 from .models import Announcement, BitByteActivity, CandidateForm, CandidateFormDoneEntry, \
     CommitteeProject, CommitteeProjectDoneEntry, \

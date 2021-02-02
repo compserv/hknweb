@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.admin import UserAdmin
 from django.conf import settings
-from .models import Announcement, Profile, Semester
+from .models import Announcement, Profile
 
 
 
@@ -75,4 +75,4 @@ class AnnouncementAdmin(admin.ModelAdmin):
 
 admin.site.register(Announcement, AnnouncementAdmin)
 admin.site.register(Profile)
-admin.site.register(Semester)
+

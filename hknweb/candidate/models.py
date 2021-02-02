@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
+from hknweb.coursesemester.models import Semester
 
 MAX_STRLEN = 150 # default max length for char fields
 MAX_TXTLEN = 2000 # default max length for text fields
@@ -104,7 +105,7 @@ class CandidateForm(models.Model):
     link           = models.CharField(max_length=MAX_STRLEN, default='')
     # if visible == False, then admins can see candiate form but it's not displayed on portal
     visible        = models.BooleanField(default=False)
-    candidateSemesterActive = models.ForeignKey('hknweb.Semester', on_delete=models.SET_NULL, null=True)
+    candidateSemesterActive = models.ForeignKey(Semester, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
         return "{} - {}".format(self.name, self.candidateSemesterActive)
@@ -126,7 +127,7 @@ class DuePayment(models.Model):
     instructions   = models.CharField(max_length=MAX_STRLEN, default='', blank=True)
     # if visible == False, then admins can see candiate form but it's not displayed on portal
     visible        = models.BooleanField(default=False)
-    candidateSemesterActive = models.ForeignKey('hknweb.Semester', on_delete=models.SET_NULL, null=True)
+    candidateSemesterActive = models.ForeignKey(Semester, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
         return "{} - {}".format(self.name, self.candidateSemesterActive)
@@ -148,7 +149,7 @@ class CommitteeProject(models.Model):
     instructions   = models.CharField(max_length=MAX_STRLEN, default='', blank=True)
     # if visible == False, then admins can see candiate form but it's not displayed on portal
     visible        = models.BooleanField(default=False)
-    candidateSemesterActive = models.ForeignKey('hknweb.Semester', on_delete=models.SET_NULL, null=True)
+    candidateSemesterActive = models.ForeignKey(Semester, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
         return "{} - {}".format(self.name, self.candidateSemesterActive)
@@ -168,7 +169,7 @@ class RequriementEvent(models.Model):
     eventType = models.ForeignKey('events.EventType', on_delete=models.CASCADE)
     numberRequired = models.IntegerField(default=0)
     enable = models.BooleanField(default=False)
-    candidateSemesterActive = models.ForeignKey('hknweb.Semester', on_delete=models.SET_NULL, null=True)
+    candidateSemesterActive = models.ForeignKey(Semester, on_delete=models.SET_NULL, null=True)
     eventsDateStart = models.DateTimeField(null=True, blank=True)
     eventsDateEnd = models.DateTimeField(null=True, blank=True)
     
@@ -187,7 +188,7 @@ class RequirementHangout(models.Model):
     ])
     numberRequired = models.IntegerField(default=0)
     enable = models.BooleanField(default=False)
-    candidateSemesterActive = models.ForeignKey('hknweb.Semester', on_delete=models.SET_NULL, null=True)
+    candidateSemesterActive = models.ForeignKey(Semester, on_delete=models.SET_NULL, null=True)
     hangoutsDateStart = models.DateTimeField(null=True, blank=True)
     hangoutsDateEnd = models.DateTimeField(null=True, blank=True)
     
@@ -197,7 +198,7 @@ class RequirementHangout(models.Model):
 class RequirementMandatory(models.Model):
     enable = models.BooleanField(default=False)
     events = models.ManyToManyField('events.Event')
-    candidateSemesterActive = models.OneToOneField('hknweb.Semester', on_delete=models.SET_NULL, null=True)
+    candidateSemesterActive = models.OneToOneField(Semester, on_delete=models.SET_NULL, null=True)
     eventsDateStart = models.DateTimeField(null=True, blank=True)
     eventsDateEnd = models.DateTimeField(null=True, blank=True)
 
@@ -206,7 +207,7 @@ class RequirementMandatory(models.Model):
 
 class RequirementBitByteActivity(models.Model):
     enable = models.BooleanField(default=False)
-    candidateSemesterActive = models.OneToOneField('hknweb.Semester', on_delete=models.SET_NULL, null=True)
+    candidateSemesterActive = models.OneToOneField(Semester, on_delete=models.SET_NULL, null=True)
     numberRequired = models.IntegerField(default=0)
 
     def __str__(self):
@@ -217,7 +218,7 @@ class RequirementMergeRequirement(models.Model):
     title = models.CharField(max_length=MAX_STRLEN, default='', blank=True)
 
     enable = models.BooleanField(default=False)
-    candidateSemesterActive = models.ForeignKey('hknweb.Semester', on_delete=models.SET_NULL, null=True)
+    candidateSemesterActive = models.ForeignKey(Semester, on_delete=models.SET_NULL, null=True)
 
     event1 = models.ForeignKey('events.EventType', on_delete=models.SET_NULL, null=True, related_name='event1')
     multiplier1 = models.FloatField(default=1)
