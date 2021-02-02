@@ -10,6 +10,8 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.conf import settings
+from hknweb.models import Profile, Semester
+import datetime
 
 # context processor for base to know whether a user is in the officer group
 def add_officer_context(request):
@@ -32,6 +34,21 @@ def account_create(request):
             username = form.cleaned_data.get('username')
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username = username, password = raw_password)
+            
+            profile = Profile.objects.get(user=user)
+            now = datetime.datetime.now()
+            sem = ""
+            month = now.month
+            if (1 <= month) and (month <= 5):
+                sem = "Spring"
+            elif (6 <= month) and (month < 8):
+                sem = "Summer"
+            elif (8 <= month) and (month <= 12):
+                sem = "Fall"
+            # The "first" function will put a "None" for me if semester not created yet
+            profile.candidate_semester = Semester.objects.filter(semester=sem, year=now.year).first()
+            profile.save()
+
             login(request, user)
             return redirect('home')
     else:
@@ -69,23 +86,28 @@ def account_settings(request):
         #elif user_form.is_valid() and profile_form.is_valid() and password_form.is_valid():
         if verify_form.is_valid():
             if password_form.is_valid():
-                password_form.save()
-                update_session_auth_hash(request, current_user)
-                messages.success(request, ('Your password was successfully updated!'))
-                return HttpResponseRedirect(request.path_info)
-            if profile_form.is_valid():
-                #user_form.save()
-                profile_form.save()
-                #user = password_form.save()
-                update_session_auth_hash(request, current_user)
-                messages.success(request, ('Your profile was successfully updated!'))
-                return HttpResponseRedirect(request.path_info)
+                if password_form.has_changed():
+                    current_user = password_form.save()
+                    update_session_auth_hash(request, current_user)
+                    messages.success(request, ('Your password was successfully updated!'))
             else:
-                messages.error(request, ('Please correct the errors.'))
-                return HttpResponseRedirect(request.path_info)
+                messages.error(request, ('Please correct the errors in your Password: {}'.format(list(password_form.errors.values()))))
+
+            if profile_form.is_valid():
+                if profile_form.has_changed():
+                    #user_form.save()
+                    profile = profile_form.save(commit=False)
+                    profile.user = request.user
+                    profile.save()
+                    #user = password_form.save()
+                    update_session_auth_hash(request, current_user)
+                    messages.success(request, ('Your profile was successfully updated!'))
+            else:
+                messages.error(request, ('Please correct the errors in your Profile data: {}'.format(list(profile_form.errors.values()))))
         else:
             messages.error(request, ('Please enter current current password.'))
-            return HttpResponseRedirect(request.path_info)
+        
+        return HttpResponseRedirect(request.path_info)
     else:
         # user_form = SettingsForm(instance = current_user)
         password_form = UpdatePasswordForm(current_user)

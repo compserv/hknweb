@@ -12,6 +12,22 @@ Candidate Portal
 {% endblock %}
 
 {% block content %}
+<style>
+    .conf-events a {
+        text-decoration: none;
+        color: #535353;
+    }
+    .conf-events a:hover {
+        text-decoration: underline;
+    }
+    .unconf-events a {
+        text-decoration: none;
+        color: #535353;
+    }
+    .unconf-events a:hover {
+        text-decoration: underline;
+    }
+</style>
 <div class="parent centered">
     <section>
         <h2>Announcements</h2>
@@ -52,7 +68,7 @@ Candidate Portal
     </section>
     <br>
     <section id="candidate-checklist">
-        <h2 class="events-list">Checklist</h2>
+        <h2 class="events-list">Candidate Checklist - {{ candidate_semester }}</h2>
 
         <div class="checklist-left-col">
             <h4>Events</h4>
@@ -70,12 +86,12 @@ Candidate Portal
                     </li>
                     <ul class="conf-events">
                         {% for confirmed in event.confirmed %}
-                            <li>{{ confirmed.name }}<br/></li>
+                            <li><a href="{% url 'events:detail' confirmed.id %}">{{ confirmed.name }}</a><br/></li>
                         {% endfor %}
                     </ul>
                     <ul class="unconf-events">
                         {% for unconfirmed in event.unconfirmed %}
-                            <li>{{ unconfirmed.name }}<br/></li>
+                            <li><a href="{% url 'events:detail' unconfirmed.id %}">{{ unconfirmed.name }}</a><br/></li>
                         {% endfor %}
                     </ul>
                     <br/>
@@ -111,12 +127,12 @@ Candidate Portal
                 </li>
                 <ul class="conf-events">
                     {% for event in confirmed_events.hangout %}
-                        <li>{{ event.name }}<br/></li>
+                        <li><a href="{% url 'events:detail' event.id %}">{{ event.name }}</a><br/></li>
                     {% endfor %}
                 </ul>
                 <ul class="unconf-events">
                     {% for event in unconfirmed_events.hangout %}
-                        <li>{{ event.name }}<br/></li>
+                        <li><a href="{% url 'events:detail' event.id %}">{{ event.name }}</a><br/></li>
                     {% endfor %}
                 </ul>
             </ul>
@@ -139,17 +155,85 @@ Candidate Portal
             <h4>Miscellaneous Requirements</h4>
             <ul class="events-list" type="1">
                 <!-- <li>Administer 1-2 Course Surveys</li> -->
-                <li>Complete a Committee Project</li>
-                <li>Pay dues</li>
-                <li>Complete all required forms</li>
-                <ul class="events-sublist">
+                <li>
+                    {% if committee_project.all_done %}
+                        <span class="req done"></span>
+                    {% else %}
+                        <span class="req not-done"></span>
+                    {% endif %}
+                    
+                    {{ committee_project.title }}
+                </li>
+                <ul class="events-list">
+                    {% for comm_proj in committee_project.resulting_statuses %}
+                        <li>
+                            {% if comm_proj.status %}
+                                <span class="req done"></span>
+                            {% else %}
+                                <span class="req not-done"></span>
+                            {% endif %}
+                            
+                            {{ comm_proj.requirement.name }} (due {{ comm_proj.requirement.duedate }})
+                            {% if comm_proj.requirement.instructions %}
+                            - {{ comm_proj.requirement.instructions }}
+                            {% endif %}
+                        </li>
+                    {% endfor %}
 
-                    {% if not candidate_forms %}
+                </ul>
+                <li>
+                    {% if due_payments.all_done %}
+                        <span class="req done"></span>
+                    {% else %}
+                        <span class="req not-done"></span>
+                    {% endif %}
+                    
+                    {{ due_payments.title }}
+                </li>
+                <ul class="events-list">
+
+                    {% if not due_payments.resulting_statuses %}
+                        No dues at this time.
+                    {% endif %}
+
+                    {% for dues in due_payments.resulting_statuses %}
+                        <li>
+                            {% if dues.status %}
+                                <span class="req done"></span>
+                            {% else %}
+                                <span class="req not-done"></span>
+                            {% endif %}
+                            
+                            {{ dues.requirement.name }} (due {{ dues.requirement.duedate }})
+                            {% if dues.requirement.instructions %}
+                            - {{ dues.requirement.instructions }}
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+
+                </ul>
+                <li>
+                    {% if candidate_forms.all_done %}
+                        <span class="req done"></span>
+                    {% else %}
+                        <span class="req not-done"></span>
+                    {% endif %}
+                    {{ candidate_forms.title }}
+                </li>
+                <ul class="events-list">
+
+                    {% if not candidate_forms.resulting_statuses %}
                         No candidate forms at this time.
                     {% endif %}
 
-                    {% for form in candidate_forms %}
-                        <li><a href={{ form.link }}>{{ form.name }}</a> (due {{ form.duedate }})</li>
+                    {% for form in candidate_forms.resulting_statuses %}
+                        <li>
+                            {% if form.status %}
+                                <span class="req done"></span>
+                            {% else %}
+                                <span class="req not-done"></span>
+                            {% endif %}
+                            <a href={{ form.requirement.link }}>{{ form.requirement.name }}</a> (due {{ form.requirement.duedate }})</li>
                     {% endfor %}
 
                 </ul>

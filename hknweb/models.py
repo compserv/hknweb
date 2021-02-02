@@ -18,10 +18,11 @@ class Profile(models.Model):
     date_of_birth = models.DateField(null=True, blank=True)
     picture = models.ImageField(blank=True)
     private = models.BooleanField(default=True, verbose_name="Private profile?")
-    phone_regex = RegexValidator(regex=r'^/([^\d]*\d){10}$/', message="Phone number must be ten digits.")
+    phone_regex = RegexValidator(regex=r'^([^\d]*\d){10}$', message="Phone number must be ten digits.")
     phone_number = models.CharField(validators=[phone_regex], max_length=15, blank=True)
     resume = models.FileField(blank=True)
     graduation_date = models.DateField(null=True, blank=True)
+    candidate_semester = models.ForeignKey('hknweb.Semester', on_delete=models.SET_NULL, null=True)
 
     @receiver(post_save, sender=User)
     def create_user_profile(sender, instance, created, **kwargs):
@@ -36,6 +37,9 @@ class Profile(models.Model):
         if self.phone_number:
             self.phone_number = re.sub("[^0-9]", "",self.phone_number)
             self.phone_number = "("+self.phone_number[0:3]+") "+self.phone_number[3:6]+"-"+self.phone_number[6:]
+    
+    def __str__(self):
+        return "Profile of: " + str(self.user)
 
 class Announcement(models.Model):
     """
@@ -52,4 +56,13 @@ class Announcement(models.Model):
 
     def __str__(self):
         return self.title if self.title != '' else self.text
+
+
+#### Global Models
+class Semester(models.Model):
+    semester   = models.CharField(max_length=10)
+    year = models.IntegerField()
+
+    def __str__(self):
+         return "{} {}".format(self.semester, self.year)
 

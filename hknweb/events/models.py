@@ -58,7 +58,7 @@ class Event(models.Model):
         return "Event(name={}, location={})".format(self.name, self.location)
 
     def __str__(self):
-        return self.name
+        return "{} - {} to {}".format(self.name, self.start_time, self.end_time)
 
     def admitted_set(self):
         return self.rsvp_set.order_by("created_at")[:self.rsvp_limit]

@@ -18,7 +18,7 @@ class ProfileForm(forms.ModelForm):
 
     class Meta:
         model = Profile
-        fields = ('picture', 'private', 'phone_number', 'date_of_birth', 'resume', 'graduation_date')
+        fields = ('picture', 'private', 'phone_number', 'date_of_birth', 'resume', 'graduation_date', 'candidate_semester')
 
 class SignupForm(UserCreationForm):
      first_name = forms.CharField(max_length=30, required=True)
@@ -27,7 +27,7 @@ class SignupForm(UserCreationForm):
 
      def clean_email(self):
          email = self.cleaned_data.get('email')
-         if (email == None or not email.endswith("berkeley.edu")):
+         if ((email is None) or not email.endswith("berkeley.edu")):
              raise forms.ValidationError('Please a berkeley.edu email to register!', code='invalid')
          else:
              return email
