@@ -10,7 +10,8 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.conf import settings
-from hknweb.models import Profile, Semester
+from hknweb.models import Profile
+from hknweb.coursesemester.models import Semester
 import datetime
 
 # context processor for base to know whether a user is in the officer group
