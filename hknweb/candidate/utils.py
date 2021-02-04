@@ -73,7 +73,7 @@ def send_bitbyte_confirm_email(request, bitbyte, confirmed):
 
 # Done: support more flexible typing and string-to-var parsing/conversion
 def sort_rsvps_into_events(rsvps, required_events):
-    """ Takes in all confirmed rsvps and sorts them into types, currently hard coded. """
+    """ Takes in all confirmed rsvps and sorts them into types. """
     # Events in admin are currently in a readable format, must convert them to callable keys for Django template
     # sorted_events = dict.fromkeys(map_event_vars.keys())
     sorted_events = {}
@@ -111,17 +111,19 @@ def get_events(rsvps, date, required_events, candidateSemester, requirement_mand
             end_time__lt=curr_sem_end,
         )
 
-    # Initialize events[settings.MANDATORY_EVENT]
+    # Initialize events[MANDATORY]
     if MANDATORY not in events:
         events[MANDATORY] = []
 
-    mandatorySet = {}
-    for mandatory_event in mandatory_events:
-        # If no rsvps are found, add this mandatory event to the list of (un)confirmed events
-        if rsvps.filter(event__id=mandatory_event.id).count() == 0:
-            mandatorySet[mandatory_event.id] = mandatory_event
-
-    events[MANDATORY].extend(mandatorySet.values())
+    if not confirmed:
+        # Only add the non-rsvped Mandatory events to the Not Confirmed list
+        mandatorySet = {}
+        for mandatory_event in mandatory_events:
+            # If no rsvps are found, add this mandatory event to the list of unconfirmed events
+            if rsvps.filter(event__id=mandatory_event.id).count() == 0:
+                mandatorySet[mandatory_event.id] = mandatory_event
+        events[MANDATORY].extend(mandatorySet.values())
+    
     events[MANDATORY].sort(key=lambda x: x.start_time)
 
     return events

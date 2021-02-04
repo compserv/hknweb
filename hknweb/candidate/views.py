@@ -274,7 +274,13 @@ class IndexView(generic.TemplateView):
         req_colors = get_requirement_colors(self.get_event_types_map(candidateSemester))
 
         blank_dict = {}
-        req_titles = {req_type: create_title(required_events.get(req_type, blank_dict).get("title", req_type) or req_type, req_remaining[req_type], req_type, req_list[req_type], req_list.get(settings.HANGOUT_EVENT, {})) for req_type in req_statuses}
+        req_titles = {}
+        for req_type in req_statuses:
+            name = required_events.get(req_type, blank_dict).get("title", req_type)
+            if (name is None) and (name == ""):
+                name = req_type
+            title_created = create_title(req_type, req_remaining[req_type], name, req_list[req_type], req_list.get(settings.HANGOUT_EVENT, blank_dict))
+            req_titles[req_type] = title_created
         
         # Process Merged Events here
         req_colors.update(get_requirement_colors(merger_nodes, lambda x: x, lambda get_key: get_key.get_events_str()))
