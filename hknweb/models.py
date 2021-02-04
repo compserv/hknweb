@@ -5,6 +5,8 @@ from django.dispatch import receiver
 import re
 from django.core.validators import RegexValidator
 from django.utils import timezone
+from hknweb.coursesemester.models import Semester
+
 
 MAX_STRLEN = 85 # default max length for char fields
 MAX_TXTLEN = 2000 # default max length for text fields
@@ -22,7 +24,7 @@ class Profile(models.Model):
     phone_number = models.CharField(validators=[phone_regex], max_length=15, blank=True)
     resume = models.FileField(blank=True)
     graduation_date = models.DateField(null=True, blank=True)
-    candidate_semester = models.ForeignKey('hknweb.Semester', on_delete=models.SET_NULL, null=True)
+    candidate_semester = models.ForeignKey(Semester, on_delete=models.SET_NULL, null=True)
 
     @receiver(post_save, sender=User)
     def create_user_profile(sender, instance, created, **kwargs):
@@ -57,12 +59,4 @@ class Announcement(models.Model):
     def __str__(self):
         return self.title if self.title != '' else self.text
 
-
-#### Global Models
-class Semester(models.Model):
-    semester   = models.CharField(max_length=10)
-    year = models.IntegerField()
-
-    def __str__(self):
-         return "{} {}".format(self.semester, self.year)
 

@@ -33,21 +33,26 @@
 <div class="centered">
     <form method="POST" id="form"  enctype="multipart/form-data">
         {% csrf_token %}
-        {% for field in form %}
-            <div class="row">
-                <span class="left-side">
-                    {{ field.label }}
-                    {% if field.field.required %}
-                        <span class="message">*</span>
-                    {% endif %}
-                    {% if field.help_text %}
-                        <i>({{ field.help_text }})</i>
-                    {% endif %}
-                </span>
-                {{ field }}
-                {{ field.errors }}
-            </div>
-        {% endfor %}
+        <table style="width:75%" class="centered">
+            {% for field in form %}
+                <tr table-layout="fixed">
+                    <td style="width:30%"></td>
+                    <td style="width:30%">
+                        {{ field.label }}
+                        {% if field.field.required %}
+                            <span class="message">*</span>
+                        {% endif %}
+                        {% if field.help_text %}
+                            <i>({{ field.help_text }})</i>
+                        {% endif %}
+                    </td>
+                    <td style="width:70%" class="right-side">
+                        {{ field }}
+                        {{ field.errors }}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
         <div id="submit">
             <input type="submit" value="Submit" />
             {% if messages %}

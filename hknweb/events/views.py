@@ -10,7 +10,7 @@ from django.views.generic import TemplateView
 from django.views.generic.edit import UpdateView
 from django.utils import timezone
 
-from markdownx.utils import markdownify
+from hknweb.utils import markdownify
 
 from hknweb.utils import (
     login_and_permission,

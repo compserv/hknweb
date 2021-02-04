@@ -44,7 +44,7 @@
             // Review sessions
             events: [{% for reviewsession in reviewsessions %}
                 {
-                    title: "{{ reviewsession.name|safe }}",
+                    title: "{{ reviewsession.name }}",
                     start: '{{ reviewsession.start_time|date:"c" }}',
                     end: '{{ reviewsession.end_time|date:"c" }}',
                     url: '{{ reviewsession.id }}',
