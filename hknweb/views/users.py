@@ -81,11 +81,12 @@ def account_settings(request):
         verify_form = ValidPasswordForm(request.POST, instance = current_user.profile)
         #user_form.is_valid()
         #correct_password = authenticate(username=request.POST['username'], password=user_form.cleaned_data['password'])
+        correct_password = request.user.check_password(verify_form.data.get('password'))
         #if not correct_password:
         #    messages.error(request, ('Incorrect password. You must enter your password to save changes.'))
         #    return HttpResponseRedirect(request.path_info)
         #elif user_form.is_valid() and profile_form.is_valid() and password_form.is_valid():
-        if verify_form.is_valid():
+        if verify_form.is_valid() and correct_password:
             if password_form.is_valid():
                 if password_form.has_changed():
                     current_user = password_form.save()

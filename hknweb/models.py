@@ -17,13 +17,13 @@ User.__str__ = lambda self: "{} ({} {})".format(self.username, self.first_name, 
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, editable=False)
-    date_of_birth = models.DateField(null=True, blank=True)
+    date_of_birth = models.DateField(null=True, blank=True, help_text="Formats: '%Y-%m-%d', '%m/%d/%Y', '%m/%d/%y' (Examples: '2006-10-25', '10/25/2006', '10/25/06')")
     picture = models.ImageField(blank=True)
     private = models.BooleanField(default=True, verbose_name="Private profile?")
     phone_regex = RegexValidator(regex=r'^([^\d]*\d){10}$', message="Phone number must be ten digits.")
     phone_number = models.CharField(validators=[phone_regex], max_length=15, blank=True)
     resume = models.FileField(blank=True)
-    graduation_date = models.DateField(null=True, blank=True)
+    graduation_date = models.DateField(null=True, blank=True, help_text="Formats: '%Y-%m-%d', '%m/%d/%Y', '%m/%d/%y' (Examples: '2006-10-25', '10/25/2006', '10/25/06')")
     candidate_semester = models.ForeignKey(Semester, on_delete=models.SET_NULL, null=True)
 
     @receiver(post_save, sender=User)
