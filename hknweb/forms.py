@@ -37,7 +37,7 @@ class SignupForm(UserCreationForm):
           fields = ('first_name', 'last_name', 'username', 'email', 'password1', 'password2')
 
 class UpdatePasswordForm(SetPasswordForm):
-    new_password1 = forms.CharField(max_length=30, required=True, label="New password", widget=forms.PasswordInput)
+    new_password1 = forms.CharField(max_length=30, label="New password", widget=forms.PasswordInput)
     new_password1.help_text = ''
 
 class ValidPasswordForm(forms.ModelForm):
