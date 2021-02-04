@@ -277,7 +277,7 @@ class IndexView(generic.TemplateView):
         req_titles = {}
         for req_type in req_statuses:
             name = required_events.get(req_type, blank_dict).get("title", req_type)
-            if (name is None) and (name == ""):
+            if (name is None) or (name == ""):
                 name = req_type
             title_created = create_title(req_type, req_remaining[req_type], name, req_list[req_type], req_list.get(settings.HANGOUT_EVENT, blank_dict))
             req_titles[req_type] = title_created
