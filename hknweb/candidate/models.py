@@ -239,7 +239,7 @@ class RequirementMergeRequirement(models.Model):
     color = models.CharField(max_length=7, default="#0072c1")
 
     linkedRequirement = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True,
-                                          help_text="Connect to another Merged Requirement node here (Candidate Semester, Grand Total, and all Enable fields for all connected nodes will be ignored) (A Cycle will make the Grand Total equal Infinite (higher precidence to Grand Total and weighted total sum))")
+                                          help_text="Connect to another Merged Requirement node here (Candidate Semester, Grand Total, and all Enable fields for all subsequent connected nodes will be ignored) (A Cycle will make the Grand Total equal Infinite (higher precidence to Grand Total and weighted total sum))")
 
     def __str__(self):
         event2Text = ""
