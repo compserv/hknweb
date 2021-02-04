@@ -82,7 +82,7 @@ def sort_rsvps_into_events(rsvps, required_events):
         event_time_range = required_events[event_type]
         for rsvp in rsvps.filter(event__event_type__type=event_type,
                                  event__start_time__gt=event_time_range["eventsDateStart"],
-                                 end_time__lt=event_time_range["eventsDateEnd"]):
+                                 event__end_time__lt=event_time_range["eventsDateEnd"]):
             temp.append(rsvp.event)
         sorted_events[event_type] = temp
     return sorted_events
