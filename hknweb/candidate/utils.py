@@ -79,7 +79,10 @@ def sort_rsvps_into_events(rsvps, required_events):
     sorted_events = {}
     for event_type in required_events:
         temp = []
-        for rsvp in rsvps.filter(event__event_type__type=event_type):
+        event_time_range = required_events[event_type]
+        for rsvp in rsvps.filter(event__event_type__type=event_type,
+                                 event__start_time__gt=event_time_range["eventsDateStart"],
+                                 end_time__lt=event_time_range["eventsDateEnd"]):
             temp.append(rsvp.event)
         sorted_events[event_type] = temp
     return sorted_events
@@ -139,7 +142,7 @@ def get_events(rsvps, date, required_events, candidateSemester, requirement_mand
 # }
 
 def check_requirements(confirmed_events, unconfirmed_events, num_challenges, \
-                        num_bitbytes, required_events, req_list):
+                        num_bitbytes, req_list):
     """ Checks which requirements have been fulfilled by a candidate. """
     req_statuses = dict.fromkeys(req_list.keys(), False)
     req_remaining = {**req_list} # Makes deep copy of "req_list"
@@ -225,6 +228,9 @@ class MergedEvents():
         self.title = ""
         if merger_node.enableTitle:
             self.title = merger_node.title
+        self.grand_total = None
+        if merger_node.enableGrandTotal:
+            self.grand_total = merger_node.grandTotal
 
         while (current_merger_node is not None):
             if (current_merger_node.id in seen_merger_nodes):
@@ -265,6 +271,8 @@ class MergedEvents():
         for event, multiplier in zip(self.events(), self.multiplier()):
             remaining_count += multiplier * req_remaining.get(event, 0)
             grand_total += multiplier * req_list.get(event, 0)
+        if self.grand_total is not None:
+            grand_total = self.grand_total
         return remaining_count, grand_total
     
     def events(self):
