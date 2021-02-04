@@ -53,11 +53,18 @@ class IndexView(generic.TemplateView):
     template_name = 'candidate/index.html'
     context_object_name = 'my_favorite_publishers'
 
-    def get_event_types_map(self, candidateSemester):
+    def get_event_types_and_times_map(self, candidateSemester, required_events_merger=None):
         if candidateSemester is not None:
             for requirementEvent in RequriementEvent.objects.filter(candidateSemesterActive=candidateSemester.id):
-                if requirementEvent.enable:
-                    yield requirementEvent.eventType.type
+                if requirementEvent.enable or ((required_events_merger is not None) and (requirementEvent.eventType.type in required_events_merger)):
+                    title = None
+                    if requirementEvent.enableTitle:
+                        title = requirementEvent.title
+                    yield (requirementEvent.eventType.type, requirementEvent.eventsDateStart, requirementEvent.eventsDateEnd, title)
+    
+    def get_event_types_map(self, candidateSemester):
+        for eventType, _, _, _ in self.get_event_types_and_times_map(candidateSemester):
+            yield eventType
 
     def process_events(self, rsvps, today, required_events, candidateSemester, requirement_mandatory, num_confirmed, num_bitbytes, req_list):
         # Confirmed (confirmed=True)
@@ -66,7 +73,7 @@ class IndexView(generic.TemplateView):
         # Unconfirmed (confirmed=False)
         unconfirmed_events = get_events(rsvps, today, required_events, candidateSemester, requirement_mandatory, confirmed=False)
         
-        req_statuses, req_remaining = check_requirements(confirmed_events, unconfirmed_events, num_confirmed, num_bitbytes, required_events, req_list)
+        req_statuses, req_remaining = check_requirements(confirmed_events, unconfirmed_events, num_confirmed, num_bitbytes, req_list)
 
         return confirmed_events, unconfirmed_events, req_statuses, req_remaining
     
@@ -165,11 +172,9 @@ class IndexView(generic.TemplateView):
         num_pending = challenges.count() - num_confirmed - num_rejected
 
         candidateSemester = self.request.user.profile.candidate_semester
-
-        required_events = set()
-        for eventType in self.get_event_types_map(candidateSemester):
-            required_events.add(eventType)
         
+        required_events_merger = set()
+
         seen_merger_nodes = set()
         merger_nodes = []
         if candidateSemester is not None:
@@ -179,7 +184,11 @@ class IndexView(generic.TemplateView):
 
         for node in merger_nodes:
             for eventType in node.events():
-                required_events.add(eventType)
+                required_events_merger.add(eventType)
+        
+        required_events = {}
+        for eventType, eventsDateStart, eventsDateEnd, title in self.get_event_types_and_times_map(candidateSemester, required_events_merger):
+            required_events[eventType] = {"eventsDateStart": eventsDateStart, "eventsDateEnd": eventsDateEnd, "title": title}
         
         req_list = {}
         # Can't use "get", since no guarantee that the Mandatory object of a semester always exist
@@ -264,7 +273,8 @@ class IndexView(generic.TemplateView):
         
         req_colors = get_requirement_colors(self.get_event_types_map(candidateSemester))
 
-        req_titles = {req_type: create_title(req_type, req_remaining[req_type], req_type, req_list[req_type], req_list.get(settings.HANGOUT_EVENT, {})) for req_type in req_statuses}
+        blank_dict = {}
+        req_titles = {req_type: create_title(required_events.get(req_type, blank_dict).get("title", req_type) or req_type, req_remaining[req_type], req_type, req_list[req_type], req_list.get(settings.HANGOUT_EVENT, {})) for req_type in req_statuses}
         
         # Process Merged Events here
         req_colors.update(get_requirement_colors(merger_nodes, lambda x: x, lambda get_key: get_key.get_events_str()))
@@ -313,7 +323,7 @@ class IndexView(generic.TemplateView):
         }
         
         bitbyte = {
-            ATTR.TITLE: req_titles[settings.BITBYTE_ACTIVITY],
+            ATTR.TITLE: "Bit-Byte",
             ATTR.STATUS: req_statuses[settings.BITBYTE_ACTIVITY],
             ATTR.NUM_BITBYTES : num_bitbytes,
         }
