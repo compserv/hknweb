@@ -165,7 +165,10 @@ class CommitteeProjectDoneEntry(models.Model):
     def __str__(self):
         return "Committee Project completed for: {}".format(self.committeeProject)
 
-class RequriementEvent(models.Model):    
+class RequriementEvent(models.Model):
+    enableTitle = models.BooleanField(default=False)
+    title = models.CharField(max_length=MAX_STRLEN, default='', blank=True)
+    
     eventType = models.ForeignKey('events.EventType', on_delete=models.CASCADE)
     numberRequired = models.IntegerField(default=0)
     enable = models.BooleanField(default=False)
@@ -217,8 +220,8 @@ class RequirementMergeRequirement(models.Model):
     enableTitle = models.BooleanField(default=False)
     title = models.CharField(max_length=MAX_STRLEN, default='', blank=True)
 
-    enable = models.BooleanField(default=False)
-    candidateSemesterActive = models.ForeignKey(Semester, on_delete=models.SET_NULL, null=True)
+    enable = models.BooleanField(default=False, help_text="Toggle this Merge node (when ON, this will exist as a first node) (Ignored if it is a connected node)")
+    candidateSemesterActive = models.ForeignKey(Semester, on_delete=models.SET_NULL, null=True, help_text="Candidate semester this Merged Requirement will take place (ignored if it is a connected node)")
 
     event1 = models.ForeignKey('events.EventType', on_delete=models.SET_NULL, null=True, related_name='event1')
     multiplier1 = models.FloatField(default=1)
@@ -226,10 +229,14 @@ class RequirementMergeRequirement(models.Model):
     event2 = models.ForeignKey('events.EventType', on_delete=models.SET_NULL, null=True, related_name='event2', blank=True)
     multiplier2 = models.FloatField(default=1)
 
+    enableGrandTotal = models.BooleanField(default=False, help_text="Toggle the \"Grant Total\" field, which will take over the weighted sum total (otherwise, will use weighted sum total) (only needed for the first node)")
+    grandTotal = models.FloatField(default=None, null=True, help_text="The grand total points needed from the weighted sum of connected events (only needed for the first node)")
+
     # Default color: CS61A blue
     color = models.CharField(max_length=7, default="#0072c1")
 
-    linkedRequirement = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True)
+    linkedRequirement = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True,
+                                          help_text="Connect to another Merged Requirement node here (Candidate Semester, Grand Total, and all Enable fields for all connected nodes will be ignored) (A Cycle will make the Grand Total equal Infinite (higher precidence to Grand Total and weighted total sum))")
 
     def __str__(self):
         event2Text = ""
