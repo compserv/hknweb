@@ -180,8 +180,11 @@ class RequriementEvent(models.Model):
         numReqText = self.numberRequired
         if self.numberRequired < 0 or (self.numberRequired is None):
             numReqText = "All"
+        eventTypeText = self.eventType
+        if self.enableTitle:
+            eventTypeText = "{} ({})".format(self.title, self.eventType)
         return "{} {} Event - Number Required: {}{}".format(self.candidateSemesterActive, \
-            self.eventType, numReqText, "" if self.enable else " [Off]")
+            eventTypeText, numReqText, "" if self.enable else " [Off]")
 
 class RequirementHangout(models.Model):
     eventType = models.CharField(max_length=255, choices=[ \
