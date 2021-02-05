@@ -99,6 +99,9 @@ class Announcement(models.Model):
     def __str__(self):
         return self.title if self.title != '' else self.text
 
+#########################
+# Candidate Form Models #
+#########################
 class CandidateForm(models.Model):
     name           = models.CharField(max_length=MAX_STRLEN, default='')
     duedate        = models.DateTimeField(default=timezone.now)
@@ -120,7 +123,14 @@ class CandidateFormDoneEntry(models.Model):
     
     def __str__(self):
         return "Forms filled for: {}".format(self.form)
+#########################
+# ^^^^^^^^^^^^^^^^^^^^^ #
+#########################
 
+
+#########################
+#     Payment Models    #
+#########################
 class DuePayment(models.Model):
     name           = models.CharField(max_length=MAX_STRLEN, default='')
     duedate        = models.DateTimeField(default=timezone.now)
@@ -142,7 +152,14 @@ class DuePaymentPaidEntry(models.Model):
     
     def __str__(self):
         return "Payments for: {}".format(self.duePayment)
+#########################
+# ^^^^^^^^^^^^^^^^^^^^^ #
+#########################
 
+
+############################
+# Committee Project Models #
+############################
 class CommitteeProject(models.Model):
     name           = models.CharField(max_length=MAX_STRLEN, default='')
     duedate        = models.DateTimeField(default=timezone.now)
@@ -164,13 +181,20 @@ class CommitteeProjectDoneEntry(models.Model):
     
     def __str__(self):
         return "Committee Project completed for: {}".format(self.committeeProject)
+#########################
+# ^^^^^^^^^^^^^^^^^^^^^ #
+#########################
 
+
+############################
+#       Event Models       #
+############################
 class RequriementEvent(models.Model):
     enableTitle = models.BooleanField(default=False)
     title = models.CharField(max_length=MAX_STRLEN, default='', blank=True)
     
     eventType = models.ForeignKey('events.EventType', on_delete=models.CASCADE)
-    numberRequired = models.IntegerField(default=0)
+    numberRequired = models.IntegerField(default=0, help_text="Number of events needed to satisfy this requirement (set to -1 for ALL events of evenType and between the eventsDateStart and eventsDateEnd, if filled)")
     enable = models.BooleanField(default=False)
     candidateSemesterActive = models.ForeignKey(Semester, on_delete=models.SET_NULL, null=True)
     eventsDateStart = models.DateTimeField(null=True, blank=True)
@@ -185,7 +209,14 @@ class RequriementEvent(models.Model):
             eventTypeText = "{} ({})".format(self.title, self.eventType)
         return "{} {} Event - Number Required: {}{}".format(self.candidateSemesterActive, \
             eventTypeText, numReqText, "" if self.enable else " [Off]")
+#########################
+# ^^^^^^^^^^^^^^^^^^^^^ #
+#########################
 
+
+############################
+#     Hangout Models       #
+############################
 class RequirementHangout(models.Model):
     eventType = models.CharField(max_length=255, choices=[ \
         (settings.HANGOUT_ATTRIBUTE_NAME, "Officer Hangouts"),
@@ -200,7 +231,14 @@ class RequirementHangout(models.Model):
     
     def __str__(self):
         return "{} {} - Number Required: {}{}".format(self.candidateSemesterActive, self.eventType, self.numberRequired, "" if self.enable else " [Off]")
+#########################
+# ^^^^^^^^^^^^^^^^^^^^^ #
+#########################
 
+
+############################
+#     Mandatory Models     #
+############################
 class RequirementMandatory(models.Model):
     enable = models.BooleanField(default=False)
     events = models.ManyToManyField('events.Event')
@@ -210,7 +248,14 @@ class RequirementMandatory(models.Model):
 
     def __str__(self):
         return "{} Mandatory - {} to {}{}".format(self.candidateSemesterActive, self.eventsDateStart, self.eventsDateEnd, "" if self.enable else " [Off]")
+#########################
+# ^^^^^^^^^^^^^^^^^^^^^ #
+#########################
 
+
+############################
+#      Bit-Byte Models     #
+############################
 class RequirementBitByteActivity(models.Model):
     enable = models.BooleanField(default=False)
     candidateSemesterActive = models.OneToOneField(Semester, on_delete=models.SET_NULL, null=True)
@@ -218,7 +263,14 @@ class RequirementBitByteActivity(models.Model):
 
     def __str__(self):
         return "{} - Number Required: {}{}".format(self.candidateSemesterActive, self.numberRequired, "" if self.enable else " [Off]")
+#########################
+# ^^^^^^^^^^^^^^^^^^^^^ #
+#########################
 
+
+############################
+#        Merge Models      #
+############################
 class RequirementMergeRequirement(models.Model):
     enableTitle = models.BooleanField(default=False)
     title = models.CharField(max_length=MAX_STRLEN, default='', blank=True)
@@ -260,4 +312,7 @@ class RequirementMergeRequirement(models.Model):
             self.multiplier1, self.event1, event2Text, \
                 linkedRequirementText, \
                 "" if self.enable else " [Off]")
+#########################
+# ^^^^^^^^^^^^^^^^^^^^^ #
+#########################
 
