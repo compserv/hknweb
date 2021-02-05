@@ -86,28 +86,31 @@ def account_settings(request):
         #    return HttpResponseRedirect(request.path_info)
         #elif user_form.is_valid() and profile_form.is_valid() and password_form.is_valid():
         if verify_form.is_valid():
-            if password_form.is_valid():
-                if password_form.has_changed():
-                    current_user = password_form.save()
-                    update_session_auth_hash(request, current_user)
-                    messages.success(request, ('Your password was successfully updated!'))
-            else:
-                messages.error(request, ('Please correct the errors in your Password: {}'.format(list(password_form.errors.values()))))
+            correct_password = request.user.check_password(verify_form.data.get('password'))
+            if correct_password:
+                if password_form.is_valid():
+                    if password_form.has_changed():
+                        current_user = password_form.save()
+                        update_session_auth_hash(request, current_user)
+                        messages.success(request, ('Your password was successfully updated!'))
+                else:
+                    messages.error(request, ('Please correct the errors in your Password: {}'.format(list(password_form.errors.values()))))
 
-            if profile_form.is_valid():
-                if profile_form.has_changed():
-                    #user_form.save()
-                    profile = profile_form.save(commit=False)
-                    profile.user = request.user
-                    profile.save()
-                    #user = password_form.save()
-                    update_session_auth_hash(request, current_user)
-                    messages.success(request, ('Your profile was successfully updated!'))
+                if profile_form.is_valid():
+                    if profile_form.has_changed():
+                        #user_form.save()
+                        profile = profile_form.save(commit=False)
+                        profile.user = request.user
+                        profile.save()
+                        #user = password_form.save()
+                        update_session_auth_hash(request, current_user)
+                        messages.success(request, ('Your profile was successfully updated!'))
+                else:
+                    messages.error(request, ('Please correct the errors in your Profile data: {}'.format(list(profile_form.errors.values()))))
             else:
-                messages.error(request, ('Please correct the errors in your Profile data: {}'.format(list(profile_form.errors.values()))))
+                messages.error(request, ('Please enter your current password.'))
         else:
-            messages.error(request, ('Please enter current current password.'))
-        
+            messages.error(request, ('Please correct the errors in your Current Password: {}'.format(list(verify_form.errors.values()))))
         return HttpResponseRedirect(request.path_info)
     else:
         # user_form = SettingsForm(instance = current_user)
