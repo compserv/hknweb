@@ -94,7 +94,7 @@ class IndexView(generic.TemplateView):
         req_statuses[node_string_key] = True
         if node.all_required:
             grand_total = -1
-            for event in node.events:
+            for event in node.events():
                 req_statuses[node_string_key] = req_statuses[node_string_key] and req_statuses[event]
                 if not req_statuses[node_string_key]:
                     break
