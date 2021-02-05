@@ -2,7 +2,7 @@
 
 
 REQUIREMENT_TITLES_TEMPLATE = "{name} ({num_required} required, {num_remaining} remaining)"
-REQUIREMENT_TITLES_ALL = "{name} Meetings (ALL required)"
+REQUIREMENT_TITLES_ALL = "{name} (ALL required)"
 
 # REQUIREMENT_EVENTS = [
 #     settings.MANDATORY_EVENT,

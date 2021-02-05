@@ -2,6 +2,7 @@ from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.shortcuts import reverse
 from django.template.loader import render_to_string
+from django.db.models import Q
 
 import itertools
 from typing import Union
@@ -80,9 +81,13 @@ def sort_rsvps_into_events(rsvps, required_events):
     for event_type in required_events:
         temp = []
         event_time_range = required_events[event_type]
-        for rsvp in rsvps.filter(event__event_type__type=event_type,
-                                 event__start_time__gt=event_time_range["eventsDateStart"],
-                                 event__end_time__lt=event_time_range["eventsDateEnd"]):
+        query = Q(event__event_type__type=event_type)
+        if (event_time_range is not None):
+            if (event_time_range["eventsDateStart"] is not None):
+                query = query & Q(event__start_time__gt=event_time_range["eventsDateStart"])
+            if (event_time_range["eventsDateEnd"] is not None):
+                query = query & Q(event__end_time__lt=event_time_range["eventsDateEnd"])
+        for rsvp in rsvps.filter(query):
             temp.append(rsvp.event)
         sorted_events[event_type] = temp
     return sorted_events
@@ -111,10 +116,11 @@ def get_events(rsvps, date, required_events, candidateSemester, requirement_mand
             end_time__lt=curr_sem_end,
         )
 
-    # Initialize events[MANDATORY]
+    # Initialize events[MANDATORY] if hasn't
     if MANDATORY not in events:
         events[MANDATORY] = []
-
+    
+    # Can assume Mandatory Events where user RSVPed to is SEPARATE from those that they don't RSVP to
     if not confirmed:
         # Only add the non-rsvped Mandatory events to the Not Confirmed list
         mandatorySet = {}
