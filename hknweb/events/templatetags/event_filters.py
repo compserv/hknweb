@@ -4,5 +4,5 @@ import bleach
 register = template.Library()
 
 @register.filter
-def event_filter_name(name):
+def event_name(name):
     return bleach.clean(name, tags=[], strip=True)

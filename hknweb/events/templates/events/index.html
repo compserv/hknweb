@@ -46,7 +46,7 @@
             // Events
             events: [{% for event in events %}
                 {
-                    title: "{{ event.name | event_filter_name | safe }}",
+                    title: "{{ event.name | event_name | safe }}",
                     start: '{{ event.start_time|date:"c" }}',
                     end: '{{ event.end_time|date:"c" }}',
                     url: '{{ event.id }}',
