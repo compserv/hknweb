@@ -3,6 +3,8 @@
 
 {% block title %}Events{% endblock %}
 
+{% load event_filters %}
+
 {% block header %}
 <!-- Scripts which make the calendar work:-->
 <link rel="stylesheet" href="{% static "events/style.css" %}">
@@ -44,7 +46,7 @@
             // Events
             events: [{% for event in events %}
                 {
-                    title: "{{ event.name }}",
+                    title: "{{ event.name | event_filter_name | safe }}",
                     start: '{{ event.start_time|date:"c" }}',
                     end: '{{ event.end_time|date:"c" }}',
                     url: '{{ event.id }}',
