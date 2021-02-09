@@ -3,6 +3,8 @@
 
 {% block title %}Review Sessions{% endblock %}
 
+{% load reviewsessions_filters %}
+
 {% block header %}
 <!-- Scripts which make the calendar work:-->
 <link rel="stylesheet" href="{% static "reviewsessions/style.css" %}">
@@ -44,7 +46,7 @@
             // Review sessions
             events: [{% for reviewsession in reviewsessions %}
                 {
-                    title: "{{ reviewsession.name }}",
+                    title: "{{ reviewsession.name | reviewsession_name | safe }}",
                     start: '{{ reviewsession.start_time|date:"c" }}',
                     end: '{{ reviewsession.end_time|date:"c" }}',
                     url: '{{ reviewsession.id }}',
