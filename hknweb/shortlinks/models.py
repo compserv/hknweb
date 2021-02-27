@@ -7,6 +7,7 @@ class Link(models.Model):
         verbose_name_plural = "Links"  # fix plural without using Meta class
     name = models.CharField(max_length=255, null=False, unique=True)
     redirect = models.URLField()
+    active = models.BooleanField(default=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     created_at = models.DateTimeField(auto_now_add=True)
 
