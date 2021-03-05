@@ -488,7 +488,7 @@ class MemberCheckoffView(generic.TemplateView):
 def checkoff_csv(request):
     if request.method != ATTR.POST:
         raise Http404()
-    next_page = request.POST.get(ATTR.NEXT, '/')
+    next_page = request.POST.get("next", '/')
     csv_file = request.FILES.get("csv_file", None)
     if not csv_file or not csv_file.name.endswith(ATTR.CSV_ENDING):
         messages.error(request, "Please input a csv file!")
