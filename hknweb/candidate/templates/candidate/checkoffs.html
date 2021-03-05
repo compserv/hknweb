@@ -12,14 +12,19 @@ Mass Checkoffs
 {% endblock %}
 
 {% block content %}
-{% if viewer_is_an_exec %}
+{% if viewer_is_an_officer %}
 <div class="parent">
     <div class="table-div">
         <h3>CSV Mass Checkoffs</h3>
-         - This page should only be accessible by execs!<br>
-         - The uploaded CSV must have headers for "Email", "First Name", and "Last Name".<br>
+        {% if viewer_is_an_exec %}
+         - Here you can do mass checkoffs for an event, committee projects, dues, or forms. You have access to the latter three since you are an exec.<br>
          - If you are checking off an event, you must input "Event ID" on this form. The event ID can be found in the URL of the respective event's information page.<br>
-         - If you are checking off project, dues, or forms, you must choose which one in the dropdown box out of the currently "visible" ones.
+         - If you are checking off project, dues, or forms, you must choose which one in the dropdown box out of the currently "visible" ones.<br>
+        {% else %}
+         - Here you can do mass RSVP confirmations for your event.<br>
+         - You must input "Event ID" on this form. The event ID can be found in the URL of the respective event's information page.<br>
+        {% endif %}
+         - The uploaded CSV must have headers for "Email", "First Name", and "Last Name".<br>
          <br><br>
         {% for message in messages %}
             <span {% if messages.tags %} class="{{ message.tags }}" {% endif %}
@@ -31,9 +36,11 @@ Mass Checkoffs
             <label for="checkoff_type">Type:</label>
             <select id="checkoff_type" name="checkoff_type" onchange="change_secondary_id(this)">
                 <option value="event">Event</option>
+                {% if viewer_is_an_exec %}
                 <option value="project">Committee Project</option>
                 <option value="dues">Dues</option>
                 <option value="forms">Forms</option>
+                {% endif %}
             </select><br><br>
             <div id="event_id_div">
                 <label for="event_id">Event ID:</label>
