@@ -41,4 +41,3 @@ class EventUpdateForm(forms.ModelForm):
             'slug': 'URL-friendly name',
             'rsvp_limit': 'RSVP limit',
         }
-        
