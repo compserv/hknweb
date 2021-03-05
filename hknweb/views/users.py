@@ -21,7 +21,11 @@ def add_officer_context(request):
             request.user.groups.filter(name=settings.OFFICER_GROUP).exists()
     }
 
-
+def add_exec_context(request):
+    return {
+        "viewer_is_an_exec":
+            request.user.groups.filter(name=settings.EXEC_GROUP).exists()
+    }
 # views
 
 def account_create(request):

@@ -177,6 +177,10 @@
         {% endif %}
         <a href="/cand">Candidate Portal</a>
         <span class="slash">/</span>
+        {% if viewer_is_an_exec %}
+          <a href="{% url 'candidate:checkoff' %}">Mass Checkoffs</a>
+          <span class="slash">/</span>
+        {% endif %}
         <a href="/accounts/settings">Settings</a>
         <span class="slash">/</span>
         <a href="/accounts/logout?next={{request.path}}">Log out</a>

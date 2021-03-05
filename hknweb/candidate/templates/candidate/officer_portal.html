@@ -98,7 +98,7 @@ Officer Portal
         <form action="{% url 'candidate:add_cands' %}" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <input type="hidden" name="next" value="{{ request.path }}">
-            <input type="file" name="cand_csv" />
+            <input type="file" name="csv_file" />
             <input type="submit" value="Add candidates" />
         </form>
     </div>
