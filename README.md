@@ -11,7 +11,9 @@ This approach is simpler if you are new to developing software.
 **Vagrant** will automatically setup a virtual machine with the correct
 setup for developing `hknweb`.
 
-Install [Vagrant](https://www.vagrantup.com/) and [VirtualBox](https://www.virtualbox.org/),
+**NOTE:**: Windows machine users MUST open their Terminal as **Administrator**
+
+Install [Vagrant](https://www.vagrantup.com/) and [VirtualBox](https://www.virtualbox.org/) (use older version: 6.0.14),
 then run:
 
 ```sh
