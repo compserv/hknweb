@@ -107,7 +107,6 @@ def account_settings(request):
                 messages.error(request, ('Wrong Password. Please enter your current password.'))
         else:
             messages.error(request, ('Please correct the errors in your Current Password: {}'.format(list(verify_form.errors.values()))))
-        verify_form = ValidPasswordForm(instance = current_user)
         return HttpResponseRedirect(request.path_info)
     else:
         # user_form = SettingsForm(instance = current_user)
