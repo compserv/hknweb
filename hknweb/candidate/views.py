@@ -25,7 +25,7 @@ from dal import autocomplete
 
 from hknweb.utils import get_rand_photo, login_and_permission, method_login_and_permission
 
-from ..events.models import Event, Rsvp
+from ..events.models import Event, Rsvp, EventType
 
 from .constants import ATTR, DEFAULT_RANDOM_PASSWORD_LENGTH, CandidateDTO
 from .forms import BitByteRequestForm, ChallengeConfirmationForm, ChallengeRequestForm
@@ -210,6 +210,10 @@ class IndexView(generic.TemplateView):
             for requirementHangout in RequirementHangout.objects.filter(candidateSemesterActive=candidateSemester.id):
                 if requirementHangout.enable:
                     num_required_hangouts[requirementHangout.eventType] = requirementHangout.numberRequired
+                    if (requirementHangout.eventType == settings.HANGOUT_ATTRIBUTE_NAME):
+                        # TODO: Hardcoded-ish for now, allow for choice
+                        if (EventType.objects.filter(type="Hangout").count() > 0):
+                            required_events["Hangout"] = {"eventsDateStart": requirementHangout.hangoutsDateStart, "eventsDateEnd": requirementHangout.hangoutsDateEnd, "title": "Hangout"}
 
         req_list[settings.BITBYTE_ACTIVITY] = 0
         # Can't use "get", since no guarantee that the object of this semester always exist
