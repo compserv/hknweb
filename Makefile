@@ -26,6 +26,12 @@ venv:
 install-prod:
 	# For issues with binary packages, consider https://pythonwheels.com/
 	$(PYTHON) -m pip install --upgrade setuptools
+
+	# NOTE: If pip and setuptools is broken, modify the following two lines
+	#       commenting the line above
+	# $(PYTHON) -m pip install --upgrade "pip<=20.3.4"
+	# $(PYTHON) -m pip install --upgrade "setuptools<=51.2.0"
+
 	# TODO: pinned/unpinned dependency version.
 	# See https://hkn-mu.atlassian.net/browse/COMPSERV-110
 	$(PYTHON) -m pip install -r requirements.txt
