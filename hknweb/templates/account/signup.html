@@ -5,12 +5,12 @@
 
 <div class="small-margin">
   <h2>Sign up</h2>
-  <form method="post">
+  <form method="post" onsubmit="submit_button.disabled = true; return true;">
     {% csrf_token %}
     {{ form.as_p }}
     <script src='https://www.google.com/recaptcha/api.js'></script>
     <div class="g-recaptcha" data-sitekey="6LeYTKAUAAAAADooVC_FG9ua47PnwP_gGWOSwauK"></div>
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <button type="submit" name="submit_button" class="btn btn-primary">Submit</button>
   </form>
   <br>
 </div>

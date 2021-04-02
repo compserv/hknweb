@@ -33,7 +33,7 @@
 <div class="centered">
     <form method="POST" id="form"  enctype="multipart/form-data">
         {% csrf_token %}
-        <table style="width:75%" class="centered">
+        <table style="width:75%" class="centered" onsubmit="submit_button.disabled = true; return true;">
             {% for field in form %}
                 <tr table-layout="fixed">
                     <td style="width:30%"></td>
@@ -54,7 +54,7 @@
             {% endfor %}
         </table>
         <div id="submit">
-            <input type="submit" value="Submit" />
+            <input type="submit" name="submit_button" value="Submit" />
             {% if messages %}
                 {% for message in messages %}
                     <br>

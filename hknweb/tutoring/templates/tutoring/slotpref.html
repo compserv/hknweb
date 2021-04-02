@@ -39,7 +39,7 @@
 <mark>{{ message }}</mark>
 
 <div class="left-align">
-<form method = "POST" action="/tutoring/slotpref">
+<form method = "POST" action="/tutoring/slotpref" onsubmit="submit_button.disabled = true; return true;">
   {% csrf_token %}
   <h2>Do you prefer for your slots to be adjacent?</h2> 
   {{form.adjacent_pref}}
@@ -76,7 +76,7 @@
     {% endfor %}
   </table>
   <div id="submit">
-    <input type="submit" value="Submit" />
+    <input type="submit" name="submit_button" value="Submit" />
   </div>
 </form>
 {% if messages %}

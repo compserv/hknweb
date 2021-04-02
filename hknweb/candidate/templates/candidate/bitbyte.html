@@ -23,7 +23,7 @@ Candidate's Bit-Byte Activities
 
         {% load app_filters %}
 
-        <form method="POST">{% csrf_token %}
+        <form method="POST" onsubmit="submit_button.disabled = true; return true;">{% csrf_token %}
             {% for field in form %}
                 <br>
                 <span class="left">{{ field.label }}
@@ -48,7 +48,7 @@ Candidate's Bit-Byte Activities
             {% endfor %}
             <br/>
 
-            <input class="f6 grow no-underline br-pill ph3 pv2 mb2 dib white bg-black" type="submit" value="Submit"/>
+            <input class="f6 grow no-underline br-pill ph3 pv2 mb2 dib white bg-black" type="submit" name="submit_button" value="Submit"/>
         </form>
 
         <p class="link">

@@ -91,29 +91,29 @@ li {
     {% endfor %}
     
     {% if perms.tutoring.add_timeslotpreference %}
-        <form action="slotpref" method="GET" id="button">
-            <button type='submit'>Timeslot Preference Form</button>
+        <form action="slotpref" method="GET" id="button" onsubmit="submit_button.disabled = true; return true;">
+            <button type='submit' name="submit_button">Timeslot Preference Form</button>
         </form>
     {% endif %}
     
     {% if perms.tutoring.add_timeslotpreference %}
-        <form action="coursepref" method="GET" id="button">
-            <button type='submit'>Course Preference Form</button>
+        <form action="coursepref" method="GET" id="button" onsubmit="submit_button.disabled = true; return true;">
+            <button type='submit' name="submit_button">Course Preference Form</button>
         </form>
     {% endif %}
 
     {% if perms.tutoring.add_slot %}
-        <form action="prepare-algorithm-input" method="GET" id="button">
-            <button type='submit'>Get Tutoring Algorithm JSON Input</button>
+        <form action="prepare-algorithm-input" method="GET" id="button" onsubmit="submit_button.disabled = true; return true;">
+            <button type='submit' name="submit_button">Get Tutoring Algorithm JSON Input</button>
         </form>
     {% endif %}
 
     {% if perms.tutoring.add_slot %}
-        <form enctype="multipart/form-data" action="generate" method="POST">
+        <form enctype="multipart/form-data" action="generate" method="POST" onsubmit="submit_button.disabled = true; return true;">
             {% csrf_token %}
             {{form.as_p}}
             <div id="submit">
-                <input type="submit" value="Submit" />
+                <input type="submit" name="submit_button" value="Submit" />
                 </div>
         </form>
     {% endif %}

@@ -18,11 +18,11 @@
       {% endif %}
     {% endif %}
 
-    <form method="post" action="{% url 'login' %}">
+    <form method="post" action="{% url 'login' %}" onsubmit="submit_button.disabled = true; return true;">
       {% csrf_token %}
       {{ form.as_p }}
 
-    <input type="submit" value="login" />
+    <input type="submit" name="submit_button" value="login" />
     <input type="hidden" name="next" value="{{ next }}" />
     </form>
 
