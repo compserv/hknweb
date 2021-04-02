@@ -64,6 +64,8 @@ Vagrant.configure("2") do |config|
     ln -fs /usr/share/zoneinfo/US/Pacific /etc/localtime
     dpkg-reconfigure -f noninteractive tzdata
 
+    add-apt-repository ppa:deadsnakes/ppa
+
     apt-get update && apt-get install -y \
         curl \
         git \
@@ -72,10 +74,10 @@ Vagrant.configure("2") do |config|
         sqlite3 \
         mariadb-client \
         mariadb-server \
-        python3 \
-        python3-dev \
+        python3.7 \
+        python3.7-dev \
         python3-pip \
-        python3-venv \
+        python3.7-venv \
         tmux \
         vim
 
@@ -97,7 +99,7 @@ Vagrant.configure("2") do |config|
 
   # Give Permission to the ".venv" to allow Execution of files in the folder, using "create: true" to make the folder if it doesn't exist
   #  -> Main purpose: Allow execution of Pip Packages (especially "fab")
-  config.vm.synced_folder "./.venv/bin", "/home/vagrant/hknweb/.venv/bin", create: true, type: "virtualbox", mount_options: ["dmode=755", "fmode=744"]
+  config.vm.synced_folder "./.venv/bin", "/home/vagrant/hknweb/.venv/bin", create: true, type: "virtualbox", mount_options: ["dmode=755", "fmode=755"]
 
   # Setup virtualenv
   config.vm.provision "shell", privileged: false, inline: "cd ~/hknweb; make venv"

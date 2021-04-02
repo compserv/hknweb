@@ -19,14 +19,13 @@ livereload:
 
 .PHONY: venv
 venv:
-	python3 -m venv $(VENV)
+	python3.7 -m venv $(VENV)
 	@echo "When developing, activate the virtualenv with 'source .venv/bin/activate' so Python can access the installed dependencies."
 
 .PHONY: install-prod
 install-prod:
 	# For issues with binary packages, consider https://pythonwheels.com/
-	$(PYTHON) -m pip install --upgrade "pip<=20.3.4"
-	$(PYTHON) -m pip install --upgrade "setuptools<=51.2.0"
+	$(PYTHON) -m pip install --upgrade setuptools
 	# TODO: pinned/unpinned dependency version.
 	# See https://hkn-mu.atlassian.net/browse/COMPSERV-110
 	$(PYTHON) -m pip install -r requirements.txt
