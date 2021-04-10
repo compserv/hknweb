@@ -16,15 +16,29 @@ Mass Checkoffs
 <div class="parent">
     <div class="table-div">
         <h3>CSV Mass Checkoffs</h3>
+        <ul>
         {% if viewer_is_an_exec %}
-         - Here you can do mass checkoffs for an event, committee projects, dues, or forms. You have access to the latter three since you are an exec.<br>
-         - If you are checking off an event, you must input "Event ID" on this form. The event ID can be found in the URL of the respective event's information page.<br>
-         - If you are checking off project, dues, or forms, you must choose which one in the dropdown box out of the currently "visible" ones.<br>
+            <li>
+                Here you can do mass checkoffs for an event, committee projects, dues, or forms. You have access to the latter three since you are an exec.
+            </li>
+            <li>
+                If you are checking off an event, you must input "Event ID" on this form. The event ID can be found in the URL of the respective event's information page.
+            </li>
+            <li>
+                If you are checking off project, dues, or forms, you must choose which one in the dropdown box out of the currently "visible" ones.
+            </li>
         {% else %}
-         - Here you can do mass RSVP confirmations for your event.<br>
-         - You must input "Event ID" on this form. The event ID can be found in the URL of the respective event's information page.<br>
+            <li>
+                Here you can do mass RSVP confirmations for your event.
+            </li>
+            <li>
+                You must input "Event ID" on this form. The event ID can be found in the URL of the respective event's information page.
+            </li>
         {% endif %}
-         - The uploaded CSV must have headers for "Email", "First Name", and "Last Name".<br>
+            <li>
+                The uploaded CSV must have headers for "Email", "First Name", and "Last Name".
+            </li>
+        </ul>
          <br><br>
         {% for message in messages %}
             <span {% if messages.tags %} class="{{ message.tags }}" {% endif %}

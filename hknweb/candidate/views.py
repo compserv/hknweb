@@ -423,7 +423,7 @@ def add_cands(request):
     cand_csv_file = request.FILES.get(ATTR.CAND_CSV, None)
     if not cand_csv_file.name.endswith(ATTR.CSV_ENDING):
         messages.error(request, "Please input a csv file!")
-    decoded_cand_csv_file = cand_csv_file.read().decode(ATTR.UTF8).splitlines()
+    decoded_cand_csv_file = cand_csv_file.read().decode(ATTR.UTF8SIG).splitlines()
     cand_csv = csv.DictReader(decoded_cand_csv_file)
 
     candidate_group = Group.objects.get(name=ATTR.CANDIDATE)
@@ -493,7 +493,7 @@ def checkoff_csv(request):
     if not csv_file or not csv_file.name.endswith(ATTR.CSV_ENDING):
         messages.error(request, "Please input a csv file!")
         return redirect(next_page)
-    decoded_csv_file = csv_file.read().decode(ATTR.UTF8).splitlines()
+    decoded_csv_file = csv_file.read().decode(ATTR.UTF8SIG).splitlines()
     mem_csv = csv.DictReader(decoded_csv_file)
 
     checkoff_type = request.POST.get("checkoff_type", "")
@@ -536,7 +536,12 @@ def checkoff_csv(request):
         try:
             memberdto = CandidateDTO(row)
         except AssertionError as e:
-            messages.error(request, "Invalid CSV format. Check that your columns are correctly labeled and filled out for each row.")
+            error_msg = "Invalid CSV format. Check that your columns are correctly labeled, there are NO blank rows, and filled out for each row."
+            error_msg += " "
+            error_msg += "No checkoff actions have been taken. Fix the errors and re-upload the entire file."
+            error_msg += " "
+            error_msg += str(e)
+            messages.error(request, error_msg)
             return redirect(next_page)
         user = User.objects.filter(first_name=memberdto.first_name, last_name=memberdto.last_name, email=memberdto.email)
         if not user:
