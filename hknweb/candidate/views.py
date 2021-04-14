@@ -427,7 +427,7 @@ def add_cands(request):
     cand_csv_file = request.FILES.get(ATTR.CAND_CSV, None)
     if not cand_csv_file.name.endswith(ATTR.CSV_ENDING):
         messages.error(request, "Please input a csv file!")
-    decoded_cand_csv_file = cand_csv_file.read().decode(ATTR.UTF8).splitlines()
+    decoded_cand_csv_file = cand_csv_file.read().decode(ATTR.UTF8SIG).splitlines()
     cand_csv = csv.DictReader(decoded_cand_csv_file)
 
     candidate_group = Group.objects.get(name=ATTR.CANDIDATE)
@@ -470,6 +470,114 @@ def add_cands(request):
     messages.success(request, "Successfully added candidates!")
 
     return redirect(next_page)
+
+class MemberCheckoffView(generic.TemplateView):
+    """Form for submitting csv of members for mass checkoffs."""
+    template_name = 'candidate/checkoffs.html'
+
+    context_object_name = 'checkoff_context'
+
+    def get_context_data(self):
+        projects = CommitteeProject.objects.filter(visible=True).order_by('-duedate')
+        dues = DuePayment.objects.filter(visible=True).order_by('-duedate')
+        forms = CandidateForm.objects.filter(visible=True).order_by('-duedate')
+
+        context = {
+            'projects' : projects,
+            'dues' : dues,
+            'forms' : forms
+        }
+        return context
+
+def checkoff_csv(request):
+    if request.method != ATTR.POST:
+        raise Http404()
+    next_page = request.POST.get("next", '/')
+    csv_file = request.FILES.get("csv_file", None)
+    if not csv_file or not csv_file.name.endswith(ATTR.CSV_ENDING):
+        messages.error(request, "Please input a csv file!")
+        return redirect(next_page)
+    decoded_csv_file = csv_file.read().decode(ATTR.UTF8SIG).splitlines()
+    mem_csv = csv.DictReader(decoded_csv_file)
+
+    checkoff_type = request.POST.get("checkoff_type", "")
+    if checkoff_type == "event":
+        event_id = request.POST.get("event_id", "")
+        if not event_id:
+            messages.error(request, "Please input an event ID!")
+            return redirect(next_page)
+        event = Event.objects.filter(pk=event_id)
+        if not event:
+            messages.error(request, "Please input a valid event ID!")
+            return redirect(next_page)
+        event = event[0]
+    elif checkoff_type == "project":
+        project_name = request.POST.get("project_name", "")
+        project = CommitteeProject.objects.get(name=project_name)
+        projectDoneEntry = CommitteeProjectDoneEntry.objects.filter(committeeProject=project).first()
+        if projectDoneEntry is None:
+            messages.error(request, "Could not find a corresponding CommiteeProjectDoneEntry. Please make sure one is created for the project.")
+            return redirect(next_page)
+    elif checkoff_type == "dues":
+        dues_name = request.POST.get("dues_name", "")
+        due = DuePayment.objects.get(name=dues_name)
+        duesDoneEntry = DuePaymentPaidEntry.objects.filter(duePayment=due).first()
+        if duesDoneEntry is None:
+            messages.error(request, "Could not find a corresponding DuePaymentPaidEntry. Please make sure one is created for the due.")
+            return redirect(next_page)
+    elif checkoff_type == "forms":
+        forms_name = request.POST.get("forms_name", "")
+        form = CandidateForm.objects.get(name=forms_name)
+        formsDoneEntry = CandidateFormDoneEntry.objects.filter(form=form).first()
+        if formsDoneEntry is None:
+            messages.error(request, "Could not find a corresponding CandidateFormDoneEntry. Please make sure one is created for the form.")
+            return redirect(next_page)
+    
+
+    # Pre-screen and validate data
+    users = []
+    for row in mem_csv:
+        try:
+            memberdto = CandidateDTO(row)
+        except AssertionError as e:
+            error_msg = "Invalid CSV format. Check that your columns are correctly labeled, there are NO blank rows, and filled out for each row."
+            error_msg += " "
+            error_msg += "No checkoff actions have been taken. Fix the errors and re-upload the entire file."
+            error_msg += " "
+            error_msg += str(e)
+            messages.error(request, error_msg)
+            return redirect(next_page)
+        user = User.objects.filter(first_name=memberdto.first_name, last_name=memberdto.last_name, email=memberdto.email)
+        if not user:
+            messages.error(request, "Could not find user " + memberdto.first_name + " " + memberdto.last_name + " with email " + memberdto.email + ". Please check these parameters again.")
+            return redirect(next_page)
+        users.append(user[0])
+
+    # Checkoff all
+    for user in users:
+        if checkoff_type == "event":
+            rsvp = Rsvp.objects.filter(event=event, user=user)
+            if rsvp.count() != 0:
+                rsvp = rsvp[0]
+                rsvp.confirmed = True
+            else:
+                rsvp = Rsvp.objects.create(user=user, event=event, confirmed=True)
+            rsvp.save()
+        elif checkoff_type == "project":
+            projectDoneEntry.users.add(user)
+        elif checkoff_type == "dues":
+            duesDoneEntry.users.add(user)
+        elif checkoff_type == "forms":
+            formsDoneEntry.users.add(user)
+
+    messages.success(request, "Successfully checked everyone off!")
+
+    return redirect(next_page)
+
+    
+        
+
+
 
 @method_login_and_permission('candidate.add_bitbyteactivity')
 class BitByteView(FormView, generic.ListView):

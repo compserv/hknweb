@@ -6,7 +6,7 @@ from django.contrib.contenttypes.models import ContentType
 candidate, _created = Group.objects.get_or_create(name='candidate')
 officer, _created = Group.objects.get_or_create(name='officer')
 
-#CANDIDATE AND OFFICER PERMISSIONS
+# CANDIDATE AND OFFICER PERMISSIONS
 cand_permission_names = [
     ('view_announcement', Announcement), 
     ('add_offchallenge', OffChallenge), 

@@ -12,16 +12,19 @@ admin.site.unregister(User)
 # Register out own model admin, based on the default UserAdmin
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
-    list_display = ('username', 'first_name', 'last_name', 'email', 'officer', 'candidate')
-    readonly_fields = ('officer', 'candidate')
+    list_display = ('username', 'first_name', 'last_name', 'email', 'officer', 'candidate', 'exec')
+    readonly_fields = ('officer', 'candidate', 'exec')
 
-    actions = ['add_cand', 'add_officer', 'remove_cand', 'remove_officer']
+    actions = ['add_cand', 'add_officer', 'add_exec', 'remove_cand', 'remove_officer', 'remove_exec']
 
     def officer(self, user):
         return 'Y' if user.groups.filter(name=settings.OFFICER_GROUP).exists() else ''
 
     def candidate(self, user):
         return 'Y' if user.groups.filter(name=settings.CAND_GROUP).exists() else ''
+
+    def exec(self, user):
+        return 'Y' if user.groups.filter(name=settings.EXEC_GROUP).exists() else ''
 
     def add_cand(self, request, queryset):
         group = Group.objects.get(name=settings.CAND_GROUP)
@@ -37,6 +40,13 @@ class CustomUserAdmin(UserAdmin):
 
     add_officer.short_description = "Add selected as officers"
 
+    def add_exec(self, request, queryset):
+        group = Group.objects.get(name=settings.EXEC_GROUP)
+        for u in queryset:
+            group.user_set.add(u)
+
+    add_exec.short_description = "Add selected as execs"
+
     def remove_cand(self, request, queryset):
         group = Group.objects.get(name=settings.CAND_GROUP)
         for u in queryset:
@@ -50,6 +60,13 @@ class CustomUserAdmin(UserAdmin):
             group.user_set.remove(u)
 
     remove_officer.short_description = "Remove selected from officers"
+
+    def remove_exec(self, request, queryset):
+        group = Group.objects.get(name=settings.EXEC_GROUP)
+        for u in queryset:
+            group.user_set.remove(u)
+
+    remove_exec.short_description = "Remove selected from execs"
 
 
 class AnnouncementAdmin(admin.ModelAdmin):
