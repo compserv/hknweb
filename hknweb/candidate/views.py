@@ -538,14 +538,14 @@ def checkoff_csv(request):
         except AssertionError as e:
             error_msg = "Invalid CSV format. Check that your columns are correctly labeled, there are NO blank rows, and filled out for each row."
             error_msg += " "
-            error_msg += "No checkoff actions have been taken. Fix the errors and re-upload the entire file."
+            error_msg += "No checkoff actions have been taken, so re-upload the entire file after fixing the errors."
             error_msg += " "
             error_msg += str(e)
             messages.error(request, error_msg)
             return redirect(next_page)
         user = User.objects.filter(first_name=memberdto.first_name, last_name=memberdto.last_name, email=memberdto.email)
         if not user:
-            messages.error(request, "Could not find user " + memberdto.first_name + " " + memberdto.last_name + " with email " + memberdto.email + ". Please check these parameters again.")
+            messages.error(request, "Could not find user " + memberdto.first_name + " " + memberdto.last_name + " with email " + memberdto.email + ". Please check these parameters again. No checkoff action has been taken, so re-upload the entire file after fixing the errors.")
             return redirect(next_page)
         users.append(user[0])
 
