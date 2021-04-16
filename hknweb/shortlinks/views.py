@@ -1,5 +1,5 @@
-from django.shortcuts import redirect
-from django.http import HttpResponse
+from django.shortcuts import redirect, render
+from django.http import HttpResponse, Http404
 
 from .models import Link
 
@@ -9,7 +9,9 @@ def index(request, temp):
 
 
 def openLink(request, temp):
-    redirectLink = Link.objects.filter(active=True).get(name=temp)
+    count = Link.objects.filter(active=True, name=temp).count()
+    if count == 0:
+        return render(request, './404.html')
+    redirectLink = Link.objects.filter(active=True).get(name=temp)    
     link = redirectLink.redirect
-    print(link)
     return redirect(link)
