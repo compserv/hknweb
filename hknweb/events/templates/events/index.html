@@ -92,8 +92,8 @@ Upcoming Events
 
     {% if perms.events.add_event %}
     <br>
-    <form action="{% url 'events:new' %}" method="GET" id="button">
-        <button type='submit'>Add an event</button>
+    <form action="{% url 'events:new' %}" method="GET" id="button" onsubmit="submit_button.disabled = true; return true;">
+        <button type='submit' name="submit_button">Add an event</button>
     </form>
     {% endif %}
     <br>

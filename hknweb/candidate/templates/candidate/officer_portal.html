@@ -57,10 +57,10 @@ Officer Portal
                         </td>
                         <td align="center">
                             {% if challenge.officer_confirmed is not True %}
-                                <form action="{% url 'candidate:confirm' challenge.id %}" method="post">
+                                <form action="{% url 'candidate:confirm' challenge.id %}" method="post" onsubmit="submit_button.disabled = true; return true;">
                                     {% csrf_token %}
                                     <input type="hidden" name="next" value="{{ request.path }}">
-                                    <input type="submit" value="Confirm" />
+                                    <input type="submit" name="submit_button" value="Confirm" />
                                 </form>
                             {% endif %}
                         </td>
@@ -95,11 +95,11 @@ Officer Portal
             <span {% if messages.tags %} class="{{ message.tags }}" {% endif %}
                 class="blue">{{ message }}</span>
         {% endfor %}
-        <form action="{% url 'candidate:add_cands' %}" method="post" enctype="multipart/form-data">
+        <form action="{% url 'candidate:add_cands' %}" method="post" enctype="multipart/form-data" onsubmit="submit_button.disabled = true; return true;">
             {% csrf_token %}
             <input type="hidden" name="next" value="{{ request.path }}">
             <input type="file" name="cand_csv" />
-            <input type="submit" value="Add candidates" />
+            <input type="submit" name="submit_button" value="Add candidates" />
         </form>
     </div>
 

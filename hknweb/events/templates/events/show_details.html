@@ -80,16 +80,16 @@
 
     <!-- RSVP/un-RSVP button -->
     {% if rsvpd %}
-      <form action="{% url 'events:unrsvp' event.id %}" method="post">
+      <form action="{% url 'events:unrsvp' event.id %}" method="post" onsubmit="submit_button.disabled = true; return true;">
         {% csrf_token %}
         <input type="hidden" name="next" value="{{ request.path }}">
-        <input type="submit" value="un-RSVP" />
+        <input type="submit" name="submit_button" value="un-RSVP" />
       </form>
     {% else %}
-      <form action="{% url 'events:rsvp' event.id %}" method="post">
+      <form action="{% url 'events:rsvp' event.id %}" method="post" onsubmit="submit_button.disabled = true; return true;">
         {% csrf_token %}
         <input type="hidden" name="next" value="{{ request.path }}">
-        <input type="submit" value="RSVP" />
+        <input type="submit" name="submit_button" value="RSVP" />
       </form>
     {% endif %}
     
@@ -139,10 +139,10 @@
                                 </td>
                                 {% if user_access_level == "Internal" %}
                                     <td>
-                                        <form action="{% url 'events:confirm_rsvp' rsvp.id 1 %}" method="POST">
+                                        <form action="{% url 'events:confirm_rsvp' rsvp.id 1 %}" method="POST" onsubmit="submit_button.disabled = true; return true;">
                                             {% csrf_token %}
                                             <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                                            <input type="submit" value="Un-confirm" />
+                                            <input type="submit" name="submit_button" value="Un-confirm" />
                                         </form>
                                     </td>
                                 {% endif %}
@@ -152,10 +152,10 @@
                                 </td>
                                 {% if user_access_level == "Internal" %}
                                     <td>
-                                        <form action="{% url 'events:confirm_rsvp' rsvp.id 0 %}" method="POST">
+                                        <form action="{% url 'events:confirm_rsvp' rsvp.id 0 %}" method="POST" onsubmit="submit_button.disabled = true; return true;">
                                             {% csrf_token %}
                                             <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                                            <input type="submit" value="Confirm" />
+                                            <input type="submit" name="submit_button" value="Confirm" />
                                         </form>
                                     </td>
                                 {% endif %}

@@ -62,8 +62,8 @@
     {% endfor %}
 
     {% if perms.exams.add_coursesemester %}
-    <form action="new" method="GET" id="button">
-        <button type='submit'>Add an Exam</button>
+    <form action="new" method="GET" id="button" onsubmit="submit_button.disabled = true; return true;">
+        <button type='submit' name="submit_button">Add an Exam</button>
     </form>
     {% endif %}
 
