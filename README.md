@@ -26,8 +26,9 @@ Stderr: VBoxManage.exe: error: Call to WHvSetupPartition failed: ERROR_SUCCESS
 ```
 ------------------------------
 
-Install [Vagrant](https://www.vagrantup.com/) and [VirtualBox](https://www.virtualbox.org/) (use older version: 6.0.14),
-then run:
+Install [Vagrant](https://www.vagrantup.com/) and [VirtualBox](https://www.virtualbox.org/) (use older version: 6.0.14):
+
+First, within the directory you cloned the hknweb repository, make sure to cd into the hknweb directory. The following commands will only work if you are within the same directory as the Vagrantfile. Then, run
 
 ```sh
 $ vagrant up
