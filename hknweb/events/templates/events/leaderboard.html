@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block title %}Leaderboard{% endblock %}
+
+{% block content %}
+<style>
+td {
+    height: auto;
+    text-align: center;
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+.slider-container {
+    padding: 10px 15px;
+}
+
+/* Tooltip container */
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+/* Tooltip text */
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+    width: 120px;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -60px; /* Use half of the width (120/2 = 60), to center the tooltip */
+
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    z-index: 1;
+}
+
+li {
+    padding-bottom: 5px;
+}
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
+</style>
+
+<div class="center measure-narrow measure-wide-m measure-very-wide-l pv4">
+    <h1 class="font-title f3 f2-ns tc">Leaderboard</h1>
+    <h2 class="font-title f4 f3-ns tc pb2 bb b--light-gray">{{office.room}}</h2>
+    <table class="center font-body overflow-auto">
+        <!-- Header row -->
+        <tr>
+            <th class="w3 pv2 bb b--light-gray">#</th>
+            <th class="w4 pv2 bb b--light-gray">Name</th>
+            <th class="w4 pv2 bb b--light-gray">Events Attended</th>
+        </tr>
+        {% for user in users %}
+        <tr>
+            <td class="pv2 w3 bb b--near-white"> {{forloop.counter}} </td>
+            <td class="pv2 w3 bb b--near-white"> {{user.name}} </td>
+            <td class="pv2 w3 bb b--near-white"> {{user.points}} </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock %}

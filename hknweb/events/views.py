@@ -306,3 +306,22 @@ def send_off_waitlist_email(request, user, event):
                 settings.NO_REPLY_EMAIL, [user.email])
     msg.attach_alternative(html_content, "text/html")
     msg.send()
+
+
+# Leaderboard
+def show_leaderboard(request):
+    users = [
+        {'name': 'Abraham', 'points': 10},
+        {'name': 'Beta', 'points': 15},
+        {'name': 'Candy', 'points': 13},
+        {'name': 'Donuts', 'points': 20},
+        {'name': 'Person', 'points': 18},
+        {'name': 'Zebra', 'points': 100},
+        {'name': 'Penguin', 'points': -18},
+        {'name': 'Elephant', 'points': 20000},
+    ]
+    users.sort(key = lambda user: -user['points'])
+    context = {
+        'users': users
+    }
+    return render(request, 'events/leaderboard.html', context)

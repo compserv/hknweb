@@ -11,4 +11,5 @@ urlpatterns = [
     path('<int:pk>/edit', views.EventUpdateView.as_view(), name='edit'),
     path('rsvps', views.AllRsvpsView.as_view(), name='rsvps'),
     path('', views.index, name='index'),
+    path('leaderboard', views.show_leaderboard, name='leaderboard'),
 ]
