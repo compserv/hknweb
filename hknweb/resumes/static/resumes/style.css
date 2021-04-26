@@ -1,0 +1,30 @@
+.search-container {
+    text-align: center;
+}
+
+.search-row {
+    padding-bottom: 5px;
+}
+
+.resume-table {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.table-row {
+
+}
+
+.table-col {
+    text-align: center;
+    min-width: 200px;
+}
+
+.table-col.resume a {
+    text-decoration: none !important;
+}
+
+.table-col.column-label {
+    font-weight: bold;
+    font-size: 1.0rem;
+}
