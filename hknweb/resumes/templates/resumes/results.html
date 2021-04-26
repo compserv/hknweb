@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Resumes{% endblock %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static "resumes/style.css" %}">
+{% endblock %}
+
+{% block heading %}
+Resumes
+{% endblock %}
+
+{% block content %}
+<table class="resume-table">
+    <tr class="table-row">
+        <th class="table-col column-label">
+            Name
+        </th>
+        <th class="table-col column-label">
+            Resume
+        </th>
+    </tr>
+    {% for profile in profiles %}
+    <tr class="table-row">
+        <td class="table-col name">
+            {{ profile.user.first_name }} {{ profile.user.last_name}}
+        </td>
+        <td class="table-col resume">
+            {% if profile.resume %}
+                <a href={{ profile.resume.url }}>Resume</a>
+            {% else %}
+                --
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

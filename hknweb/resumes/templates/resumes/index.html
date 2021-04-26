@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Resumes{% endblock %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static "resumes/style.css" %}">
+{% endblock %}
+
+{% block heading %}
+Resumes
+{% endblock %}
+
+{% block content %}
+<div class="search-container">
+    <form method="POST">
+        {% csrf_token %}
+        {{ search_form.as_p }}
+        <input type="submit" value="Search">
+    </form>
+</div>
+{% endblock %}
