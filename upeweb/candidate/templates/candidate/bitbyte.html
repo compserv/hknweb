@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static "candidate/style.css" %}">
+{% endblock %}
+
+{% block title %}Your Bitbyte{% endblock %}
+
+{% block heading %}
+Candidate's Bit-Byte Activities
+{% endblock %}
+
+{% block content %}
+<div class="parent">
+    <div class="left-extra-narrow">
+        <h3>Request Bit-Byte Activity Confirmation</h3>
+
+        {% for message in messages %}
+            <span {% if messages.tags %} class="{{ message.tags }}" {% endif %}
+                class="blue">{{ message }}</span>
+        {% endfor %}
+
+        {% load app_filters %}
+
+        <form method="POST" onsubmit="submit_button.disabled = true; return true;">{% csrf_token %}
+            {% for field in form %}
+                <br>
+                <span class="left">{{ field.label }}
+                    {% if field.field.required %}<span class="red">* </span>{% endif %}
+                </span>&nbsp
+                {% if field.label == 'Proof' %}
+                <span class="tooltip">
+                    <img src="{% static 'candidate/more_info.png' %}" alt="more info" class="inline-icon">
+                    <span class="tooltiptext">
+                        Please send a photo to #bitbyte on Slack and paste the link here, along
+                        with any comments. You can obtain the link by clicking "More actions->Copy link"
+                        on Slack. The link should start with "https://upe.slack.com/archives/"
+                    </span>
+                </span>
+                {% endif %}
+                {% if field|field_type == 'Textarea' %}
+                    <br/>
+                {% endif %}
+                {{ field }}
+                {{ field.errors }}
+                <br/>
+            {% endfor %}
+            <br/>
+
+            <input class="f6 grow no-underline br-pill ph3 pv2 mb2 dib white bg-black" type="submit" name="submit_button" value="Submit"/>
+        </form>
+
+        <p class="link">
+            <a href="{% url 'candidate:index' %}">Back to candidate portal</a>
+        </p>
+    </div>
+
+    <!-- list of requested bit-byte activities -->
+    <div id='agenda' class="right-extra-wide">
+        <h3 class="title-left-pad">Bit-Byte Activities</h3>
+
+        {% if bitbyte_list %}
+            <table class="full-table">
+                <thead>
+                    <th>Participants</th>
+                    <th>Confirmed</th>
+                    <th>Request Date</th>
+                    <th>Proof</th>
+                    <th>Notes</th>
+                </thead>
+
+                <tbody>
+                {% for bitbyte in bitbyte_list %}
+                    <tr>
+                        <td align="center">{% for participant in bitbyte.participants.all %}
+                            {{ participant.first_name }} {{ participant.last_name }} ({{ participant.username }}) <br>
+                        {% endfor %}</td>
+                        <td align="center">
+                            {% if bitbyte.is_confirmed %}
+                                <img src="{% static 'candidate/yes.png'%}" alt="confirmed" class="table-icon">
+                            {% elif bitbyte.is_rejected %}
+                                <img src="{% static 'candidate/no.png'%}" alt="rejected" class="table-icon">
+                            {% else %}
+                                <img src="{% static 'candidate/maybe.png'%}" alt="in progress" class="table-icon">
+                            {% endif %}
+                        </td>
+                        <td align="center">{{ bitbyte.request_date|date }}</td>
+                        <td class="table-column-max" align="center">{{ bitbyte.proof }}</td>
+                        <td class="table-column-max" align="center">{{ bitbyte.notes }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+        {% else %}
+            <p>No activities to show.</p>
+        {% endif %}
+    </div>
+
+</div>
+
+{% endblock %}

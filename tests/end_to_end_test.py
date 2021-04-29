@@ -14,7 +14,7 @@ from django.urls import URLResolver
 # properly before testing
 django.setup()
 
-from hknweb.urls import urlpatterns  # noqa: E402
+from upeweb.urls import urlpatterns  # noqa: E402
 
 
 def assert_does_not_error(client, path):

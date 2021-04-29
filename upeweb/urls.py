@@ -1,0 +1,48 @@
+"""upeweb URL Configuration
+
+The `urlpatterns` list routes URLs to views. For more information please see:
+    https://docs.djangoproject.com/en/2.0/topics/http/urls/
+Examples:
+Function views
+    1. Add an import:  from my_app import views
+    2. Add a URL to urlpatterns:  url(r'^$', views.home, name='home')
+Class-based views
+    1. Add an import:  from other_app.views import Home
+    2. Add a URL to urlpatterns:  url(r'^$', Home.as_view(), name='home')
+Including another URLconf
+    1. Import the include() function: from django.conf.urls import url, include
+    2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
+"""
+from django.contrib import admin
+from django.urls import include
+from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
+
+from .shortlinks import views as viewsShortlink
+from .views import landing
+from .views import users
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('accounts/', include('django.contrib.auth.urls')),
+    path('accounts/create/', users.account_create, name='account-create'),
+    path('accounts/settings/', users.account_settings, name='account-settings'),
+    path('accounts/activate/', users.activate),
+    path('about/', landing.about, name='about'),
+    path('events/', include('upeweb.events.urls')),
+    path('reviewsessions/', include('upeweb.reviewsessions.urls')),
+    path('exams/', include('upeweb.exams.urls')),
+    path('alumni/', include('upeweb.alumni.urls')),
+    path('tutoring/', include('upeweb.tutoring.urls')),
+    path('cand/', include('upeweb.candidate.urls')),
+    path('pages/', include('upeweb.markdown_pages.urls')),
+    path('markdownx/', include('markdownx.urls')),
+    path('elections/', include('upeweb.elections.urls')),
+    path('auth/', include('social_django.urls', namespace='social')),
+    path('', landing.home, name='home'),
+    path('<slug:temp>/', viewsShortlink.openLink),
+]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

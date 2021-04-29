@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static "alumni/style.css" %}">
+{% endblock %}
+
+{% block title %}UPE Alumni{% endblock %}
+
+{% block heading %}
+UPE Alumni
+{% endblock %}
+
+{% block content %}
+<div class="parent">
+
+    <div id="sunset-img">
+        <img src="{% static 'alumni/berkeley_sunset.jpg'%}" alt="berkeley" style="width: 100%;">
+    </div>
+
+    <section id="alumni-options">
+        <h2><a href="{% url 'alumni:search' %}?q=\\">Look up Fellow Alumni Information</a></h3>
+        <h2><a href="{% url 'alumni:form' %}">Submit Alumni Information</a></h3>
+    </div>
+
+    <br>
+
+</div>
+
+  <!-- TODO: add public event feed (ical) -->
+{% endblock %}

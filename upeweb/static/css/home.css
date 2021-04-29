@@ -1,0 +1,340 @@
+body {
+    background: url('../img/bg.png');
+    background-size: contain;
+    background-position: 0px -50px;
+    margin: 0px;
+    background-repeat: no-repeat;
+    background-size: inherit;
+}
+
+/* Override base.css */
+.white-above-navi, .heading, .content {
+    background-color: transparent;
+}
+
+.heading {
+    display: none;
+}
+.content {
+    padding: 0;
+}
+.navi-container {
+    border-bottom: none;
+}
+
+/* BANNER */
+.banner {
+    padding: 0 13px;
+    padding-top: 50px;
+    max-width: 1125px;
+    margin: auto;
+    transition: all 500ms ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+.banner > * {
+    padding-bottom: 50px;
+}
+.banner-heading {
+    display: inline-block;
+    font-weight: 700;
+    padding-top: 100px;
+    text-align: left;
+}
+.banner-title {
+    font-size: 4em;
+}
+.banner-subtitle {
+    font-size: 2.5em;
+    font-style: italic;
+}
+.banner-text {
+    font-size: 1.5em;
+    font-weight: 400;
+    margin-top: 50px;
+}
+.banner-text:last-child {
+    font-size: 1.3em;
+    margin-top: 1em;
+}
+.banner-text a {
+    color: #C4820E;
+    text-decoration: none;
+}
+.banner-text a:hover {
+    text-decoration: underline;
+}
+@media screen and (min-width: 1150px) {
+    .banner-heading {
+        padding-right: 7%;
+    }
+}
+@media screen and (max-width: 1049.999px) {
+    .banner {
+        flex-direction: column;
+    }
+    .banner-heading {
+        padding-top: 0;
+    }
+    .tutoring-column {
+        padding-bottom: 75px;
+    }
+    .tutoring-column:last-child {
+        padding-bottom: 0;
+    }
+}
+.tutoring-panel {
+    background-color: white;
+    border-radius: 15px;
+    padding: 15px;
+    box-shadow: 2px 3px 10px 4px rgba(0,0,0,0.1);
+}
+.tutoring-title {
+    font-size: 1.5em;
+    font-weight: 600;
+    margin-bottom: 0.5em;
+}
+.tutoring-panel table {
+    border-spacing: 0;
+    text-align: center;
+}
+.tutoring-date {
+    font-size: 1.2em;
+    text-align: center;
+}
+.tutoring-panel th {
+    font-weight: 400;
+    opacity: 0.9;
+    font-size: .9em;
+    text-align: center;
+}
+.tutoring-panel th, td {
+    padding: 4.5px;
+}
+.tutoring-panel tbody tr:nth-child(odd) {
+    background-color: #F5F5F5;
+}
+#curr-hour {
+    border-left: solid 5px #FDB515;
+}
+/* Events card */
+.tutoring-panel ul {
+    margin: 0;
+}
+.tutoring-panel li {
+    margin-top: 10px;
+}
+.events-card-time {
+    margin-left: 20px;
+    color: black;
+    white-space: pre;
+}
+
+/* ABOUT UPE SECTION */
+.what {
+    margin-top: 50px;
+    height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.whatpic {
+    width: 350px;
+    height: 500px;
+    margin: 20px;
+    max-width: 20%;
+}
+.what_1 {
+    margin-left: 0px;
+    background: url('../img/what1.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: -200px 0px;
+}
+.what_2 {
+    background: url('../img/what2.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: -100px 0px;
+    margin-right: 30px;
+}
+.what_3 {
+    background: url('../img/what3.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: 0px 0px;
+    margin-left: 30px;
+    margin-right: 0px;
+}
+.what-about {
+    padding-left: 13px;
+    padding-right: 13px;
+    margin: 0 auto;
+    max-width: 35%;
+}
+.what-about-title {
+    font-size: 2em;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+.what-about-subtitle {
+    font-size: 1.5em;
+    font-weight: 400;
+    opacity: 0.8;
+    line-height: 1.75em;
+}
+@media screen and (max-width: 1200px) {
+    .what_2 {
+        display: none;
+    }
+    .what_1 {
+        margin-right: 30px;
+    }
+}
+@media screen and (max-width: 800px) {
+    .whatpic {
+        display: none;
+    }
+    .what-about {
+        max-width: 100%;
+    }
+}
+
+/* SERVICES SECTION */
+.services {
+    max-width: 1000px;
+    padding: 0 13px;
+    margin: 100px auto;
+    border-box: content;
+    text-align: center;
+}
+.services-heading {
+    text-align: left;
+}
+.services-title {
+    font-size: 2.5em;
+    font-weight: 800;
+    margin: 10px 0;
+}
+.services-subtitle {
+    font-size: 1.4em;
+    opacity: 0.7;
+    margin: 20px 0;
+    font-weight: 400;
+    line-height: 1.75em;
+}
+.services-leftright {
+    display: inline-block;
+    vertical-align: top;
+    width: 48%;
+    text-align: left;
+}
+@media screen and (min-width: 1100px) {
+    .services-leftright:first-child {
+        padding-right: 3%;
+        text-align: right;
+    }
+    .services-title {
+        margin-top: 150px;
+    }
+}
+@media screen and (max-width: 1099.999px) {
+    .services-leftright {
+        width: 100%;
+        text-align: center;
+    }
+    .servicespic {
+        width: 100% !important;
+    }
+}
+.servicespic {
+    display: inline-block;
+    text-align: left;
+    position: relative;
+    margin: 4% 0;
+    color: white;
+    font-weight: 800;
+    background-size: cover;
+}
+.servicespic-gradient {
+    background-image: linear-gradient(0deg, rgba(0,0,0,.9) 0, transparent 75%, transparent);
+    background-size: 100%;
+}
+.servicespic:last-child {
+    margin-bottom: 0;
+}
+.servicespic img {
+    width: 100%;
+    z-index: -100000;
+}
+.services-1 {
+    position: relative;
+    width: 500px;
+    height: 350px;
+}
+.services-2 {
+    position: relative;
+    width: 400px;
+    height: 400px;
+}
+.services-3 {
+    position: relative;
+    width: 300px;
+    height: 200px;
+}
+.services-text {
+    color: white;
+    font-size: 1.3em;
+    margin: 20px;
+    font-weight: 300;
+    position: absolute;
+    bottom: 0;
+}
+.services-text b {
+    font-weight: 400;
+}
+
+/* CUSTOM FOOTER */
+.footer {
+    padding-top: 35px;
+    padding-bottom: 35px;
+}
+.help-form-container {
+    max-width: 700px;
+    text-align: center;
+    margin: 0 auto;
+    border-bottom: 1px solid white;
+    margin-bottom: 2em;
+}
+.help-form {
+    display: inline-block;
+    text-align: left;
+    padding-bottom: 2em;
+}
+.form-title {
+    font-size: 40px;
+    color: white;
+    font-weight: 800;
+    margin-bottom: 30px;
+}
+
+.footer-contact {
+    font-family: "Source Sans Pro", sans-serif;
+    color: rgba(255,255,255,0.48);
+    font-weight: 300;
+    font-size: 18px;
+}
+
+.contact-block {
+    margin: 15px;
+}
+.contact-title {
+    color: white;
+    font-size: 25px;
+}
+
+.here {
+    opacity: 0.7;
+    border-bottom: 5px solid #516aff;
+}

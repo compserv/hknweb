@@ -54,4 +54,4 @@ repos:
         language: system
         name: App templates must be prefixed with app name
         entry: bash -c 'echo "Make sure to prefix your template directories!" && exit 1'
-        files: ^hknweb/[^/]+/templates/[^/]+\.html$
+        files: ^upeweb/[^/]+/templates/[^/]+\.html$

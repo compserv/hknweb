@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static "alumni/style.css" %}">
+{% endblock %}
+
+{% block title %}Alumni Form{% endblock %}
+
+{% block heading %}
+Submit Your Alumni Information
+{% endblock %}
+
+{% block content %}
+<div class="parent">
+
+    <div class="left-pad">
+
+        {% if messages %}
+            {% for message in messages %}
+                <h3  {% if messages.tags %} class="{{ message.tags }}" {% endif %} class="blue">{{ message }}</h3>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST" onsubmit="submit_button.disabled = true; return true;">{% csrf_token %}
+            {% for field in form %}
+                <br>
+                <span style="float: left;">{{ field.label }} {% if field.field.required %}
+                    <span style="color: red;">* </span>{% endif %}
+                </span>&nbsp
+                {{ field }}
+                {% if field.label == 'Mailing list' %}
+                <br><span class="footnote">
+                    If added to the mailing list, you'll receive periodic
+                    news/updates about UPE, including Alumni events.
+                </span>
+                {% endif %}
+                {{ field.errors }}
+                <br>
+            {% endfor %}
+
+            <input type="submit" name="submit_button" value="Submit"/>
+        </form>
+        <br>
+
+    </div>
+
+</div>
+
+{% endblock %}

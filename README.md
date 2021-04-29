@@ -1,7 +1,7 @@
-hknweb
+upeweb
 ======
 
-Welcome! This is the in-progress redesign for the HKN (Mu Chapter) website,
+Welcome! This is the in-progress redesign for the UPE (Nu Chapter) website,
 built with Django.
 
 ## Setup (Quick)
@@ -9,7 +9,7 @@ built with Django.
 This approach is simpler if you are new to developing software.
 
 **Vagrant** will automatically setup a virtual machine with the correct
-setup for developing `hknweb`.
+setup for developing `upeweb`.
 
 ------------------------------
 ### Windows Users
@@ -28,7 +28,7 @@ Stderr: VBoxManage.exe: error: Call to WHvSetupPartition failed: ERROR_SUCCESS
 
 Install [Vagrant](https://www.vagrantup.com/) and [VirtualBox](https://www.virtualbox.org/) (use older version: 6.0.14):
 
-First, within the directory you cloned the hknweb repository, make sure to cd into the hknweb directory. The following commands will only work if you are within the same directory as the Vagrantfile. Then, run
+First, within the directory you cloned the upeweb repository, make sure to cd into the upeweb directory. The following commands will only work if you are within the same directory as the Vagrantfile. Then, run
 
 ```sh
 $ vagrant up
@@ -59,7 +59,7 @@ which will attempt to safely shutdown the virtual machine, or kill it otherwise.
 This approach requires less space, and is faster if your computer already has Python
 and GNU Make installed (i.e. most GNU/Linux machines.)
 
-Developing on `hknweb` requires a virtual environment so that every developer has the exact same development environment i.e. any errors that a developer has is not due to difference in configuration. We will be using Python's built-on [`venv`](https://docs.python.org/3/library/venv.html) to make our virtual environment. This command creates our virtual environment.
+Developing on `upeweb` requires a virtual environment so that every developer has the exact same development environment i.e. any errors that a developer has is not due to difference in configuration. We will be using Python's built-on [`venv`](https://docs.python.org/3/library/venv.html) to make our virtual environment. This command creates our virtual environment.
 ```sh
 $ make venv
 ```
@@ -78,7 +78,7 @@ In summary, the setup looks like:
 ```sh
 $ vagrant up                    # boot up the vm
 $ vagrant ssh                   # enter into our vm
-$ cd hknweb                     # enter our main directory
+$ cd upeweb                     # enter our main directory
 $ make venv                     # create our virtual environment
 $ source .venv/bin/activate     # enter our virtual environment
 $ make install                  # install our dependencies
@@ -106,7 +106,7 @@ $ make
 
 In a Vagrant box, run
 ```sh
-$ cd ~/hknweb
+$ cd ~/upeweb
 $ make
 ```
 

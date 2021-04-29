@@ -1,4 +1,4 @@
-# hknweb-specific stuff
+# upeweb-specific stuff
 .vagrant/
 db.sqlite3
 venv/
@@ -53,7 +53,7 @@ target/
 /keyrings/live/pubring.kbx~
 /keyrings/live/secring.gpg
 /bbtest.txt
-/hknweb/settings/secrets.py
+/upeweb/settings/secrets.py
 
 ## Windows
 # Windows thumbnail cache files

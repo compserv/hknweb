@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ subject }}</title>
+</head>
+<body>
+
+    <p>
+        Hi {{ first_name }}!
+    </p>
+
+    <p>
+        I've created an account for you <a href="{{ website_link }}">here</a>!<br>
+        <br>
+        Here are your account details, as well as a temporarily generated password:<br>
+        Username: {{ username }}<br>
+        Password: {{ password }}<br>
+        <br>
+        You can change your password upon logging in, which you should do so promptly.
+    </p>
+
+    <p>
+        Once you've logged in, feel free to explore our website. 
+        The candidate portal is accessed by clicking "Welcome, {{ first_name }}" in the top right corner, 
+        then clicking "Candidate Portal". 
+        This is where you can view your progress for your candidate requirements!
+    </p>
+
+    <p>
+        Information about our events can be found in three different places:
+        <ul>
+            <li>
+                Your candidate portal will show a list of a few upcoming events.
+            </li>
+            <li>
+                "Events" --> "Calendar" leads to a calendar view. 
+                Click on an event in the calendar to view the event's details.
+            </li>
+            <li>
+                "Events" --> "All RSVPs" leads to a list view. 
+                Here you have easy access to RSVP to events, as well as access event details by clicking on the event title.
+            </li>
+        </ul>
+    </p>
+
+    <p>
+        If you have any questions, please feel free to reach out to us at vp@upe.mu.
+    </p>
+
+    <p>
+        Have a nice day!<br>
+        Compserv
+    </p>
+
+    <img src="{{ img_link }}" alt="cute animal"><br>
+    <span style="font-size: 0.8em;"> Image source: pexels.com </span>
+
+</body>
+</html>

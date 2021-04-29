@@ -8,7 +8,7 @@ Vagrant.configure("2") do |config|
   # Boxes: https://vagrantcloud.com/search.
 
   # ubuntu/xenial64 box used instead of debian/stretch64 because
-  # guest additions are installed by default, so the hknweb shared folder
+  # guest additions are installed by default, so the upeweb shared folder
   # may be synced with virtualbox instead of rsync, and so updates live.
   # Otherwise, both boxes use systemd and have similar packages.
   config.vm.box = "ubuntu/xenial64"
@@ -31,9 +31,9 @@ Vagrant.configure("2") do |config|
   # your network.
   # config.vm.network "public_network"
 
-  # Shares the host folder "." to the guest mount point "/home/vagrant/hknweb",
+  # Shares the host folder "." to the guest mount point "/home/vagrant/upeweb",
   # with additional options.
-  config.vm.synced_folder ".", "/home/vagrant/hknweb", type: "virtualbox", mount_options: ["dmode=755", "fmode=644"]
+  config.vm.synced_folder ".", "/home/vagrant/upeweb", type: "virtualbox", mount_options: ["dmode=755", "fmode=644"]
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -80,26 +80,26 @@ Vagrant.configure("2") do |config|
         vim
 
     # Set up MySQL database and development user
-    mysql -e "CREATE DATABASE IF NOT EXISTS hknweb;"
-    mysql -e "GRANT ALL PRIVILEGES ON hknweb.* TO 'hkn'@'localhost' IDENTIFIED BY 'hknweb-dev';"
+    mysql -e "CREATE DATABASE IF NOT EXISTS upeweb;"
+    mysql -e "GRANT ALL PRIVILEGES ON upeweb.* TO 'upe'@'localhost' IDENTIFIED BY 'upeweb-dev';"
 
     #Set IP and PORT environment variables for `make dev`
     printf "\n\nexport IP='[::]'\nexport PORT='3000'\n" >> /home/vagrant/.bashrc
 
     cat <<-EOF > ~/.my.cnf
     [client]
-    user=hkn
-    password=hknweb-dev
+    user=upe
+    password=upeweb-dev
     EOF
 
-    cat "export HKNWEB_MODE=dev" >> /home/vagrant/.bashrc
+    cat "export UPEWEB_MODE=dev" >> /home/vagrant/.bashrc
   SHELL
 
   # Give Permission to the ".venv" to allow Execution of files in the folder, using "create: true" to make the folder if it doesn't exist
   #  -> Main purpose: Allow execution of Pip Packages (especially "fab")
-  config.vm.synced_folder "./.venv/bin", "/home/vagrant/hknweb/.venv/bin", create: true, type: "virtualbox", mount_options: ["dmode=755", "fmode=744"]
+  config.vm.synced_folder "./.venv/bin", "/home/vagrant/upeweb/.venv/bin", create: true, type: "virtualbox", mount_options: ["dmode=755", "fmode=744"]
 
   # Setup virtualenv
-  config.vm.provision "shell", privileged: false, inline: "cd ~/hknweb; make venv"
+  config.vm.provision "shell", privileged: false, inline: "cd ~/upeweb; make venv"
 
 end

@@ -4,7 +4,7 @@ PIP_HOME = $(shell python3 -c "import site; import os; print(os.path.join(site.U
 VENV := .venv
 BIN := $(VENV)/bin
 PYTHON := $(BIN)/python
-MANAGE := HKNWEB_MODE='dev' $(PYTHON) ./manage.py
+MANAGE := UPEWEB_MODE='dev' $(PYTHON) ./manage.py
 
 IP ?= 127.0.0.1
 PORT ?= 3000
@@ -28,7 +28,7 @@ install-prod:
 	$(PYTHON) -m pip install --upgrade "pip<=20.3.4"
 	$(PYTHON) -m pip install --upgrade "setuptools<=51.2.0"
 	# TODO: pinned/unpinned dependency version.
-	# See https://hkn-mu.atlassian.net/browse/COMPSERV-110
+	# See https://upe-mu.atlassian.net/browse/COMPSERV-110
 	$(PYTHON) -m pip install -r requirements.txt
 
 .PHONY: install
@@ -65,9 +65,9 @@ clean:
 
 .PHONY: mysql
 mysql:
-	mysql -e "CREATE DATABASE IF NOT EXISTS hkn;"
-	mysql -e "GRANT ALL PRIVILEGES ON hkn.* TO 'hkn'@'localhost' IDENTIFIED BY 'hknweb-dev';"
+	mysql -e "CREATE DATABASE IF NOT EXISTS upe;"
+	mysql -e "GRANT ALL PRIVILEGES ON upe.* TO 'upe'@'localhost' IDENTIFIED BY 'upeweb-dev';"
 
 .PHONY: permissions
 permissions:
-	$(MANAGE) shell < hknweb/init_permissions.py
+	$(MANAGE) shell < upeweb/init_permissions.py

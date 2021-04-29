@@ -1,6 +1,6 @@
 1F3CAA5F32F6483D
-alex.eecs@hkn.eecs.berkeley.edu
-compserv@hkn.eecs.berkeley.edu
-hutch@hkn.eecs.berkeley.edu
+alex.cs@upe.cs.berkeley.edu
+compserv@upe.cs.berkeley.edu
+hutch@upe.cs.berkeley.edu
 jameszhu@berkeley.edu
-jvperrin@hkn.eecs.berkeley.edu
+jvperrin@upe.cs.berkeley.edu

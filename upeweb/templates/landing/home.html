@@ -1,0 +1,266 @@
+{% extends "base.html" %}
+{% load static from staticfiles %}
+<html>
+    <head>
+
+        <!-- Base CSS -->
+        <link rel="stylesheet" href="{% static "css/home.css" %}">
+
+        <!-- Fonts -->
+        <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,600,700,800,900|Open+Sans|PT+Sans:700|Roboto:400,500,700,900|Source+Sans+Pro:300,400,600,700" rel="stylesheet">
+
+        <!-- Materialize -->
+        <!-- Compiled and minified CSS -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+        <!-- Compiled and minified JavaScript -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    </head>
+    <body>
+        <div class="navi">
+            <div class="navi-logo">
+                <img src="{% static "img/upe-bear.svg" %}" class="navi-logo-img">
+                <div class="navi-logo-text">
+                    <div class="navi-logo-title">
+                        Upsilon Pi Epsilon
+                    </div>
+                    <div class="navi-logo-subtitle">
+                        UC Berkeley
+                    </div>
+                </div>
+            </div>
+            <div class="navi-menu-container">
+                <div class='navi-menu'>
+
+{% block header %}
+<link rel="stylesheet" href="{% static "css/home.css" %}">
+<!-- Materialize -->
+<!-- Compiled and minified CSS -->
+<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"> -->
+<!-- Compiled and minified JavaScript -->
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script> -->
+
+<title>Berkeley UPE</title>
+{% endblock %}
+
+{% block content %}
+<div class="banner">
+    <div class="banner-heading">
+        <div class="banner-title">
+            Upsilon Pi Epsilon
+        </div>
+        <div class="banner-subtitle">
+            Nu Chapter
+        </div>
+        <div class="banner-text">
+            UC Berkeley's Computer Science honor society
+        </div>
+        <div class="banner-text">
+            <a href="/exams">Exams</a> &#8226; <a href="">course guides and surveys</a> &#8226; <a href="">course map</a>
+        </div>
+    </div>
+
+    <div class="tutoring-column">
+        <div class="tutoring-panel">
+            <div class="tutoring-title">
+                Announcements
+            </div>
+                {% if not announcements %}
+                    No announcements at this time.
+                {% endif %}
+
+                {% for announcement in announcements %}
+                    <p>
+                    <strong>{{ announcement.title }}</strong> [{{ announcement.release_date|date:"m/d/Y" }}]<br>
+                    {{ announcement.text }}
+                    </p>
+                {% endfor %}
+
+        </div>
+        <br>
+        <div class="tutoring-panel">
+            <div class="tutoring-title">
+                Today's Tutoring Hours
+            </div>
+            <span class="tutoring-date"><div>April 22, 2019</div></span>
+            <table>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th class="tutoring-office">
+                            345&nbsp;SODA
+                        </th>
+                        <th class="tutoring-office">
+                            290&nbsp;CORY
+                        </th>
+                    </tr>
+                </thead>
+                <tr>
+                    <td>11:00</td>
+                    <td>James&nbsp;Z.</td>
+                    <td>Jessie Y. Michael W. Jessie Y. Michael W. Jessie Y. Michael W. Jessie Y. Michael W.</td>
+                </tr>
+                <tr>
+                    <td id="curr-hour">12:00</td>
+                    <td>James Z.</td>
+                    <td>Jessie Y. <br> Michael W.</td>
+                </tr>
+                <tr>
+                    <td>1:00</td>
+                    <td>James Z.</td>
+                    <td>Michael W.</td>
+                </tr>
+                <tr>
+                    <td>2:00</td>
+                    <td>James Z.</td>
+                    <td>Dalton O.</td>
+                </tr>
+                <tr>
+                    <td>3:00</td>
+                    <td>James Z.</td>
+                    <td>James Z.</td>
+                </tr>
+                <tr>
+                    <td>4:00</td>
+                    <td>James Z.</td>
+                    <td>Alex.cs</td>
+                </tr>
+            </table>
+        </div>
+
+        <br>
+
+        <div class="tutoring-panel">
+            <div class="tutoring-title">
+                Upcoming Events
+            </div>
+            <ul>
+                {% for event in events %}
+                    <li>
+                        <a href="{% url 'events:index' %}{{ event.id }}">{{ event.name }}</a>
+                        <span class="events-card-time">{{event.start_time|date:"D m/d h:i A"}} - {{ event.end_time|date:"h:i A"}}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <br>
+
+        {% if reviewsessions %}
+        <div class="tutoring-panel">
+            <div class="tutoring-title">
+                Upcoming Review Sessions
+            </div>
+            <ul>
+                {% for reviewsession in reviewsessions %}
+                    <li>
+                        <a href="{% url 'reviewsessions:index' %}{{ reviewsession.id }}">{{ reviewsession.name }}</a>
+                        <span class="events-card-time">{{reviewsession.start_time|date:"D m/d h:i A"}} - {{ reviewsession.end_time|date:"h:i A"}}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+
+<div class="what">
+    <div class="whatpic what_1"></div>
+    <div class="whatpic what_2"></div>
+    <div class="what-about">
+        <div class="what-about-title">What is UPE?</div>
+        <div class="what-about-subtitle">
+                Upsilon Pi Epsilon (UPE) is the national Computer Science honor society. The Berkeley chapter is among the most active engineering societies at Berkeley, providing services to fellow undergraduates. Welcome to our website!
+        </div>
+    </div>
+    <div class="whatpic what_3"></div>
+</div>
+
+<div class="services">
+    <div class="services-leftright">
+        <div class="services-heading">
+            <div class="services-title">Our Services</div>
+            <div class="services-subtitle">
+                We host a variety of acdemic, industry, and service events to help grow our CS community. Here's a look at what we do.
+            </div>
+        </div>
+        <a href="">
+            <div class="servicespic" style="width: 90%; background-image: url({% static "img/services-tutoring.png" %})">
+                <div class="servicespic-gradient" style="padding-bottom: 76.304023845%;"></div>
+                <div class="services-text">
+                    <b>Tutoring hours</b> <br>
+                    Questions about your classes? We're here to help!
+                </div>
+            </div>
+        </a>
+        <a href="">
+            <div class="servicespic" style="width: 100%; background-image: url({% static "img/services-maker-workshops.jpg" %});">
+                <div class="servicespic-gradient" style="padding-bottom: 66.25%;"></div>
+                <div class="services-text">
+                    <b>Maker workshops</b> <br>
+                    Students from around the Bay Area learn about CS through hands-on projects.
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="services-leftright">
+        <a href="">
+            <div class="servicespic" style="width: 90%; background-image: url({% static "img/services-decal.jpg" %});">
+                <div class="servicespic-gradient" style="padding-bottom: 66.25%;"></div>
+                <div class="services-text">
+                    <b>CS Stack DeCal</b> <br>
+                    Our DeCal provides an overview of the CS department.
+                </div>
+            </div>
+        </a>
+        <a href="">
+            <div class="servicespic"  style="width: 85%; background-image: url({% static "img/services-exam-bank.png" %});">
+                <div class="servicespic-gradient" style="padding-bottom: 55.7515337423%;"></div>
+                <div class="services-text">
+                    <b>Exam archives</b> <br>
+                    Find past exams and solutions from EE and CS classes.
+                </div>
+            </div>
+        </a>
+        <a href="">
+            <div class="servicespic" style="width: 70%; background-image: url({% static "img/services-course-map.png" %});">
+                <div class="servicespic-gradient" style="padding-bottom: 102.1035598706%;"></div>
+                <div class="services-text">
+                    <b>Course map</b> <br>
+                    See what prerequisites you'll need to pursue a concentration.
+                </div>
+            </div>
+        </a>
+        <a href="">
+            <div class="servicespic"  style="width: 93%; background-image: url({% static "img/services-course-guides.png" %});">
+                <div class="servicespic-gradient" style="padding-bottom: 50.7030603805%;"></div>
+                <div class="services-text">
+                    <b>Course guides and surveys</b> <br>
+                    Discover your future classes, while hearing reviews of different courses by your peers.
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra-footer %}
+<div class="help-form-container">
+    <div class="help-form">
+        <div class="form-title">We're here for <span style="border-bottom: 5px solid #FDB515;">you</span>.</div>
+        <form class="footer-block-text">
+            <input id="first_name" type="text" class="validate">
+            <label for="first_name">Your name</label>
+            <br>
+
+            <input id="last_name" type="text" class="validate">
+            <label for="last_name">Your email</label>
+            <br>
+
+            <input id="last_name" type="text" class="validate">
+            <label for="last_name">How can we help?</label>
+        </form>
+    </div>
+</div>
+{% endblock %}

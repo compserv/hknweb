@@ -1,2 +1,2 @@
 bbtest.txt
-hknweb/settings/secrets.py
+upeweb/settings/secrets.py

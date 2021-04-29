@@ -34,26 +34,26 @@ def create_dirs(c: Connection):
 class DeployConfig(Config):
     @staticmethod
     def global_defaults():
-        hkn_defaults = {
+        upe_defaults = {
             'deploy': {
                 'name': 'default',
-                'user': 'hkn',
+                'user': 'upe',
                 'host': 'apphost.ocf.berkeley.edu',
                 'path': {
-                    'root': '/home/h/hk/hkn/hknweb',
+                    'root': '/home/h/hk/upe/upeweb',
                     'repo': 'repo',
                     'releases': 'releases',
                     'current': 'current',
                     'shared': 'shared',
                 },
-                'repo_url': 'https://github.com/compserv/hknweb.git',
+                'repo_url': 'https://github.com/compserv/upeweb.git',
                 'branch': 'master',
                 'linked_files': [],
                 'linked_dirs': [],
                 'keep_releases': 10,
             },
         }
-        return merge_dicts(Config.global_defaults(), hkn_defaults)
+        return merge_dicts(Config.global_defaults(), upe_defaults)
 
 
 targets = {
@@ -102,13 +102,13 @@ def install_deps(c: Connection):
 def django_migrate(c: Connection):
     print('-- Migrating tables')
     with c.cd(c.release_path):
-        c.run('HKNWEB_MODE=prod .venv/bin/python ./manage.py migrate')
+        c.run('UPEWEB_MODE=prod .venv/bin/python ./manage.py migrate')
 
 
 def django_collectstatic(c: Connection):
     print('-- Collecting static files')
     with c.cd(c.release_path):
-        c.run('HKNWEB_MODE=prod .venv/bin/python ./manage.py collectstatic --noinput')
+        c.run('UPEWEB_MODE=prod .venv/bin/python ./manage.py collectstatic --noinput')
 
 
 def symlink_release(c: Connection):
@@ -118,7 +118,7 @@ def symlink_release(c: Connection):
 
 def systemd_restart(c: Connection):
     print('-- Restarting systemd unit')
-    c.run('systemctl --user restart hknweb.service', echo=True)
+    c.run('systemctl --user restart upeweb.service', echo=True)
 
 
 def setup(c: Connection, commit=None, release=None):
