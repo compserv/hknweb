@@ -4,6 +4,7 @@ from django import forms
 from django.core.validators import URLValidator
 
 from hknweb.utils import markdownify
+import urllib.parse
 
 
 from .constants import (
@@ -28,18 +29,18 @@ from .models import Event
 
 def create_gcal_link(event: Event) -> str:
     attrs = {
-        EVENT_NAME_ATTRIBUTE_NAME: event.name,
+        EVENT_NAME_ATTRIBUTE_NAME: urllib.parse.quote_plus(event.name, safe=''),
+        DESCRIPTION_ATTRIBUTE_NAME: urllib.parse.quote_plus(event.description, safe=''),
+        LOCATION_ATTRIBUTE_NAME: urllib.parse.quote_plus(event.location, safe=''),
         START_TIME_ATTRIBUTE_NAME: format_gcal_time(event.start_time),
         END_TIME_ATTRIBUTE_NAME: format_gcal_time(event.end_time),
-        DESCRIPTION_ATTRIBUTE_NAME: event.description,
-        LOCATION_ATTRIBUTE_NAME: event.location,
     }
     return GCAL_INVITE_TEMPLATE.format(**attrs)
 
 
 def format_gcal_time(time: datetime) -> str:
     attrs = {
-        YEAR_ATTRIBUTE_NAME: time.year,
+        YEAR_ATTRIBUTE_NAME:  time.year,
         MONTH_ATTRIBUTE_NAME: time.month,
         DAY_ATTRIBUTE_NAME: time.day,
         HOUR_ATTRIBUTE_NAME: time.hour,
