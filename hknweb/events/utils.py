@@ -40,7 +40,7 @@ def create_gcal_link(event: Event) -> str:
 
 def format_gcal_time(time: datetime) -> str:
     attrs = {
-        YEAR_ATTRIBUTE_NAME:  time.year,
+        YEAR_ATTRIBUTE_NAME: time.year,
         MONTH_ATTRIBUTE_NAME: time.month,
         DAY_ATTRIBUTE_NAME: time.day,
         HOUR_ATTRIBUTE_NAME: time.hour,
