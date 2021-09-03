@@ -42,27 +42,17 @@ class TimeSlot(models.Model):
     FRI = 5
     DAY_CHOICES = [
         (MON, 'Mon'),
-        # (TUE, 'Tue'),
+        (TUE, 'Tue'),
         (WED, 'Wed'),
-        # (THU, 'Thu'),
+        (THU, 'Thu'),
         (FRI, 'Fri'),
     ]
-    # HOUR_CHOICES = [
-    #     (11, '11am'),
-    #     (12, '12pm'),
-    #     (13, '1pm'),
-    #     (14, '2pm'),
-    #     (15, '3pm'),
-    #     (16, '4pm'),
-    # ]
     HOUR_CHOICES = [
         (13, '1pm'),
         (14, '2pm'),
-        # (15, '3pm'),
-        (19, '7pm'),
-        (20, '8pm'),
+        (15, '3pm'),
+        (16, '4pm'),
         (21, '9pm'),
-        # (22, '10pm')
     ]
     hour = models.IntegerField(choices=HOUR_CHOICES)
     day = models.IntegerField(choices=DAY_CHOICES)

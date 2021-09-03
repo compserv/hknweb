@@ -13,7 +13,7 @@ class TutorCourseAdmin(admin.ModelAdmin):
 class TimeSlotAdmin(admin.ModelAdmin):
 	list_filter = ['day', 'hour']
 	search_fields = ['day', 'hour']
-	actions = ['resync_timeslot_id']
+	actions = ['resync_timeslot_id', 'reset_database_time_information']
 
 	def resync_timeslot_id(self, request, queryset):
 		queryset_ordered = queryset.order_by('hour', 'day')
@@ -24,6 +24,15 @@ class TimeSlotAdmin(admin.ModelAdmin):
 			id_num += 1
 	
 	resync_timeslot_id.short_description = "Resync Time Slot ID in order of time (hour then day)"
+
+	def reset_database_time_information(self, request, queryset):
+		Room.objects.all().delete()
+		Slot.objects.all().delete()
+		TutorCourse.objects.all().delete()
+		TimeSlot.objects.all().delete()
+
+	reset_database_time_information.short_description = "Reset the time slot information if e.g. the semester's offered tutoring hours change"
+
 
 @admin.register(Slot)
 class SlotAdmin(admin.ModelAdmin):
