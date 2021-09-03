@@ -36,6 +36,8 @@ ADJACENT_PREFERENCE_CHOIES = [
     (0, "Don't care"),
     (1, 'Yes')
 ]
+
+ROOM_PREFERENCE_CHOICES = [(n, "%s %s" % (building, room_num)) for n, building, room_num in Room.DEFAULT_ROOM_CHOICES]
 class TimeSlotPreferenceForm(forms.Form):
     adjacent_pref = forms.IntegerField(widget=forms.RadioSelect(choices=ADJACENT_PREFERENCE_CHOIES))
     num_assignments = forms.IntegerField()
@@ -53,18 +55,9 @@ class TimeSlotPreferenceForm(forms.Form):
             self.fields[field_name] = forms.IntegerField(widget=forms.RadioSelect(choices=SLOT_PREFERENCE_CHOICES))
             self.fields[field_name].initial = pref.time_preference
 
-            number_of_tutor_rooms = Room.objects.all().count()
-
-            if number_of_tutor_rooms == 1:
-                # Doesn't matter preference, there's only one room anyway
-                pass
-            elif number_of_tutor_rooms == 2:
-                field_name = 'timeslot_office_preference_%s' % (timeslot.timeslot_id,)
-                self.fields[field_name] = forms.IntegerField(widget=forms.NumberInput(attrs={'type':'range', 'min':-2, 'max': 2, 'step': 1}))
-                self.fields[field_name].initial = pref.office_preference
-            else:
-                # TODO: In the event there is multiple rooms (low priority)
-                pass
+            field_name = 'timeslot_office_preference_%s' % (timeslot.timeslot_id,)
+            self.fields[field_name] = forms.IntegerField(widget=forms.RadioSelect(choices=ROOM_PREFERENCE_CHOICES))
+            self.fields[field_name].initial = pref.office_preference
         
     def save_slot_preference_data(self):
         for name, value in self.cleaned_data.items():

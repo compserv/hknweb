@@ -30,6 +30,7 @@ class TimeSlotAdmin(admin.ModelAdmin):
 		Slot.objects.all().delete()
 		TutorCourse.objects.all().delete()
 		TimeSlot.objects.all().delete()
+		TimeSlotPreference.objects.all().delete()
 
 	reset_database_time_information.short_description = "Reset the time slot information if e.g. the semester's offered tutoring hours change"
 

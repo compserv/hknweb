@@ -86,31 +86,21 @@ class TimeSlot(models.Model):
 
 class Room(models.Model):
     DEFAULT_ROOM_CHOICES = [
-        # (0, 'Cory', '290'),
-        # (1, 'Soda', '345'),
-        (0, 'Online', '')
+        (0, 'Hybrid/Cory', '290'),
+        (1, 'Hybrid/Soda', '345'),
+        (2, 'Online', ''),
     ]
     building = models.CharField(max_length=255)
     room_num = models.CharField(max_length=255, blank=True)
 
     def get_num_building(self):
-        room_num_str = ""
-        if self.room_num:
-            room_num_str = self.room_num + " "
-        return room_num_str + self.building
+        return "%s %s" % (self.building, self.room_num)
 
     def __str__(self):
         return self.get_num_building()
 
 class Slot(models.Model):
-    # CORY = 0
-    # SODA = 1
-    # ROOM_CHOICES = [
-    #     (CORY, 'Cory'),
-    #     (SODA, 'Soda'),
-    # ]
     timeslot = models.ForeignKey(TimeSlot, on_delete=models.CASCADE, null=True)
-    # room = models.IntegerField(choices=ROOM_CHOICES)
     room = models.ForeignKey(Room, on_delete=models.CASCADE, null=True)
     slot_id = models.IntegerField(default=0)
     tutors = models.ManyToManyField(Tutor)
