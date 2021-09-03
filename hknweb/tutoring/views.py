@@ -2,9 +2,22 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import permission_required
 from django.http import JsonResponse
 from hknweb.coursesemester.models import Course
-from .models import TimeSlot, Slot, Tutor, TutorCourse, TimeSlotPreference, CoursePreference, Room
-from .forms import TimeSlotPreferenceForm, CoursePreferenceForm, TutoringAlgorithmOutputForm
+from .models import (
+    TimeSlot,
+    Slot,
+    Tutor,
+    TutorCourse,
+    TimeSlotPreference,
+    CoursePreference,
+    Room,
+)
+from .forms import (
+    TimeSlotPreferenceForm,
+    CoursePreferenceForm,
+    TutoringAlgorithmOutputForm,
+)
 import json
+
 
 def index(request):
     if Room.objects.all().count() == 0:
@@ -17,83 +30,89 @@ def index(request):
     hours = TimeSlot.HOUR_CHOICES
     offices = []
     for room in Room.objects.all():
-        slot = {hour: Slot.objects.filter(room=room, timeslot__hour=hour).order_by('timeslot__hour').order_by('timeslot__day') for hour, _ in hours}
+        slot = {
+            hour: Slot.objects.filter(room=room, timeslot__hour=hour)
+            .order_by("timeslot__hour")
+            .order_by("timeslot__day")
+            for hour, _ in hours
+        }
         office = {
-                'room': str(room),
-                'slots': slot,
-            }
+            "room": str(room),
+            "slots": slot,
+        }
         offices.append(office)
-    
+
     context = {
-        
-        'days': days,
-        'hours': hours,
-        'offices': offices,
-        'form': TutoringAlgorithmOutputForm()
+        "days": days,
+        "hours": hours,
+        "offices": offices,
+        "form": TutoringAlgorithmOutputForm(),
     }
-    return render(request, 'tutoring/index.html', context)
-    
-@permission_required('tutoring.add_timeslotpreference', login_url='/accounts/login/')
+    return render(request, "tutoring/index.html", context)
+
+
+@permission_required("tutoring.add_timeslotpreference", login_url="/accounts/login/")
 def tutor_course_preference(request):
-    if Tutor.objects.filter(user = request.user).exists():
+    if Tutor.objects.filter(user=request.user).exists():
         tutor = Tutor.objects.get(user=request.user)
     else:
         name = request.user.get_full_name()
-        tutor = Tutor(user = request.user, name = name)
+        tutor = Tutor(user=request.user, name=name)
         tutor.save()
     if CoursePreference.objects.filter(tutor=tutor).count() == 0:
         initialize_course_preferences(tutor)
     form = CoursePreferenceForm(request.POST or None, tutor=tutor)
-    context = {
-        'form': form
-    }
-    if request.method == 'POST':
+    context = {"form": form}
+    if request.method == "POST":
         if form.is_valid():
             form.save_course_preference_data()
-    return render(request, 'tutoring/coursepref.html', context)
+    return render(request, "tutoring/coursepref.html", context)
 
-@permission_required('tutoring.add_timeslotpreference', login_url='/accounts/login/')
+
+@permission_required("tutoring.add_timeslotpreference", login_url="/accounts/login/")
 def tutor_slot_preference(request):
-    if Tutor.objects.filter(user = request.user).exists():
+    if Tutor.objects.filter(user=request.user).exists():
         tutor = Tutor.objects.get(user=request.user)
     else:
         name = request.user.get_full_name()
-        tutor = Tutor(user = request.user, name = name)
+        tutor = Tutor(user=request.user, name=name)
         tutor.save()
     if TimeSlotPreference.objects.filter(tutor=tutor).count() == 0:
         initialize_slot_preferences(tutor)
     form = TimeSlotPreferenceForm(request.POST or None, tutor=tutor)
-    
-    day_of_weeks_model = TimeSlot.objects.values_list('day', flat=True).distinct()
+
+    day_of_weeks_model = TimeSlot.objects.values_list("day", flat=True).distinct()
     day_of_weeks = []
     for day in day_of_weeks_model:
         day_of_weeks.append(TimeSlot.DAYS_OF_WEEK[day])
     hours = []
-    for hour in TimeSlot.objects.values_list('hour', flat=True).distinct():
+    for hour in TimeSlot.objects.values_list("hour", flat=True).distinct():
         hours.append((hour, TimeSlot.time(hour)))
-    context = {
-        'form': form,
-        'days': day_of_weeks,
-        'hours': hours,
-        'message': ""
-    }
-    if request.method == 'POST':
+    context = {"form": form, "days": day_of_weeks, "hours": hours, "message": ""}
+    if request.method == "POST":
         if form.is_valid():
             form.save_slot_preference_data()
-            context['message'] = "Sign up form saved! (Don't forget to screenshot your selections)"
+            context[
+                "message"
+            ] = "Sign up form saved! (Don't forget to screenshot your selections)"
         else:
-            context['message'] = "An error occured, please screenshot your current entries and contact CompServ"
-    return render(request, 'tutoring/slotpref.html', context)
+            context[
+                "message"
+            ] = "An error occured, please screenshot your current entries and contact CompServ"
+    return render(request, "tutoring/slotpref.html", context)
+
 
 def generate_all_rooms():
     for rooms in Room.DEFAULT_ROOM_CHOICES:
         room_model = Room(id=rooms[0], building=rooms[1], room_num=rooms[2])
         room_model.save()
 
+
 def generate_all_courses():
     for course in Course.objects.all():
         tutor_course = TutorCourse(course=course)
         tutor_course.save()
+
 
 def generate_all_slots():
     id = 0
@@ -101,39 +120,43 @@ def generate_all_slots():
     room_querySet = Room.objects.all()
     for hour, _ in TimeSlot.HOUR_CHOICES:
         for day, _ in TimeSlot.DAY_CHOICES:
-            timeslot = TimeSlot(hour=hour, day=day, timeslot_id = timeslot_id)
+            timeslot = TimeSlot(hour=hour, day=day, timeslot_id=timeslot_id)
             timeslot_id += 1
             timeslot.save()
             for room in room_querySet:
-                slot = Slot(timeslot=timeslot, room = room, slot_id = id)
+                slot = Slot(timeslot=timeslot, room=room, slot_id=id)
                 slot.save()
                 id += 1
+
 
 def initialize_slot_preferences(tutor):
     for timeslot in TimeSlot.objects.all():
         pref = TimeSlotPreference(tutor=tutor, timeslot=timeslot)
         pref.save()
 
+
 def initialize_course_preferences(tutor):
     for course in TutorCourse.objects.all():
         pref = CoursePreference(tutor=tutor, course=course)
         pref.save()
 
+
 def get_office_course_preferences(office):
     courses = TutorCourse.objects.all()
     prefs = []
-    #Cory
+    # Cory
     if office == 0:
         for course in courses:
             prefs.append(course.cory_preference)
-    #Soda
+    # Soda
     elif office == 1:
         for course in courses:
             prefs.append(course.soda_preference)
     return prefs
 
+
 # Generates file that will be fed into algorithm
-@permission_required('tutoring.add_slot', login_url='/accounts/login/')
+@permission_required("tutoring.add_slot", login_url="/accounts/login/")
 def prepare_algorithm_input(request):
     input_data = {}
     courses = []
@@ -148,7 +171,7 @@ def prepare_algorithm_input(request):
         tutor_dict["name"] = tutor.name
         slot_time_prefs = []
         slot_office_prefs_each_room = []
-        
+
         for _ in range(num_rooms):
             slot_office_prefs_each_room.append([])
 
@@ -176,7 +199,7 @@ def prepare_algorithm_input(request):
     cory_course_prefs = get_office_course_preferences(0)
     soda_office_prefs = get_office_course_preferences(1)
     time_gaps = get_slot_time_gaps()
-    for slot in Slot.objects.all().order_by('slot_id'):
+    for slot in Slot.objects.all().order_by("slot_id"):
         slot_dict = {}
         slot_dict["sid"] = slot.slot_id
         slot_dict["name"] = "Slot {}".format(slot.slot_id)
@@ -192,57 +215,78 @@ def prepare_algorithm_input(request):
     input_data["slots"] = slots
     return JsonResponse(input_data)
 
+
 def get_day_range_dict(time_gaps, day, slot_hour, last_hour):
     if day not in time_gaps:
         time_gaps[day] = {}
-    
+
     day_range_dict = time_gaps[day]
 
     if slot_hour not in day_range_dict:
-        day_range_dict[slot_hour] = {"Before" : False, "After" : False}
+        day_range_dict[slot_hour] = {"Before": False, "After": False}
     if last_hour not in day_range_dict:
-        day_range_dict[last_hour] = {"Before" : False, "After" : False}
-    
+        day_range_dict[last_hour] = {"Before": False, "After": False}
+
     return day_range_dict
 
+
 def get_slot_time_gaps():
-    time_gaps = {} # Day : {Hour : {"Before" : bool, "After" : bool}}
-    last_day = -1 # Days of the week: 0 to 6, Sunday to Saturday (see tutoring/models.py)
+    time_gaps = {}  # Day : {Hour : {"Before" : bool, "After" : bool}}
+    last_day = (
+        -1
+    )  # Days of the week: 0 to 6, Sunday to Saturday (see tutoring/models.py)
     last_hour = -1
-    for slot in Slot.objects.all().order_by('timeslot__day', 'timeslot__hour'):
+    for slot in Slot.objects.all().order_by("timeslot__day", "timeslot__hour"):
         if last_day != slot.timeslot.day:
             if last_hour != -1 and last_day != -1:
-                day_range_dict = get_day_range_dict(time_gaps, last_day, slot.timeslot.hour, last_hour)
+                day_range_dict = get_day_range_dict(
+                    time_gaps, last_day, slot.timeslot.hour, last_hour
+                )
                 day_range_dict[last_hour]["After"] = True
 
             last_day = slot.timeslot.day
             last_hour = -1
-            
+
         if last_hour == -1:
             last_hour = slot.timeslot.hour
-            day_range_dict = get_day_range_dict(time_gaps, slot.timeslot.day, slot.timeslot.hour, last_hour)
+            day_range_dict = get_day_range_dict(
+                time_gaps, slot.timeslot.day, slot.timeslot.hour, last_hour
+            )
             day_range_dict[last_hour]["Before"] = True
             continue
         if last_hour + 1 != slot.timeslot.hour:
             # Otherwise, there is a break in time (note that times should have been sorted)
             # Get the boolean dictionary (pass-by-refs anyway), or make a new one
-            day_range_dict = get_day_range_dict(time_gaps, slot.timeslot.day, slot.timeslot.hour, last_hour)
-            
+            day_range_dict = get_day_range_dict(
+                time_gaps, slot.timeslot.day, slot.timeslot.hour, last_hour
+            )
+
             day_range_dict[slot.timeslot.hour]["Before"] = True
             day_range_dict[last_hour]["After"] = True
-        
+
         last_hour = slot.timeslot.hour
     if last_hour != -1 and last_day != -1:
-        day_range_dict = get_day_range_dict(time_gaps, last_day, slot.timeslot.hour, last_hour)
+        day_range_dict = get_day_range_dict(
+            time_gaps, last_day, slot.timeslot.hour, last_hour
+        )
         day_range_dict[last_hour]["After"] = True
     return time_gaps
+
 
 def get_adjacent_slot_ids(slot, time_gaps):
     # time_gaps = {Day : {Hour : {"Before" : bool, "After" : bool}}}
     adjacent = []
 
-    gap_before = time_gaps.get(slot.timeslot.day, {}).get(slot.timeslot.hour, {}).get("Before", False)
-    gap_after  = time_gaps.get(slot.timeslot.day, {}).get(slot.timeslot.hour, {}).get("After", False)
+    gap_before = (
+        time_gaps.get(slot.timeslot.day, {})
+        .get(slot.timeslot.hour, {})
+        .get("Before", False)
+    )
+    gap_after = (
+        time_gaps.get(slot.timeslot.day, {})
+        .get(slot.timeslot.hour, {})
+        .get("After", False)
+    )
 
     if gap_after and (not gap_before):
         adjacent.append(slot.get_previous_hour_slot().slot_id)
@@ -257,12 +301,13 @@ def get_adjacent_slot_ids(slot, time_gaps):
         pass
     return adjacent
 
-@permission_required('tutoring.add_slot', login_url='/accounts/login/')
+
+@permission_required("tutoring.add_slot", login_url="/accounts/login/")
 def generate_schedule(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         form = TutoringAlgorithmOutputForm(request.POST, request.FILES)
         if form.is_valid():
-            output = request.FILES['output']
+            output = request.FILES["output"]
             data = json.loads(output.read().decode("utf-8"))
             for slot_id in data:
                 slot = Slot.objects.get(slot_id=slot_id)
@@ -270,4 +315,4 @@ def generate_schedule(request):
                 for id in tutor_ids:
                     tutor = Tutor.objects.get(id=id)
                     slot.tutors.add(tutor)
-    return redirect('/tutoring/')
+    return redirect("/tutoring/")
