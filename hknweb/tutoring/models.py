@@ -106,15 +106,19 @@ class TimeSlot(models.Model):
 
 class Room(models.Model):
     DEFAULT_ROOM_CHOICES = [
-        (0, "Hybrid/Cory", "290"),
-        (1, "Hybrid/Soda", "345"),
-        (2, "Online", ""),
+        (0, "No preference", ""),
+        (1, "Hybrid/Cory", "290"),
+        (2, "Hybrid/Soda", "345"),
+        (3, "Online", ""),
     ]
     building = models.CharField(max_length=255)
     room_num = models.CharField(max_length=255, blank=True)
 
     def get_num_building(self):
-        return "%s %s" % (self.building, self.room_num)
+        to_display = self.building
+        if self.room_num:
+            to_display += " %s" % (self.room_num,)
+        return to_display
 
     def __str__(self):
         return self.get_num_building()

@@ -29,8 +29,6 @@ def access_slotfields_at_hour(form, hour):
         if fieldname in form.fields:
             time_pref_field = form.fields[fieldname].get_bound_field(form, fieldname)
 
-        number_of_tutor_rooms = Room.objects.all().count()
-
         fieldname = "timeslot_office_preference_%s" % (timeslot_id,)
         office_pref_field = None
         if fieldname in form.fields:
