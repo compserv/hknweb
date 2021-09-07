@@ -12,21 +12,26 @@
 </head>
 <style>
     .heading {
-        display: none;
+      display: none;
     }
     .content {
-        padding-top: 1em;
-        padding-bottom: 1em;
+      padding-top: 1em;
+      padding-bottom: 1em;
     }
     @media screen and (min-width: 1000px) {
-        .content {
-            padding-top: 1.5em;
-            padding-bottom: 1.5em;
-        }
+      .content {
+          padding-top: 1.5em;
+          padding-bottom: 1.5em;
+      }
     }
     .centered {
-        max-width: 700px;
-        margin: 0 auto;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    ul {
+      margin-top: 0;
+      padding: 0;
+      list-style-type: none;
     }
 </style>
 {% endblock %}
@@ -41,7 +46,8 @@
 <div class="left-align">
 <form method = "POST" action="/tutoring/slotpref" onsubmit="submit_button.disabled = true; return true;">
   {% csrf_token %}
-  <h2>Do you prefer for your slots to be adjacent?</h2> 
+  <h2>Do you prefer for your slots to be adjacent?</h2>
+  <p>"Adjacent Slots" means having two 1-hour time slots next to each other, forming a 2-hour time slot.</p>
   {{form.adjacent_pref}}
   <h2> Enter the amount of hours you are tutoring for per week</h2>
   {{form.num_assignments}}
@@ -50,11 +56,16 @@
   <p> Example: BOB BOBERTSON should be entered as: Bob Bobertson. </p>
   {{form.tutor_name}}
   <h2> Timeslot preferences </h2>
+  <p>For each time slot below, indicate your preference level for office hours.</p>
+  <p>You can also indicate your office preference for individual time slots.</p>
+
   <p>
-      <p>
-        Select your <b>availability</b> using the first set of options and your <b>preferred location</b> using the second set of options.
-      </p>
-  <table>
+    For each time slot below, indicate your preference level for office hours for each room:<br/>
+    Strongly undesired (<i>leftmost</i>), slightly undesired (<i>halfway left and center</i>), 
+    no preference (<i>center</i>), slightly prefered (<i>halfway right and center</i>), and strongly prefered (<i>rightmost</i>).
+  </p>
+
+  <table border="1" cellpadding="10px">
     <tr>
       <th class="w3 pv2 bb b--light-gray">Hours</th>
       {% for day in days %}
@@ -68,7 +79,12 @@
         <td class="pv2 w ba b--near-white">
             {% for field in slotfields %}
               {% if field %}
-                {{ field }}
+                {% if field.label %}
+                    {{ field.label }}
+                {% endif %}
+                <div>
+                  {{ field }}
+                </div>
               {% endif %}
             {% endfor %}
         </td>
@@ -76,9 +92,11 @@
     </tr>
     {% endfor %}
   </table>
+  <p> </p>
   <div id="submit">
-    <input type="submit" name="submit_button" value="Submit" />
+    <input type="submit" name="submit_button" value="Submit" style="width: 90px; height: 40px; font-size: 16px;"/>
   </div>
+  <p> </p>
 </form>
 {% if messages %}
   {% for message in messages %}

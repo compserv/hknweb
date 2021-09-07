@@ -1,5 +1,6 @@
 from django import template
 from django.apps import apps
+from hknweb.tutoring.models import Room
 
 register = template.Library()
 TimeSlot = apps.get_model("tutoring", "TimeSlot")
@@ -29,10 +30,12 @@ def access_slotfields_at_hour(form, hour):
         if fieldname in form.fields:
             time_pref_field = form.fields[fieldname].get_bound_field(form, fieldname)
 
-        fieldname = "timeslot_office_preference_%s" % (timeslot_id,)
-        office_pref_field = None
-        if fieldname in form.fields:
-            office_pref_field = form.fields[fieldname].get_bound_field(form, fieldname)
-        slotfields.append([time_pref_field, office_pref_field])
+        pref_fields = [time_pref_field]
+        for room in Room.objects.all():
+            fieldname = "timeslot_office_preference_%s_%s" % (timeslot_id, room.id)
+            if fieldname in form.fields:
+                pref_fields.append(form.fields[fieldname].get_bound_field(form, fieldname))  
+        
+        slotfields.append(pref_fields)
 
     return slotfields
