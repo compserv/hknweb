@@ -107,7 +107,6 @@ class TimeSlotPreferenceForm(forms.Form):
                 room_pref_for_timeslot = RoomPreference.objects.filter(timeslot=timeslot, tutor=self.tutor)
 
                 if number_of_tutor_rooms == 1:
-                    # Just in case a Preference is assigned to the room
                     room_pref = room_pref_for_timeslot.first()
                     assert room_pref.room.id == room_id, "The room ids somehow did not match: {} vs {}".format(room_pref.room.id, room_id)
                     room_pref.preference = value
