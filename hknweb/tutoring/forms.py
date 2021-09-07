@@ -74,7 +74,6 @@ class TimeSlotPreferenceForm(forms.Form):
                 self.fields[field_name] = forms.IntegerField(widget=forms.NumberInput(attrs={'type':'range', 'min':0, 'max': 0, 'step': 0}))
                 self.fields[field_name].label = "%s only" % (str(room), )
                 self.fields[field_name].disabled = True
-                pass
             elif number_of_tutor_rooms == 2:
                 room_pref, other_room_pref = rooms_slot_available.first().room, rooms_slot_available.last().room
                 field_name = 'timeslot_office_preference_%s_%s' % (timeslot.timeslot_id, room_pref.room.id)
