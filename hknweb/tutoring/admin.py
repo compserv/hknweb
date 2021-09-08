@@ -1,7 +1,6 @@
 from django.contrib import admin
 
 from .models import (
-    RoomPreference,
     TutorCourse,
     TimeSlot,
     Slot,
@@ -43,7 +42,6 @@ class TimeSlotAdmin(admin.ModelAdmin):
         TutorCourse.objects.all().delete()
         TimeSlot.objects.all().delete()
         TimeSlotPreference.objects.all().delete()
-        RoomPreference.objects.all().delete()
 
     reset_database_time_information.short_description = "Reset the time slot information if e.g. the semester's offered tutoring hours change"
 
@@ -87,15 +85,10 @@ class CoursePreferenceAdmin(admin.ModelAdmin):
 
 @admin.register(TimeSlotPreference)
 class TimeSlotPreferenceAdmin(admin.ModelAdmin):
-    list_display = ["tutor", "timeslot", "preference"]
-    list_filter = ["tutor", "timeslot", "preference"]
-    search_fields = ["tutor", "timeslot", "preference"]
+    list_display = ["tutor", "timeslot", "time_preference", "office_preference"]
+    list_filter = ["tutor", "timeslot", "time_preference", "office_preference"]
+    search_fields = ["tutor", "timeslot", "time_preference", "office_preference"]
 
-@admin.register(RoomPreference)
-class RoomPreferenceAdmin(admin.ModelAdmin):
-    list_display = ["tutor", "timeslot", "room", "preference"]
-    list_filter = ["tutor", "timeslot", "room", "preference"]
-    search_fields = ["tutor", "timeslot", "room", "preference"]
 
 @admin.register(Room)
 class RoomAdmin(admin.ModelAdmin):

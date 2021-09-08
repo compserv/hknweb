@@ -1,5 +1,5 @@
 from django import forms
-from .models import CoursePreference, Room, RoomPreference, Slot, TimeSlot, TutorCourse, TimeSlotPreference
+from .models import CoursePreference, Room, TimeSlot, TutorCourse, TimeSlotPreference
 
 COURSE_PREFERENCE_CHOICES = [
     (-1, "Have not yet taken course"),
@@ -39,6 +39,12 @@ SLOT_PREFERENCE_CHOICES = [
 ]
 ADJACENT_PREFERENCE_CHOIES = [(-1, "No"), (0, "Don't care"), (1, "Yes")]
 
+ROOM_PREFERENCE_CHOICES = [
+    (n, "%s %s" % (building, room_num))
+    for n, building, room_num in Room.DEFAULT_ROOM_CHOICES
+]
+
+
 class TimeSlotPreferenceForm(forms.Form):
     adjacent_pref = forms.IntegerField(
         widget=forms.RadioSelect(choices=ADJACENT_PREFERENCE_CHOIES)
@@ -54,75 +60,37 @@ class TimeSlotPreferenceForm(forms.Form):
         self.fields["num_assignments"].initial = self.tutor.num_assignments
         timeslots = TimeSlot.objects.all().order_by("timeslot_id")
         for timeslot in timeslots:
-            timeslot_pref = TimeSlotPreference.objects.get(tutor=self.tutor, timeslot=timeslot)
+            pref = TimeSlotPreference.objects.get(tutor=self.tutor, timeslot=timeslot)
             field_name = "timeslot_time_preference_%s" % (timeslot.timeslot_id,)
             self.fields[field_name] = forms.IntegerField(
                 widget=forms.RadioSelect(choices=SLOT_PREFERENCE_CHOICES)
             )
-            self.fields[field_name].initial = timeslot_pref.preference
-            self.fields[field_name].label = "Timeslot Availability"
+            self.fields[field_name].initial = pref.time_preference
 
-            room_prefs = RoomPreference.objects.filter(tutor=self.tutor, timeslot=timeslot)
-            
-            rooms_slot_available = Slot.objects.filter(timeslot=timeslot).order_by("room__id")
-            number_of_tutor_rooms = rooms_slot_available.count()
-
-            if number_of_tutor_rooms == 1:
-                # Disabled slider for label only purposes, with side feature to say no adjustment available
-                room = rooms_slot_available.first().room
-                field_name = 'timeslot_office_preference_%s_%s' % (timeslot.timeslot_id, room.id)
-                self.fields[field_name] = forms.IntegerField(widget=forms.NumberInput(attrs={'type':'range', 'min':0, 'max': 0, 'step': 0}))
-                self.fields[field_name].label = "%s only" % (str(room), )
-                self.fields[field_name].disabled = True
-                pass
-            elif number_of_tutor_rooms == 2:
-                room_pref, other_room_pref = rooms_slot_available.first().room, rooms_slot_available.last().room
-                field_name = 'timeslot_office_preference_%s_%s' % (timeslot.timeslot_id, room_pref.room.id)
-                self.fields[field_name] = forms.IntegerField(widget=forms.NumberInput(attrs={'type':'range', 'min':-2, 'max': 2, 'step': 1}))
-                self.fields[field_name].initial = room_pref.preference
-                self.fields[field_name].label = str(other_room_pref.room) + " <-> " + str(room_pref.room)
-            else:
-                for room_slot in rooms_slot_available:
-                    room = room_slot.room
-                    field_name = 'timeslot_office_preference_%s_%s' % (timeslot.timeslot_id, room.id)
-                    self.fields[field_name] = forms.IntegerField(widget=forms.NumberInput(attrs={'type':'range', 'min':-2, 'max': 2, 'step': 1}))
-                    self.fields[field_name].initial = room_prefs.get(room=room).preference
-                    self.fields[field_name].label = str(room)
+            field_name = "timeslot_office_preference_%s" % (timeslot.timeslot_id,)
+            self.fields[field_name] = forms.IntegerField(
+                widget=forms.RadioSelect(choices=ROOM_PREFERENCE_CHOICES)
+            )
+            self.fields[field_name].initial = pref.office_preference
 
     def save_slot_preference_data(self):
-        number_of_tutor_rooms = Room.objects.count()
-
         for name, value in self.cleaned_data.items():
             if name.startswith("timeslot_time_preference_"):
                 timeslot_id = int(name.replace("timeslot_time_preference_", ""))
                 timeslot = TimeSlot.objects.get(timeslot_id=timeslot_id)
-                timeslot_pref = TimeSlotPreference.objects.get(
+                pref = TimeSlotPreference.objects.get(
                     timeslot=timeslot, tutor=self.tutor
                 )
-                timeslot_pref.preference = value
-                timeslot_pref.save(update_fields=["preference"])
+                pref.time_preference = value
+                pref.save(update_fields=["time_preference"])
             elif name.startswith("timeslot_office_preference_"):
-                timeslot_id, room_id = [int(v) for v in name.replace("timeslot_office_preference_", "").split("_")]
-
+                timeslot_id = int(name.replace("timeslot_office_preference_", ""))
                 timeslot = TimeSlot.objects.get(timeslot_id=timeslot_id)
-                room_pref_for_timeslot = RoomPreference.objects.filter(timeslot=timeslot, tutor=self.tutor)
-
-                if number_of_tutor_rooms == 1:
-                    # Just in case a Preference is assigned to the room
-                    room_pref = room_pref_for_timeslot.first()
-                    assert room_pref.room.id == room_id, "The room ids somehow did not match: {} vs {}".format(room_pref.room.id, room_id)
-                    room_pref.preference = value
-                    room_pref.save(update_fields=["preference"])
-                elif number_of_tutor_rooms == 2:
-                    # For loop used in case the ordering is not correct
-                    for room_pref in room_pref_for_timeslot:
-                        room_pref.preference = value * (1 if (room_pref.room.id == room_id) else -1)
-                        room_pref.save(update_fields=["preference"])
-                else:
-                    # Room IDs sourced from each slider
-                    room_pref = room_pref_for_timeslot.get(room_id=room_id)
-                    room_pref.preference = value
-                    room_pref.save(update_fields=["preference"])
+                pref = TimeSlotPreference.objects.get(
+                    timeslot=timeslot, tutor=self.tutor
+                )
+                pref.office_preference = value
+                pref.save(update_fields=["office_preference"])
             elif name == "adjacent_pref":
                 self.tutor.adjacent_pref = value
             elif name == "num_assignments":

@@ -1,4 +1,3 @@
-from operator import mod
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -20,16 +19,13 @@ class Tutor(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     name = models.CharField(max_length=255)
     adjacent_pref = models.IntegerField(default=0)
-    num_assignments = models.IntegerField(default=2)
+    num_assignments = models.IntegerField(default=1)
 
     def get_course_preferences(self):
         return CoursePreference.objects.filter(tutor=self).order_by("course__id")
 
-    def get_timeslot_preferences(self):
-        return TimeSlotPreference.objects.filter(tutor=self).order_by("timeslot__hour", "timeslot__day")
-
-    def get_room_preferences(self):
-        return RoomPreference.objects.filter(tutor=self).order_by("timeslot__hour", "timeslot__day", "room__id")
+    def get_slot_preferences(self):
+        return TimeSlotPreference.objects.filter(tutor=self).order_by("timeslot_id")
 
     def get_preferred_courses(self):
         preferences = self.get_course_preferences()
@@ -110,9 +106,10 @@ class TimeSlot(models.Model):
 
 class Room(models.Model):
     DEFAULT_ROOM_CHOICES = [
-        (0, "Hybrid/Cory", "290"),
-        (1, "Hybrid/Soda", "345"),
-        (2, "Online", ""),
+        (0, "No preference", ""),
+        (1, "Hybrid/Cory", "290"),
+        (2, "Hybrid/Soda", "345"),
+        (3, "Online", ""),
     ]
     building = models.CharField(max_length=255)
     room_num = models.CharField(max_length=255, blank=True)
@@ -188,11 +185,5 @@ class CoursePreference(models.Model):
 class TimeSlotPreference(models.Model):
     tutor = models.ForeignKey(Tutor, on_delete=models.CASCADE)
     timeslot = models.ForeignKey(TimeSlot, on_delete=models.CASCADE)
-    preference = models.IntegerField(default=0)
-
-
-class RoomPreference(models.Model):
-    tutor = models.ForeignKey(Tutor, on_delete=models.CASCADE)
-    timeslot = models.ForeignKey(TimeSlot, on_delete=models.CASCADE)
-    room = models.ForeignKey(Room, on_delete=models.CASCADE)
-    preference = models.IntegerField(default=0)
+    time_preference = models.IntegerField(default=1)
+    office_preference = models.IntegerField(default=0)
