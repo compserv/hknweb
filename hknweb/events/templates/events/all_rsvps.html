@@ -91,11 +91,11 @@
                                             </div>
                                         </td>
                                         <td align="center">
-                                            <form action="{{ action }}" method="POST">
+                                            <form action="{{ action }}" method="POST" onsubmit="submit_button.disabled = true; return true;">
                                                 {% csrf_token %}
                                                 <input type="hidden" name="event" value="{{ event.id }}" />
                                                 <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                                                <input type="submit" value="{{ rsvp_type_data.display_value }}" />
+                                                <input type="submit" name="submit_button" value="{{ rsvp_type_data.display_value }}" />
                                             </form>
                                         </td>
                                     </tr>

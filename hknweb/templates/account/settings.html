@@ -12,16 +12,23 @@
 </ul>
 {% endif %}
 
-<form method="post">
+<form method="post" onsubmit="change_password.disabled = true; return true;">
+	{% csrf_token %}
+	<h2>Change password</h2>
+	<label>Old password:</label>
+	{{ verify_form.password }}
+	{{ password_form.as_p }}
+	<button type="submit" name="change_password">Save</button>
+</form>
+
+<form method="post" onsubmit="edit_profile.disabled = true; return true;">
 	{% csrf_token %}
 	<!-- <h2>Account settings</h2> -->
 	<!-- {{ user_form.as_p }} -->
-	<h2>Change password</h2>
-	{{ password_form.as_p }}
 	<h2>Edit profile</h2>
 	{{ profile_form.as_p }}
-  <h2>Confirm password</h2>
-  {{ verify_form.as_p }}
-	<button type="submit">Save</button>
+	<h3>Confirm password</h3>
+	{{ verify_form.as_p }}
+	<button type="submit" name="edit_profile">Save</button>
 </form>
 {% endblock %}

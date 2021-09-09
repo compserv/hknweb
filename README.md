@@ -11,8 +11,24 @@ This approach is simpler if you are new to developing software.
 **Vagrant** will automatically setup a virtual machine with the correct
 setup for developing `hknweb`.
 
-Install [Vagrant](https://www.vagrantup.com/) and [VirtualBox](https://www.virtualbox.org/),
-then run:
+------------------------------
+### Windows Users
+* **NOTE**: **Windows machine** users MUST open their Terminal as **Administrator**
+* We have success of the setup completing on Windows Command Prompt, Windows Git Bash, and Windows Linux Subsystem (WSL). Regardless, you must open them as Admin via a right click! Same with Windows Terminal if you use that.
+* You might get an error on the side below. You can fix this by Running the Command Prompt as Administrator, and then running: `bcdedit /set hypervisorlaunchtype off`
+```
+There was an error while executing `VBoxManage`, a CLI used by Vagrant
+for controlling VirtualBox. The command and stderr is shown below.
+
+Command: ["startvm", "3e703a10-ae97-4ef6-80fa-bf959a3905dc", "--type", "headless"]
+
+Stderr: VBoxManage.exe: error: Call to WHvSetupPartition failed: ERROR_SUCCESS
+```
+------------------------------
+
+Install [Vagrant](https://www.vagrantup.com/) and [VirtualBox](https://www.virtualbox.org/) (use older version: 6.0.14):
+
+First, within the directory you cloned the hknweb repository, make sure to cd into the hknweb directory. The following commands will only work if you are within the same directory as the Vagrantfile. Then, run
 
 ```sh
 $ vagrant up

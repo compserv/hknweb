@@ -26,7 +26,7 @@ Officer Challenge Confirmation
         Request Date: {{ challenge.request_date }}<br/><br/>
 
         <!-- Confimation form -->
-        <form method="post">
+        <form method="post" onsubmit="submit_button.disabled = true; return true;">
             {% csrf_token %}
 
             {% for field in form %}
@@ -40,7 +40,7 @@ Officer Challenge Confirmation
                 </div>
             {% endfor %}
 
-            <input class="f6 grow no-underline br-pill ph3 pv2 mb2 dib white bg-black" type="submit" value="Submit"/>
+            <input class="f6 grow no-underline br-pill ph3 pv2 mb2 dib white bg-black" type="submit" name="submit_button" value="Submit"/>
 
         </form>
         <br>

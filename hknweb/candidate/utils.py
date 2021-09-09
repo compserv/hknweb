@@ -163,6 +163,9 @@ def check_requirements(confirmed_events, unconfirmed_events, num_challenges, \
             num_confirmed = len(confirmed_events[req_type])
         # officer hangouts and mandatory events are special cases
         if req_type == settings.HANGOUT_EVENT:
+            # TODO: Hardcoded-ish for now, allow for choice
+            if "Hangout" in confirmed_events:
+                num_confirmed = len(confirmed_events["Hangout"])
             interactivities = {
                 settings.HANGOUT_ATTRIBUTE_NAME: num_confirmed,
                 settings.CHALLENGE_ATTRIBUTE_NAME: num_challenges,

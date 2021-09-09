@@ -18,17 +18,17 @@
       {% endif %}
     {% endif %}
 
-    <form method="post" action="{% url 'login' %}">
+    <form method="post" action="{% url 'login' %}" onsubmit="submit_button.disabled = true; return true;">
       {% csrf_token %}
       {{ form.as_p }}
 
-    <input type="submit" value="login" />
+    <input type="submit" name="submit_button" value="login" />
     <input type="hidden" name="next" value="{{ next }}" />
     </form>
 
     <a href="{% url 'account-create' %}">Sign up</a>
     <p><a href="{% url 'password_reset' %}">Forgot your password?</a></p>
-    <a href="{% url 'social:begin' 'google-oauth2' %}">Login with Google</a>
+    <!-- <a href="{% url 'social:begin' 'google-oauth2' %}">Login with Google</a> -->
     <br><br><br>
 </div>
 {% endblock %}

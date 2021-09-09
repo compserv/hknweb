@@ -83,6 +83,7 @@ TEMPLATES = [
                 'social_django.context_processors.backends',
                 'social_django.context_processors.login_redirect',
                 'hknweb.views.users.add_officer_context',
+                'hknweb.views.users.add_exec_context'
             ],
         },
     },
@@ -200,6 +201,7 @@ SOCIAL_AUTH_ASSOCIATION_SERVER_URL_LENGTH  = 100
 # user groups
 CAND_GROUP = 'candidate'
 OFFICER_GROUP = 'officer'
+EXEC_GROUP = 'exec'
 
 # default hard-coded event types for candidate semester
 # NOTE: these strings are also hard-coded in candidate/index.html

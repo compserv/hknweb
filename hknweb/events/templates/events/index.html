@@ -3,6 +3,8 @@
 
 {% block title %}Events{% endblock %}
 
+{% load event_filters %}
+
 {% block header %}
 <!-- Scripts which make the calendar work:-->
 <link rel="stylesheet" href="{% static "events/style.css" %}">
@@ -44,7 +46,7 @@
             // Events
             events: [{% for event in events %}
                 {
-                    title: "{{ event.name }}",
+                    title: "{{ event.name | event_name | safe }}",
                     start: '{{ event.start_time|date:"c" }}',
                     end: '{{ event.end_time|date:"c" }}',
                     url: '{{ event.id }}',
@@ -90,8 +92,8 @@ Upcoming Events
 
     {% if perms.events.add_event %}
     <br>
-    <form action="{% url 'events:new' %}" method="GET" id="button">
-        <button type='submit'>Add an event</button>
+    <form action="{% url 'events:new' %}" method="GET" id="button" onsubmit="submit_button.disabled = true; return true;">
+        <button type='submit' name="submit_button">Add an event</button>
     </form>
     {% endif %}
     <br>

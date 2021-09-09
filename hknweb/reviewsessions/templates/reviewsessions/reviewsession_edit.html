@@ -38,10 +38,10 @@
 <h1 id="add-review-session-title"> Edit Review Session: {{ reviewsession.name }} </h1>
 
 <div class="centered">
-    <form method="post">
+    <form method="post" onsubmit="submit_button.disabled = true; return true;">
         {% csrf_token %}
         {{ form.as_p }}
-        <input type="submit" value="Update">
+        <input type="submit" name="submit_button" value="Update">
         {% if messages %}
             {% for message in messages %}
                 <br>

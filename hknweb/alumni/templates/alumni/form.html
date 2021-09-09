@@ -22,7 +22,7 @@ Submit Your Alumni Information
             {% endfor %}
         {% endif %}
 
-        <form method="POST">{% csrf_token %}
+        <form method="POST" onsubmit="submit_button.disabled = true; return true;">{% csrf_token %}
             {% for field in form %}
                 <br>
                 <span style="float: left;">{{ field.label }} {% if field.field.required %}
@@ -39,7 +39,7 @@ Submit Your Alumni Information
                 <br>
             {% endfor %}
 
-            <input type="submit" value="Submit"/>
+            <input type="submit" name="submit_button" value="Submit"/>
         </form>
         <br>
 
