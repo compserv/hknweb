@@ -3,13 +3,14 @@ from django.contrib.auth.decorators import permission_required
 from django.http import JsonResponse
 from hknweb.coursesemester.models import Course
 from .models import (
-    TimeSlot,
+    CoursePreference,
     Slot,
     Tutor,
     TutorCourse,
+    TimeSlot,
     TimeSlotPreference,
-    CoursePreference,
     Room,
+    RoomPreference,
 )
 from .forms import (
     TimeSlotPreferenceForm,
@@ -18,14 +19,16 @@ from .forms import (
 )
 import json
 
-
-def index(request):
+def initialize_tutoring():
     if Room.objects.all().count() == 0:
         generate_all_rooms()
     if Slot.objects.all().count() == 0:
         generate_all_slots()
     if TutorCourse.objects.all().count() == 0:
         generate_all_courses()
+
+def index(request):
+    initialize_tutoring()
     days = [name for _, name in TimeSlot.DAY_CHOICES]
     hours = TimeSlot.HOUR_CHOICES
     offices = []
@@ -77,8 +80,7 @@ def tutor_slot_preference(request):
         name = request.user.get_full_name()
         tutor = Tutor(user=request.user, name=name)
         tutor.save()
-    if TimeSlotPreference.objects.filter(tutor=tutor).count() == 0:
-        initialize_slot_preferences(tutor)
+    initialize_slot_preferences(tutor)
     form = TimeSlotPreferenceForm(request.POST or None, tutor=tutor)
 
     day_of_weeks_model = TimeSlot.objects.values_list("day", flat=True).distinct()
@@ -130,9 +132,16 @@ def generate_all_slots():
 
 
 def initialize_slot_preferences(tutor):
-    for timeslot in TimeSlot.objects.all():
-        pref = TimeSlotPreference(tutor=tutor, timeslot=timeslot)
-        pref.save()
+    initialize_tutoring()
+    if TimeSlotPreference.objects.filter(tutor=tutor).count() == 0:
+        for timeslot in TimeSlot.objects.all():
+            timeslot_pref = TimeSlotPreference(tutor=tutor, timeslot=timeslot)
+            timeslot_pref.save()
+    if RoomPreference.objects.filter(tutor=tutor).count() == 0:
+        for timeslot in TimeSlot.objects.all():
+            for room in Room.objects.all():
+                room_pref = RoomPreference(tutor=tutor, timeslot=timeslot, room=room)
+                room_pref.save()
 
 
 def initialize_course_preferences(tutor):
@@ -152,6 +161,7 @@ def get_office_course_preferences(office):
     elif office == 1:
         for course in courses:
             prefs.append(course.soda_preference)
+    # TODO: Ability to generalize for good practice, currently assumes neutral
     return prefs
 
 
@@ -164,29 +174,23 @@ def prepare_algorithm_input(request):
         courses.append(str(course.course))
     input_data["courseName"] = courses
     tutors = []
-    num_rooms = Room.objects.all().count()
     for tutor in Tutor.objects.all():
         tutor_dict = {}
         tutor_dict["tid"] = tutor.id
         tutor_dict["name"] = tutor.name
         slot_time_prefs = []
-        slot_office_prefs_each_room = []
+        slot_office_prefs = []
 
-        for _ in range(num_rooms):
-            slot_office_prefs_each_room.append([])
+        for timeslot_pref in tutor.get_timeslot_preferences():
+            for _ in Slot.objects.filter(timeslot=timeslot_pref.timeslot):
+                slot_time_prefs.append(timeslot_pref.preference)
 
-        for pref in tutor.get_slot_preferences():
-            slot_time_prefs.append(pref.time_preference)
-            # TODO: ID of which room is this
-            #  Gonna need to add which "office" relates to "pref.office_preference"
-            room_index = 0
-            slot_office_prefs_each_room[room_index].append(pref.office_preference)
-            for i, slot_office_pref in enumerate(slot_office_prefs_each_room):
-                if i == room_index:
-                    continue
-                slot_office_pref.append(-pref.office_preference)
-        tutor_dict["timeSlots"] = slot_time_prefs * num_rooms
-        tutor_dict["officePrefs"] = sum(slot_office_prefs_each_room, [])
+        for room_pref in tutor.get_room_preferences():
+            if Slot.objects.filter(timeslot=room_pref.timeslot, room=room_pref.room).count() > 0:
+                slot_office_prefs.append(room_pref.preference)
+        
+        tutor_dict["timeSlots"] = slot_time_prefs
+        tutor_dict["officePrefs"] = slot_office_prefs
         course_prefs = []
         for pref in tutor.get_course_preferences():
             course_prefs.append(pref.preference)
@@ -213,21 +217,6 @@ def prepare_algorithm_input(request):
         slots.append(slot_dict)
     input_data["slots"] = slots
     return JsonResponse(input_data)
-
-
-def get_day_range_dict(time_gaps, day, slot_hour, last_hour):
-    if day not in time_gaps:
-        time_gaps[day] = {}
-
-    day_range_dict = time_gaps[day]
-
-    if slot_hour not in day_range_dict:
-        day_range_dict[slot_hour] = {"Before": False, "After": False}
-    if last_hour not in day_range_dict:
-        day_range_dict[last_hour] = {"Before": False, "After": False}
-
-    return day_range_dict
-
 
 def get_adjacent_slot_ids(slot):
     slots_to_check = [
