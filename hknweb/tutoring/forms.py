@@ -1,5 +1,5 @@
 from django import forms
-from .models import CoursePreference, Room, RoomPreference, Slot, TimeSlot, TutorCourse, TimeSlotPreference
+from .models import CoursePreference, RoomPreference, Slot, TimeSlot, TutorCourse, TimeSlotPreference
 
 COURSE_PREFERENCE_CHOICES = [
     (-1, "Have not yet taken course"),

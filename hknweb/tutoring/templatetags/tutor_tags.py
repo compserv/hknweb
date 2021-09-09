@@ -1,6 +1,5 @@
 from django import template
 from django.apps import apps
-from hknweb.tutoring.models import Room
 
 register = template.Library()
 TimeSlot = apps.get_model("tutoring", "TimeSlot")
