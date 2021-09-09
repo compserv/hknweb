@@ -143,12 +143,17 @@ class TimeSlotPreferenceForm(forms.Form):
                     timeslot=timeslot, tutor=self.tutor
                 )
                 
-                for one_room_pref in room_prefs:
-                    if one_room_pref.room.id == value - 1:
-                        one_room_pref.preference = 2
-                    else:
+                if value == 0:                    
+                    for one_room_pref in room_prefs:
                         one_room_pref.preference = 0
-                    one_room_pref.save(update_fields=["preference"])
+                        one_room_pref.save(update_fields=["preference"])
+                else:
+                    for one_room_pref in room_prefs:
+                        if one_room_pref.room.id == value - 1:
+                            one_room_pref.preference = 2
+                        else:
+                            one_room_pref.preference = -2
+                        one_room_pref.save(update_fields=["preference"])
 
                 # TODO: TO BE UNCOMMENTED ONCE A SOLUTION FOR MORE THAN ONE ROOM IS DECIDED
                 # timeslot_id, room_id = [int(v) for v in name.replace("timeslot_office_preference_", "").split("_")]
