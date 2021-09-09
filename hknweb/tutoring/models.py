@@ -134,9 +134,6 @@ class Slot(models.Model):
 
     def get_office(self):
         return self.room.building
-        # for room in self.ROOM_CHOICES:
-        #     if room[0] == self.room:
-        #         return room[1]
 
     def get_previous_hour_slot(self, hours_back=1):
         # Returns None if no slot exist
