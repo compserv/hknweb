@@ -122,9 +122,8 @@ def generate_all_slots():
     room_querySet = Room.objects.all()
     for hour, _ in TimeSlot.HOUR_CHOICES:
         for day, _ in TimeSlot.DAY_CHOICES:
-            timeslot = TimeSlot(hour=hour, day=day, timeslot_id=timeslot_id)
+            timeslot, _ = TimeSlot.objects.get_or_create(hour=hour, day=day, timeslot_id=timeslot_id)
             timeslot_id += 1
-            timeslot.save()
             for room in room_querySet:
                 slot = Slot(timeslot=timeslot, room=room, slot_id=id)
                 slot.save()
