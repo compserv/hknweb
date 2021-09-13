@@ -2,9 +2,11 @@ from django.db import models
 from django.contrib.auth.models import User
 import django.utils.timezone
 
+
 class Link(models.Model):
     class Meta:
         verbose_name_plural = "Links"  # fix plural without using Meta class
+
     name = models.CharField(max_length=255, null=False, unique=True)
     redirect = models.URLField()
     active = models.BooleanField(default=True)
@@ -17,7 +19,7 @@ class Link(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        if self.link_modified(['name', 'redirect', 'active']):
+        if self.link_modified(["name", "redirect", "active"]):
             self.modified_at = django.utils.timezone.now()
         super().save(*args, **kwargs)  # Call the "real" save() method.
 
@@ -32,9 +34,9 @@ class Link(models.Model):
         instance._state.db = db
         instance._old_values = dict(zip(field_names, values))
         return instance
-    
+
     def link_modified(self, fields):
-        if hasattr(self, '_old_values'):
+        if hasattr(self, "_old_values"):
             if not self.pk or not self._old_values:
                 return True
 
