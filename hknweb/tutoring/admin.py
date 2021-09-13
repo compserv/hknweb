@@ -88,11 +88,13 @@ class TimeSlotPreferenceAdmin(admin.ModelAdmin):
     list_filter = ["tutor", "timeslot", "preference"]
     search_fields = ["tutor", "timeslot", "preference"]
 
+
 @admin.register(RoomPreference)
 class RoomPreferenceAdmin(admin.ModelAdmin):
     list_display = ["tutor", "timeslot", "room", "preference"]
     list_filter = ["tutor", "timeslot", "room", "preference"]
     search_fields = ["tutor", "timeslot", "room", "preference"]
+
 
 @admin.register(Room)
 class RoomAdmin(admin.ModelAdmin):

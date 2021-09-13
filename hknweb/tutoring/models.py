@@ -25,10 +25,14 @@ class Tutor(models.Model):
         return CoursePreference.objects.filter(tutor=self).order_by("course__id")
 
     def get_timeslot_preferences(self):
-        return TimeSlotPreference.objects.filter(tutor=self).order_by("timeslot__hour", "timeslot__day")
+        return TimeSlotPreference.objects.filter(tutor=self).order_by(
+            "timeslot__hour", "timeslot__day"
+        )
 
     def get_room_preferences(self):
-        return RoomPreference.objects.filter(tutor=self).order_by("timeslot__hour", "timeslot__day", "room__id")
+        return RoomPreference.objects.filter(tutor=self).order_by(
+            "timeslot__hour", "timeslot__day", "room__id"
+        )
 
     def get_preferred_courses(self):
         preferences = self.get_course_preferences()
