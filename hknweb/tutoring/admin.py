@@ -57,16 +57,13 @@ class SlotAdmin(admin.ModelAdmin):
 
     def resync_slot_id(self, request, queryset):
         queryset_ordered = queryset.order_by(
-            "room__id", "timeslot__hour", "timeslot__day"
+            "timeslot__hour", "timeslot__day", "room__id"
         )
-        id_num = -1
-        last_room_id = float("inf")
+        slot_id = 0
         for slot_query in queryset_ordered:
-            if slot_query.room.id <= last_room_id:
-                id_num += 1
-            slot_query.slot_id = id_num
+            slot_query.slot_id = slot_id
+            slot_id += 1
             slot_query.save()
-            last_room_id = slot_query.room.id
 
     resync_slot_id.short_description = "Resync Slot ID in order of time (hour then day)"
 
