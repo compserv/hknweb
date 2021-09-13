@@ -1,7 +1,9 @@
 # from django.conf import settings
 
 
-REQUIREMENT_TITLES_TEMPLATE = "{name} ({num_required} required, {num_remaining} remaining)"
+REQUIREMENT_TITLES_TEMPLATE = (
+    "{name} ({num_required} required, {num_remaining} remaining)"
+)
 REQUIREMENT_TITLES_ALL = "{name} (ALL required)"
 
 # REQUIREMENT_EVENTS = [
@@ -11,6 +13,7 @@ REQUIREMENT_TITLES_ALL = "{name} (ALL required)"
 #     settings.SERV_EVENT,
 #     settings.PRODEV_EVENT,
 # ]
+
 
 class ATTR:
     CAND_CSV = "cand_csv"
@@ -33,8 +36,10 @@ class ATTR:
     UTF8 = "utf-8"
     UTF8SIG = "utf-8-sig"
 
+
 BERKELEY_EMAIL_DOMAIN = "@berkeley.edu"
 HKN_EMAIL_DOMAIN = "@hkn.eecs.berkeley.edu"
+
 
 class CandidateDTO:
     def __init__(self, candidate_attributes: dict):
@@ -50,7 +55,9 @@ class CandidateDTO:
 
     def validate(self):
         assert self.email, "Candidate email must not be empty"
-        assert self.email.endswith(BERKELEY_EMAIL_DOMAIN) or self.email.endswith(HKN_EMAIL_DOMAIN), "Candidate email must be an @berkeley.edu email"
+        assert self.email.endswith(BERKELEY_EMAIL_DOMAIN) or self.email.endswith(
+            HKN_EMAIL_DOMAIN
+        ), "Candidate email must be an @berkeley.edu email"
         assert self.first_name, "Candidate first name must not be empty"
         assert self.last_name, "Candidate last name must not be empty"
         assert self.username, "Candidate username must not be empty"
