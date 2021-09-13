@@ -20,13 +20,16 @@ DAY_ATTRIBUTE_NAME = "day"
 HOUR_ATTRIBUTE_NAME = "hour"
 MINUTES_ATTRIBUTE_NAME = "minutes"
 SECONDS_ATTRIBUTE_NAME = "seconds"
-GCAL_DATETIME_TEMPLATE = "{%s:04n}{%s:02n}{%s:02n}T{%s:02n}{%s:02n}{%s:02n}Z" % (  # "T" is for GCal format, "Z" is to indicate UTC time
-    YEAR_ATTRIBUTE_NAME,
-    MONTH_ATTRIBUTE_NAME,
-    DAY_ATTRIBUTE_NAME,
-    HOUR_ATTRIBUTE_NAME,
-    MINUTES_ATTRIBUTE_NAME,
-    SECONDS_ATTRIBUTE_NAME,
+GCAL_DATETIME_TEMPLATE = (
+    "{%s:04n}{%s:02n}{%s:02n}T{%s:02n}{%s:02n}{%s:02n}Z"
+    % (  # "T" is for GCal format, "Z" is to indicate UTC time
+        YEAR_ATTRIBUTE_NAME,
+        MONTH_ATTRIBUTE_NAME,
+        DAY_ATTRIBUTE_NAME,
+        HOUR_ATTRIBUTE_NAME,
+        MINUTES_ATTRIBUTE_NAME,
+        SECONDS_ATTRIBUTE_NAME,
+    )
 )
 
 

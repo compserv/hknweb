@@ -73,7 +73,9 @@ def create_event(data, start_time, end_time, user):
     event.save()
 
 
-def generate_recurrence_times(start_time: datetime, end_time: datetime, num_times: int, period: int) -> list:
+def generate_recurrence_times(
+    start_time: datetime, end_time: datetime, num_times: int, period: int
+) -> list:
     """
     Parameters
     ----------
@@ -82,7 +84,8 @@ def generate_recurrence_times(start_time: datetime, end_time: datetime, num_time
 
     """
     times = [(start_time, end_time)]
-    if num_times <= 0 or period <= 0: return times
+    if num_times <= 0 or period <= 0:
+        return times
     time_diff = timedelta(period * 7)
     for _ in range(num_times - 1):
         start_time, end_time = start_time + time_diff, end_time + time_diff
@@ -104,13 +107,16 @@ def get_access_level(user):
     return access_level
 
 
-DATETIME_WIDGET_NO_AUTOCOMPLETE = forms.DateTimeInput(attrs={'autocomplete':'off'})
+DATETIME_WIDGET_NO_AUTOCOMPLETE = forms.DateTimeInput(attrs={"autocomplete": "off"})
 
-def format_url(s: str, max_width: int=None) -> str:
+
+def format_url(s: str, max_width: int = None) -> str:
     url_validator = URLValidator()
     s = markdownify(s)
     try:
         url_validator(s)
-        return "<a href='{link}' style='background-color: white'> {link} </a>".format(link=s)
+        return "<a href='{link}' style='background-color: white'> {link} </a>".format(
+            link=s
+        )
     except:
         return "<div style='background-color: white'>{s}</div>".format(s=s)
