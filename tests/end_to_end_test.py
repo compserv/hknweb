@@ -30,15 +30,17 @@ def assert_does_not_error(client, path):
     ):
         # If a SERVER_NAME is set, then we redirect off-site somewhere, we'll
         # assume these succeed.
-        if 'SERVER_NAME' not in resp.request:
+        if "SERVER_NAME" not in resp.request:
             raise AssertionError(
-                dedent('''\
+                dedent(
+                    """\
                     Should have received status code 200 or 400, but instead received {resp.status_code}.
                     Full path: {path}
                     Final URL: {resp.url}
                     The response body was:
                     {resp.content}
-                ''').format(path=path, resp=resp),
+                """
+                ).format(path=path, resp=resp),
             )
 
 
@@ -57,6 +59,6 @@ def _get_reversed_urlpatterns(urlpatterns=urlpatterns):
             yield from _get_reversed_urlpatterns(urlpatterns=urlpattern.url_patterns)
 
 
-@pytest.mark.parametrize('path', _get_reversed_urlpatterns())
+@pytest.mark.parametrize("path", _get_reversed_urlpatterns())
 def test_view_does_not_error_with_default_args(client, path):
     assert_does_not_error(client, path)
