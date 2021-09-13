@@ -5,8 +5,9 @@ from hknweb.utils import markdownify
 from .models import MarkdownPage
 from .forms import EditPageForm
 
+
 def editor(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         form = EditPageForm(request.POST)
         if form.is_valid():
             mdp = MarkdownPage(**form.cleaned_data)
@@ -15,11 +16,16 @@ def editor(request):
     else:
         form = EditPageForm()
 
-    return render(request, 'markdown_pages/editor.html', { 'form': form })
+    return render(request, "markdown_pages/editor.html", {"form": form})
+
 
 def display(request, path):
     mdp = get_object_or_404(MarkdownPage, path=path)
-    return render(request, 'markdown_pages/display.html', {
-        'name': mdp.name,
-        'body': markdownify(mdp.body),
-    })
+    return render(
+        request,
+        "markdown_pages/display.html",
+        {
+            "name": mdp.name,
+            "body": markdownify(mdp.body),
+        },
+    )
