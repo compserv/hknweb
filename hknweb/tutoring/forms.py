@@ -1,5 +1,12 @@
 from django import forms
-from .models import CoursePreference, RoomPreference, Slot, TimeSlot, TutorCourse, TimeSlotPreference
+from .models import (
+    CoursePreference,
+    RoomPreference,
+    Slot,
+    TimeSlot,
+    TutorCourse,
+    TimeSlotPreference,
+)
 
 COURSE_PREFERENCE_CHOICES = [
     (-1, "Have not yet taken course"),
@@ -39,6 +46,7 @@ SLOT_PREFERENCE_CHOICES = [
 ]
 ADJACENT_PREFERENCE_CHOIES = [(-1, "No"), (0, "Don't care"), (1, "Yes")]
 
+
 class TimeSlotPreferenceForm(forms.Form):
     adjacent_pref = forms.IntegerField(
         widget=forms.RadioSelect(choices=ADJACENT_PREFERENCE_CHOIES)
@@ -61,7 +69,9 @@ class TimeSlotPreferenceForm(forms.Form):
         # ]
 
         for timeslot in timeslots:
-            timeslot_pref = TimeSlotPreference.objects.get(tutor=self.tutor, timeslot=timeslot)
+            timeslot_pref = TimeSlotPreference.objects.get(
+                tutor=self.tutor, timeslot=timeslot
+            )
             field_name = "timeslot_time_preference_%s" % (timeslot.timeslot_id,)
             self.fields[field_name] = forms.IntegerField(
                 widget=forms.RadioSelect(choices=SLOT_PREFERENCE_CHOICES)
@@ -69,31 +79,48 @@ class TimeSlotPreferenceForm(forms.Form):
             self.fields[field_name].initial = timeslot_pref.preference
             self.fields[field_name].label = "Timeslot Availability"
 
-            room_prefs = RoomPreference.objects.filter(tutor=self.tutor, timeslot=timeslot)
+            room_prefs = RoomPreference.objects.filter(
+                tutor=self.tutor, timeslot=timeslot
+            )
 
-            rooms_slot_available = Slot.objects.filter(timeslot=timeslot).order_by("room__id")
+            rooms_slot_available = Slot.objects.filter(timeslot=timeslot).order_by(
+                "room__id"
+            )
             number_of_tutor_rooms = rooms_slot_available.count()
 
             field_name = "timeslot_office_preference_%s" % (timeslot.timeslot_id,)
-            
+
             if number_of_tutor_rooms == 1:
                 one_room_pref = room_prefs.get(room=rooms_slot_available.first().room)
                 self.fields[field_name] = forms.IntegerField(
-                    widget=forms.RadioSelect(choices=[(one_room_pref.room.id + 1, str(one_room_pref.room))])
+                    widget=forms.RadioSelect(
+                        choices=[(one_room_pref.room.id + 1, str(one_room_pref.room))]
+                    )
                 )
                 self.fields[field_name].label = "Room Preference"
                 self.fields[field_name].initial = one_room_pref.room.id + 1
             else:
                 self.fields[field_name] = forms.IntegerField(
-                    widget=forms.RadioSelect(choices=ROOM_PREFERENCE_CHOICES_BASE + [(room_slot.room.id + 1, str(room_slot.room)) for room_slot in rooms_slot_available])
+                    widget=forms.RadioSelect(
+                        choices=ROOM_PREFERENCE_CHOICES_BASE
+                        + [
+                            (room_slot.room.id + 1, str(room_slot.room))
+                            for room_slot in rooms_slot_available
+                        ]
+                    )
                 )
                 chosen = 0
                 highest = 0
                 for room_slot in rooms_slot_available:
                     one_room_pref = room_prefs.get(room=room_slot.room)
                     # 0 means don't care, so no == 0
-                    if one_room_pref.preference > 0 and one_room_pref.preference > highest:
-                        chosen = one_room_pref.room.id + 1 # Shift forward by one for No Preference
+                    if (
+                        one_room_pref.preference > 0
+                        and one_room_pref.preference > highest
+                    ):
+                        chosen = (
+                            one_room_pref.room.id + 1
+                        )  # Shift forward by one for No Preference
                         highest = one_room_pref.preference
                 self.fields[field_name].label = "Room Preference"
                 self.fields[field_name].initial = chosen
@@ -142,8 +169,8 @@ class TimeSlotPreferenceForm(forms.Form):
                 room_prefs = RoomPreference.objects.filter(
                     timeslot=timeslot, tutor=self.tutor
                 )
-                
-                if value == 0:                    
+
+                if value == 0:
                     for one_room_pref in room_prefs:
                         one_room_pref.preference = 0
                         one_room_pref.save(update_fields=["preference"])
