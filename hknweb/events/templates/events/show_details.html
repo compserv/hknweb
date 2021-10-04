@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% load event_filters %}
+
 {% block title %}{{ event.name }}{% endblock %}
 
 {% block heading %}
@@ -43,9 +45,8 @@
 
     <p>{{ event_description | safe }}</p>
     <p><b>Event Type</b>: {{ event.event_type }}</p>
-    <p><b>Location</b>: {{ event_location | safe }}</p>
-    <p><b>Date</b>: {{event.start_time|date:"D, N j, Y"}}</p>
-    <p><b>Time</b>: {{event.start_time|time}} to {{event.end_time|time}}</p>
+    <p><b>Location</b>: {{ event_location }}</p>
+    <p><b>Date(s) and Time(s)</b>: {{ event | process_event_time }}</p>
     <p><b>Semester</b>: {{event.semester}}</p>
     <p><b>Access level</b>: {{ event_access_level }}</p>
 

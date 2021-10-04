@@ -2,9 +2,7 @@ from datetime import datetime, timedelta
 
 from django import forms
 from django.core.validators import URLValidator
-
-from hknweb.utils import markdownify
-
+from django.utils.safestring import mark_safe
 
 from .constants import (
     ATTR,
@@ -112,11 +110,11 @@ DATETIME_WIDGET_NO_AUTOCOMPLETE = forms.DateTimeInput(attrs={"autocomplete": "of
 
 def format_url(s: str, max_width: int = None) -> str:
     url_validator = URLValidator()
-    s = markdownify(s)
     try:
         url_validator(s)
-        return "<a href='{link}' style='background-color: white'> {link} </a>".format(
+        link_with_tag = "<a href='{link}' style='background-color: white'> {link} </a>".format(
             link=s
         )
+        return mark_safe(link_with_tag)
     except:
-        return "<div style='background-color: white'>{s}</div>".format(s=s)
+        return s
