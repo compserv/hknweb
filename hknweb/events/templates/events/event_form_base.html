@@ -10,6 +10,13 @@
 <link rel="stylesheet" href="{% static 'events/style.css' %}">
 {% endblock %}
 
+<style>
+    .errorlist {
+        list-style: none;
+        color: red;
+    }
+</style>
+
 <div class="centered">
     <form method="POST" id="form" onsubmit="submit_button.disabled = true; return true;">
         {% csrf_token %}
