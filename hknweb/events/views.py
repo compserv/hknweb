@@ -269,7 +269,7 @@ def add_event(request):
             return redirect("/events")
         else:
             messages.error(request, "Something went wrong oops")
-    return render(request, "events/event_add.html", {"form": EventForm(None)})
+    return render(request, "events/event_add.html", {"form": form})
 
 
 def confirm_rsvp(request, id, operation):
