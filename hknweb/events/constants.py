@@ -6,12 +6,12 @@ DESCRIPTION_ATTRIBUTE_NAME = "description"
 LOCATION_ATTRIBUTE_NAME = "location"
 
 # See https://stackoverflow.com/questions/22757908/what-parameters-are-required-to-create-an-add-to-google-calendar-link
-GCAL_INVITE_TEMPLATE = "https://calendar.google.com/calendar/render?action=TEMPLATE&text={%s}&dates={%s}/{%s}&details={%s}&location={%s}" % (
+GCAL_INVITE_TEMPLATE = "https://www.google.com/calendar/render?action=TEMPLATE&text={%s}&details={%s}&location={%s}&dates={%s}/{%s}" % (
     EVENT_NAME_ATTRIBUTE_NAME,
-    START_TIME_ATTRIBUTE_NAME,
-    END_TIME_ATTRIBUTE_NAME,
     DESCRIPTION_ATTRIBUTE_NAME,
     LOCATION_ATTRIBUTE_NAME,
+    START_TIME_ATTRIBUTE_NAME,
+    END_TIME_ATTRIBUTE_NAME,
 )
 
 YEAR_ATTRIBUTE_NAME = "year"
