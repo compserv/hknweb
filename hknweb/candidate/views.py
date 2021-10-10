@@ -24,6 +24,8 @@ from django.views import generic
 from django.views.generic.edit import FormView
 
 from dal import autocomplete
+from hknweb.models import Profile
+from hknweb.views.users import get_current_cand_semester
 
 from hknweb.utils import (
     get_rand_photo,
@@ -653,6 +655,13 @@ def add_cands(request):
     new_cand_list = []
     email_set = set()
     username_set = set()
+    current_cand_semester = get_current_cand_semester()
+    if current_cand_semester is None:
+        error_msg = "Inform CompServ the following: Please add the current semester in CourseSemester."
+        error_msg += " "
+        error_msg += "No candidate account actions have been taken, so re-upload the entire file after fixing the errors."
+        messages.error(request, error_msg)
+        return redirect(next_page)
     for i, row in enumerate(cand_csv):
         try:
             candidatedto = CandidateDTO(row)
@@ -696,6 +705,10 @@ def add_cands(request):
     for new_cand in new_cand_list:
         new_cand.save()
         candidate_group.user_set.add(new_cand)
+
+        profile = Profile.objects.get(user=new_cand)
+        profile.candidate_semester = current_cand_semester
+        profile.save()
 
         subject = "[HKN] Candidate account"
         html_content = render_to_string(
