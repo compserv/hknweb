@@ -1,4 +1,6 @@
+from collections import OrderedDict
 import csv
+from typing import Tuple
 
 from django.conf import settings
 
@@ -22,6 +24,8 @@ from django.views import generic
 from django.views.generic.edit import FormView
 
 from dal import autocomplete
+from hknweb.models import Profile
+from hknweb.views.users import get_current_cand_semester
 
 from hknweb.utils import (
     get_rand_photo,
@@ -574,7 +578,7 @@ class CandRequestView(FormView, generic.ListView):
             },
         )
         msg = EmailMultiAlternatives(
-            subject, subject, "no-reply@hkn.eecs.berkeley.edu", [officer_email]
+            subject, subject, settings.NO_REPLY_EMAIL, [officer_email]
         )
         msg.attach_alternative(html_content, "text/html")
         msg.send()
@@ -604,6 +608,34 @@ class OfficerPortalView(generic.ListView):
         )
         return result
 
+def check_duplicates(candidatedto: CandidateDTO, row: OrderedDict,
+                     email_set: set, username_set: set, i: int) -> Tuple[bool, str]:
+    error_msg = ""
+    # Check for duplicate Email
+    cand_email_in_set = candidatedto.email in email_set
+    if (cand_email_in_set or User.objects.filter(email=candidatedto.email).count() > 0):
+        if cand_email_in_set:
+            error_msg = "Duplicate email {} in the Candidate data.".format(candidatedto.email)
+        else:
+            error_msg = "Account with email {} already exists.".format(candidatedto.email)
+        error_msg += " "
+        error_msg += "No candidate account actions have been taken, so re-upload the entire file after fixing the errors."
+        error_msg += " "
+        error_msg += "Error Row Information at row {}: {}.".format(i + 1, row)
+        return True, error_msg
+    # Check for duplicate Username
+    cand_username_in_set = candidatedto.username in username_set
+    if (cand_username_in_set or User.objects.filter(username=candidatedto.username).count() > 0):
+        if cand_username_in_set:
+            error_msg = "Duplicate username {} in the Candidate data.".format(candidatedto.username)
+        else:
+            error_msg = "Account of username {} already exists.".format(candidatedto.username)
+        error_msg += " "
+        error_msg += "No candidate account actions have been taken, so re-upload the entire file after fixing the errors."
+        error_msg += " "
+        error_msg += "Error Row Information at row {}: {}.".format(i + 1, row)
+        return True, error_msg
+    return False, ""
 
 @login_and_permission("auth.add_user")
 def add_cands(request):
@@ -619,25 +651,64 @@ def add_cands(request):
 
     candidate_group = Group.objects.get(name=ATTR.CANDIDATE)
 
-    for row in cand_csv:
+    # Pre-screen and validate data
+    new_cand_list = []
+    email_set = set()
+    username_set = set()
+    current_cand_semester = get_current_cand_semester()
+    if current_cand_semester is None:
+        error_msg = "Inform CompServ the following: Please add the current semester in CourseSemester."
+        error_msg += " "
+        error_msg += "No candidate account actions have been taken, so re-upload the entire file after fixing the errors."
+        messages.error(request, error_msg)
+        return redirect(next_page)
+    for i, row in enumerate(cand_csv):
         try:
             candidatedto = CandidateDTO(row)
         except AssertionError as e:
-            messages.error(request, "Invalid candidate information: " + str(e))
+            error_msg = "Invalid CSV format. Check that your columns are correctly labeled, there are NO blank rows, and filled out for each row."
+            error_msg += " "
+            error_msg += "No candidate account actions have been taken, so re-upload the entire file after fixing the errors."
+            error_msg += " "
+            error_msg += "Candidate error message: {}.".format(e)
+            error_msg += " "
+            error_msg += "Row Information at row {}: {}.".format(i + 1, row)
+            messages.error(request, error_msg)
             return redirect(next_page)
 
         password = BaseUserManager.make_random_password(
             None, length=DEFAULT_RANDOM_PASSWORD_LENGTH
         )
-        new_cand = User.objects.create_user(
-            candidatedto.username,
+        
+        duplicate, error_msg = check_duplicates(candidatedto, row, email_set, username_set, i)
+        if duplicate:
+            messages.error(request, error_msg)
+            return redirect(next_page)
+        
+        new_cand = User(
+            username=candidatedto.username,
             email=candidatedto.email,
             password=password,
         )
+        email_set.add(candidatedto.email)
+        username_set.add(candidatedto.username)
         new_cand.first_name = candidatedto.first_name
         new_cand.last_name = candidatedto.last_name
+        new_cand_list.append(new_cand)
+    
+    # Release the memory once done
+    del email_set
+    del username_set
+    
+    # Add all candidates
+    count = 0
+    for new_cand in new_cand_list:
         new_cand.save()
         candidate_group.user_set.add(new_cand)
+
+        profile = Profile.objects.get(user=new_cand)
+        profile.candidate_semester = current_cand_semester
+        profile.save()
 
         subject = "[HKN] Candidate account"
         html_content = render_to_string(
@@ -652,12 +723,13 @@ def add_cands(request):
             },
         )
         msg = EmailMultiAlternatives(
-            subject, subject, "no-reply@hkn.eecs.berkeley.edu", [candidatedto.email]
+            subject, subject, settings.NO_REPLY_EMAIL, [candidatedto.email]
         )
         msg.attach_alternative(html_content, "text/html")
         msg.send()
+        count += 1
 
-    messages.success(request, "Successfully added candidates!")
+    messages.success(request, "Successfully added {} candidates!".format(count))
 
     return redirect(next_page)
 
@@ -735,7 +807,7 @@ def checkoff_csv(request):
 
     # Pre-screen and validate data
     users = []
-    for row in mem_csv:
+    for i, row in enumerate(mem_csv):
         try:
             memberdto = CandidateDTO(row)
         except AssertionError as e:
@@ -743,7 +815,9 @@ def checkoff_csv(request):
             error_msg += " "
             error_msg += "No checkoff actions have been taken, so re-upload the entire file after fixing the errors."
             error_msg += " "
-            error_msg += str(e)
+            error_msg += "Candidate error message: {}.".format(e)
+            error_msg += " "
+            error_msg += "Error Row Information at row {}: {}".format(i + 1, row)
             messages.error(request, error_msg)
             return redirect(next_page)
         user = User.objects.filter(

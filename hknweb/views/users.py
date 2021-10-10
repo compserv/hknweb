@@ -37,9 +37,21 @@ def add_exec_context(request):
     }
 
 
+def get_current_cand_semester():
+    # The "first" function will put a "None" for me if semester not created yet
+    now = datetime.datetime.now()
+    sem = ""
+    month = now.month
+    if (1 <= month) and (month <= 5):
+        sem = "Spring"
+    elif (6 <= month) and (month < 8):
+        sem = "Summer"
+    elif (8 <= month) and (month <= 12):
+        sem = "Fall"
+    # The "first" function will put a "None" for me if semester not created yet
+    return Semester.objects.filter(semester=sem, year=now.year).first()
+
 # views
-
-
 def account_create(request):
     if request.method == "POST":
         form = SignupForm(request.POST)
@@ -55,19 +67,7 @@ def account_create(request):
             user = authenticate(username=username, password=raw_password)
 
             profile = Profile.objects.get(user=user)
-            now = datetime.datetime.now()
-            sem = ""
-            month = now.month
-            if (1 <= month) and (month <= 5):
-                sem = "Spring"
-            elif (6 <= month) and (month < 8):
-                sem = "Summer"
-            elif (8 <= month) and (month <= 12):
-                sem = "Fall"
-            # The "first" function will put a "None" for me if semester not created yet
-            profile.candidate_semester = Semester.objects.filter(
-                semester=sem, year=now.year
-            ).first()
+            profile.candidate_semester = get_current_cand_semester()
             profile.save()
 
             login(request, user)
