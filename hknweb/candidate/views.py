@@ -24,6 +24,7 @@ from django.views import generic
 from django.views.generic.edit import FormView
 
 from dal import autocomplete
+from multiprocessing import Pool
 from hknweb.models import Profile
 from hknweb.views.users import get_current_cand_semester
 
@@ -656,6 +657,7 @@ def add_cands(request):
     email_set = set()
     username_set = set()
     current_cand_semester = get_current_cand_semester()
+    email_passwords = {}
     if current_cand_semester is None:
         error_msg = "Inform CompServ the following: Please add the current semester in CourseSemester."
         error_msg += " "
@@ -695,6 +697,7 @@ def add_cands(request):
         new_cand.first_name = candidatedto.first_name
         new_cand.last_name = candidatedto.last_name
         new_cand_list.append(new_cand)
+        email_passwords[new_cand.email] = password
     
     # Release the memory once done
     del email_set
@@ -702,6 +705,8 @@ def add_cands(request):
     
     # Add all candidates
     count = 0
+    email_pool = Pool()
+    email_pool_list = []
     for new_cand in new_cand_list:
         new_cand.save()
         candidate_group.user_set.add(new_cand)
@@ -715,21 +720,31 @@ def add_cands(request):
             "candidate/new_candidate_account_email.html",
             {
                 "subject": subject,
-                "first_name": candidatedto.first_name,
-                "username": candidatedto.username,
-                "password": password,
+                "first_name": new_cand.first_name,
+                "username": new_cand.username,
+                "password": email_passwords[new_cand.email],
                 "website_link": request.build_absolute_uri("/accounts/login/"),
                 "img_link": get_rand_photo(),
             },
         )
         msg = EmailMultiAlternatives(
-            subject, subject, settings.NO_REPLY_EMAIL, [candidatedto.email]
+            subject, subject, settings.NO_REPLY_EMAIL, [new_cand.email]
         )
         msg.attach_alternative(html_content, "text/html")
-        msg.send()
+        email_pool_list.append(email_pool.apply_async(msg.send, args=()))
         count += 1
-
-    messages.success(request, "Successfully added {} candidates!".format(count))
+    email_pool.close()
+    
+    try:
+        for p in email_pool_list:
+            p.get() # See if there's errors
+        
+        # If gone through everything and no errors
+        messages.success(request, "Successfully added {} candidates!".format(count))
+    except Exception as e:
+        messages.warning(request, "An error occured during the sending of emails. "
+                                + "Error message: " + str(e) + " --- "
+                                + "Successfully added {} candidates!".format(count))
 
     return redirect(next_page)
 
