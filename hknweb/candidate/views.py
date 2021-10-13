@@ -690,12 +690,12 @@ def add_cands(request):
         new_cand = User(
             username=candidatedto.username,
             email=candidatedto.email,
-            password=password,
         )
         email_set.add(candidatedto.email)
         username_set.add(candidatedto.username)
         new_cand.first_name = candidatedto.first_name
         new_cand.last_name = candidatedto.last_name
+        new_cand.set_password(password)
         new_cand_list.append(new_cand)
         email_passwords[new_cand.email] = password
     
@@ -705,7 +705,7 @@ def add_cands(request):
     
     # Add all candidates
     count = 0
-    email_pool = Pool()
+    email_pool = Pool(processes=4)
     email_pool_list = []
     for new_cand in new_cand_list:
         new_cand.save()
