@@ -735,16 +735,23 @@ def add_cands(request):
         count += 1
     email_pool.close()
     
-    try:
-        for p in email_pool_list:
+    email_errors = []
+    for i, p in enumerate(email_pool_list):
+        try:
             p.get() # See if there's errors
-        
-        # If gone through everything and no errors
-        messages.success(request, "Successfully added {} candidates!".format(count))
-    except Exception as e:
+        except Exception as e:
+            email_errors.append((new_cand_list[i].email, str(e)))
+    
+    # If gone through everything and no errors
+    if len(email_errors) > 0:
         messages.warning(request, "An error occured during the sending of emails. "
-                                + "Error message: " + str(e) + " --- "
-                                + "Successfully added {} candidates!".format(count))
+                                + "Candidate Email and Error Messages: " + str(email_errors) + " --- "
+                                + "Inform CompServ of the errors, and inform the candidates "
+                                + "to access their accounts by resetting their password "
+                                + "using \"Forget your password?\" in the Login page. "
+                                + "All {} candidates added!".format(count))
+    else:
+        messages.success(request, "Successfully added {} candidates!".format(count))
 
     return redirect(next_page)
 
