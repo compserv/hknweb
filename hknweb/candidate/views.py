@@ -25,6 +25,7 @@ from django.views.generic.edit import FormView
 
 from dal import autocomplete
 from multiprocessing import Pool
+import time
 from hknweb.models import Profile
 from hknweb.views.users import get_current_cand_semester
 
@@ -638,6 +639,10 @@ def check_duplicates(candidatedto: CandidateDTO, row: OrderedDict,
         return True, error_msg
     return False, ""
 
+def delayed_mail_sends(msg):
+    msg.send()
+    time.sleep(1)
+
 @login_and_permission("auth.add_user")
 def add_cands(request):
     if request.method != ATTR.POST:
@@ -665,6 +670,14 @@ def add_cands(request):
         messages.error(request, error_msg)
         return redirect(next_page)
     for i, row in enumerate(cand_csv):
+        # if i > 30:
+        #     error_msg = "Preprocessing stopped! Detected more than 30 account requests!"
+        #     error_msg += " "
+        #     error_msg += "Please upload the file in separate batches of 30 account requests each."
+        #     error_msg += " "
+        #     error_msg += "No candidate account actions have been taken, so re-upload the entire file after fixing the errors."
+        #     messages.error(request, error_msg)
+        #     return redirect(next_page)
         try:
             candidatedto = CandidateDTO(row)
         except AssertionError as e:
@@ -705,7 +718,7 @@ def add_cands(request):
     
     # Add all candidates
     count = 0
-    email_pool = Pool(processes=4)
+    email_pool = Pool()
     email_pool_list = []
     for new_cand in new_cand_list:
         new_cand.save()
@@ -731,16 +744,21 @@ def add_cands(request):
             subject, subject, settings.NO_REPLY_EMAIL, [new_cand.email]
         )
         msg.attach_alternative(html_content, "text/html")
-        email_pool_list.append(email_pool.apply_async(msg.send, args=()))
+        email_pool_list.append(email_pool.apply_async(delayed_mail_sends, args=(msg,)))
         count += 1
     email_pool.close()
     
     email_errors = []
-    for i, p in enumerate(email_pool_list):
+    i = 0
+    while i < len(email_pool_list):
         try:
-            p.get() # See if there's errors
+            while i < len(email_pool_list):
+                p = email_pool_list[i]
+                p.get()
+                i += 1
         except Exception as e:
             email_errors.append((new_cand_list[i].email, str(e)))
+            i += 1
     
     # If gone through everything and no errors
     if len(email_errors) > 0:

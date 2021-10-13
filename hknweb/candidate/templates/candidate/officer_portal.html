@@ -88,9 +88,12 @@ Officer Portal
 
     <div class="table-div">
         <h3>Add new candidates (this may take a few minutes!)</h3>
-         - Make sure you have permission to add users!<br>
-         - The uploaded CSV must have headers for "Email", "First Name", and "Last Name".
-        <br><br>
+        <ul>
+         <li>Make sure you have permission to add users!</li>
+         <li>The uploaded CSV must have headers for "Email", "First Name", and "Last Name"</li>
+         <!-- <li>Please limit each CSV upload with 30 account requests (there will be a check for this)</li> -->
+         <li>Requests may take up to a minute</li>
+        </ul>
         {% for message in messages %}
             <span {% if messages.tags %} class="{{ message.tags }}" {% endif %}
                 class="blue">{{ message }}</span>
