@@ -25,7 +25,6 @@ from django.views.generic.edit import FormView
 
 from dal import autocomplete
 from multiprocessing import Pool
-import time
 from hknweb.models import Profile
 from hknweb.views.users import get_current_cand_semester
 
