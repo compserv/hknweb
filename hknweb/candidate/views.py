@@ -25,7 +25,6 @@ from django.views.generic.edit import FormView
 
 from dal import autocomplete
 from multiprocessing import Pool
-import time
 from hknweb.models import Profile
 from hknweb.views.users import get_current_cand_semester
 
@@ -666,7 +665,7 @@ def add_cands(request):
         messages.error(request, error_msg)
         return redirect(next_page)
     for i, row in enumerate(cand_csv):
-        if i > 30:
+        if i >= 30:
             error_msg = "Preprocessing stopped! Detected more than 30 account requests!"
             error_msg += " "
             error_msg += "Please upload the file in separate batches of 30 account requests each."
