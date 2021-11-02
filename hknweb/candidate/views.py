@@ -175,9 +175,14 @@ class IndexView(generic.TemplateView):
             remaining_count, grand_total = node.get_counts(req_remaining, req_list)
             req_statuses[node_string_key] = round(remaining_count, 2) < 0.05
 
-        req_titles[node_string_key] = create_title(
-            "", remaining_count, node_string, grand_total, None
-        )
+        # num_required_hangouts is None, since Merger nodes should not use it
+        if node.all_required:
+            # TODO Support for All Required for Merged Requirement (probably not a huge priority)
+            req_titles[node_string_key] = node_string + " - Looped Merged Requirements for all required currently unsupported"
+        else:
+            req_titles[node_string_key] = create_title(
+                "", remaining_count, node_string, grand_total, None
+            )
 
         confirmed_events[node_string_key] = []
         unconfirmed_events[node_string_key] = []
@@ -317,7 +322,7 @@ class IndexView(generic.TemplateView):
                         requirementHangout.eventType
                     ] = requirementHangout.numberRequired
                     if requirementHangout.eventType == settings.HANGOUT_ATTRIBUTE_NAME:
-                        # TODO: Hardcoded-ish for now, allow for choice
+                        # TODO: Hardcoded-ish for now, allow for choice of Hangout events
                         if EventType.objects.filter(type="Hangout").count() > 0:
                             required_events["Hangout"] = {
                                 "eventsDateStart": requirementHangout.hangoutsDateStart,
