@@ -13,7 +13,6 @@ from .constants import (
     EVENT_NAME_ATTRIBUTE_NAME,
     GCAL_DATETIME_TEMPLATE,
     GCAL_INVITE_TEMPLATE,
-    GROUP_TO_ACCESSLEVEL,
     HOUR_ATTRIBUTE_NAME,
     LOCATION_ATTRIBUTE_NAME,
     MINUTES_ATTRIBUTE_NAME,
@@ -96,14 +95,6 @@ def get_padding(l1, l2):
     l1, l2 = max(l1, 1), max(l2, 1)
     p1, p2 = max(l1 - l2, 0), max(l2 - l1, 0)
     return [None] * (p1 + 1), [None] * (p2 + 1)
-
-
-def get_access_level(user):
-    access_level = 2  # See constants.py
-    for group_name, access_value in GROUP_TO_ACCESSLEVEL.items():
-        if user.groups.filter(name=group_name).exists():
-            access_level = min(access_level, access_value)
-    return access_level
 
 
 DATETIME_WIDGET_NO_AUTOCOMPLETE = forms.DateTimeInput(attrs={"autocomplete": "off"})

@@ -27,6 +27,7 @@ from dal import autocomplete
 from multiprocessing import Pool
 from hknweb.models import Profile
 from hknweb.views.users import get_current_cand_semester
+from hknweb.utils import get_access_level, GROUP_TO_ACCESSLEVEL
 
 from hknweb.utils import (
     get_rand_photo,

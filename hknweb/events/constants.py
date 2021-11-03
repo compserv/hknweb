@@ -61,13 +61,6 @@ class ATTR:
 
 RSVPS_PER_PAGE = 10
 
-
-GROUP_TO_ACCESSLEVEL = {
-    "officer": 0,
-    "member": 0,
-    "candidate": 1,
-}
-
 ACCESSLEVEL_TO_DESCRIPTION = {
     0: "Internal",
     1: "Candidate",
