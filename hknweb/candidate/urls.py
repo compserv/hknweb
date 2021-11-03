@@ -5,6 +5,7 @@ from . import views
 app_name = "candidate"
 urlpatterns = [
     path("", views.IndexView.as_view(), name="index"),
+    path("portal/<username>", views.candidate_portal_view_by_username, name="viewcand"),
     # candidate end of officer challenge requests
     path("candreq", views.CandRequestView.as_view(), name="candrequests"),
     # officer end of officer challenge requests
