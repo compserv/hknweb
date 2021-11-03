@@ -57,6 +57,8 @@ from .models import (
 from .utils import (
     check_interactivity_requirements,
     check_requirements,
+    count_challenges,
+    count_num_bitbytes,
     create_title,
     get_requirement_colors,
     get_events,
@@ -107,7 +109,7 @@ class IndexView(generic.TemplateView):
         required_events,
         candidateSemester,
         requirement_mandatory,
-        num_confirmed,
+        num_challenges_confirmed,
         num_bitbytes,
         req_list,
     ):
@@ -132,7 +134,7 @@ class IndexView(generic.TemplateView):
         )
 
         req_statuses, req_remaining = check_requirements(
-            confirmed_events, unconfirmed_events, num_confirmed, num_bitbytes, req_list
+            confirmed_events, unconfirmed_events, num_challenges_confirmed, num_bitbytes, req_list
         )
 
         return confirmed_events, unconfirmed_events, req_statuses, req_remaining
@@ -173,9 +175,14 @@ class IndexView(generic.TemplateView):
             remaining_count, grand_total = node.get_counts(req_remaining, req_list)
             req_statuses[node_string_key] = round(remaining_count, 2) < 0.05
 
-        req_titles[node_string_key] = create_title(
-            "", remaining_count, node_string, grand_total, None
-        )
+        # num_required_hangouts is None, since Merger nodes should not use it
+        if node.all_required:
+            # TODO Support for All Required for Merged Requirement (probably not a huge priority)
+            req_titles[node_string_key] = node_string + " - Looped Merged Requirements for all required currently unsupported"
+        else:
+            req_titles[node_string_key] = create_title(
+                "", remaining_count, node_string, grand_total, None
+            )
 
         confirmed_events[node_string_key] = []
         unconfirmed_events[node_string_key] = []
@@ -241,18 +248,12 @@ class IndexView(generic.TemplateView):
         return self.request.user in entry.users.all()
 
     def get_context_data(self):
-        challenges = OffChallenge.objects.filter(requester__exact=self.request.user)
-        # if either one is waiting, challenge is still being reviewed
-        num_confirmed = challenges.filter(
-            Q(officer_confirmed=True) & Q(csec_confirmed=True)
-        ).count()
-        num_rejected = challenges.filter(
-            Q(officer_confirmed=False) | Q(csec_confirmed=False)
-        ).count()
-        num_pending = challenges.count() - num_confirmed - num_rejected
 
         candidateSemester = self.request.user.profile.candidate_semester
 
+        num_challenges_confirmed, num_challenges_rejected, num_pending \
+            = count_challenges(self.request.user, candidateSemester)
+        
         required_events_merger = set()
 
         seen_merger_nodes = set()
@@ -321,7 +322,7 @@ class IndexView(generic.TemplateView):
                         requirementHangout.eventType
                     ] = requirementHangout.numberRequired
                     if requirementHangout.eventType == settings.HANGOUT_ATTRIBUTE_NAME:
-                        # TODO: Hardcoded-ish for now, allow for choice
+                        # TODO: Hardcoded-ish for now, allow for choice of Hangout events
                         if EventType.objects.filter(type="Hangout").count() > 0:
                             required_events["Hangout"] = {
                                 "eventsDateStart": requirementHangout.hangoutsDateStart,
@@ -329,26 +330,23 @@ class IndexView(generic.TemplateView):
                                 "title": "Hangout",
                             }
 
+        ### Bit Byte
         req_list[settings.BITBYTE_ACTIVITY] = 0
         # Can't use "get", since no guarantee that the object of this semester always exist
         bitbyte_requirement = (
             candidateSemester
             and RequirementBitByteActivity.objects.filter(
-                candidateSemesterActive=candidateSemester.id
+                candidateSemesterActive=candidateSemester
             ).first()
         )
         if bitbyte_requirement is not None and bitbyte_requirement.enable:
             req_list[settings.BITBYTE_ACTIVITY] = bitbyte_requirement.numberRequired
+        
+        num_bitbytes = count_num_bitbytes(self.request.user, bitbyte_requirement)
 
-        num_bitbytes = (
-            BitByteActivity.objects.filter(participants__exact=self.request.user)
-            .filter(confirmed=True)
-            .count()
-        )
-
-        announcements = Announcement.objects.filter(visible=True).order_by(
-            "-release_date"
-        )
+        announcements = Announcement.objects.filter(visible=True) \
+                                            .order_by("-release_date")
+        ###
 
         ### Candidate Forms
         candidate_forms = candidateSemester and CandidateForm.objects.filter(
@@ -418,7 +416,7 @@ class IndexView(generic.TemplateView):
             required_events,
             candidateSemester,
             requirement_mandatory,
-            num_confirmed,
+            num_challenges_confirmed,
             num_bitbytes,
             req_list,
         )
@@ -443,7 +441,7 @@ class IndexView(generic.TemplateView):
         # Process Merged Events here
         req_colors.update(
             get_requirement_colors(
-                merger_nodes, lambda x: x, lambda get_key: get_key.get_events_str()
+                merger_nodes, lambda view_key: view_key, lambda get_key: get_key.get_events_str()
             )
         )
         merge_names = []
@@ -496,9 +494,9 @@ class IndexView(generic.TemplateView):
                     settings.CHALLENGE_ATTRIBUTE_NAME
                 ],
                 ATTR.NUM_PENDING: num_pending,
-                ATTR.NUM_REJECTED: num_rejected,
+                ATTR.NUM_REJECTED: num_challenges_rejected,
                 # anything not pending or rejected is confirmed
-                ATTR.NUM_CONFIRMED: num_confirmed,
+                ATTR.NUM_CONFIRMED: num_challenges_confirmed,
             },
             settings.HANGOUT_ATTRIBUTE_NAME: {
                 ATTR.TITLE: req_titles[settings.HANGOUT_EVENT][
@@ -535,7 +533,7 @@ class IndexView(generic.TemplateView):
             "interactivities": interactivities,
             "bitbyte": bitbyte,
             "candidate_semester": candidateSemester
-            or "Please set your candidate semester in your Account Settings",
+                                or "Please set your candidate semester in your Account Settings",
         }
         return context
 
