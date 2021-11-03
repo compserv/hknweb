@@ -20,17 +20,12 @@ from .models import (
 )
 
 from .utils import (
-    check_interactivity_requirements,
     check_requirements,
     count_challenges,
     count_num_bitbytes,
     create_title,
     get_requirement_colors,
     get_events,
-    # req_list,
-    send_bitbyte_confirm_email,
-    send_challenge_confirm_email,
-    sort_rsvps_into_events,
     MergedEvents,
 )
 
