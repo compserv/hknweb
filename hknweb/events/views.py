@@ -33,9 +33,9 @@ from .utils import (
     create_gcal_link,
     format_url,
     generate_recurrence_times,
-    get_access_level,
     get_padding,
 )
+from hknweb.utils import get_access_level
 
 # views
 
@@ -146,6 +146,9 @@ class AllRsvpsView(TemplateView):
 @login_and_permission("events.view_event")
 def show_details(request, id):
     event = get_object_or_404(Event, pk=id)
+    if event.access_level < get_access_level(request.user):
+        messages.warning(request, "Insufficent permission to access event.")
+        return redirect("/events")
     rsvps = Rsvp.objects.filter(event=event)
     rsvpd = Rsvp.objects.filter(user=request.user, event=event).exists()
     waitlisted = False

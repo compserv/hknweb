@@ -10,7 +10,8 @@ from typing import Union
 from hknweb.utils import get_rand_photo, get_semester_bounds
 
 from ..events.models import Event, EventType
-from .models import RequirementMergeRequirement
+from .models import BitByteActivity, OffChallenge, RequirementHangout, \
+                    RequirementMergeRequirement
 
 from .constants import REQUIREMENT_TITLES_TEMPLATE, REQUIREMENT_TITLES_ALL
 
@@ -102,8 +103,8 @@ def sort_rsvps_into_events(rsvps, required_events):
 def get_events(
     rsvps, date, required_events, candidateSemester, requirement_mandatory, confirmed
 ):
-    event_models = rsvps.filter(confirmed=confirmed)
-    events = sort_rsvps_into_events(event_models, required_events)
+    rsvp_models = rsvps.filter(confirmed=confirmed)
+    events = sort_rsvps_into_events(rsvp_models, required_events)
 
     # We want to show all mandatory events, not just the events the candidate has RSVP'd to
     # Get all mandatory events i.e. events with event type "Mandatory"
@@ -147,6 +148,57 @@ def get_events(
 
     return events
 
+def count_challenges(requested_user, candidateSemester):
+    challenges = OffChallenge.objects.filter(requester__exact=requested_user)
+    req_challenges_models = RequirementHangout.objects.filter(
+                            eventType=settings.CHALLENGE_ATTRIBUTE_NAME,
+                            candidateSemesterActive=candidateSemester,
+                        ).first()
+    if req_challenges_models is not None:
+        if req_challenges_models.hangoutsDateStart is not None:
+            challenges = challenges.filter(
+                request_date__gt=req_challenges_models.hangoutsDateStart,
+            )
+        if req_challenges_models.hangoutsDateEnd is not None:
+            challenges = challenges.filter(
+                request_date__lt=req_challenges_models.hangoutsDateEnd,
+            )
+    # if either one is waiting, challenge is still being reviewed
+    
+    ## Count number of confirmed
+    challenges_confirmed = challenges.filter(
+        Q(officer_confirmed=True) & Q(csec_confirmed=True)
+    )
+    num_challenges_confirmed = challenges_confirmed.count()
+    ##
+
+    ## Count number of rejected
+    challenges_rejected = challenges.filter(
+        Q(officer_confirmed=False) | Q(csec_confirmed=False)
+    )
+    num_challenges_rejected = challenges_rejected.count()
+    ##
+
+    num_pending = challenges.count() - num_challenges_confirmed - num_challenges_rejected
+
+    return num_challenges_confirmed, num_challenges_rejected, num_pending
+
+def count_num_bitbytes(requested_user, bitbyte_requirement):
+    bitbyte_models = BitByteActivity.objects.filter(
+                        participants__exact=requested_user,
+                        confirmed=True
+                    )
+    if bitbyte_requirement is not None:
+        if bitbyte_requirement.bitByteDateStart is not None:
+            bitbyte_models = bitbyte_models.filter(
+                request_date__gt=bitbyte_requirement.bitByteDateStart,
+            )
+        if bitbyte_requirement.bitByteDateEnd is not None:
+            bitbyte_models = bitbyte_models.filter(
+                request_date__lt=bitbyte_requirement.bitByteDateEnd,
+            )
+    num_bitbytes = bitbyte_models.count()
+    return num_bitbytes
 
 # Done: increase flexibility by fetching event requirement count from database
 # req_list = {
@@ -179,7 +231,7 @@ def check_requirements(
             num_confirmed = len(confirmed_events[req_type])
         # officer hangouts and mandatory events are special cases
         if req_type == settings.HANGOUT_EVENT:
-            # TODO: Hardcoded-ish for now, allow for choice
+            # TODO: Hardcoded-ish for now, allow for choice of Hangout events
             if "Hangout" in confirmed_events:
                 num_confirmed = len(confirmed_events["Hangout"])
             interactivities = {
