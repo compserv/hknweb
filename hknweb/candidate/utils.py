@@ -10,7 +10,8 @@ from typing import Union
 from hknweb.utils import get_rand_photo, get_semester_bounds
 
 from ..events.models import Event, EventType
-from .models import BitByteActivity, OffChallenge, RequirementHangout, RequirementMergeRequirement
+from .models import BitByteActivity, OffChallenge, RequirementHangout, \
+                    RequirementMergeRequirement
 
 from .constants import REQUIREMENT_TITLES_TEMPLATE, REQUIREMENT_TITLES_ALL
 

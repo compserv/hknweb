@@ -33,9 +33,9 @@ from .utils import (
     create_gcal_link,
     format_url,
     generate_recurrence_times,
-    get_access_level,
     get_padding,
 )
+from hknweb.utils import get_access_level
 
 # views
 

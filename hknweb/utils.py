@@ -166,3 +166,16 @@ def markdownify(text):
         html = cleaner.clean(html)
 
     return mark_safe(html)
+
+GROUP_TO_ACCESSLEVEL = {
+    "officer": 0,
+    "member": 0,
+    "candidate": 1,
+}
+
+def get_access_level(user):
+    access_level = 2  # See constants.py
+    for group_name, access_value in GROUP_TO_ACCESSLEVEL.items():
+        if user.groups.filter(name=group_name).exists():
+            access_level = min(access_level, access_value)
+    return access_level

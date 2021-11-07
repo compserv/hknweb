@@ -5,10 +5,15 @@
 <link rel="stylesheet" href="{% static "candidate/style.css" %}">
 {% endblock %}
 
-{% block title %}Candidate portal{% endblock %}
+
+{% block title %}
+    {% if not user_self %}{{ username }}'s{% endif %}
+    Candidate portal
+{% endblock %}
 
 {% block heading %}
-Candidate Portal
+    {% if not user_self %}{{ username }}'s{% endif %}
+    Candidate Portal
 {% endblock %}
 
 {% block content %}
@@ -29,6 +34,12 @@ Candidate Portal
     }
 </style>
 <div class="parent centered">
+    {% if messages %}
+        {% for message in messages %}
+            <h3  {% if messages.tags %} class="{{ message.tags }}" {% endif %} class="blue">{{ message }}</h3>
+        {% endfor %}
+    {% endif %}
+    {% if user_self %}
     <section>
         <h2>Announcements</h2>
 
@@ -67,8 +78,14 @@ Candidate Portal
         {% endif %}
     </section>
     <br>
+    {% endif %}
     <section id="candidate-checklist">
-        <h2 class="events-list">Candidate Checklist - {{ candidate_semester }}</h2>
+        <h2 class="events-list">
+            {% if not user_self %}
+                {{ username }}'s
+            {% endif %}
+            Candidate Checklist - {{ candidate_semester }}
+        </h2>
 
         <div class="checklist-left-col">
             <h4>Events</h4>

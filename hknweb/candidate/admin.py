@@ -21,7 +21,7 @@ from .models import (
     RequirementMandatory,
     RequirementMergeRequirement,
 )
-from .views import send_bitbyte_confirm_email, send_challenge_confirm_email
+from .utils import send_bitbyte_confirm_email, send_challenge_confirm_email
 
 import datetime
 
