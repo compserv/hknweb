@@ -76,10 +76,13 @@ Vagrant.configure("2") do |config|
         mariadb-server \
         python3.7 \
         python3.7-dev \
-        python3-pip \
         python3.7-venv \
         tmux \
         vim
+    
+    # Force set python3.7 to the python and python3 symlinks
+    ln -fs /usr/bin/python3.7 /usr/bin/python
+    ln -fs /usr/bin/python3.7 /usr/bin/python3
 
     # Set up MySQL database and development user
     mysql -e "CREATE DATABASE IF NOT EXISTS hknweb;"
