@@ -13,6 +13,7 @@ env:
 install:
   - make venv
   - source .venv/bin/activate
+  - python --version
   - make install
 script:
   - make migrate
