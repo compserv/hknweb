@@ -31,6 +31,8 @@ urlpatterns = [
     path("accounts/activate/", users.activate),
     path("about/", landing.about, name="about"),
     path("events/", include("hknweb.events.urls")),
+    path("polls/", include("hknweb.polls.urls")),
+    path("mysite/", include("hknweb.mysite.urls")),
     path("reviewsessions/", include("hknweb.reviewsessions.urls")),
     path("exams/", include("hknweb.exams.urls")),
     path("alumni/", include("hknweb.alumni.urls")),
