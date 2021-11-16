@@ -1,5 +1,7 @@
 from django.conf import settings
-from django.utils import get_access_level, timezone
+from django.utils import timezone
+
+from hknweb.utils import get_access_level
 
 from ..events.models import Event, Rsvp, EventType
 
