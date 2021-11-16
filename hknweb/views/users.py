@@ -16,6 +16,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.conf import settings
+from django.forms import ValidationError
 from hknweb.models import Profile
 from hknweb.coursesemester.models import Semester
 import datetime
@@ -59,9 +60,8 @@ def account_create(request):
             if confirm_recaptcha(request):
                 form.save()
             else:
-                raise form.ValidationError(
-                    "Invalid reCAPTCHA. Please try again.", code="invalid"
-                )
+                messages.warning(request, "Invalid reCAPTCHA. Please try again.")
+                return render(request, "account/signup.html", {"form": form})
             username = form.cleaned_data.get("username")
             raw_password = form.cleaned_data.get("password1")
             user = authenticate(username=username, password=raw_password)
