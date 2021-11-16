@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.utils import timezone
+from django.utils import get_access_level, timezone
 
 from ..events.models import Event, Rsvp, EventType
 
@@ -414,7 +414,9 @@ class CandidatePortalData():
 
         upcoming_events = Event.objects.filter(
             start_time__range=(today, today + timezone.timedelta(days=7))
-        ).order_by("start_time")
+        ).order_by("start_time").filter(
+            access_level__gte=get_access_level(self.user)
+        )
 
         events = []
         for req_event in self.get_event_types_map(candidateSemester):
