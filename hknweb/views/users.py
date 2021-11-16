@@ -1,9 +1,8 @@
 import urllib
 import json
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.contrib.auth.models import User
 from hknweb.forms import (
-    SettingsForm,
     ProfileForm,
     SignupForm,
     ValidPasswordForm,
@@ -11,12 +10,10 @@ from hknweb.forms import (
 )
 from django.shortcuts import render, render_to_response, redirect
 from django.contrib.auth import authenticate, login, update_session_auth_hash
-from hknweb.forms import SettingsForm, ProfileForm, SignupForm
 from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.conf import settings
-from django.forms import ValidationError
 from hknweb.models import Profile
 from hknweb.coursesemester.models import Semester
 import datetime
