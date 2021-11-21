@@ -37,6 +37,7 @@ urlpatterns = [
     path("tutoring/", include("hknweb.tutoring.urls")),
     path("cand/", include("hknweb.candidate.urls")),
     path("pages/", include("hknweb.markdown_pages.urls")),
+    path('polls/', include('hknweb.polls.urls')),
     path("markdownx/", include("markdownx.urls")),
     path("elections/", include("hknweb.elections.urls")),
     path("auth/", include("social_django.urls", namespace="social")),
