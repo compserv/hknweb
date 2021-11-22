@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static "css/style.css" %}">
+{% endblock %}
+
+{% block title %}HKN Polls{% endblock %}
+
+{% block heading %}
+HKN Polls
+{% endblock %}
+
+{% block content %}
+
+{{ question }}
+
+{% endblock %}
