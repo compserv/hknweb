@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 
-from .models import Question
+from .models import Question, Choice
 
 
 class QuestionModelTests(TestCase):
@@ -71,4 +71,19 @@ class QuestionDetailViewTests(TestCase):
         url = reverse('polls:detail', args=(past_question.id,))
         response = self.client.get(url)
         self.assertContains(response, past_question.question_text)
+
+
+class QuestionVotesTests(TestCase):
+    #Results view needs refactoring for it to have a get_queryset method before
+    #we can test this, otherwise we're just testing that generic.DetailView
+    #works, which we assume it does.
+    def test_voting_updates_vote_count(self):
+        question = Question.objects.create(question_text='vote me',
+                                           pub_date=timezone.now() - timezone.timedelta(days=1))
+        choice = Choice.objects.create(question=question, choice_text='this')
+        choice.votes += 1
+        choice.save()
+        response = self.client.get(reverse('polls:results', args=(question.id,)))
+        self.assertEqual(response.status_code, 200)
+
 # Create your tests here.
