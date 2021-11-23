@@ -15,15 +15,6 @@ setup for developing `hknweb`.
 ### Windows Users
 * **NOTE**: **Windows machine** users MUST open their Terminal as **Administrator**
 * We have success of the setup completing on Windows Command Prompt, Windows Git Bash, and Windows Linux Subsystem (WSL). Regardless, you must open them as Admin via a right click! Same with Windows Terminal if you use that.
-* You might get an error on the side below. You can fix this by Running the Command Prompt as Administrator, and then running: `bcdedit /set hypervisorlaunchtype off`
-```
-There was an error while executing `VBoxManage`, a CLI used by Vagrant
-for controlling VirtualBox. The command and stderr is shown below.
-
-Command: ["startvm", "3e703a10-ae97-4ef6-80fa-bf959a3905dc", "--type", "headless"]
-
-Stderr: VBoxManage.exe: error: Call to WHvSetupPartition failed: ERROR_SUCCESS
-```
 ------------------------------
 
 Install [Vagrant](https://www.vagrantup.com/) and [VirtualBox](https://www.virtualbox.org/) (use older version: 6.0.14):
@@ -85,6 +76,7 @@ $ make install                  # install our dependencies
 $ make migrate                  # apply all database changes
 $ make permissions              # initialize our database
 $ make dev                      # start local web server
+$ logout                        # exit the virtual machine
 $ vagrant halt                  # after developing, shut down our virtual machine
 ```
 
@@ -119,3 +111,27 @@ $ make createsuperuser
 
 You will be prompted for some login info, after which you should be able to access
 the admin interface with your super user credentials at `http://localhost:3000/admin`.
+
+
+## FAQ
+This is a compilation of past errors and how they were solved.
+
+### "[Errno 71] Protocol error 'lib' -> '/home/vagrant/hknweb/.venv/lib64'"
+![image](https://user-images.githubusercontent.com/46059916/140850935-fcef93ba-6ad2-4d63-a133-da959d986a70.png)
+- https://github.com/pypa/pipenv/issues/2084
+- https://stackoverflow.com/questions/24640819/protocol-error-setting-up-virtualenvironment-through-vagrant-on-ubuntu
+
+### "VBoxManage.exe: error: Call to WHvSetupPartition failed: ERROR_SUCCESS"
+```
+There was an error while executing `VBoxManage`, a CLI used by Vagrant
+for controlling VirtualBox. The command and stderr is shown below.
+
+Command: ["startvm", "3e703a10-ae97-4ef6-80fa-bf959a3905dc", "--type", "headless"]
+
+Stderr: VBoxManage.exe: error: Call to WHvSetupPartition failed: ERROR_SUCCESS
+```
+- Running the Command Prompt as Administrator, and then running: `bcdedit /set hypervisorlaunchtype off`
+- https://superuser.com/questions/1502529/call-to-whvsetuppartition-failed-error-success-last-0xc000000d-87-verr-nem-v -> see "Simon"'s response
+
+### M1 Macs
+![image (1)](https://user-images.githubusercontent.com/46059916/140851262-e65a481a-9c0a-4e99-b09f-fe0c98f55194.png)

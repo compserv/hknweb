@@ -1,9 +1,8 @@
 import urllib
 import json
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.contrib.auth.models import User
 from hknweb.forms import (
-    SettingsForm,
     ProfileForm,
     SignupForm,
     ValidPasswordForm,
@@ -11,7 +10,6 @@ from hknweb.forms import (
 )
 from django.shortcuts import render, render_to_response, redirect
 from django.contrib.auth import authenticate, login, update_session_auth_hash
-from hknweb.forms import SettingsForm, ProfileForm, SignupForm
 from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -59,9 +57,8 @@ def account_create(request):
             if confirm_recaptcha(request):
                 form.save()
             else:
-                raise form.ValidationError(
-                    "Invalid reCAPTCHA. Please try again.", code="invalid"
-                )
+                messages.warning(request, "Invalid reCAPTCHA. Please try again.")
+                return render(request, "account/signup.html", {"form": form})
             username = form.cleaned_data.get("username")
             raw_password = form.cleaned_data.get("password1")
             user = authenticate(username=username, password=raw_password)
