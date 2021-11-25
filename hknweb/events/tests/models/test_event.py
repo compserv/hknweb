@@ -24,3 +24,28 @@ class EventModelTests(TestCase):
         self.assertIs(self.user, self.event.created_by)
         self.assertIs(self.event_type, self.event.event_type)
         self.assertIs(self.event_name, self.event.name)
+
+    def test_repr(self):
+        expected = "Event(name={}, location={})".format(
+            self.event_name,
+            self.event.location,
+        )
+        actual = repr(self.event)
+
+        self.assertEqual(expected, actual)
+
+    def test_str(self):
+        expected = "{} - {} to {}".format(
+            self.event_name,
+            self.event.start_time,
+            self.event.end_time,
+        )
+        actual = str(self.event)
+
+        self.assertEqual(expected, actual)
+
+    def test_get_absolute_url(self):
+        expected = "/events/{}".format(self.event.id)
+        actual = self.event.get_absolute_url()
+
+        self.assertEqual(expected, actual)
