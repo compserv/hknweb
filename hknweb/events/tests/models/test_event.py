@@ -1,3 +1,7 @@
+import datetime
+
+from django.utils import timezone
+
 from django.test import TestCase
 
 from hknweb.events.tests.models.utils import ModelFactory
@@ -47,5 +51,33 @@ class EventModelTests(TestCase):
     def test_get_absolute_url(self):
         expected = "/events/{}".format(self.event.id)
         actual = self.event.get_absolute_url()
+
+        self.assertEqual(expected, actual)
+
+    def test_semester_with_month_lt_7_returns_spring(self):
+        current_time = timezone.now()
+        time = datetime.datetime(
+            year=current_time.year,
+            month=6,
+            day=current_time.day,
+        )
+        self.event.start_time = time
+
+        expected = "{} {}".format("Spring", time.year)
+        actual = self.event.semester
+
+        self.assertEqual(expected, actual)
+
+    def test_semester_with_month_geq_7_returns_fall(self):
+        current_time = timezone.now()
+        time = datetime.datetime(
+            year=current_time.year,
+            month=7,
+            day=current_time.day,
+        )
+        self.event.start_time = time
+
+        expected = "{} {}".format("Fall", time.year)
+        actual = self.event.semester
 
         self.assertEqual(expected, actual)
