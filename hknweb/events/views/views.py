@@ -20,15 +20,15 @@ from hknweb.utils import (
     DATETIME_12_HOUR_FORMAT,
     PACIFIC_TIMEZONE,
 )
-from .constants import (
+from hknweb.events.constants import (
     ACCESSLEVEL_TO_DESCRIPTION,
     ATTR,
     GCAL_INVITE_TEMPLATE_ATTRIBUTE_NAME,
     RSVPS_PER_PAGE,
 )
-from .models import Event, EventType, Rsvp
-from .forms import EventForm, EventUpdateForm
-from .utils import (
+from hknweb.events.models import Event, EventType, Rsvp
+from hknweb.events.forms import EventForm, EventUpdateForm
+from hknweb.events.utils import (
     create_event,
     create_gcal_link,
     format_url,
@@ -38,19 +38,6 @@ from .utils import (
 from hknweb.utils import get_access_level
 
 # views
-
-
-def index(request):
-    events = Event.objects.order_by("-start_time").filter(
-        access_level__gte=get_access_level(request.user)
-    )
-    event_types = EventType.objects.order_by("type")
-
-    context = {
-        "events": events,
-        "event_types": event_types,
-    }
-    return render(request, "events/index.html", context)
 
 
 @method_login_and_permission("events.add_rsvp")
