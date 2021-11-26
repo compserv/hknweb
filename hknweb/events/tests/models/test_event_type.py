@@ -3,7 +3,7 @@ from django.test import TestCase
 from hknweb.events.tests.models.utils import ModelFactory
 
 
-class EventModelTests(TestCase):
+class EventTypeModelTests(TestCase):
     def setUp(self):
         event_type = ModelFactory.create_event_type()
 

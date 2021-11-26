@@ -3,7 +3,7 @@ import datetime
 from django.utils import timezone
 
 from django.contrib.auth.models import User
-from hknweb.events.models import Event, EventType
+from hknweb.events.models import Event, EventType, Rsvp
 
 
 class ModelFactory:
@@ -12,14 +12,16 @@ class ModelFactory:
         default_kwargs = {
             "username": "default username",
         }
-        return User.objects.create(**default_kwargs, **kwargs)
+        kwargs = {**default_kwargs, **kwargs}
+        return User.objects.create(**kwargs)
 
     @staticmethod
     def create_event_type(**kwargs):
         default_kwargs = {
             "type": "default event type",
         }
-        return EventType.objects.create(**default_kwargs, **kwargs)
+        kwargs = {**default_kwargs, **kwargs}
+        return EventType.objects.create(**kwargs)
 
     @staticmethod
     def create_event(name, event_type, created_by, **kwargs):
@@ -35,8 +37,14 @@ class ModelFactory:
             "location": "default location",
             "description": "default description",
         }
-        return Event.objects.create(
-            **required_kwargs,
-            **default_kwargs,
-            **kwargs,
-        )
+        kwargs = {**required_kwargs, **default_kwargs, **kwargs}
+        return Event.objects.create(**kwargs)
+
+    @staticmethod
+    def create_rsvp(user, event, **kwargs):
+        required_kwargs = {
+            "user": user,
+            "event": event,
+        }
+        kwargs = {**required_kwargs, **kwargs}
+        return Rsvp.objects.create(**kwargs)
