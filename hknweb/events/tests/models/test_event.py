@@ -81,3 +81,6 @@ class EventModelTests(TestCase):
         actual = self.event.semester
 
         self.assertEqual(expected, actual)
+
+    def test_on_waitlist_without_waitlist_returns_false(self):
+        self.assertFalse(self.event.on_waitlist(None))

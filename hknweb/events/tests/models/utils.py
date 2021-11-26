@@ -48,3 +48,30 @@ class ModelFactory:
         }
         kwargs = {**required_kwargs, **kwargs}
         return Rsvp.objects.create(**kwargs)
+
+    @staticmethod
+    def create_event_with_rsvps():
+        event_create_user = ModelFactory.create_user(username="event create user")
+        num_rsvps = 3
+        rsvp_users = [ModelFactory.create_user(username="rsvp_user_{}".format(str(i))) for i in range(1, 1 + num_rsvps)]
+
+        event_type = ModelFactory.create_event_type()
+        event_name = "custom event name"
+
+        event = ModelFactory.create_event(
+            name=event_name,
+            event_type=event_type,
+            created_by=event_create_user,
+            rsvp_limit=num_rsvps - 1,
+        )
+
+        rsvps = [ModelFactory.create_rsvp(rsvp_user, event) for rsvp_user in rsvp_users]
+
+        return (
+            event_create_user,
+            rsvp_users,
+            event_type,
+            event_name,
+            event,
+            rsvps,
+        )
