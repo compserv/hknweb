@@ -1,11 +1,7 @@
 from django.shortcuts import render, redirect
-from django.http import Http404, HttpResponseForbidden
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, reverse
-from django.core.mail import EmailMultiAlternatives
 from django.core.paginator import Paginator
-from django.conf import settings
-from django.template.loader import render_to_string
 from django.views.generic import TemplateView
 from django.views.generic.edit import UpdateView
 from django.utils import timezone
@@ -15,7 +11,6 @@ from hknweb.utils import markdownify
 from hknweb.utils import (
     login_and_permission,
     method_login_and_permission,
-    get_rand_photo,
     get_semester_bounds,
     DATETIME_12_HOUR_FORMAT,
     PACIFIC_TIMEZONE,
@@ -36,8 +31,6 @@ from hknweb.events.utils import (
     get_padding,
 )
 from hknweb.utils import get_access_level
-
-# views
 
 
 @method_login_and_permission("events.add_rsvp")
@@ -205,39 +198,6 @@ def show_details(request, id):
     return render(request, "events/show_details.html", context)
 
 
-@login_and_permission("events.add_rsvp")
-def rsvp(request, id):
-    if request.method != "POST":
-        raise Http404()
-
-    event = get_object_or_404(Event, pk=id)
-
-    if Rsvp.has_not_rsvpd(request.user, event):
-        Rsvp.objects.create(user=request.user, event=event, confirmed=False)
-    else:
-        messages.error(request, "You have already RSVP'd.")
-    next_page = request.POST.get("next", "/")
-    return redirect(next_page)
-
-
-@login_and_permission("events.delete_rsvp")
-def unrsvp(request, id):
-    if request.method != "POST":
-        raise Http404()
-
-    event = get_object_or_404(Event, pk=id)
-    rsvp = get_object_or_404(Rsvp, user=request.user, event=event)
-    if rsvp.confirmed:
-        messages.error(request, "Cannot un-rsvp from event you have gone to.")
-    else:
-        old_admitted = set(event.admitted_set())
-        rsvp.delete()
-        for off_waitlist_rsvp in event.newly_off_waitlist_rsvps(old_admitted):
-            send_off_waitlist_email(request, off_waitlist_rsvp.user, event)
-    next_page = request.POST.get("next", "/")
-    return redirect(next_page)
-
-
 @login_and_permission("events.add_event")
 def add_event(request):
     form = EventForm(request.POST or None)
@@ -260,22 +220,6 @@ def add_event(request):
         else:
             messages.error(request, "Something went wrong oops")
     return render(request, "events/event_add.html", {"form": form})
-
-
-def confirm_rsvp(request, id, operation):
-    if request.method != "POST":
-        raise Http404()
-
-    access_level = get_access_level(request.user)
-    if access_level > 0:
-        raise HttpResponseForbidden()
-
-    rsvp = Rsvp.objects.get(id=id)
-    rsvp.confirmed = operation == 0  # { confirmed: 0, unconfirmed: 1 }
-    rsvp.save()
-
-    next_page = request.POST.get("next", "/")
-    return redirect(next_page)
 
 
 @method_login_and_permission("events.change_event")
@@ -304,28 +248,3 @@ class EventUpdateView(UpdateView):
                 " when you change the rsvp limit. Be sure to make an announcement!",
             )
         return super().form_valid(form)
-
-
-# Helpers
-
-
-def send_off_waitlist_email(request, user, event):
-    subject = "[HKN] You have gotten off the waitlist for your event"
-
-    event_link = request.build_absolute_uri(
-        reverse("events:detail", kwargs={"id": event.id})
-    )
-    html_content = render_to_string(
-        "events/off_waitlist_email.html",
-        {
-            "subject": subject,
-            "event_name": event.name,
-            "event_link": event_link,
-            "img_link": get_rand_photo(),
-        },
-    )
-    msg = EmailMultiAlternatives(
-        subject, subject, settings.NO_REPLY_EMAIL, [user.email]
-    )
-    msg.attach_alternative(html_content, "text/html")
-    msg.send()
