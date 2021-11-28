@@ -55,7 +55,9 @@ class UnrsvpViewTests(TestCase):
         self.assertEqual(response.status_code, 302)
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(len(messages), 1)
-        self.assertEqual(str(messages[0]), "Cannot un-rsvp from event you have gone to.")
+        self.assertEqual(
+            str(messages[0]), "Cannot un-rsvp from event you have gone to."
+        )
 
     def test_unrsvp_deletes_rsvp(self):
         kwargs = {

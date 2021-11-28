@@ -18,7 +18,9 @@ class TabularViewTests(TestCase):
         user.save()
 
         content_type = ContentType.objects.get_for_model(Rsvp)
-        permission = Permission.objects.get(content_type=content_type, codename="add_rsvp")
+        permission = Permission.objects.get(
+            content_type=content_type, codename="add_rsvp"
+        )
         user.user_permissions.add(permission)
 
         self.client.login(username=user.username, password=password)

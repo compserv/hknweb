@@ -20,15 +20,15 @@ class EventWithRsvpsTests(TestCase):
         self.event_name = event_name
         self.event = event
         self.rsvps = rsvps
-    
+
     def test_admitted_set(self):
-        expected = self.rsvps[:self.event.rsvp_limit]
+        expected = self.rsvps[: self.event.rsvp_limit]
         actual = list(self.event.admitted_set())
 
         self.assertListEqual(expected, actual)
 
     def test_waitlist_set(self):
-        expected = self.rsvps[self.event.rsvp_limit:]
+        expected = self.rsvps[self.event.rsvp_limit :]
         actual = list(self.event.waitlist_set())
 
         self.assertListEqual(expected, actual)

@@ -53,7 +53,10 @@ class ModelFactory:
     def create_event_with_rsvps():
         event_create_user = ModelFactory.create_user(username="event create user")
         num_rsvps = 3
-        rsvp_users = [ModelFactory.create_user(username="rsvp_user_{}".format(str(i))) for i in range(1, 1 + num_rsvps)]
+        rsvp_users = [
+            ModelFactory.create_user(username="rsvp_user_{}".format(str(i)))
+            for i in range(1, 1 + num_rsvps)
+        ]
 
         event_type = ModelFactory.create_event_type()
         event_name = "custom event name"

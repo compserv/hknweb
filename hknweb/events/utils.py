@@ -11,9 +11,9 @@ from .models import Event
 
 def create_gcal_link(event: Event) -> str:
     attrs = {
-        ATTR.EVENT_NAME: urllib.parse.quote_plus(event.name, safe=''),
-        ATTR.DESCRIPTION: urllib.parse.quote_plus(event.description, safe=''),
-        ATTR.LOCATION: urllib.parse.quote_plus(event.location, safe=''),
+        ATTR.EVENT_NAME: urllib.parse.quote_plus(event.name, safe=""),
+        ATTR.DESCRIPTION: urllib.parse.quote_plus(event.description, safe=""),
+        ATTR.LOCATION: urllib.parse.quote_plus(event.location, safe=""),
         ATTR.START_TIME: format_gcal_time(event.start_time),
         ATTR.END_TIME: format_gcal_time(event.end_time),
     }
@@ -89,8 +89,10 @@ def format_url(s: str, max_width: int = None) -> str:
     url_validator = URLValidator()
     try:
         url_validator(s)
-        link_with_tag = "<a href='{link}' style='background-color: white'> {link} </a>".format(
-            link=s
+        link_with_tag = (
+            "<a href='{link}' style='background-color: white'> {link} </a>".format(
+                link=s
+            )
         )
         return mark_safe(link_with_tag)
     except:

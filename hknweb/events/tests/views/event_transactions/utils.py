@@ -13,7 +13,9 @@ def setUp(test, permission_name):
     user.save()
 
     content_type = ContentType.objects.get_for_model(Event)
-    permission = Permission.objects.get(content_type=content_type, codename=permission_name)
+    permission = Permission.objects.get(
+        content_type=content_type, codename=permission_name
+    )
     user.user_permissions.add(permission)
 
     test.client.login(username=user.username, password=password)

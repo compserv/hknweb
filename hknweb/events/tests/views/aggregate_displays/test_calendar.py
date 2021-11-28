@@ -36,7 +36,7 @@ class CalendarViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertQuerysetEqual(response.context["event_types"], [repr(event_type)])
         self.assertQuerysetEqual(response.context["events"], [repr(event)])
-    
+
     def test_events_with_event_type_without_access(self):
         user = ModelFactory.create_user()
         event_type = ModelFactory.create_event_type()
@@ -77,7 +77,9 @@ class CalendarViewTests(TestCase):
                 event_type=event_type,
                 created_by=user,
                 access_level=2,
-            ) for i in range(1, 1 + num_events)]
+            )
+            for i in range(1, 1 + num_events)
+        ]
 
         response = self.client.get(reverse("events:index"))
 
