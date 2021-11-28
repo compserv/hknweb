@@ -10,7 +10,7 @@ def confirm_rsvp(request, id, operation):
 
     access_level = get_access_level(request.user)
     if access_level > 0:
-        raise HttpResponseForbidden()
+        return HttpResponseForbidden()
 
     rsvp = Rsvp.objects.get(id=id)
     rsvp.confirmed = operation == 0  # { confirmed: 0, unconfirmed: 1 }
