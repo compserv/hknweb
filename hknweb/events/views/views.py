@@ -1,33 +1,15 @@
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from django.shortcuts import get_object_or_404, reverse
-from django.core.paginator import Paginator
+from django.shortcuts import reverse
 from django.views.generic import TemplateView
-from django.views.generic.edit import UpdateView
 from django.utils import timezone
 
-from hknweb.utils import markdownify
-
 from hknweb.utils import (
-    login_and_permission,
     method_login_and_permission,
     get_semester_bounds,
-    DATETIME_12_HOUR_FORMAT,
-    PACIFIC_TIMEZONE,
 )
-from hknweb.events.constants import (
-    ACCESSLEVEL_TO_DESCRIPTION,
-    ATTR,
-    GCAL_INVITE_TEMPLATE_ATTRIBUTE_NAME,
-    RSVPS_PER_PAGE,
-)
+from hknweb.events.constants import ATTR
 from hknweb.events.models import Event, EventType, Rsvp
-from hknweb.events.forms import EventForm, EventUpdateForm
 from hknweb.events.utils import (
-    create_event,
-    create_gcal_link,
     format_url,
-    generate_recurrence_times,
     get_padding,
 )
 from hknweb.utils import get_access_level
@@ -121,130 +103,3 @@ class AllRsvpsView(TemplateView):
             ATTR.DATA: data,
         }
         return context
-
-
-@login_and_permission("events.view_event")
-def show_details(request, id):
-    event = get_object_or_404(Event, pk=id)
-    if event.access_level < get_access_level(request.user):
-        messages.warning(request, "Insufficent permission to access event.")
-        return redirect("/events")
-    rsvps = Rsvp.objects.filter(event=event)
-    rsvpd = Rsvp.objects.filter(user=request.user, event=event).exists()
-    waitlisted = False
-    waitlist_position = 0
-
-    if rsvpd:
-        # Gets the rsvp object for the user
-        rsvp = Rsvp.objects.filter(user=request.user, event=event)[:1].get()
-        # Check if waitlisted
-        if event.rsvp_limit:
-            rsvps_before = rsvps.filter(created_at__lt=rsvp.created_at).count()
-            waitlisted = rsvps_before >= event.rsvp_limit
-
-    # Get waitlist position
-    if waitlisted:
-        position = rsvps.filter(created_at__lt=rsvp.created_at).count()
-        waitlist_position = position - event.rsvp_limit + 1
-    # Render only non-waitlisted rsvps
-    rsvps = event.admitted_set()
-    waitlists = event.waitlist_set()
-    limit = event.rsvp_limit
-    gcal_link = create_gcal_link(event)
-
-    event_location = format_url(event.location)
-
-    rsvps_page = Paginator(rsvps, RSVPS_PER_PAGE).get_page(
-        request.GET.get("rsvps_page")
-    )
-    waitlists_page = Paginator(waitlists, RSVPS_PER_PAGE).get_page(
-        request.GET.get("waitlists_page")
-    )
-
-    user_access_level = ACCESSLEVEL_TO_DESCRIPTION[get_access_level(request.user)]
-    event_access_level = ACCESSLEVEL_TO_DESCRIPTION[event.access_level]
-
-    data = [
-        {
-            ATTR.TITLE: "RSVPs",
-            ATTR.DATA: rsvps_page if len(rsvps_page) > 0 else None,
-            ATTR.PAGE_PARAM: "rsvps_page",
-            ATTR.COUNT: str(rsvps.count()) + " / {limit}".format(limit=limit),
-        },
-    ]
-    if limit:
-        data.append(
-            {
-                ATTR.TITLE: "Waitlist",
-                ATTR.DATA: waitlists_page if len(waitlists_page) > 0 else None,
-                ATTR.PAGE_PARAM: "waitlists_page",
-                ATTR.COUNT: str(waitlists.count()),
-            }
-        )
-
-    context = {
-        ATTR.DATA: data,
-        "event": event,
-        "event_description": markdownify(event.description),
-        "event_location": event_location,
-        "user_access_level": user_access_level,
-        "event_access_level": event_access_level,
-        "rsvpd": rsvpd,
-        "waitlisted": waitlisted,
-        "waitlist_position": waitlist_position,
-        "can_edit": request.user.has_perm("events.change_event"),
-        GCAL_INVITE_TEMPLATE_ATTRIBUTE_NAME: gcal_link,
-    }
-    return render(request, "events/show_details.html", context)
-
-
-@login_and_permission("events.add_event")
-def add_event(request):
-    form = EventForm(request.POST or None)
-    if request.method == "POST":
-        if form.is_valid():
-            data = form.cleaned_data
-
-            times = generate_recurrence_times(
-                data[ATTR.START_TIME],
-                data["end_time"],
-                data["recurring_num_times"],
-                data["recurring_period"],
-            )
-
-            for start_time, end_time in times:
-                create_event(data, start_time, end_time, request.user)
-
-            messages.success(request, "Event has been added!")
-            return redirect("/events")
-        else:
-            messages.error(request, "Something went wrong oops")
-    return render(request, "events/event_add.html", {"form": form})
-
-
-@method_login_and_permission("events.change_event")
-class EventUpdateView(UpdateView):
-    model = Event
-    form_class = EventUpdateForm
-    template_name_suffix = "_edit"
-
-    def get_initial(self):
-        """Override some prepopulated data with custom data; in this case, make times
-        the right format."""
-        initial = super().get_initial()
-        initial["start_time"] = self.object.start_time.astimezone(
-            PACIFIC_TIMEZONE
-        ).strftime(DATETIME_12_HOUR_FORMAT)
-        initial["end_time"] = self.object.end_time.astimezone(
-            PACIFIC_TIMEZONE
-        ).strftime(DATETIME_12_HOUR_FORMAT)
-        return initial
-
-    def form_valid(self, form):
-        if "rsvp_limit" in form.changed_data:
-            messages.success(
-                self.request,
-                "People who rsvp'd or are on the waitlist are not notified"
-                " when you change the rsvp limit. Be sure to make an announcement!",
-            )
-        return super().form_valid(form)

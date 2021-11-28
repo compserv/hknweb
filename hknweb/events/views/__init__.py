@@ -4,10 +4,10 @@ from hknweb.events.views.rsvp_transactions import (
     unrsvp,
     confirm_rsvp,
 )
-
-from hknweb.events.views.views import (
-    AllRsvpsView,
-    show_details,
-    add_event,
+from hknweb.events.views.event_transactions import (
     EventUpdateView,
+    add_event,
+    show_details,
 )
+
+from hknweb.events.views.views import AllRsvpsView

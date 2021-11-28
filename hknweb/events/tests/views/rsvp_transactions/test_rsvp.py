@@ -1,39 +1,16 @@
 from django.test import TestCase
 
 from django.urls import reverse
-from django.contrib.auth.models import Permission
-from django.contrib.contenttypes.models import ContentType
 from django.contrib.messages import get_messages
 
 from hknweb.events.models import Rsvp
 
-from hknweb.events.tests.models.utils import ModelFactory
+from hknweb.events.tests.views.rsvp_transactions.utils import setUp
 
 
 class RsvpViewTests(TestCase):
     def setUp(self):
-        user = ModelFactory.create_user()
-        password = "custom password"
-        user.set_password(password)
-        user.save()
-
-        content_type = ContentType.objects.get_for_model(Rsvp)
-        permission = Permission.objects.get(content_type=content_type, codename="add_rsvp")
-        user.user_permissions.add(permission)
-
-        self.client.login(username=user.username, password=password)
-
-        event_type = ModelFactory.create_event_type()
-        event = ModelFactory.create_event(
-            name="custom event name",
-            event_type=event_type,
-            created_by=user,
-            access_level=2,
-        )
-
-        self.user = user
-        self.password = password
-        self.event = event
+        setUp(self, ["add_rsvp"])
 
     def test_not_post_returns_http404(self):
         kwargs = {
