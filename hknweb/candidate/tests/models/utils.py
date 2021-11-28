@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 
-from hknweb.candidate.models import BitByteActivity
+from hknweb.candidate.models import BitByteActivity, OffChallenge
 
 
 class ModelFactory:
@@ -28,3 +28,22 @@ class ModelFactory:
         bitbyteactivity.save()
 
         return bitbyteactivity
+
+    @staticmethod
+    def create_officerchallenge_activity(requester, officer, **kwargs):
+        required_kwargs = {
+            "requester": requester,
+            "officer": officer,
+        }
+        default_kwargs = {
+            "name": "default name",
+            "description": "default description",
+            "proof": "default proof",
+            "officer_comment": "default officer_comment",
+        }
+        kwargs = {
+            **required_kwargs,
+            **default_kwargs,
+            **kwargs,
+        }
+        return OffChallenge.objects.create(**kwargs)
