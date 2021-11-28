@@ -1,4 +1,7 @@
-from hknweb.events.views.index import index
+from hknweb.events.views.aggregate_displays import (
+    index,
+    AllRsvpsView,
+)
 from hknweb.events.views.rsvp_transactions import (
     rsvp,
     unrsvp,
@@ -9,5 +12,3 @@ from hknweb.events.views.event_transactions import (
     add_event,
     show_details,
 )
-
-from hknweb.events.views.views import AllRsvpsView

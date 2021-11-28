@@ -5,7 +5,7 @@ from django.urls import reverse
 from hknweb.events.tests.models.utils import ModelFactory
 
 
-class IndexViewTests(TestCase):
+class CalendarViewTests(TestCase):
     def test_no_event_types(self):
         response = self.client.get(reverse("events:index"))
 
