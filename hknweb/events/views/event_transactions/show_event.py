@@ -9,7 +9,6 @@ from hknweb.utils import login_and_permission
 from hknweb.events.constants import (
     ACCESSLEVEL_TO_DESCRIPTION,
     ATTR,
-    GCAL_INVITE_TEMPLATE_ATTRIBUTE_NAME,
     RSVPS_PER_PAGE,
 )
 from hknweb.events.models import Event, Rsvp
@@ -90,6 +89,6 @@ def show_details(request, id):
         "waitlisted": waitlisted,
         "waitlist_position": waitlist_position,
         "can_edit": request.user.has_perm("events.change_event"),
-        GCAL_INVITE_TEMPLATE_ATTRIBUTE_NAME: gcal_link,
+        ATTR.GCAL_INVITE_TEMPLATE: gcal_link,
     }
     return render(request, "events/show_details.html", context)
