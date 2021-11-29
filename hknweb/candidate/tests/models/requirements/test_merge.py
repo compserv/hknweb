@@ -1,7 +1,6 @@
 from django.test import TestCase
 
-from hknweb.candidate.tests.models.utils import ModelFactory
-
 
 class MergeRequirementModelTests(TestCase):
+    # !TODO Write tests for merge requirement models
     pass
