@@ -16,7 +16,11 @@ class BitByteActivityActivityModelTests(TestCase):
         self.bitbyteactivity = bitbyteactivity
 
     def test_str(self):
-        expected = ", ".join([c.username for c in self.participants]) + "; " + self.bitbyteactivity.proof
+        expected = (
+            ", ".join([c.username for c in self.participants])
+            + "; "
+            + self.bitbyteactivity.proof
+        )
         actual = str(self.bitbyteactivity)
 
         self.assertEqual(expected, actual)
@@ -25,22 +29,30 @@ class BitByteActivityActivityModelTests(TestCase):
         self.bitbyteactivity.confirmed = True
         self.bitbyteactivity.save()
 
-        self.assertTrue(BitByteActivity.objects.get(id=self.bitbyteactivity.id).is_confirmed)
+        self.assertTrue(
+            BitByteActivity.objects.get(id=self.bitbyteactivity.id).is_confirmed
+        )
 
     def test_is_confirmed_returns_false_when_not_confirmed(self):
         self.bitbyteactivity.confirmed = False
         self.bitbyteactivity.save()
 
-        self.assertFalse(BitByteActivity.objects.get(id=self.bitbyteactivity.id).is_confirmed)
+        self.assertFalse(
+            BitByteActivity.objects.get(id=self.bitbyteactivity.id).is_confirmed
+        )
 
     def test_is_rejected_returns_false_when_confirmed(self):
         self.bitbyteactivity.confirmed = True
         self.bitbyteactivity.save()
 
-        self.assertFalse(BitByteActivity.objects.get(id=self.bitbyteactivity.id).is_rejected)
+        self.assertFalse(
+            BitByteActivity.objects.get(id=self.bitbyteactivity.id).is_rejected
+        )
 
     def test_is_rejected_returns_true_when_not_confirmed(self):
         self.bitbyteactivity.confirmed = False
         self.bitbyteactivity.save()
 
-        self.assertTrue(BitByteActivity.objects.get(id=self.bitbyteactivity.id).is_rejected)
+        self.assertTrue(
+            BitByteActivity.objects.get(id=self.bitbyteactivity.id).is_rejected
+        )

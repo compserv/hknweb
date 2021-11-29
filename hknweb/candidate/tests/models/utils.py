@@ -107,11 +107,7 @@ class ModelFactory:
         default_kwargs = {
             "notes": "default notes",
         }
-        kwargs = {
-            **required_kwargs,
-            **default_kwargs,
-            **kwargs
-        }
+        kwargs = {**required_kwargs, **default_kwargs, **kwargs}
         return CandidateFormDoneEntry.objects.create(**kwargs)
 
     @staticmethod
@@ -134,11 +130,7 @@ class ModelFactory:
         default_kwargs = {
             "notes": "default notes",
         }
-        kwargs = {
-            **required_kwargs,
-            **default_kwargs,
-            **kwargs
-        }
+        kwargs = {**required_kwargs, **default_kwargs, **kwargs}
         return CommitteeProjectDoneEntry.objects.create(**kwargs)
 
     @staticmethod
@@ -161,11 +153,7 @@ class ModelFactory:
         default_kwargs = {
             "notes": "default notes",
         }
-        kwargs = {
-            **required_kwargs,
-            **default_kwargs,
-            **kwargs
-        }
+        kwargs = {**required_kwargs, **default_kwargs, **kwargs}
         return DuePaymentPaidEntry.objects.create(**kwargs)
 
     @staticmethod

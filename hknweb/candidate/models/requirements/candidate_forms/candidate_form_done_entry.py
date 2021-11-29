@@ -1,7 +1,9 @@
 from django.contrib.auth.models import User
 from django.db import models
 
-from hknweb.candidate.models.requirements.candidate_forms.candidate_form import CandidateForm
+from hknweb.candidate.models.requirements.candidate_forms.candidate_form import (
+    CandidateForm,
+)
 
 
 class CandidateFormDoneEntry(models.Model):

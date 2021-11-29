@@ -12,8 +12,10 @@ class CommitteeProjectDoneEntryRequirementModelTests(TestCase):
         committeeproject = ModelFactory.create_committeeproject_requirement(
             candidateSemesterActive=semester,
         )
-        committeeprojectdoneentry = ModelFactory.create_committeeprojectdoneentry_requirement(
-            committeeProject=committeeproject,
+        committeeprojectdoneentry = (
+            ModelFactory.create_committeeprojectdoneentry_requirement(
+                committeeProject=committeeproject,
+            )
         )
 
         self.semester = semester
