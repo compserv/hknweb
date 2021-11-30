@@ -1,0 +1,17 @@
+.left-pad {
+    padding-left: 3%;
+}
+
+.detail {
+    padding-left: 5%;
+    line-height: 1.3em;
+    font-size: 1.3em;
+}
+
+li a {
+    color: green;
+}
+
+body {
+    background: white url("images/background.png") no-repeat;
+}
