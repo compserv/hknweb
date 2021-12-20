@@ -3,5 +3,20 @@
 
 
 {% block content %}
-<a href="{% url 'home' %}">Home</a>
+    <h1>
+        Course surveys designs
+    </h1>
+
+    {% if pages %}
+        <ul>
+            {% for page in pages %}
+                <li>
+                    <a href={{page.path}}>{{page.name}}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        No course surveys pages at the moment! Check back later or contact HKN.
+    {% endif %}
+
 {% endblock %}
