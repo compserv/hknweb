@@ -39,10 +39,10 @@ urlpatterns = [
     path("pages/", include("hknweb.markdown_pages.urls")),
     path("markdownx/", include("markdownx.urls")),
     path("elections/", include("hknweb.elections.urls")),
+    path("course_surveys/", include("hknweb.course_surveys.urls")),
     path("auth/", include("social_django.urls", namespace="social")),
     path("", landing.home, name="home"),
     path("<slug:temp>/", viewsShortlink.openLink),
-    path("course_surveys", include("hknweb.course_surveys.urls")),
 ]
 
 if settings.DEBUG:
