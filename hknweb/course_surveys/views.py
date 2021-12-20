@@ -16,12 +16,14 @@ def index(request):
         if page is not None:
             page_name = page.name
             if page_name.startswith(COURSE_SURVEY_PREFIX):
-                page_name = page_name[len(COURSE_SURVEY_PREFIX):]
+                page_name = page_name[len(COURSE_SURVEY_PREFIX) :]
 
-            pages.append({
-                Attr.NAME: page_name,
-                Attr.PATH: "/pages/" + page_path,
-            })
+            pages.append(
+                {
+                    Attr.NAME: page_name,
+                    Attr.PATH: "/pages/" + page_path,
+                }
+            )
 
     context = {
         Attr.PAGES: pages,
