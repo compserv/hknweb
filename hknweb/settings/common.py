@@ -21,8 +21,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 # Application definition
 
 INSTALLED_APPS = [
+    "rest_framework",
     "hknweb",
-    'hknweb.academics',
+    "hknweb.academics",
     "hknweb.events",
     "hknweb.tutoring",
     "hknweb.markdown_pages",

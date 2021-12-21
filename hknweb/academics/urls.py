@@ -1,7 +1,14 @@
-from django.urls import path
+from django.urls import include, path
+from rest_framework.routers import DefaultRouter
 
-from hknweb.academics import views
+from .views import register_viewsets
 
 
 app_name = "academics"
-urlpatterns = []
+
+router = DefaultRouter()
+register_viewsets(router)
+
+urlpatterns = [
+    path("api/", include(router.urls)),
+]
