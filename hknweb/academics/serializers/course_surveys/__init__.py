@@ -1,0 +1,3 @@
+from hknweb.academics.serializers.course_surveys.question import QuestionSerializer
+from hknweb.academics.serializers.course_surveys.rating import RatingSerializer
+from hknweb.academics.serializers.course_surveys.survey import SurveySerializer
