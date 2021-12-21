@@ -1,16 +1,200 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block header %}
+    <style>
+        .demographic-selection-panel {
+            box-shadow: 0 0 1em #252525;
+            margin: auto;
+            min-height: 20em;
+            width: 15%;
+            border-radius: 0.75em;
+            text-align: center;
+            position: relative;
+            display: inline-block;
+            margin-bottom: 2%;
+        }
+
+        .demographic-selection-panel:hover {
+            box-shadow: none;
+            background-color: #252525;
+            color: white;
+        }
+
+        .demographic-selection-panel-header {
+            padding-top: 50%;
+            font-size: 200%;
+        }
+
+        .demographic-information-panel {
+            box-shadow: 0 0 1em #252525;
+            margin: auto;
+            min-height: 15em;
+            width: 47.5%;
+            border-radius: 0.75em;
+            text-align: center;
+            position: relative;
+            margin-bottom: 3%;
+        }
+
+        .demographic-information-panel-header {
+            font-size: 150%;
+            margin-bottom: 1%;
+        }
+
+        .demographic-information-panel-selection {
+            display: inline-block;
+            margin-left: 1em;
+            margin-right: 1em;
+            margin-top: 0.5em;
+        }
+
+        .demographic-information-panel-body {
+            font-size: 125%;
+            text-align: left;
+            padding-left: 10%;
+            padding-right: 10%;
+        }
+
+        .demographic-information-panel-footer {
+            font-size: 150%;
+            position: absolute;
+            bottom: 2%;
+            margin-left: auto;
+            margin-right: auto;
+            left: 0;
+            right: 0;
+            text-align: center;
+        }
+
+        .design-list {
+            font-size: 150%;
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .design-list-item {
+            display: inline-block;
+            margin-left: 1em;
+            margin-right: 1em;
+            min-width: 5.5em;
+        }
+
+    </style>
+
+    <script>
+        function clickSelectionStudent() {
+            document.getElementById("student-selection").style.fontWeight="Bold";
+            document.getElementById("ta-selection").style.fontWeight="Normal";
+            document.getElementById("instructor-selection").style.fontWeight="Normal";
+
+            document.getElementById("selection-text-none").style.display="none";
+            document.getElementById("selection-text-student").style.display="block";
+            document.getElementById("selection-text-ta").style.display="none";
+            document.getElementById("selection-text-instructor").style.display="none";
+        }
+        function clickSelectionTA() {
+            document.getElementById("student-selection").style.fontWeight="Normal";
+            document.getElementById("ta-selection").style.fontWeight="Bold";
+            document.getElementById("instructor-selection").style.fontWeight="Normal";
+
+            document.getElementById("selection-text-none").style.display="none";
+            document.getElementById("selection-text-student").style.display="none";
+            document.getElementById("selection-text-ta").style.display="block";
+            document.getElementById("selection-text-instructor").style.display="none";
+        }
+        function clickSelectionInstructor() {
+            document.getElementById("student-selection").style.fontWeight="Normal";
+            document.getElementById("ta-selection").style.fontWeight="Normal";
+            document.getElementById("instructor-selection").style.fontWeight="Bold";
+
+            document.getElementById("selection-text-none").style.display="none";
+            document.getElementById("selection-text-student").style.display="none";
+            document.getElementById("selection-text-ta").style.display="none";
+            document.getElementById("selection-text-instructor").style.display="block";
+        }
+    </script>
+{% endblock %}
 
 {% block content %}
-    <h1>
-        Course surveys designs
+    <h1 style="margin: auto; width: 50%; text-align: center; padding-bottom: 1.5%;">
+        Course surveys
     </h1>
 
+    <div class="panel panel-primary demographic-selection-panel" style="float: left; left: 26.25%;" onclick="clickSelectionStudent()">
+        <div class="panel-header demographic-selection-panel-header">
+            For students
+        </div>
+    </div>
+    <div class="panel panel-primary demographic-selection-panel" style="float: none; left: 27.5%;" onclick="clickSelectionTA()">
+        <div class="panel-header demographic-selection-panel-header">
+            For TAs or (u)GSIs
+        </div>
+    </div>
+    <div class="panel panel-primary demographic-selection-panel" style="float: right; right: 26.25%;" onclick="clickSelectionInstructor()">
+        <div class="panel-header demographic-selection-panel-header">
+            For instructors
+        </div>
+    </div>
+
+    <div class="panel panel-primary demographic-information-panel">
+        <div class="panel-header demographic-information-panel-header">
+            <div class="demographic-information-panel-selection" id="student-selection">
+                Student
+            </div>
+            /
+            <div class="demographic-information-panel-selection" id="ta-selection">
+                Teaching Assistant
+            </div>
+            /
+            <div class="demographic-information-panel-selection" id="instructor-selection">
+                Instructor
+            </div>
+        </div>
+        <div class="panel-body demographic-information-panel-body" id="selection-text">
+            <div id="selection-text-none" style="text-align: center;">
+                Click on a panel!
+            </div>
+            <div id="selection-text-student" style="display: none;">
+                As a student, you are able to: <br>
+
+                - browse through our course map<br>
+                - view course and instructor ratings throughout the semesters<br>
+            </div>
+            <div id="selection-text-ta" style="display: none;">
+                If you are a Teaching Assistant for any EE/CS course, you are able to: <br>
+
+                - view and print your course evaluations <br>
+                - enable public view for your data <br>
+                - update your contact informations (ie. website, email, interests, profile picture). <br>
+                - view as Student <br>
+            </div>
+            <div id="selection-text-instructor" style="display: none;">
+                If you are a Faculty Instructor for any EE/CS course, you are able to: <br>
+
+                - view and print your course evaluations <br>
+                - update your contact informations (ie. website, email, interests, profile picture). <br>
+                - view TA evaluations for hiring purposes <br>
+                - view as Student <br>
+            </div>
+        </div>
+        <div class="panel-footer demographic-information-panel-footer">
+            Sign in via <a href="">CalNet</a>
+        </div>
+    </div>
+
+
+    <h2 style="margin: auto; text-align: center; padding-bottom: 1.5%;">
+        Designs
+    </h2>
+
     {% if pages %}
-        <ul>
+        <ul class="design-list">
             {% for page in pages %}
-                <li>
+                <li class="design-list-item">
                     <a href={{page.path}}>{{page.name}}</a>
                 </li>
             {% endfor %}
