@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from django.contrib.auth.models import User
+
 from hknweb.academics.models import (
     Course,
     Department,
@@ -136,3 +138,20 @@ class ModelFactory:
             icsr_semester=icsr_semester,
             **kwargs,
         )
+
+    @staticmethod
+    def create_user(**kwargs):
+        default_kwargs = {
+            "username": "default username",
+        }
+        kwargs = {**default_kwargs, **kwargs}
+        return User.objects.create(**kwargs)
+
+
+def login_user(test_cls):
+    user = ModelFactory.create_user()
+    password = "custom password"
+    user.set_password(password)
+    user.save()
+
+    test_cls.client.login(username=user.username, password=password)
