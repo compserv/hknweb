@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static "candidate/style.css" %}">
+{% endblock %}
+
+{% block title %}Mass Checkoffs{% endblock %}
+
+{% block heading %}
+Mass Checkoffs
+{% endblock %}
+
+{% block content %}
+{% if viewer_is_an_officer %}
+<div class="parent">
+    <div class="table-div">
+        <h3>CSV Mass Checkoffs</h3>
+        <ul>
+        {% if viewer_is_an_exec %}
+            <li>
+                Here you can do mass checkoffs for an event, committee projects, dues, or forms. You have access to the latter three since you are an exec.
+            </li>
+            <li>
+                If you are checking off an event, you must input "Event ID" on this form. The event ID can be found in the URL of the respective event's information page.
+            </li>
+            <li>
+                If you are checking off project, dues, or forms, you must choose which one in the dropdown box out of the currently "visible" ones.
+            </li>
+        {% else %}
+            <li>
+                Here you can do mass RSVP confirmations for your event.
+            </li>
+            <li>
+                You must input "Event ID" on this form. The event ID can be found in the URL of the respective event's information page.
+            </li>
+        {% endif %}
+            <li>
+                The uploaded CSV must have headers for "Email", "First Name", and "Last Name".
+            </li>
+        </ul>
+         <br><br>
+        {% for message in messages %}
+            <span {% if messages.tags %} class="{{ message.tags }}" {% endif %}
+                class="blue">{{ message }}</span>
+        {% endfor %}
+        <form action="{% url 'candidate:checkoff_csv' %}" method="post" enctype="multipart/form-data" id="checkoff_form">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.path }}">
+            <label for="checkoff_type">Type:</label>
+            <select id="checkoff_type" name="checkoff_type" onchange="change_secondary_id(this)">
+                <option value="event">Event</option>
+                {% if viewer_is_an_exec %}
+                <option value="project">Committee Project</option>
+                <option value="dues">Dues</option>
+                <option value="forms">Forms</option>
+                {% endif %}
+            </select><br><br>
+            <div id="event_id_div">
+                <label for="event_id">Event ID:</label>
+                <input type="number" id="event_id" name="event_id"/><br><br>
+            </div>
+            <div id="project_id_div">
+                <label for="project_name">Committee Project:</label>
+                <select id="project_name" name="project_name">
+                    {% for project in projects %}
+                        <option value="{{project.name}}">{{project.name}}</option>
+                    {% endfor %}
+                </select><br><br>
+            </div>
+            <div id="dues_id_div">
+                <label for="dues_name">Dues:</label>
+                <select id="dues_name" name="dues_name">
+                    {% for due in dues %}
+                        <option value="{{due.name}}">{{due.name}}</option>
+                    {% endfor %}
+                </select><br><br>
+            </div>
+            <div id="forms_id_div">
+                <label for="forms_name">Forms:</label>
+                <select id="forms_name" name="forms_name">
+                    {% for form in forms %}
+                        <option value="{{form.name}}">{{form.name}}</option>
+                    {% endfor %}
+                </select><br><br>
+            </div>
+            <label for="csv_file">CSV File:</label>
+            <input type="file" id="csv_file" name="csv_file" /><br><br>
+            <input type="submit" value="Checkoff" />
+        </form>
+    </div>
+
+</div>
+{% else %}
+    <h3 style="text-align: center;">Sorry, you do not have access to this page.</h3>
+{% endif %}
+<script>
+    function change_secondary_id(select_id) {
+        var selectedValue = select_id.options[select_id.selectedIndex].value;
+        document.getElementById("event_id_div").style.display = selectedValue == "event" ? "block" : "none";
+        document.getElementById("project_id_div").style.display = selectedValue == "project" ? "block" : "none";
+        document.getElementById("dues_id_div").style.display = selectedValue == "dues" ? "block" : "none";
+        document.getElementById("forms_id_div").style.display = selectedValue == "forms" ? "block" : "none";
+    }
+    change_secondary_id(document.getElementById("checkoff_type"));
+</script>
+{% endblock %}

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ subject }}</title>
+</head>
+<body>
+
+    <p>
+        {{ requester.first_name }} {{ requester.last_name }} ({{ requester.username }})
+        has requested a bit-byte activity to be confirmed, of which you are a participant.
+        Participants include:
+    </p>
+    <p>
+        {% for part in participants %}
+            {{ part.first_name }} {{ part.last_name }} ({{ part.username }}) <br>
+        {% endfor %}
+    </p>
+    <p>
+        Click
+        <a href="{{ bitbyte_link }}">here</a>
+        to view the activity on your portal. You will receive a notification when the
+        request is confirmed by VP/csec.
+    </p>
+
+    <p>
+        Have a nice day!
+    </p>
+
+    <img src="{{ img_link }}" alt="cute animal"><br>
+    <span style="font-size: 0.8em;"> Image source: pexels.com </span>
+
+</body>
+</html>

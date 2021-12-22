@@ -15,7 +15,7 @@ Your Officer Challenges
 <div class="parent">
 
     <!-- Left side of page, form to request new challenges -->
-    <div style="width: 40%; float: left; padding-left: 50px;">
+    <div class="left-narrow">
         <h3>Request Officer Challenge Confirmation</h3>
 
         {% for message in messages %}
@@ -25,30 +25,33 @@ Your Officer Challenges
 
         {% load app_filters %}
 
-        <form method="POST">{% csrf_token %}
+        <form method="POST" onsubmit="submit_button.disabled = true; return true;">{% csrf_token %}
             {% for field in form %}
                 <br>
-                <span style="float: left;">{{ field.label }} {% if field.field.required %}
-                    <span style="color: red;">* </span>{% endif %}
+                <span class="left">{{ field.label }}
+                    {% if field.field.required %}<span class="red">* </span>{% endif %}
                 </span>&nbsp
+                {% if field.label == 'Proof' %}
+                <span class="tooltip">
+                    <img src="{% static 'candidate/more_info.png' %}" alt="more info" class="inline-icon">
+                    <span class="tooltiptext">
+                        You can include some proof that you've completed the challenge.
+                        If applicable, send it to #challenges on Slack and paste a link here.
+                        You can obtain the link by clicking "More actions->Copy link"
+                        on Slack. The link should start with "https://hkn.slack.com/archives/"
+                    </span>
+                </span>
+                {% endif %}
                 {% if field|field_type == 'Textarea' %}
                     <br/>
                 {% endif %}
                 {{ field }}
-                {% if field.label == 'Proof' %}
-                <br/>
-                <span style="color: #0000A0; font-size: 0.8em">
-                    You can optionally include some proof that you've completed
-                    the challenge. If your proof is a file, you can send it to
-                    the Slack channel, or upload to Google Drive and paste a link here.
-                </span>
-                {% endif %}
                 {{ field.errors }}
                 <br/>
             {% endfor %}
             <br/>
 
-            <input class="f6 grow no-underline br-pill ph3 pv2 mb2 dib white bg-black" type="submit" value="Submit"/>
+            <input class="f6 grow no-underline br-pill ph3 pv2 mb2 dib white bg-black" type="submit" name="submit_button" value="Submit"/>
         </form>
 
         <p class="link">
@@ -57,12 +60,11 @@ Your Officer Challenges
     </div>
 
     <!-- Right side of page, list of requested challenges -->
-    <!--  TODO: refactor CSS (e.g. move into style.css and change px into em)  -->
-    <div id='agenda' style="width: 50%; float: right; padding-left: 20px; padding-right: 20px;">
+    <div id='agenda' class="right-wide">
         <h3>Past Requests</h3>
 
         {% if challenge_list %}
-            <table style="width: 100%;">
+            <table class="full-table">
                 <thead>
                     <th>Title</th>
                     <th>Officer</th>
@@ -108,3 +110,4 @@ Your Officer Challenges
 </div>
 
 {% endblock %}
+
