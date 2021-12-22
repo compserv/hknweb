@@ -19,28 +19,32 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 
+from .shortlinks import views as viewsShortlink
 from .views import landing
 from .views import users
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('accounts/', include('django.contrib.auth.urls')),
-    path('accounts/create/', users.account_create, name='account-create'),
-    path('accounts/settings/', users.account_settings, name='account-settings'),
-    path('accounts/activate/', users.activate),
-    path('about/', landing.about, name='about'),
-    path('events/', include('hknweb.events.urls')),
-    path('exams/', include('hknweb.exams.urls')),
-    path('alumni/', include('hknweb.alumni.urls')),
-    path('tutoring/', include('hknweb.tutoring.urls')),
-    path('tours/', include('hknweb.tours.urls'), name='tours'),
-    path('cand/', include('hknweb.candidate.urls')),
-    path('pages/', include('hknweb.markdown_pages.urls')),
-    path('markdownx/', include('markdownx.urls')),
-    path('s/', include('hknweb.shortlinks.urls')),
-    path('elections/', include('hknweb.elections.urls')),
-    path('auth/', include('social_django.urls', namespace='social')),
-    path('', landing.home, name='home'),
+    path("admin/", admin.site.urls),
+    path("accounts/", include("django.contrib.auth.urls")),
+    path("accounts/create/", users.account_create, name="account-create"),
+    path("accounts/settings/", users.account_settings, name="account-settings"),
+    path("accounts/activate/", users.activate),
+    path("about/", landing.about, name="about"),
+    path("academics/", include("hknweb.academics.urls")),
+    path("events/", include("hknweb.events.urls")),
+    path("reviewsessions/", include("hknweb.reviewsessions.urls")),
+    path("exams/", include("hknweb.exams.urls")),
+    path("alumni/", include("hknweb.alumni.urls")),
+    path("tutoring/", include("hknweb.tutoring.urls")),
+    path("tours/", include("hknweb.tours.urls"), name="tours"),
+    path("cand/", include("hknweb.candidate.urls")),
+    path("pages/", include("hknweb.markdown_pages.urls")),
+    path("markdownx/", include("markdownx.urls")),
+    path("elections/", include("hknweb.elections.urls")),
+    path("course_surveys/", include("hknweb.course_surveys.urls")),
+    path("auth/", include("social_django.urls", namespace="social")),
+    path("", landing.home, name="home"),
+    path("<slug:temp>/", viewsShortlink.openLink),
 ]
 
 if settings.DEBUG:

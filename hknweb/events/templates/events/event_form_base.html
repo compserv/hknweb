@@ -1,0 +1,88 @@
+{% load static %}
+{% block header %}
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+
+<!-- XDSoft DateTimePicker -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" integrity="sha256-DOS9W6NR+NFe1fUhEE0PGKY/fubbUCnOfTje2JMDw3Y=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js" integrity="sha256-FEqEelWI3WouFOo2VWP/uJfs1y8KJ++FLh2Lbqc8SJk=" crossorigin="anonymous"></script>
+
+<link rel="stylesheet" href="{% static 'events/style.css' %}">
+{% endblock %}
+
+<style>
+    .errorlist {
+        list-style: none;
+        color: red;
+    }
+</style>
+
+<div class="centered">
+    <form method="POST" id="form" onsubmit="submit_button.disabled = true; return true;">
+        {% csrf_token %}
+        <table style="margin: auto; text-align: center;">
+            <tbody>
+                <tr>
+                    <td style="padding-right: 5em;">
+                        {% for field in form %}
+                            {% if field.label != "Description" %}
+                                <div class="row">
+                                    <span class="left-side">
+                                        {{ field.label }}
+                                        {% if field.field.required %}
+                                            <span class="message">*</span>
+                                        {% endif %}
+                                        {{ field }}
+                                        {{ field.errors }}
+                                    </span>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>
+                        <div class="row right-side">
+                            <span>
+                                {{ form.description.label }}
+                                {% if form.description.field.required %}
+                                    <span class="message">*</span>
+                                {% endif %}
+                                {{ form.description }}
+                                {{ form.description.errors }}
+                            </span>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+        Note: You can bulk delete recurring events through the websites <a href="{% url 'admin:index' %}">admin</a>.
+        <br><br>
+
+        <div id="submit">
+            <input type="submit" name="submit_button" value="Submit" />
+            {% if messages %}
+                {% for message in messages %}
+                    <br>
+                    <span class="message">{{ message }}</span>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </form>
+
+    <script>
+        $(function () {
+            $("#id_start_time").datetimepicker({
+                format: 'm/d/Y g:i A',
+                formatTime: 'g:i A',
+                validateOnBlur: false,
+            });
+        });
+        $(function () {
+            $("#id_end_time").datetimepicker({
+                format: 'm/d/Y g:i A',
+                formatTime: 'g:i A',
+                validateOnBlur: false,
+            });
+        });
+    </script>
+</div>

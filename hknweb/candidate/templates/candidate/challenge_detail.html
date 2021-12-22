@@ -46,12 +46,12 @@ View Officer Challenge
 
     <!-- Link to go back depends on whether you're a candidate or officer -->
     {% if viewer_is_an_officer %}
-        <p class="link"><a href="{% url 'candidate:offrequests' %}">
-            Go Back to All Challenges from Me
+        <p class="link"><a href="{% url 'candidate:officer' %}">
+            Go back to officer portal
         </a></p>
     {% else %}
         <p class="link"><a href="{% url 'candidate:candrequests' %}">
-            Go Back to All Requested Challenges
+            Go back to all requested challenges
         </a></p>
     {% endif %}
 

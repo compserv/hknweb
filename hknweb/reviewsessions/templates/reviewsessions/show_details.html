@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ reviewsession.name }}{% endblock %}
+
+{% block heading %}
+{{ reviewsession.name }}
+{% endblock %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static "reviewsessions/style.css" %}">
+<style>
+    .heading {
+        display: none;
+    }
+    @media screen and (min-width: 1000px) {
+        .content {
+            padding-bottom: 1em;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="parent">
+  <h1 id="review-session-detail-title"> {{ reviewsession.name }} </h1>
+
+  <div id="left-details">
+
+    <p>{{ reviewsession.description }}</p>
+    <p><b>Location</b>: {{ reviewsession.location }}</p>
+    <p><b>Date</b>: {{reviewsession.start_time|date:"D, N j, Y"}}</p>
+    <p><b>Time</b>: {{reviewsession.start_time|time}} to {{reviewsession.end_time|time}}</p>
+
+    {% if can_edit %}
+      <p><a href="{% url 'reviewsessions:edit' reviewsession.id %}">
+          Edit This Review Session
+      </a></p>
+    {% endif %}
+
+    <p><a href="{% url 'reviewsessions:index' %}">
+        Go Back to Calendar
+    </a></p>
+  </div>
+
+  <div id='right-details'>
+    {% if messages %}
+      {% for message in messages %}
+        <h3 {% if messages.tags %} class="{{ message.tags }}" {% endif %}
+            style="color: #B78727;">{{ message }}</h3>
+      {% endfor %}
+    {% endif %}
+
+  </div>
+</div>
+
+{% endblock %}

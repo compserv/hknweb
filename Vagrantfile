@@ -75,6 +75,7 @@ Vagrant.configure("2") do |config|
         python3 \
         python3-dev \
         python3-pip \
+        python3-venv \
         tmux \
         vim
 
@@ -94,6 +95,11 @@ Vagrant.configure("2") do |config|
     cat "export HKNWEB_MODE=dev" >> /home/vagrant/.bashrc
   SHELL
 
-  # Setup pipenv and virtualenv
-  config.vm.provision "shell", privileged: false, inline: "cd ~/hknweb; make setup"
+  # Give Permission to the ".venv" to allow Execution of files in the folder, using "create: true" to make the folder if it doesn't exist
+  #  -> Main purpose: Allow execution of Pip Packages (especially "fab")
+  config.vm.synced_folder "./.venv/bin", "/home/vagrant/hknweb/.venv/bin", create: true, type: "virtualbox", mount_options: ["dmode=755", "fmode=744"]
+
+  # Setup virtualenv
+  config.vm.provision "shell", privileged: false, inline: "cd ~/hknweb; make venv"
+
 end

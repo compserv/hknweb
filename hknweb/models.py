@@ -5,23 +5,41 @@ from django.dispatch import receiver
 import re
 from django.core.validators import RegexValidator
 from django.utils import timezone
+from hknweb.coursesemester.models import Semester
 
-MAX_STRLEN = 85 # default max length for char fields
-MAX_TXTLEN = 2000 # default max length for text fields
+
+MAX_STRLEN = 85  # default max length for char fields
+MAX_TXTLEN = 2000  # default max length for text fields
 
 # Pretty sure this is terrible coding practice but hey it works
 # Sorry Daddy DeNero
-User.__str__ = lambda self: "{} ({} {})".format(self.username, self.first_name, self.last_name)
+User.__str__ = lambda self: "{} ({} {})".format(
+    self.username, self.first_name, self.last_name
+)
+
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, editable=False)
-    date_of_birth = models.DateField(null=True, blank=True)
+    date_of_birth = models.DateField(
+        null=True,
+        blank=True,
+        help_text="Formats: '%Y-%m-%d', '%m/%d/%Y', '%m/%d/%y' (Examples: '2006-10-25', '10/25/2006', '10/25/06')",
+    )
     picture = models.ImageField(blank=True)
     private = models.BooleanField(default=True, verbose_name="Private profile?")
-    phone_regex = RegexValidator(regex=r'^/([^\d]*\d){10}$/', message="Phone number must be ten digits.")
+    phone_regex = RegexValidator(
+        regex=r"^([^\d]*\d){10}$", message="Phone number must be ten digits."
+    )
     phone_number = models.CharField(validators=[phone_regex], max_length=15, blank=True)
     resume = models.FileField(blank=True)
-    graduation_date = models.DateField(null=True, blank=True)
+    graduation_date = models.DateField(
+        null=True,
+        blank=True,
+        help_text="Formats: '%Y-%m-%d', '%m/%d/%Y', '%m/%d/%y' (Examples: '2006-10-25', '10/25/2006', '10/25/06')",
+    )
+    candidate_semester = models.ForeignKey(
+        Semester, on_delete=models.SET_NULL, null=True
+    )
 
     @receiver(post_save, sender=User)
     def create_user_profile(sender, instance, created, **kwargs):
@@ -34,8 +52,19 @@ class Profile(models.Model):
 
     def clean(self):
         if self.phone_number:
-            self.phone_number = re.sub("[^0-9]", "",self.phone_number)
-            self.phone_number = "("+self.phone_number[0:3]+") "+self.phone_number[3:6]+"-"+self.phone_number[6:]
+            self.phone_number = re.sub("[^0-9]", "", self.phone_number)
+            self.phone_number = (
+                "("
+                + self.phone_number[0:3]
+                + ") "
+                + self.phone_number[3:6]
+                + "-"
+                + self.phone_number[6:]
+            )
+
+    def __str__(self):
+        return "Profile of: " + str(self.user)
+
 
 class Announcement(models.Model):
     """
@@ -44,11 +73,11 @@ class Announcement(models.Model):
     and the text will follow that in normal font, with a space in between.
     """
 
-    title           = models.CharField(max_length=MAX_STRLEN, default='')
-    text            = models.TextField(max_length=MAX_TXTLEN, blank=True, default='')
+    title = models.CharField(max_length=MAX_STRLEN, default="")
+    text = models.TextField(max_length=MAX_TXTLEN, blank=True, default="")
     # if visible == False, then admins can see announcement but it's not displayed on portal
-    visible         = models.BooleanField(default=False)
-    release_date    = models.DateTimeField(default=timezone.now)
+    visible = models.BooleanField(default=False)
+    release_date = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return self.title if self.title != '' else self.text
+        return self.title if self.title != "" else self.text
