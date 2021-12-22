@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}Events Leaderboard{% endblock %}
+
+{% block title %}
+    Events Leaderboard
+{% endblock %}
+
 {% block header %}
 <link rel="stylesheet" href="{% static "events/style.css" %}">
 <style>
@@ -10,12 +14,7 @@
     .content {
         padding-top: 1em;
         padding-bottom: 1em;
-    }
-    @media screen and (min-width: 1000px) {
-        .content {
-            padding-top: 1.5em;
-            padding-bottom: 1.5em;
-        }
+        font-size: 125%;
     }
     table.center {
 	    margin-left:auto; 
@@ -23,18 +22,24 @@
   	}
 </style>
 {% endblock %}
-{% block heading %}Events Leaderboard{% endblock %}
 
 {% block content %}
-<h1 id="add-event-title"> Events Leaderboard </h1>
+    <h1 id="add-event-title"> Events Leaderboard </h1>
 
-<div>
-	<table style="border:1px solid black" class = "center" >
-	<tr><th>Name</th><th>Events Attended</th></tr>
-		{% for tuple in leaders %}
-		    <tr><td style="text-align:center">{{ tuple.0 }}</td><td style="text-align:center">{{ tuple.1 }}</td></tr>
-		{% endfor %}
-	</table>
-</div>
+    <div>
+        <table class="center" >
+            <tr>
+                <th>Name</th>
+                <th>Events Attended</th>
+            </tr>
+
+            {% for tuple in leaders %}
+                <tr>
+                    <td style="text-align:center; width: 20%; overflow: hidden;">{{ tuple.0 }}</td>
+                    <td style="text-align:center; width: 20%; overflow: hidden;">{{ tuple.1 }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
 {% endblock %}
 

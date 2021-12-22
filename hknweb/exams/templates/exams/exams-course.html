@@ -27,7 +27,7 @@
 </style>
 {% endblock %}
 
-{% block heading %}{{ course.department.subject }} {{ course.number }} Exams{% endblock %}
+{% block heading %}{{ course.department.subject }} {{ course.number }} Exams{% if selectedTerm|length > 0 %} ({{ selectedTerm }}){% endif %}{% endblock %}
 
 {% block content %}
 <table>

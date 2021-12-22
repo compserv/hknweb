@@ -10,10 +10,10 @@
 {% block content %}
 <div class="center measure-very-wide pv4">
   <h1 class="font-title f3 f2-ns tc">Static Page Editor</h1>
-  <form method="POST" action="">
+  <form method="POST" action="" onsubmit="submit_button.disabled = true; return true;">
     {% csrf_token %}
     {{ form }}
-    <input type="submit" value="Submit" />
+    <input type="submit" name="submit_button" value="Submit" />
   </form>
   {{ form.media }}
 </div>
