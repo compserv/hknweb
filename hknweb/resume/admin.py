@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import Resume
 
+
 class ResumeAdmin(admin.ModelAdmin):
     fields = ["name", "email", "notes", "document", "uploaded_at", "critiques"]
     readonly_fields = ['uploaded_at', "email", "name", "document"]

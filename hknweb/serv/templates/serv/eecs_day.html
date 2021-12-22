@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load static %}
+{% block header %}
+<link rel="stylesheet" href="{% static "serv/style.css" %}">
+{% endblock %}
+
+{% block title %}EECS Day{% endblock %}
+
+{% block heading %}EECS Day{% endblock %}
+
+{% block content %}
+<div>
+    <div class="info">
+        <h2>Overview</h2>
+        <p>Taking place every Fall, EECS Day is our annual open house, providing prospective students in high-school and their parents with an opportunity to learn firsthand
+            what it is like to study <a href="http://eecs.berkeley.edu">EECS at UC Berkeley</a>. The day’s activities typically include a department tour, various hands-on EECS workshops and demos, and the chance to speak to
+            UC Berkeley professors and students on their personal experiences. For those not yet in high school but are still eager to learn about EECS at Cal, HKN hosts <a href="jreecs">Junior EECS Day</a>.</p>
+        <p><i>Annual, Fall Semester</i></p>
+        <h2>Sample Schedule</h2>
+        <ul id="schedule">
+            <li>10:30 am - 11:00 am: Sign In</li>
+            <li>11:00 am - 11:40 am: Speaker</li>
+            <li>11:50 am - 12:40 am: Department Tour</li>
+            <li>12:40 pm - 1:30 pm: Lunch</li>
+            <li>1:30 pm - 2:20 pm: Computer Science Lab</li>
+            <li>2:30 pm - 3:20 pm: Electrical Engineering Lab</li>
+            <li>3:30 pm - 4:00 pm: Closing Panel</li>
+        </ul>
+    </div> 
+</div>
+{% endblock %}

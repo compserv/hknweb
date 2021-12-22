@@ -1,80 +1,75 @@
 {% extends 'base.html' %}
 
 {% block header %}
-<style>
-    .content {
-        padding-top: 1em;
-        padding-bottom: 1em;
-        text-align: left;
-        padding-left:5em;
-    }
-    #actual-contents {
-        display: inline-block;
-        margin: 0 auto;
-        text-align: left;
-    }
-    #title {
-      font-size:5em;
-      margin: none;
-      margin-block-start: -.5em;
-      margin-block-end: 0em;
-      text-align: left;
-      margin-bottom: .5em;
-    }
-    #input {
-      resize: none;
-      margin-top: 10em;
-    }
-    #warning {
-      color: red;
-    }
-</style>
+    <style>
+        .content {
+            padding-top: 1em;
+            padding-bottom: 1em;
+            padding-left: 30%;
+            padding-right: 30%;
+            text-align: left;
+        }
+
+        #actual-contents {
+            display: inline-block;
+            margin: 0 auto;
+            text-align: left;
+        }
+
+        #title {
+            font-size: 3em;
+            margin: auto;
+            margin-bottom: .5em;
+            text-align: center;
+        }
+
+        #input {
+            resize: none;
+            margin-top: 10em;
+        }
+
+        #warning {
+            color: red;
+        }
+    </style>
 
 {% endblock %}
 
 
 {% block content %}
-<p id="title">Resume Review</p>
+    <p id="title">Resume Review</p>
 
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    <formgroup id="input">
-      {{ form.name.errors }}
-      {{ form.name.label_tag }}
-      {{ form.name }}
-    </formgroup>
-  </br>
-</br>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
 
-  <formgroup id="input">
-    {{ form.email.errors }}
-    {{ form.email.label_tag }}
-    {{ form.email }}
-  </formgroup>
-</br>
+        <formgroup id="input">
+            {{ form.name.errors }}
+            {{ form.name.label_tag }}
+            {{ form.name }}
+        </formgroup> </br></br>
 
-  </br>
-    <formgroup id="input"> 
-      Resume (please submit a PDF):
-      {{ form.document }}
-    </formgroup>
-  </br>
-</br>
+        <formgroup id="input">
+            {{ form.email.errors }}
+            {{ form.email.label_tag }}
+            {{ form.email }}
+        </formgroup> </br></br>
 
-    <formgroup id="input">
-      What type of feedback/help are you looking for? What types of companies/schools etc are you applying for and what fields are you interested in?
-    </br>
-      {{ form.notes }}
-    </formgroup>
-  </br>
-</br>
-    
-    <button type="submit">Upload</button>
-    {% if err %}
-    <p id="warning">Something was wrong with your file. Please try again.</p>
-    {% endif %}
+        <formgroup id="input"> 
+            Resume (please submit a PDF):
+            {{ form.document }}
+        </formgroup> </br></br>
 
-  </form>
+        <formgroup id="input">
+            What type of feedback/help are you looking for? What types of companies/schools etc are you applying for and what fields are you interested in?
+            </br>
+            {{ form.notes }}
+        </formgroup> </br></br>
 
-  <p><a href="{% url 'home' %}">Return to home</a></p>
+        <button type="submit">Upload</button>
+
+        {% if err %}
+        <p id="warning">Something was wrong with your file. Please try again.</p>
+        {% endif %}
+
+    </form>
 {% endblock %}
