@@ -1,5 +1,9 @@
 class Attr:
+    COURSES = "courses"
+    DEPT = "dept"
+    INSTRUCTORS = "instructors"
     NAME = "name"
+    NUMBER = "number"
     PATH = "path"
     PAGES = "pages"
 
