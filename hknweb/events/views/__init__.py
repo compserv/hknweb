@@ -1,6 +1,7 @@
 from hknweb.events.views.aggregate_displays import (
     index,
     AllRsvpsView,
+    get_leaderboard,
 )
 from hknweb.events.views.rsvp_transactions import (
     rsvp,
