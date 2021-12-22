@@ -35,6 +35,7 @@ urlpatterns = [
     path("reviewsessions/", include("hknweb.reviewsessions.urls")),
     path("exams/", include("hknweb.exams.urls")),
     path("alumni/", include("hknweb.alumni.urls")),
+    path("serv/", include("hknweb.serv.urls")),
     path("tutoring/", include("hknweb.tutoring.urls")),
     path("tours/", include("hknweb.tours.urls"), name="tours"),
     path("cand/", include("hknweb.candidate.urls")),

@@ -125,15 +125,17 @@
       </label>
     </div>
     <div id="outreach-nav-bar" class="sub-nav-bar navi-container">
-      <a href="">EECS Day</a>
+      <a href="{% url 'serv:index' %}">Outreach</a>
       <span class="slash">/</span>
-      <a href="">Junior EECS Day</a>
+      <a href="{% url 'serv:eecsday' %}">EECS Day</a>
       <span class="slash">/</span>
-      <a href="">Maker Workshops</a>
+      <a href="{% url 'serv:jreecs' %}">Junior EECS Day</a>
       <span class="slash">/</span>
-      <a href="">Bear Hacks</a>
+      <a href="{% url 'serv:makershops' %}">Maker Workshops</a>
       <span class="slash">/</span>
-      <a href="">Cal Day</a>
+      <a href="{% url 'serv:bearhacks' %}">Bear Hacks</a>
+      <span class="slash">/</span>
+      <a href="{% url 'serv:calday' %}">Cal Day</a>
     </div>
     <div class="navi-container mobile-nav-bar" style="text-align: center;">
       <label for="toggle-events">
