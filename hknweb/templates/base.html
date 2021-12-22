@@ -93,15 +93,15 @@
     <div id="student-nav-bar" class="sub-nav-bar navi-container">
       <a href="/exams">Exam Archive</a>
       <span class="slash">/</span>
-      <a href="">Tutoring Hours</a>
+      <a href="/tutoring">Tutoring Hours</a>
       <span class="slash">/</span>
-      <a href="">Review Sessions</a>
+      <a href="/reviewsessions">Review Sessions</a>
       <span class="slash">/</span>
-      <a href="">Course Surveys</a>
+      <a href="{% url 'course_surveys:index' %}">Course Surveys</a>
       <span class="slash">/</span>
       <a href="">Course Guide</a>
       <span class="slash">/</span>
-      <a href="">Department Tours</a>
+      <a href="{% url 'tours:index' %}">Department Tours</a>
     </div>
     <div class="navi-container mobile-nav-bar" style="text-align: center;">
       <label for="toggle-industry">
@@ -145,6 +145,8 @@
     <div id="events-nav-bar" class="sub-nav-bar navi-container">
       <a href="/events">Calendar</a>
       <span class="slash">/</span>
+      <a href="/events/rsvps?option=semester">All RSVPs</a>
+      <span class="slash">/</span>
       <a href="https://www.flickr.com/people/berkeley_hkn/">Photos</a>
     </div>
     <div class="navi-container mobile-nav-bar" style="text-align: center;">
@@ -153,7 +155,7 @@
       </label>
     </div>
     <div id="about-nav-bar" class="sub-nav-bar navi-container">
-      <a href="">Contact Us</a>
+      <a href="{% url 'about' %}">About HKN</a>
       <span class="slash">/</span>
       <a href="">Committees</a>
       <span class="slash">/</span>
@@ -172,7 +174,9 @@
       </div>
       <div id="account-nav-bar" class="sub-nav-bar navi-container">
         {% if viewer_is_an_officer %}
-          <a href="/cand/offreq">Officer Portal</a>
+          <a href="{% url 'candidate:officer' %}">Officer Portal</a>
+          <span class="slash">/</span>
+          <a href="{% url 'candidate:checkoff' %}">Mass Checkoffs</a>
           <span class="slash">/</span>
         {% endif %}
         <a href="/cand">Candidate Portal</a>
@@ -196,7 +200,7 @@
         <span class="slash">/</span>
         Course Guide
         <span class="slash">/</span>
-        Department Tours
+        <a href="{% url 'tours:index' %}">Department Tours</a>
       </div>
 
       <div class="heading">

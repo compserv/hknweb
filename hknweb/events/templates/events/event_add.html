@@ -2,61 +2,8 @@
 {% load static %}
 {% block title %}Add an event{% endblock %}
 
-{% block header %}
-<link rel="stylesheet" href="{% static "events/style.css" %}">
-<style>
-    .heading {
-        display: none;
-    }
-    .content {
-        padding-top: 1em;
-        padding-bottom: 1em;
-    }
-    @media screen and (min-width: 1000px) {
-        .content {
-            padding-top: 1.5em;
-            padding-bottom: 1.5em;
-        }
-    }
-    .centered {
-        max-width: 700px;
-        margin: 0 auto;
-    }
-</style>
-{% endblock %}
-
 {% block heading %}Add a calendar event{% endblock %}
 
 {% block content %}
-<h1 id="add-event-title"> Add a calendar event </h1>
-
-<div class="centered">
-    <form method="POST" id="form">
-        {% csrf_token %}
-        {% for field in form %}
-            <div class="row">
-                <span class="left-side">
-                    {{ field.label }}
-                    {% if field.field.required %}
-                        <span class="message">*</span>
-                    {% endif %}
-                    {% if field.help_text %}
-                        <i>({{ field.help_text }})</i>
-                    {% endif %}
-                </span>
-                {{ field }}
-                {{ field.errors }}
-            </div>
-        {% endfor %}
-        <div id="submit">
-            <input type="submit" value="Submit" />
-            {% if messages %}
-                {% for message in messages %}
-                    <br>
-                    <span class="message">{{ message }}</span>
-                {% endfor %}
-            {% endif %}
-        </div>
-    </form>
-</div>
+{% include 'events/event_form_base.html' %}
 {% endblock %}
