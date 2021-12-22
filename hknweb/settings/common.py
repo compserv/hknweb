@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     "hknweb.coursesemester",
     "hknweb.course_surveys",
     "hknweb.exams",
+    "hknweb.indrel",
     "hknweb.resume",
     "hknweb.serv",
     "hknweb.tours",

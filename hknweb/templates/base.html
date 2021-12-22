@@ -109,15 +109,15 @@
       </label>
     </div>
     <div id="industry-nav-bar" class="sub-nav-bar navi-container">
-      <a href="">Why HKN?</a>
+      <a href="{% url 'indrel:index' %}">Why HKN?</a>
       <span class="slash">/</span>
-      <a href="">Resume Books</a>
+      <a href="{% url 'indrel:resume_book' %}">Resume Book</a>
       <span class="slash">/</span>
-      <a href="">Infosessions</a>
+      <a href="{% url 'indrel:infosessions' %}">Infosessions</a>
       <span class="slash">/</span>
-      <a href="">Career Fair</a>
+      <a href="{% url 'indrel:career_fair' %}">Career Fair</a>
       <span class="slash">/</span>
-      <a href="">Get in Touch</a>
+      <a href="{% url 'indrel:contact_us' %}">Contact Us</a>
     </div>
     <div class="navi-container mobile-nav-bar" style="text-align: center;">
       <label for="toggle-outreach">
