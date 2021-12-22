@@ -9,25 +9,61 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='DepTour',
+            name="DepTour",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(default='', max_length=255)),
-                ('email', models.EmailField(default='', max_length=255)),
-                ('datetime', models.DateTimeField(default=datetime.date.today, verbose_name='Desired Date and Time')),
-                ('phone', models.CharField(default='', max_length=15, validators=[django.core.validators.RegexValidator(message="Enter a valid 10-digit phone number in the format: '9876543210'", regex='^\\+?1?\\d{10}$')])),
-                ('comments', models.TextField(blank=True, default='', max_length=2000, verbose_name='Additional comments')),
-                ('date_submitted', models.DateTimeField(default=datetime.datetime.now)),
-                ('confirmed', models.BooleanField(default=False)),
-                ('deprel_comments', models.TextField(blank=True, default='', max_length=2000)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(default="", max_length=255)),
+                ("email", models.EmailField(default="", max_length=255)),
+                (
+                    "datetime",
+                    models.DateTimeField(
+                        default=datetime.date.today,
+                        verbose_name="Desired Date and Time",
+                    ),
+                ),
+                (
+                    "phone",
+                    models.CharField(
+                        default="",
+                        max_length=15,
+                        validators=[
+                            django.core.validators.RegexValidator(
+                                message="Enter a valid 10-digit phone number in the format: '9876543210'",
+                                regex="^\\+?1?\\d{10}$",
+                            )
+                        ],
+                    ),
+                ),
+                (
+                    "comments",
+                    models.TextField(
+                        blank=True,
+                        default="",
+                        max_length=2000,
+                        verbose_name="Additional comments",
+                    ),
+                ),
+                ("date_submitted", models.DateTimeField(default=datetime.datetime.now)),
+                ("confirmed", models.BooleanField(default=False)),
+                (
+                    "deprel_comments",
+                    models.TextField(blank=True, default="", max_length=2000),
+                ),
             ],
             options={
-                'verbose_name': 'Department Tour',
+                "verbose_name": "Department Tour",
             },
         ),
     ]
