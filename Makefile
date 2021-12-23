@@ -24,15 +24,34 @@ venv:
 
 .PHONY: install-prod
 install-prod:
+	# Installs dependencies for Production only
+
 	# For issues with binary packages, consider https://pythonwheels.com/
-	$(PYTHON) -m pip install --upgrade "pip<=20.3.4"
-	$(PYTHON) -m pip install --upgrade "setuptools<=51.2.0"
+	# For destination production machine, "make install" should have
+	#  upgraded already and it should detect and move on for "pip"
+	$(PYTHON) -m pip install --upgrade pip setuptools
+
+	# NOTE: If pip and setuptools is broken, use the following two lines
+	#       and then commenting the two line above
+	# $(PYTHON) -m pip install --upgrade "pip<=20.3.4"
+	# $(PYTHON) -m pip install --upgrade "setuptools<=51.2.0"
+
 	# TODO: pinned/unpinned dependency version.
 	# See https://hkn-mu.atlassian.net/browse/COMPSERV-110
 	$(PYTHON) -m pip install -r requirements.txt
 
 .PHONY: install
 install:
+	# Installs dependencies for Development and Production
+
+	# See:
+	#  - https://github.com/compserv/hknweb/pull/272
+	#  - https://github.com/compserv/hknweb/commit/cf826d4
+	#  - https://github.com/compserv/hknweb/commit/124b108
+	#  - https://github.com/hashicorp/vagrant/issues/12057
+	# This is mainly a Vagrant workaround to allow pip upgrade
+	$(PYTHON) -m pip install --upgrade pip --ignore-installed
+
 	make install-prod
 	$(PYTHON) -m pip install -r requirements-dev.txt
 

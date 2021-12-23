@@ -1,11 +1,11 @@
 django==2.2.8
 mysqlclient==1.4.5
 whitenoise==4.1.1
-pillow==6.2.0
+pillow==8.4.0
 django-markdownx==2.0.27
-bleach==3.3.0
+bleach==4.1.0
 gunicorn==19.9.0
-fabric==2.4.0
+fabric==2.6.0
 social-auth-app-django==3.1.0
 django-autocomplete-light==3.5.1
 djangorestframework==3.11.0

@@ -4,15 +4,16 @@ cache:
   directories:
     - $HOME/.cache/pip
 python:
-  - "3.5"
-  - "3.6"
   - "3.7"
+  - "3.8"
+  - "3.9"
 env:
   # TODO: add test env (where DEBUG=False, secret key unencrypted)
   - HKNWEB_MODE=dev
 install:
   - make venv
   - source .venv/bin/activate
+  - python --version
   - make install
 script:
   - make migrate
