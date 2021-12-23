@@ -1,0 +1,4 @@
+from hknweb.academics.serializers.logistics.course import CourseSerializer
+from hknweb.academics.serializers.logistics.department import DepartmentSerializer
+from hknweb.academics.serializers.logistics.instructor import InstructorSerializer
+from hknweb.academics.serializers.logistics.semester import SemesterSerializer

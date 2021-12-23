@@ -21,7 +21,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 # Application definition
 
 INSTALLED_APPS = [
+    "rest_framework",
     "hknweb",
+    "hknweb.academics",
     "hknweb.events",
     "hknweb.tutoring",
     "hknweb.markdown_pages",
@@ -31,7 +33,12 @@ INSTALLED_APPS = [
     "hknweb.elections",
     "hknweb.courses",
     "hknweb.coursesemester",
+    "hknweb.course_surveys",
     "hknweb.exams",
+    "hknweb.indrel",
+    "hknweb.resume",
+    "hknweb.serv",
+    "hknweb.tours",
     "hknweb.reviewsessions",
     "dal",  # must be before django.contrib.admin
     "dal_select2",  # must be before django.contrib.admin

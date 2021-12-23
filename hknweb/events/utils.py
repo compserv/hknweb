@@ -5,44 +5,29 @@ from django.core.validators import URLValidator
 from django.utils.safestring import mark_safe
 import urllib.parse
 
-from .constants import (
-    ATTR,
-    DAY_ATTRIBUTE_NAME,
-    DESCRIPTION_ATTRIBUTE_NAME,
-    END_TIME_ATTRIBUTE_NAME,
-    EVENT_NAME_ATTRIBUTE_NAME,
-    GCAL_DATETIME_TEMPLATE,
-    GCAL_INVITE_TEMPLATE,
-    HOUR_ATTRIBUTE_NAME,
-    LOCATION_ATTRIBUTE_NAME,
-    MINUTES_ATTRIBUTE_NAME,
-    MONTH_ATTRIBUTE_NAME,
-    SECONDS_ATTRIBUTE_NAME,
-    START_TIME_ATTRIBUTE_NAME,
-    YEAR_ATTRIBUTE_NAME,
-)
+from .constants import ATTR, GCAL_INVITE_TEMPLATE, GCAL_DATETIME_TEMPLATE
 from .models import Event
 
 
 def create_gcal_link(event: Event) -> str:
     attrs = {
-        EVENT_NAME_ATTRIBUTE_NAME: urllib.parse.quote_plus(event.name, safe=''),
-        DESCRIPTION_ATTRIBUTE_NAME: urllib.parse.quote_plus(event.description, safe=''),
-        LOCATION_ATTRIBUTE_NAME: urllib.parse.quote_plus(event.location, safe=''),
-        START_TIME_ATTRIBUTE_NAME: format_gcal_time(event.start_time),
-        END_TIME_ATTRIBUTE_NAME: format_gcal_time(event.end_time),
+        ATTR.EVENT_NAME: urllib.parse.quote_plus(event.name, safe=""),
+        ATTR.DESCRIPTION: urllib.parse.quote_plus(event.description, safe=""),
+        ATTR.LOCATION: urllib.parse.quote_plus(event.location, safe=""),
+        ATTR.START_TIME: format_gcal_time(event.start_time),
+        ATTR.END_TIME: format_gcal_time(event.end_time),
     }
     return GCAL_INVITE_TEMPLATE.format(**attrs)
 
 
 def format_gcal_time(time: datetime) -> str:
     attrs = {
-        YEAR_ATTRIBUTE_NAME: time.year,
-        MONTH_ATTRIBUTE_NAME: time.month,
-        DAY_ATTRIBUTE_NAME: time.day,
-        HOUR_ATTRIBUTE_NAME: time.hour,
-        MINUTES_ATTRIBUTE_NAME: time.minute,
-        SECONDS_ATTRIBUTE_NAME: time.second,
+        ATTR.YEAR: time.year,
+        ATTR.MONTH: time.month,
+        ATTR.DAY: time.day,
+        ATTR.HOUR: time.hour,
+        ATTR.MINUTES: time.minute,
+        ATTR.SECONDS: time.second,
     }
     return GCAL_DATETIME_TEMPLATE.format(**attrs)
 
@@ -104,8 +89,10 @@ def format_url(s: str, max_width: int = None) -> str:
     url_validator = URLValidator()
     try:
         url_validator(s)
-        link_with_tag = "<a href='{link}' style='background-color: white'> {link} </a>".format(
-            link=s
+        link_with_tag = (
+            "<a href='{link}' style='background-color: white'> {link} </a>".format(
+                link=s
+            )
         )
         return mark_safe(link_with_tag)
     except:

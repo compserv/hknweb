@@ -75,8 +75,7 @@ shell:
 
 .PHONY: test
 test: venv
-	$(BIN)/pytest -v tests/
-	$(BIN)/pre-commit run --all-files
+	$(MANAGE) test $(test_app)
 
 .PHONY: clean
 clean:

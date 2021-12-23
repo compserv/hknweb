@@ -12,5 +12,6 @@ urlpatterns = [
     path("new", views.add_event, name="new"),
     path("<int:pk>/edit", views.EventUpdateView.as_view(), name="edit"),
     path("rsvps", views.AllRsvpsView.as_view(), name="rsvps"),
+    path("leaderboard", views.get_leaderboard, name="leaderboard"),
     path("", views.index, name="index"),
 ]
