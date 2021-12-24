@@ -77,6 +77,7 @@ Vagrant.configure("2") do |config|
         python3.7 \
         python3.7-dev \
         python3.7-venv \
+        build-essential \
         tmux \
         vim
     
