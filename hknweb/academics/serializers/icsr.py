@@ -34,8 +34,8 @@ class ICSRSerializer(serializers.HyperlinkedModelSerializer):
             "icsr_semester",
             "first_name",
             "last_name",
+            "course_name",
             "course_number",
-            "section_type",
             "section_number",
             "instructor_type",
         ]

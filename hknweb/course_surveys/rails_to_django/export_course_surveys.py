@@ -1,0 +1,222 @@
+import sys
+import json
+import time
+
+from pprint import pprint
+from collections import defaultdict
+
+import requests
+from requests.auth import HTTPBasicAuth
+
+from dto import DJANGO, DJANGO_DTOS, RAILS_DTOS
+
+
+FNAME = "course_surveys_data.json"
+WEBSITE_BASE_URL = "http://localhost:3000/academics/api/"
+AUTHENTICATION = HTTPBasicAuth()
+
+
+def main():
+    data = load_data()
+    rails_dtos = data_to_rails_dtos(data)
+    ModelUpload(rails_dtos).upload_models()
+
+
+def load_data():
+    with open(FNAME, "r", encoding="utf8") as f:
+        data = json.load(f)
+
+    return data
+
+
+def data_to_rails_dtos(data):
+    output_dtos = dict()
+    for model_dto in RAILS_DTOS:
+        json_models = data[model_dto.key]
+
+        output_model_dtos = dict()
+        for json_model in json_models:
+            output_model_dto = model_dto(json_model)
+            output_model_dtos[output_model_dto.id] = output_model_dto
+
+        output_dtos[model_dto.key] = output_model_dtos
+
+        print(model_dto.key, len(json_models))
+        pprint(json_model)
+        pprint(output_model_dto)
+        print()
+
+    return output_dtos
+
+
+class ModelUpload:
+    def __init__(self, rails_dtos):
+        self.rails_dtos = rails_dtos
+
+        self.r2d = defaultdict(dict)  # rails id to django model mappings
+
+    def upload_models(self):
+        print("Uploading departments...")
+        self._upload_departments()
+
+        print("Uploading instructors...")
+        self._upload_instructors()
+
+        print("Uploading semesters...")
+        self._upload_semesters()
+
+        print("Uploading courses and ICSRs...")
+        self._upload_icsrs_courses()
+
+        print("Uploading questions, surveys, and ratings...")
+        self._upload_surveys_questions_ratings()
+
+    def _upload_departments(self):
+        department_dtos = self.rails_dtos["department"].values()
+        for i, department_dto in enumerate(department_dtos):
+            department = DJANGO.Department(department_dto)
+            department.upload(WEBSITE_BASE_URL, AUTHENTICATION)
+
+            self.r2d["department"][department_dto.id] = department
+
+    def _upload_instructors(self):
+        start_time = time.time()
+
+        instructor_dtos = self.rails_dtos["instructor"].values()
+        for i, instructor_dto in enumerate(instructor_dtos):
+            instructor = DJANGO.Instructor(instructor_dto)
+            instructor.upload(WEBSITE_BASE_URL, AUTHENTICATION)
+
+            self.r2d["instructor"][instructor_dto.id] = instructor
+
+            self._print_update(i, len(instructor_dtos), start_time)
+        print()
+
+    def _upload_semesters(self):
+        klass_dtos = self.rails_dtos["klass"].values()
+        for i, klass_dto in enumerate(klass_dtos):
+            if klass_dto.semester in self.r2d["semester"]:
+                continue
+
+            semester = DJANGO.Semester(klass_dto)
+            semester.upload(WEBSITE_BASE_URL, AUTHENTICATION)
+
+            self.r2d["semester"][klass_dto.semester] = semester
+
+    def _upload_icsrs_courses(self):
+        start_time = time.time()
+
+        instructorship_dtos = self.rails_dtos["instructorship"].values()
+        for i, instructorship_dto in enumerate(instructorship_dtos):
+            klass_dto = self.rails_dtos["klass"][instructorship_dto.klass_id]
+            instructor_dto = self.rails_dtos["instructor"][
+                instructorship_dto.instructor_id
+            ]
+            course_dto = self.rails_dtos["course"][klass_dto.course_id]
+
+            course = self._get_or_upload_course(course_dto)
+            department = self.r2d["department"][course_dto.dept_id]
+            instructor = self.r2d["instructor"][instructor_dto.id]
+            semester = self.r2d["semester"][klass_dto.semester]
+
+            icsr = DJANGO.ICSR(
+                instructor_dto,
+                course_dto,
+                instructorship_dto,
+                klass_dto,
+                course,
+                department,
+                instructor,
+                semester,
+            )
+            icsr.upload(WEBSITE_BASE_URL, AUTHENTICATION)
+
+            self.r2d["icsr"][instructorship_dto.id] = icsr
+
+            self._print_update(i, len(instructorship_dtos), start_time)
+        print()
+
+    def _upload_surveys_questions_ratings(self):
+        start_time = time.time()
+
+        survey_answer_dtos = self.rails_dtos["survey_answer"].values()
+        for i, survey_answer_dto in enumerate(survey_answer_dtos):
+            instructorship_dto = self.rails_dtos["instructorship"][
+                survey_answer_dto.instructorship_id
+            ]
+            survey_question_dto = self.rails_dtos["survey_question"][
+                survey_answer_dto.survey_question_id
+            ]
+
+            icsr = self.r2d["icsr"][instructorship_dto.id]
+
+            survey = DJANGO.Survey(survey_answer_dto, instructorship_dto, icsr)
+            survey.upload(WEBSITE_BASE_URL, AUTHENTICATION)
+
+            question = self._get_or_upload_question(survey_question_dto)
+
+            rating = DJANGO.Rating(
+                survey_answer_dto,
+                survey_question_dto,
+                survey,
+                question,
+            )
+            rating.upload(WEBSITE_BASE_URL, AUTHENTICATION)
+
+            self._print_update(i, len(survey_answer_dtos), start_time)
+        print()
+
+    def _get_or_upload_course(self, course_dto):
+        if course_dto.id in self.r2d["course"]:
+            return self.r2d["course"][course_dto.id]
+
+        course = DJANGO.Course()
+        course.upload(WEBSITE_BASE_URL, AUTHENTICATION)
+        self.r2d["course"][course_dto.id] = course
+
+        return course
+
+    def _get_or_upload_question(self, survey_question_dto):
+        if survey_question_dto.id in self.r2d["question"]:
+            return self.r2d["question"][survey_question_dto.id]
+
+        question = DJANGO.Question()
+        question.upload(WEBSITE_BASE_URL, AUTHENTICATION)
+        self.r2d["question"][survey_question_dto.id] = question
+
+        return question
+
+    def _print_update(self, i, n, start_time):
+        i = i + 1
+
+        time_spent = time.time() - start_time
+        time_left = (time_spent / i) * (n - i)
+        h = int(time_left // 3600)
+        m = int((time_left % 3600) // 60)
+        s = int((time_left % 60))
+
+        print(
+            "Finished %i / %i. Time remaining: %02d:%02d:%02d\r" % (i, n, h, m, s),
+            flush=True,
+            end="",
+        )
+
+
+def clear_course_surveys_db():
+    for d in DJANGO_DTOS:
+        print("Clearing {model_type} models...".format(model_type=d.__name__))
+
+        url = WEBSITE_BASE_URL + d.api_url
+        response = requests.get(url, auth=AUTHENTICATION)
+
+        data = json.loads(response.content)
+        for d in data:
+            response = requests.delete(d["url"], auth=AUTHENTICATION)
+            assert response.ok
+
+
+if __name__ == "__main__":
+    if len(sys.argv) == 2 and sys.argv[-1] == "clear":
+        clear_course_surveys_db()
+    else:
+        main()
