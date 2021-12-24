@@ -7,7 +7,7 @@ class Semester(BaseModel):
     class Attr(BaseModel.Attr):
         YEAR = "year"
         YEAR_SECTION = "year_section"
-    
+
     SECTION_MAPPING = {
         "1": "Sp",
         "2": "Su",

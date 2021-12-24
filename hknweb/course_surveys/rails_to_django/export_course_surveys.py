@@ -109,7 +109,9 @@ class ModelUpload:
         instructorship_dtos = self.rails_dtos["instructorship"].values()
         for i, instructorship_dto in enumerate(instructorship_dtos):
             klass_dto = self.rails_dtos["klass"][instructorship_dto.klass_id]
-            instructor_dto = self.rails_dtos["instructor"][instructorship_dto.instructor_id]
+            instructor_dto = self.rails_dtos["instructor"][
+                instructorship_dto.instructor_id
+            ]
             course_dto = self.rails_dtos["course"][klass_dto.course_id]
 
             course = self._get_or_upload_course(course_dto)
@@ -139,8 +141,12 @@ class ModelUpload:
 
         survey_answer_dtos = self.rails_dtos["survey_answer"].values()
         for i, survey_answer_dto in enumerate(survey_answer_dtos):
-            instructorship_dto = self.rails_dtos["instructorship"][survey_answer_dto.instructorship_id]
-            survey_question_dto = self.rails_dtos["survey_question"][survey_answer_dto.survey_question_id]
+            instructorship_dto = self.rails_dtos["instructorship"][
+                survey_answer_dto.instructorship_id
+            ]
+            survey_question_dto = self.rails_dtos["survey_question"][
+                survey_answer_dto.survey_question_id
+            ]
 
             icsr = self.r2d["icsr"][instructorship_dto.id]
 
@@ -181,7 +187,7 @@ class ModelUpload:
         return question
 
     def _print_update(self, i, n, start_time):
-        i = i+1
+        i = i + 1
 
         time_spent = time.time() - start_time
         time_left = (time_spent / i) * (n - i)
@@ -189,7 +195,11 @@ class ModelUpload:
         m = int((time_left % 3600) // 60)
         s = int((time_left % 60))
 
-        print("Finished %i / %i. Time remaining: %02d:%02d:%02d\r" % (i, n, h, m, s), flush=True, end="")
+        print(
+            "Finished %i / %i. Time remaining: %02d:%02d:%02d\r" % (i, n, h, m, s),
+            flush=True,
+            end="",
+        )
 
 
 def clear_course_surveys_db():

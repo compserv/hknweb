@@ -39,5 +39,7 @@ class ICSR(BaseModel):
             self.Attr.COURSE_NAME: course_dto.name,
             self.Attr.COURSE_NUMBER: course_dto.number,
             self.Attr.SECTION_NUMBER: klass_dto.section,
-            self.Attr.INSTRUCTOR_TYPE: "Teaching Assistant" if instructorship_dto.ta else "Professor",
+            self.Attr.INSTRUCTOR_TYPE: "Teaching Assistant"
+            if instructorship_dto.ta
+            else "Professor",
         }
