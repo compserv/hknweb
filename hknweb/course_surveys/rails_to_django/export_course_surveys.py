@@ -2,7 +2,7 @@ import json
 from pprint import pprint
 from requests.auth import HTTPBasicAuth
 
-from dto import DTOS
+from dto import RAILS_DTOS, DJANGO
 
 
 FNAME = "course_surveys_data.json"
@@ -15,7 +15,7 @@ with open(FNAME, "r", encoding="utf8") as f:
 
 
 output_dtos = dict()
-for model_dto in DTOS:
+for model_dto in RAILS_DTOS:
     json_models = data[model_dto.key]
 
     output_model_dtos = dict()
@@ -30,3 +30,6 @@ for model_dto in DTOS:
     pprint(json_model)
     pprint(output_model_dto)
     input()
+
+
+

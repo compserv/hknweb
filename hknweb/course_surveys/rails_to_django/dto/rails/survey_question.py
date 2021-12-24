@@ -1,4 +1,4 @@
-from dto.base import BaseDTO
+from dto.rails.base import BaseDTO
 
 
 class SurveyQuestionDTO(BaseDTO):

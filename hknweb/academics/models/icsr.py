@@ -27,6 +27,5 @@ class ICSR(AcademicEntity):
     last_name = models.TextField(max_length=100)
     course_name = models.TextField(max_length=500)
     course_number = models.TextField(max_length=100)
-    section_type = models.TextField(max_length=100)
     section_number = models.TextField(max_length=100)
     instructor_type = models.TextField(max_length=100)
