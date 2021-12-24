@@ -1,6 +1,5 @@
 class BaseDTO:
     key = None
-    api_url = None
 
     class Attr:
         ID = "id"

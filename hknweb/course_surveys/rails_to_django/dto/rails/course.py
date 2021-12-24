@@ -22,3 +22,10 @@ class CourseDTO(BaseDTO):
         )
 
         self.dept_id = json_data[self.Attr.DEPT_ID]
+
+    def __repr__(self):
+        return "CourseDTO(id={id}, number={number}, name={name})".format(
+            id=self.id,
+            number=self.number,
+            name=self.name,
+        )

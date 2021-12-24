@@ -2,6 +2,8 @@ from dto.django.base import BaseModel
 
 
 class ICSR(BaseModel):
+    api_url = "icsrs/"
+
     class Attr(BaseModel.Attr):
         ICSR_COURSE = "icsr_course"
         ICSR_DEPARTMENT = "icsr_department"
@@ -9,6 +11,7 @@ class ICSR(BaseModel):
         ICSR_SEMESTER = "icsr_semester"
         FIRST_NAME = "first_name"
         LAST_NAME = "last_name"
+        COURSE_NAME = "course_name"
         COURSE_NUMBER = "course_number"
         SECTION_NUMBER = "section_number"
         INSTRUCTOR_TYPE = "instructor_type"
@@ -27,12 +30,13 @@ class ICSR(BaseModel):
         super().__init__()
 
         self.data = {
-            self.Attr.ICSR_COURSE: course.remote_id,
-            self.Attr.ICSR_DEPARTMENT: department.remote_id,
-            self.Attr.ICSR_INSTRUCTOR: instructor.remote_id,
-            self.Attr.ICSR_SEMESTER: semester.remote_id,
+            self.Attr.ICSR_COURSE: course.remote_url,
+            self.Attr.ICSR_DEPARTMENT: department.remote_url,
+            self.Attr.ICSR_INSTRUCTOR: instructor.remote_url,
+            self.Attr.ICSR_SEMESTER: semester.remote_url,
             self.Attr.FIRST_NAME: instructor_dto.first_name,
             self.Attr.LAST_NAME: instructor_dto.last_name,
+            self.Attr.COURSE_NAME: course_dto.name,
             self.Attr.COURSE_NUMBER: course_dto.number,
             self.Attr.SECTION_NUMBER: klass_dto.section,
             self.Attr.INSTRUCTOR_TYPE: "Teaching Assistant" if instructorship_dto.ta else "Professor",

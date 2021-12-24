@@ -2,6 +2,8 @@ from dto.django.base import BaseModel
 
 
 class Department(BaseModel):
+    api_url = "departments/"
+
     class Attr(BaseModel.Attr):
         NAME = "name"
         ABBR = "abbr"

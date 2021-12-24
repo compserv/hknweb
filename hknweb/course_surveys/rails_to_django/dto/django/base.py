@@ -3,6 +3,8 @@ import json
 
 
 class BaseModel:
+    api_url = None
+
     class Attr:
         ID = "id"
         URL = "url"

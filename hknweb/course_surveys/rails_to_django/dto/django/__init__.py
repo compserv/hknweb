@@ -17,3 +17,16 @@ class DJANGO:
     Rating = Rating
     Semester = Semester
     Survey = Survey
+
+
+# This order is important for mass deletion!
+DJANGO_DTOS = [
+    Rating,
+    Question,
+    Survey,
+    ICSR,
+    Course,
+    Department,
+    Instructor,
+    Semester,
+]

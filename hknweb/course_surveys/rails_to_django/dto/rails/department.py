@@ -3,7 +3,6 @@ from dto.rails.base import BaseDTO
 
 class DepartmentDTO(BaseDTO):
     key = "department"
-    api_url = "departments/"
 
     class Attr(BaseDTO.Attr):
         ABBR = "abbr"

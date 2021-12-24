@@ -2,6 +2,8 @@ from dto.django.base import BaseModel
 
 
 class Semester(BaseModel):
+    api_url = "semesters/"
+
     class Attr(BaseModel.Attr):
         YEAR = "year"
         YEAR_SECTION = "year_section"
