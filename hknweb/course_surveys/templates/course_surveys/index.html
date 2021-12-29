@@ -76,21 +76,6 @@
             right: 0;
             text-align: center;
         }
-
-        .instructions-button {
-            font-size: 150%;
-            text-align: center;
-            margin: auto;
-            margin-bottom: 0.5em;
-            padding: 0;
-            width: 15%;
-            border: 0.1em solid gainsboro;
-            border-radius: 0.75em;
-        }
-
-        .instructions-button:hover {
-            font-weight: bold;
-        }
     </style>
 
     <!-- Search panel -->
@@ -304,18 +289,6 @@
             document.getElementById("search-panel-list-instructor").style.display="block";
         }
 
-        function clickInstructionsHide() {
-            document.getElementById("instructions-button-hide").style.display="none";
-            document.getElementById("instructions-button-show").style.display="block";
-            document.getElementById("instructions").style.display="none";
-        }
-
-        function clickInstructionsShow() {
-            document.getElementById("instructions-button-hide").style.display="block";
-            document.getElementById("instructions-button-show").style.display="none";
-            document.getElementById("instructions").style.display="block";
-        }
-
         function clickInformationInstructor() {
             document.getElementById("information-panel-none").style.display="none";
             document.getElementById("information-panel-course").style.display="none";
@@ -336,144 +309,141 @@
     </h1>
 
     <!-- Demographic selection and information panels -->
-    <div>
-        <div id="instructions">
-            <div class="panel panel-primary demographic-selection-panel" style="float: left; left: 26.25%;" onclick="clickSelectionStudent()">
-                <div class="panel-header demographic-selection-panel-header">
-                    For students
-                </div>
-            </div>
-            <div class="panel panel-primary demographic-selection-panel" style="float: none; left: 27.5%;" onclick="clickSelectionTA()">
-                <div class="panel-header demographic-selection-panel-header">
-                    For TAs or (u)GSIs
-                </div>
-            </div>
-            <div class="panel panel-primary demographic-selection-panel" style="float: right; right: 26.25%;" onclick="clickSelectionInstructor()">
-                <div class="panel-header demographic-selection-panel-header">
-                    For instructors
-                </div>
-            </div>
-    
-            <div class="panel panel-primary demographic-information-panel">
-                <div class="panel-header demographic-information-panel-header">
-                    <div class="demographic-information-panel-selection" id="student-selection">
-                        Student
-                    </div>
-                    /
-                    <div class="demographic-information-panel-selection" id="ta-selection">
-                        Teaching Assistant
-                    </div>
-                    /
-                    <div class="demographic-information-panel-selection" id="instructor-selection">
-                        Instructor
+    {% if courses is None and instructors is None %}
+        <div>
+            <div id="instructions">
+                <div class="panel panel-primary demographic-selection-panel" style="float: left; left: 26.25%;" onclick="clickSelectionStudent()">
+                    <div class="panel-header demographic-selection-panel-header">
+                        For students
                     </div>
                 </div>
-                <div class="panel-body demographic-information-panel-body" id="selection-text">
-                    <div id="selection-text-none" style="text-align: center;">
-                        Click on a panel!
-                    </div>
-                    <div id="selection-text-student" style="display: none;">
-                        As a student, you are able to: <br>
-    
-                        - browse through our course map<br>
-                        - view course and instructor ratings throughout the semesters<br>
-                    </div>
-                    <div id="selection-text-ta" style="display: none;">
-                        If you are a Teaching Assistant for any EE/CS course, you are able to: <br>
-    
-                        - view and print your course evaluations <br>
-                        - enable public view for your data <br>
-                        - update your contact informations (ie. website, email, interests, profile picture). <br>
-                        - view as Student <br>
-                    </div>
-                    <div id="selection-text-instructor" style="display: none;">
-                        If you are a Faculty Instructor for any EE/CS course, you are able to: <br>
-    
-                        - view and print your course evaluations <br>
-                        - update your contact informations (ie. website, email, interests, profile picture). <br>
-                        - view TA evaluations for hiring purposes <br>
-                        - view as Student <br>
+                <div class="panel panel-primary demographic-selection-panel" style="float: none; left: 27.5%;" onclick="clickSelectionTA()">
+                    <div class="panel-header demographic-selection-panel-header">
+                        For TAs or (u)GSIs
                     </div>
                 </div>
-                <div class="panel-footer demographic-information-panel-footer">
-                    Sign in via <a href="">CalNet</a>
+                <div class="panel panel-primary demographic-selection-panel" style="float: right; right: 26.25%;" onclick="clickSelectionInstructor()">
+                    <div class="panel-header demographic-selection-panel-header">
+                        For instructors
+                    </div>
+                </div>
+        
+                <div class="panel panel-primary demographic-information-panel">
+                    <div class="panel-header demographic-information-panel-header">
+                        <div class="demographic-information-panel-selection" id="student-selection">
+                            Student
+                        </div>
+                        /
+                        <div class="demographic-information-panel-selection" id="ta-selection">
+                            Teaching Assistant
+                        </div>
+                        /
+                        <div class="demographic-information-panel-selection" id="instructor-selection">
+                            Instructor
+                        </div>
+                    </div>
+                    <div class="panel-body demographic-information-panel-body" id="selection-text">
+                        <div id="selection-text-none" style="text-align: center;">
+                            Click on a panel!
+                        </div>
+                        <div id="selection-text-student" style="display: none;">
+                            As a student, you are able to: <br>
+        
+                            - browse through our course map<br>
+                            - view course and instructor ratings throughout the semesters<br>
+                        </div>
+                        <div id="selection-text-ta" style="display: none;">
+                            If you are a Teaching Assistant for any EE/CS course, you are able to: <br>
+        
+                            - view and print your course evaluations <br>
+                            - enable public view for your data <br>
+                            - update your contact informations (ie. website, email, interests, profile picture). <br>
+                            - view as Student <br>
+                        </div>
+                        <div id="selection-text-instructor" style="display: none;">
+                            If you are a Faculty Instructor for any EE/CS course, you are able to: <br>
+        
+                            - view and print your course evaluations <br>
+                            - update your contact informations (ie. website, email, interests, profile picture). <br>
+                            - view TA evaluations for hiring purposes <br>
+                            - view as Student <br>
+                        </div>
+                    </div>
+                    <div class="panel-footer demographic-information-panel-footer">
+                        Sign in via <a href="https://auth.berkeley.edu/cas/login?service={{ service }}">CalNet</a>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <div class="instructions-button" id="instructions-button-hide" onclick="clickInstructionsHide()">
-            Hide instructions
-        </div>
-        <div class="instructions-button" id="instructions-button-show" style="display: none;" onclick="clickInstructionsShow()">
-            Show instructions
-        </div>
-    </div>
+    {% endif %}
 
     <!-- Course and instructor information panels -->
-    <div>
-        <div class="panel panel-primary search-panel">
-            <div class="panel-header search-panel-header">
-                Filter by: <br>
-                <div class="search-panel-selection" id="search-panel-selection-course" onclick="clickSearchByCourse()" style="font-weight: bold;">
-                    Course
+    {% if courses is not None and instructors is not None %}
+        <div>
+            <div class="panel panel-primary search-panel">
+                <div class="panel-header search-panel-header">
+                    Filter by: <br>
+                    <div class="search-panel-selection" id="search-panel-selection-course" onclick="clickSearchByCourse()" style="font-weight: bold;">
+                        Course
+                    </div>
+                    /
+                    <div class="search-panel-selection" id="search-panel-selection-instructor" onclick="clickSearchByInstructor()">
+                        Instructor
+                    </div>
+                    <br>
+                    <div class="search-bar">
+                        Search bar
+                    </div>
                 </div>
-                /
-                <div class="search-panel-selection" id="search-panel-selection-instructor" onclick="clickSearchByInstructor()">
-                    Instructor
-                </div>
-                <br>
-                <div class="search-bar">
-                    Search bar
+                <div class="panel-body search-panel-body">
+                    <ul class="search-panel-list" id="search-panel-list-course">
+                        {% for course in courses %}
+                            <li class="search-panel-list-item" onclick="clickInformationCourse()">
+                                <div class="search-panel-list-item-bubble">
+                                    {{course.dept}} {{course.number}}
+                                </div>
+                                <div class="search-panel-list-item-text">
+                                    Course name
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    <ul class="search-panel-list" id="search-panel-list-instructor" style="display: none;">
+                        {% for instructor in instructors %}
+                            <li class="search-panel-list-item" onclick="clickInformationInstructor()">
+                                <div class="search-panel-list-item-bubble" style="float: none; margin: auto; width: 80%;">
+                                    {{instructor.name}}
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
                 </div>
             </div>
-            <div class="panel-body search-panel-body">
-                <ul class="search-panel-list" id="search-panel-list-course">
-                    {% for course in courses %}
-                        <li class="search-panel-list-item" onclick="clickInformationCourse()">
-                            <div class="search-panel-list-item-bubble">
-                                {{course.dept}} {{course.number}}
-                            </div>
-                            <div class="search-panel-list-item-text">
-                                Course name
-                            </div>
-                        </li>
-                    {% endfor %}
-                </ul>
-                <ul class="search-panel-list" id="search-panel-list-instructor" style="display: none;">
-                    {% for instructor in instructors %}
-                        <li class="search-panel-list-item" onclick="clickInformationInstructor()">
-                            <div class="search-panel-list-item-bubble" style="float: none; margin: auto; width: 80%;">
-                                {{instructor.name}}
-                            </div>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </div>
-        </div>
 
-        <div class="panel panel-primary information-panel">
-            <div class="panel-header information-panel-header">
-                <div id="information-panel-none">
-                    Click on a course or instructor to show information!
-                </div>
-                <div id="information-panel-course" style="display: none;">
-                    Information panel course
-                </div>
-                <div id="information-panel-instructor" style="display: none;">
-                    Information panel instructor
+            <div class="panel panel-primary information-panel">
+                <div class="panel-header information-panel-header">
+                    <div id="information-panel-none">
+                        Click on a course or instructor to show information!
+                    </div>
+                    <div id="information-panel-course" style="display: none;">
+                        Information panel course
+                    </div>
+                    <div id="information-panel-instructor" style="display: none;">
+                        Information panel instructor
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="panel panel-primary ratings-panel">
-            <div class="panel-header ratings-panel-header">
-                Ratings panel
-            </div>
-            <div class="panel-body ratings-panel-body">
-                Not sure how to do this yet lol
+            <div class="panel panel-primary ratings-panel">
+                <div class="panel-header ratings-panel-header">
+                    Ratings panel
+                </div>
+                <div class="panel-body ratings-panel-body">
+                    Not sure how to do this yet lol
+                </div>
             </div>
         </div>
-    </div>
+    {% endif %}
 
     <!-- Designs -->
     <div>

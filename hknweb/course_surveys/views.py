@@ -1,3 +1,5 @@
+import requests, json
+
 from django.views.generic import TemplateView
 
 from hknweb.markdown_pages.models import MarkdownPage
@@ -5,6 +7,7 @@ from hknweb.academics.models import Course, Instructor
 
 from hknweb.course_surveys.constants import (
     Attr,
+    CAS,
     COURSE_SURVEY_PREFIX,
     COURSE_SURVEY_TRANSPARENCY_PAGE_PATHS,
 )
@@ -14,16 +17,42 @@ class IndexView(TemplateView):
     template_name = "course_surveys/index.html"
 
     def get_context_data(self, **kwargs):
+        service = self.request.build_absolute_uri("?")
+        cas_signed_in = self._validate_cas(service)
+
         context = {
             Attr.PAGES: self._get_pages(),
-            Attr.COURSES: self._get_courses(),
-            Attr.INSTRUCTORS: self._get_instructors(),
+            Attr.SERVICE: service,
+            Attr.COURSES: self._get_courses(cas_signed_in),
+            Attr.INSTRUCTORS: self._get_instructors(cas_signed_in),
         }
-
         return context
 
+    def _validate_cas(self, service: str) -> bool:
+        """
+        See https://apereo.github.io/cas/6.4.x/protocol/CAS-Protocol.html
+        """
+        ticket = self.request.GET.get(Attr.TICKET, None)
+        if ticket is None:
+            return False
+
+        # See https://apereo.github.io/cas/6.4.x/protocol/CAS-Protocol-Specification.html
+        params = {
+            Attr.SERVICE: service,
+            Attr.TICKET: ticket,
+            Attr.FORMAT: CAS.JSON,
+        }
+        response = requests.get(CAS.SERVICE_VALIDATE_URL, params=params)
+        content = json.loads(response.content.decode("utf-8"))
+        response = content[CAS.SERVICE_RESPONSE]
+
+        return CAS.AUTHENTICATION_SUCCESS in response
+
     @staticmethod
-    def _get_courses():
+    def _get_courses(cas_signed_in: bool):
+        if not cas_signed_in:
+            return None
+
         courses = []
         seen_courses = set()
         for course in Course.objects.all():
@@ -53,7 +82,10 @@ class IndexView(TemplateView):
         return courses
 
     @staticmethod
-    def _get_instructors():
+    def _get_instructors(cas_signed_in: bool):
+        if not cas_signed_in:
+            return None
+
         instructors = []
         seen_instructors = set()
         for instructor in Instructor.objects.all():
