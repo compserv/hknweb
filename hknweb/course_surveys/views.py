@@ -17,7 +17,7 @@ class IndexView(TemplateView):
     template_name = "course_surveys/index.html"
 
     def get_context_data(self, **kwargs):
-        service = self.request.build_absolute_uri("?")
+        service = self.request.build_absolute_uri()
         cas_signed_in = self._validate_cas(service)
 
         context = {
@@ -32,6 +32,10 @@ class IndexView(TemplateView):
         """
         See https://apereo.github.io/cas/6.4.x/protocol/CAS-Protocol.html
         """
+        cas_signed_in = self.request.session.get(CAS.SIGNED_IN, None)
+        if cas_signed_in:
+            return True
+
         ticket = self.request.GET.get(Attr.TICKET, None)
         if ticket is None:
             return False
@@ -46,7 +50,9 @@ class IndexView(TemplateView):
         content = json.loads(response.content.decode("utf-8"))
         response = content[CAS.SERVICE_RESPONSE]
 
-        return CAS.AUTHENTICATION_SUCCESS in response
+        self.request.session[CAS.SIGNED_IN] = CAS.AUTHENTICATION_SUCCESS in response
+
+        return self.request.session[CAS.SIGNED_IN]
 
     @staticmethod
     def _get_courses(cas_signed_in: bool):

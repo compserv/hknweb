@@ -26,7 +26,8 @@ COURSE_SURVEY_PREFIX = "Course surveys "
 
 
 class CAS:
-    SERVICE_VALIDATE_URL = "https://auth.berkeley.edu/cas/serviceValidate"
     AUTHENTICATION_SUCCESS = "authenticationSuccess"
     JSON = "JSON"
+    SIGNED_IN = "signed_in"
     SERVICE_RESPONSE = "serviceResponse"
+    SERVICE_VALIDATE_URL = "https://auth.berkeley.edu/cas/serviceValidate"
