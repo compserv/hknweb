@@ -20,11 +20,25 @@ class IndexView(TemplateView):
         service = self.request.build_absolute_uri()
         cas_signed_in = self._validate_cas(service)
 
+        survey_number = int(self.request.GET.get(Attr.SURVEY_NUMBER, 1))
+        course = self._get_course(
+            cas_signed_in,
+            self.request.GET.get(Attr.COURSE, None),
+            survey_number,
+        )
+        instructor = self._get_instructor(
+            cas_signed_in,
+            self.request.GET.get(Attr.INSTRUCTOR, None),
+            survey_number,
+        )
+
         context = {
             Attr.PAGES: self._get_pages(),
             Attr.SERVICE: service,
             Attr.COURSES: self._get_courses(cas_signed_in),
             Attr.INSTRUCTORS: self._get_instructors(cas_signed_in),
+            Attr.COURSE: course,
+            Attr.INSTRUCTOR: instructor,
         }
         return context
 
@@ -65,7 +79,13 @@ class IndexView(TemplateView):
             if not course.icsr_course.exists():
                 continue
 
-            most_recent_icsr = course.icsr_course.latest(
+            icsrs = course.icsr_course.filter(
+                section_number__exact="1", instructor_type__exact="Professor"
+            )
+            if not icsrs.exists():
+                continue
+
+            most_recent_icsr = icsrs.latest(
                 "icsr_semester__year",
                 "-icsr_semester__year_section",
             )
@@ -82,6 +102,8 @@ class IndexView(TemplateView):
                 {
                     Attr.DEPT: most_recent_icsr.icsr_department.abbr,
                     Attr.NUMBER: most_recent_icsr.course_number,
+                    Attr.NAME: most_recent_icsr.course_name,
+                    Attr.ID: course.id,
                 }
             )
 
@@ -116,6 +138,7 @@ class IndexView(TemplateView):
             instructors.append(
                 {
                     Attr.NAME: name,
+                    Attr.ID: instructor.instructor_id,
                 }
             )
 
@@ -139,3 +162,76 @@ class IndexView(TemplateView):
                 )
 
         return pages
+
+    @staticmethod
+    def _get_course(cas_signed_in, id, survey_number):
+        if not cas_signed_in or id is None:
+            return None
+
+        course = Course.objects.get(pk=id)
+
+        icsrs = course.icsr_course.order_by(
+            "-icsr_semester__year",
+            "icsr_semester__year_section",
+        ).filter(section_number__exact="1", instructor_type__exact="Professor")
+        most_recent_icsr = icsrs.first()
+
+        if survey_number > len(icsrs):
+            return None
+        icsr = icsrs[survey_number - 1]
+
+        return {
+            Attr.DEPT: most_recent_icsr.icsr_department.abbr,
+            Attr.NUMBER: most_recent_icsr.course_number,
+            Attr.NAME: most_recent_icsr.course_name,
+            Attr.ID: course.id,
+            Attr.SURVEY: IndexView._get_survey(icsr),
+            Attr.PREVIOUS_PAGE: survey_number - 1 if survey_number > 1 else None,
+            Attr.NEXT_PAGE: survey_number + 1 if survey_number < len(icsrs) else None,
+        }
+
+    @staticmethod
+    def _get_instructor(cas_signed_in, id, survey_number):
+        if not cas_signed_in or id is None:
+            return None
+
+        instructor = Instructor.objects.get(pk=id)
+
+        icsrs = instructor.icsr_instructor.order_by(
+            "-icsr_semester__year",
+            "icsr_semester__year_section",
+        )
+        most_recent_icsr = icsrs.first()
+
+        if survey_number > len(icsrs):
+            return None
+        icsr = icsrs[survey_number - 1]
+
+        name = "{first_name} {last_name}".format(
+            first_name=most_recent_icsr.first_name,
+            last_name=most_recent_icsr.last_name,
+        )
+        return {
+            Attr.NAME: name,
+            Attr.ID: instructor.instructor_id,
+            Attr.INSTRUCTOR_TYPE: most_recent_icsr.instructor_type,
+            Attr.SURVEY: IndexView._get_survey(icsr),
+            Attr.PREVIOUS_PAGE: survey_number - 1 if survey_number > 1 else None,
+            Attr.NEXT_PAGE: survey_number + 1 if survey_number < len(icsrs) else None,
+        }
+
+    @staticmethod
+    def _get_survey(icsr):
+        semester = icsr.icsr_semester
+        survey = icsr.survey_icsr.first()
+
+        return {
+            Attr.DEPT: icsr.icsr_department.abbr,
+            Attr.NUMBER: icsr.course_number,
+            Attr.COURSE_ID: icsr.icsr_course.id,
+            Attr.SECTION_NUMBER: icsr.section_number,
+            Attr.SEMESTER: semester.year_section + str(semester.year)[-2:],
+            Attr.INSTRUCTOR_TYPE: icsr.instructor_type,
+            Attr.NUM_STUDENTS: survey.num_students,
+            Attr.RESPONSE_COUNT: survey.response_count,
+        }
