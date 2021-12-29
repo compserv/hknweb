@@ -8,4 +8,9 @@ class HasPermissionOrReadOnly(permissions.DjangoModelPermissionsOrAnonReadOnly):
     !TODO Implement permissions
     """
 
-    pass
+    def has_permission(self, request, view):
+        """
+        Currently, only HKN officers are allowed to view course surveys data through the API.
+        This means that API access is purely HKN internal.
+        """
+        return request.user.groups.filter(name="officer").exists()
