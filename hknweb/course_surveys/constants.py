@@ -1,11 +1,14 @@
 class Attr:
     COURSES = "courses"
     DEPT = "dept"
+    FORMAT = "format"
     INSTRUCTORS = "instructors"
     NAME = "name"
     NUMBER = "number"
     PATH = "path"
     PAGES = "pages"
+    SERVICE = "service"
+    TICKET = "ticket"
 
 
 COURSE_SURVEY_TRANSPARENCY_PAGE_PATHS = [
@@ -20,3 +23,10 @@ COURSE_SURVEY_TRANSPARENCY_PAGE_PATHS = [
 ]
 
 COURSE_SURVEY_PREFIX = "Course surveys "
+
+
+class CAS:
+    SERVICE_VALIDATE_URL = "https://auth.berkeley.edu/cas/serviceValidate"
+    AUTHENTICATION_SUCCESS = "authenticationSuccess"
+    JSON = "JSON"
+    SERVICE_RESPONSE = "serviceResponse"
