@@ -20,7 +20,7 @@ class IndexView(TemplateView):
     def get_context_data(self, **kwargs):
         context = {}
 
-        service = self.request.build_absolute_uri()
+        service = self.request.build_absolute_uri("?")
         cas_signed_in = self._validate_cas(service)
 
         survey_number = int(self.request.GET.get(Attr.SURVEY_NUMBER, 1))
@@ -70,6 +70,7 @@ class IndexView(TemplateView):
         }
         response = requests.get(CAS.SERVICE_VALIDATE_URL, params=params)
         content = json.loads(response.content.decode("utf-8"))
+        print(content)
         response = content[CAS.SERVICE_RESPONSE]
 
         self.request.session[CAS.SIGNED_IN] = CAS.AUTHENTICATION_SUCCESS in response
