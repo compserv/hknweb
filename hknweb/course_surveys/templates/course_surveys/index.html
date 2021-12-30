@@ -240,6 +240,17 @@
             float: right;
         }
 
+        .ratings-table {
+            padding: auto;
+            margin: auto;
+            width: 100%;
+        }
+
+        .ratings-item-bubble {
+            border-radius: 1em;
+            color: white;
+        }
+
     </style>
 
     <!-- Designs -->
@@ -484,32 +495,45 @@
 
             <div class="panel panel-primary ratings-panel">
                 <div class="panel-header ratings-panel-header">
+                    <div class="survey-number-navigator previous-survey" {% if previous_page %} onClick="clickSurveyNumber({{ previous_page }})" {% else %} style="opacity: 0.6; text-decoration: none;" {% endif %}>
+                        Prev
+                    </div>
                     {% if course %}
-                        <div class="survey-number-navigator previous-survey" {% if course.previous_page %} onClick="clickSurveyNumber({{ course.previous_page }})" {% else %} style="opacity: 0.6; text-decoration: none;" {% endif %}>
-                            Prev
-                        </div>
                         <div style="display: inline-block;">
-                            {{ course.survey.semester }}: {{ course.survey.num_students }} students ({{ course.survey.response_count }} responses)
-                        </div>
-                        <div class="survey-number-navigator next-survey" {% if course.next_page %} onClick="clickSurveyNumber({{ course.next_page }})" {% else %} style="opacity: 0.6; text-decoration: none;" {% endif %}>
-                            Next
+                            {{ survey.semester }}: {{ survey.num_students }} students ({{ survey.response_count }} responses)
                         </div>
                     {% elif instructor %}
-                        <div class="survey-number-navigator previous-survey" {% if instructor.previous_page %} onClick="clickSurveyNumber({{ instructor.previous_page }})" {% else %} style="opacity: 0.6; text-decoration: none;" {% endif %}>
-                            Prev
-                        </div>
                         <div style="display: inline-block;">
-                            {{ instructor.survey.semester }} as a {{ instructor.instructor_type }} for <div style="text-decoration: underline; display: inline;" onclick="clickInformationCourse({{ instructor.survey.course_id }})">{{ instructor.survey.dept }} {{ instructor.survey.number }}</div>
+                            {{ survey.semester }} as a {{ instructor.instructor_type }} for <div style="text-decoration: underline; display: inline;" onclick="clickInformationCourse({{ survey.course_id }})">{{ survey.dept }} {{ survey.number }}</div>
                             <br>
-                            {{ instructor.survey.num_students }} students ({{ instructor.survey.response_count }} responses)
-                        </div>
-                        <div class="survey-number-navigator next-survey" {% if instructor.next_page %} onClick="clickSurveyNumber({{ instructor.next_page }})" {% else %} style="opacity: 0.6; text-decoration: none;" {% endif %}>
-                            Next
+                            {{ survey.num_students }} students ({{ survey.response_count }} responses)
                         </div>
                     {% endif %}
+                    <div class="survey-number-navigator next-survey" {% if next_page %} onClick="clickSurveyNumber({{ next_page }})" {% else %} style="opacity: 0.6; text-decoration: none;" {% endif %}>
+                        Next
+                    </div>
                 </div>
                 <div class="panel-body ratings-panel-body">
-                    
+                    <table class="ratings-table">
+                        <tr>
+                            <th style="width: 70%;">
+                                Question
+                            </th>
+                            <th style="width: 30%;">
+                                Rating
+                            </th>
+                        </tr>
+                        {% for rating in survey.ratings %}
+                            <tr>
+                                <td>
+                                    {{ rating.text }}
+                                </td>
+                                <td class="ratings-item-bubble" style="background-color: {{ rating.color }};">
+                                    {{ rating.value }} / {{ rating.max }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
                 </div>
             </div>
         </div>
