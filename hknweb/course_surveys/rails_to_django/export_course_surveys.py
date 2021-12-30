@@ -1,6 +1,4 @@
-import sys
-import json
-import time
+import sys, json, time, pickle, os
 
 from pprint import pprint
 from collections import defaultdict
@@ -17,9 +15,12 @@ AUTHENTICATION = HTTPBasicAuth()
 
 
 def main():
-    data = load_data()
-    rails_dtos = data_to_rails_dtos(data)
-    ModelUpload(rails_dtos).upload_models()
+    if os.path.exists(ModelUpload.TEMP_FILE_PATH):
+        ModelUpload(None).upload_models()
+    else:
+        data = load_data()
+        rails_dtos = data_to_rails_dtos(data)
+        ModelUpload(rails_dtos).upload_models()
 
 
 def load_data():
@@ -50,30 +51,75 @@ def data_to_rails_dtos(data):
 
 
 class ModelUpload:
-    def __init__(self, rails_dtos):
-        self.rails_dtos = rails_dtos
+    TEMP_FILE_PATH = "model_upload.pt"
 
-        self.r2d = defaultdict(dict)  # rails id to django model mappings
+    def __init__(self, rails_dtos):
+        if os.path.exists(self.TEMP_FILE_PATH):
+            print("Continuing from last checkpoint")
+
+            with open(self.TEMP_FILE_PATH, "rb") as f:
+                _self = pickle.load(f)
+
+            self.rails_dtos = _self.rails_dtos
+            self.r2d = _self.r2d
+            self.status = _self.status
+            self.i = _self.i
+        else:
+            self.rails_dtos = rails_dtos
+            self.r2d = defaultdict(dict)  # rails id to django model mappings
+            self.status = 0
+            self.i = 0
 
     def upload_models(self):
-        print("Uploading departments...")
-        self._upload_departments()
+        try:
+            if self.status < 1:
+                print("Uploading departments...")
+                self._upload_departments()
+                self.status += 1
+                self.i = 0
 
-        print("Uploading instructors...")
-        self._upload_instructors()
+            if self.status < 2:
+                print("Uploading instructors...")
+                self._upload_instructors()
+                self.status += 1
+                self.i = 0
 
-        print("Uploading semesters...")
-        self._upload_semesters()
+            if self.status < 3:
+                print("Uploading semesters...")
+                self._upload_semesters()
+                self.status += 1
+                self.i = 0
 
-        print("Uploading courses and ICSRs...")
-        self._upload_icsrs_courses()
+            if self.status < 4:
+                print("Uploading courses and ICSRs...")
+                self._upload_icsrs_courses()
+                self.status += 1
+                self.i = 0
 
-        print("Uploading questions, surveys, and ratings...")
-        self._upload_surveys_questions_ratings()
+            if self.status < 5:
+                print("Uploading questions, surveys, and ratings...")
+                self._upload_surveys_questions_ratings()
+                self.status += 1
+                self.i = 0
+
+        except Exception as e:
+            print()
+            print(e)
+
+            self.save()
+
+    def save(self):
+        with open(self.TEMP_FILE_PATH, "wb") as f:
+            pickle.dump(self, f, protocol=pickle.HIGHEST_PROTOCOL)
 
     def _upload_departments(self):
         department_dtos = self.rails_dtos["department"].values()
         for i, department_dto in enumerate(department_dtos):
+            if self.i > i:
+                continue
+
+            self.i = i
+
             department = DJANGO.Department(department_dto)
             department.upload(WEBSITE_BASE_URL, AUTHENTICATION)
 
@@ -84,6 +130,11 @@ class ModelUpload:
 
         instructor_dtos = self.rails_dtos["instructor"].values()
         for i, instructor_dto in enumerate(instructor_dtos):
+            if self.i > i:
+                continue
+
+            self.i = i
+
             instructor = DJANGO.Instructor(instructor_dto)
             instructor.upload(WEBSITE_BASE_URL, AUTHENTICATION)
 
@@ -95,6 +146,11 @@ class ModelUpload:
     def _upload_semesters(self):
         klass_dtos = self.rails_dtos["klass"].values()
         for i, klass_dto in enumerate(klass_dtos):
+            if self.i > i:
+                continue
+
+            self.i = i
+
             if klass_dto.semester in self.r2d["semester"]:
                 continue
 
@@ -108,6 +164,11 @@ class ModelUpload:
 
         instructorship_dtos = self.rails_dtos["instructorship"].values()
         for i, instructorship_dto in enumerate(instructorship_dtos):
+            if self.i > i:
+                continue
+
+            self.i = i
+
             klass_dto = self.rails_dtos["klass"][instructorship_dto.klass_id]
             instructor_dto = self.rails_dtos["instructor"][
                 instructorship_dto.instructor_id
@@ -141,6 +202,11 @@ class ModelUpload:
 
         survey_answer_dtos = self.rails_dtos["survey_answer"].values()
         for i, survey_answer_dto in enumerate(survey_answer_dtos):
+            if self.i > i:
+                continue
+
+            self.i = i
+
             instructorship_dto = self.rails_dtos["instructorship"][
                 survey_answer_dto.instructorship_id
             ]
@@ -215,8 +281,25 @@ def clear_course_surveys_db():
             assert response.ok
 
 
+def fill_missing_instructor_first_names():
+    data = ModelUpload(None)
+
+    instructorship_dtos = data.rails_dtos["instructorship"].values()
+    for instructorship_dto in instructorship_dtos:
+        instructor_dto = data.rails_dtos["instructor"][instructorship_dto.instructor_id]
+        if not instructor_dto.first_name:
+            instructor_dto.first_name = "MISSING_FIRST_NAME"
+
+    data.save()
+
+
 if __name__ == "__main__":
-    if len(sys.argv) == 2 and sys.argv[-1] == "clear":
-        clear_course_surveys_db()
-    else:
-        main()
+    fn = main
+
+    command = sys.argv[1]
+    if command == "clear":
+        fn = clear_course_surveys_db
+    elif command == "fill_first":
+        fn = fill_missing_instructor_first_names
+
+    fn()
