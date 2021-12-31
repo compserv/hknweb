@@ -7,7 +7,8 @@ require "set"
 
 OUTPUT_FILE_NAME = "course_surveys_data.json"
 
-instructorships = Instructorship.last(1000)
+N = 10000
+instructorships = Instructorship.last(N)
 
 output = {
     "survey_answer" => [],
@@ -27,7 +28,7 @@ post_process_model_types = {
 }
 
 
-instructorships.each do |iship|
+instructorships.each_with_index do |iship, i|
     klass = Klass.find(iship.klass_id)
     instructor = Instructor.find(iship.instructor_id)
     course = Course.find(klass.course_id)
@@ -49,6 +50,10 @@ instructorships.each do |iship|
 
         output["survey_question"].add(survey_question.id)
         output["survey_answer"].append(survey_answer)
+    end
+
+    if (i+1) % 100 == 0 then
+        p "Finished #{i + 1} / #{N}"
     end
 end
 
