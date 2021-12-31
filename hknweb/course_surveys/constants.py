@@ -26,6 +26,7 @@ class Attr:
     SURVEY_NUMBER = "survey_number"
     TEXT = "text"
     TICKET = "ticket"
+    UPLOAD_ALLOWED = "upload_allowed"
     VALUE = "value"
 
 

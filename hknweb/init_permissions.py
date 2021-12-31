@@ -1,5 +1,7 @@
 from hknweb.candidate.models import Announcement, OffChallenge, BitByteActivity
 from hknweb.events.models import Event, Rsvp
+from hknweb.academics.models import AcademicEntity
+
 from django.contrib.auth.models import User, Group, Permission
 from django.contrib.contenttypes.models import ContentType
 
@@ -19,7 +21,13 @@ cand_permission_names = [
 ]
 
 # OFFICER ONLY PERMISSIONS
-off_permission_names = [("add_event", Event), ("change_event", Event)]
+off_permission_names = [
+    ("add_event", Event),
+    ("change_event", Event),
+    ("add_academicentity", AcademicEntity),
+    ("view_academicentity", AcademicEntity),
+    ("change_academicentity", AcademicEntity),
+]
 
 # SETTING PERMISSIONS TO GROUPS
 for codename, model in cand_permission_names:

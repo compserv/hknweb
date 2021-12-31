@@ -1,3 +1,4 @@
+from hknweb.academics.models.base_models import AcademicEntity
 from hknweb.academics.models.logistics import (
     Course,
     Department,

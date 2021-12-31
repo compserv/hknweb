@@ -21,6 +21,9 @@ class IndexView(TemplateView):
         context = {}
 
         service = self.request.build_absolute_uri("?")
+        upload_allowed = self.request.user.has_perm(
+            "course_surveys.change_academicentity"
+        )
         cas_signed_in = self._validate_cas(service)
 
         survey_number = int(self.request.GET.get(Attr.SURVEY_NUMBER, 1))
@@ -42,6 +45,7 @@ class IndexView(TemplateView):
         context = {
             **context,
             Attr.PAGES: self._get_pages(),
+            Attr.UPLOAD_ALLOWED: upload_allowed,
             Attr.SERVICE: service,
             Attr.COURSES: self._get_courses(cas_signed_in),
             Attr.INSTRUCTORS: self._get_instructors(cas_signed_in),
@@ -239,6 +243,18 @@ class IndexView(TemplateView):
     @staticmethod
     def _get_survey(icsr):
         semester = icsr.icsr_semester
+
+        context = {
+            Attr.DEPT: icsr.icsr_department.abbr,
+            Attr.NUMBER: icsr.course_number,
+            Attr.COURSE_ID: icsr.icsr_course.id,
+            Attr.SECTION_NUMBER: icsr.section_number,
+            Attr.SEMESTER: semester.year_section + str(semester.year)[-2:],
+            Attr.INSTRUCTOR_TYPE: icsr.instructor_type,
+            Attr.RATINGS: None,
+        }
+        if not icsr.survey_icsr.exists():
+            return context
         survey = icsr.survey_icsr.first()
 
         ratings = []
@@ -266,12 +282,7 @@ class IndexView(TemplateView):
             )
 
         return {
-            Attr.DEPT: icsr.icsr_department.abbr,
-            Attr.NUMBER: icsr.course_number,
-            Attr.COURSE_ID: icsr.icsr_course.id,
-            Attr.SECTION_NUMBER: icsr.section_number,
-            Attr.SEMESTER: semester.year_section + str(semester.year)[-2:],
-            Attr.INSTRUCTOR_TYPE: icsr.instructor_type,
+            **context,
             Attr.NUM_STUDENTS: survey.num_students,
             Attr.RESPONSE_COUNT: survey.response_count,
             Attr.RATINGS: ratings,

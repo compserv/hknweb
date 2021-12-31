@@ -495,9 +495,11 @@
 
             <div class="panel panel-primary ratings-panel">
                 <div class="panel-header ratings-panel-header">
-                    <div class="survey-number-navigator previous-survey" {% if previous_page %} onClick="clickSurveyNumber({{ previous_page }})" {% else %} style="opacity: 0.6; text-decoration: none;" {% endif %}>
-                        Prev
-                    </div>
+                    {% if course or instructor %}
+                        <div class="survey-number-navigator previous-survey" {% if previous_page %} onClick="clickSurveyNumber({{ previous_page }})" {% else %} style="opacity: 0.6; text-decoration: none;" {% endif %}>
+                            Prev
+                        </div>
+                    {% endif %}
                     {% if course %}
                         <div style="display: inline-block;">
                             {{ survey.semester }}: {{ survey.num_students }} students ({{ survey.response_count }} responses)
@@ -509,31 +511,37 @@
                             {{ survey.num_students }} students ({{ survey.response_count }} responses)
                         </div>
                     {% endif %}
-                    <div class="survey-number-navigator next-survey" {% if next_page %} onClick="clickSurveyNumber({{ next_page }})" {% else %} style="opacity: 0.6; text-decoration: none;" {% endif %}>
-                        Next
-                    </div>
+                    {% if course or instructor %}
+                        <div class="survey-number-navigator next-survey" {% if next_page %} onClick="clickSurveyNumber({{ next_page }})" {% else %} style="opacity: 0.6; text-decoration: none;" {% endif %}>
+                            Next
+                        </div>
+                    {% endif %}
                 </div>
                 <div class="panel-body ratings-panel-body">
-                    <table class="ratings-table">
-                        <tr>
-                            <th style="width: 70%;">
-                                Question
-                            </th>
-                            <th style="width: 30%;">
-                                Rating
-                            </th>
-                        </tr>
-                        {% for rating in survey.ratings %}
+                    {% if survey.ratings %}
+                        <table class="ratings-table">
                             <tr>
-                                <td>
-                                    {{ rating.text }}
-                                </td>
-                                <td class="ratings-item-bubble" style="background-color: {{ rating.color }};">
-                                    {{ rating.value }} / {{ rating.max }}
-                                </td>
+                                <th style="width: 70%;">
+                                    Question
+                                </th>
+                                <th style="width: 30%;">
+                                    Rating
+                                </th>
                             </tr>
-                        {% endfor %}
-                    </table>
+                            {% for rating in survey.ratings %}
+                                <tr>
+                                    <td>
+                                        {{ rating.text }}
+                                    </td>
+                                    <td class="ratings-item-bubble" style="background-color: {{ rating.color }};">
+                                        {{ rating.value }} / {{ rating.max }}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    {% else %}
+                        Course survey information will appear here once a course or instructor is selected.
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -557,5 +565,17 @@
             No course surveys design pages at the moment! Check back later or contact HKN.
         {% endif %}
     </div>
+
+    <!-- Upload link -->
+    {% if upload_allowed %}
+        <div style="margin: auto; text-align: center; padding-top: 1.5%;">
+            <a href="{% url 'course_surveys:upload' %}">Upload</a> course surveys data
+        </div>
+    {% endif %}
+
+    <!-- Design credit -->
+    <h2 style="margin: auto; text-align: center; padding-top: 3%; color: grey; font-weight: normal;">
+        UI/UX designed by <a href="https://www.linkedin.com/in/dan-y-chu/" style="text-decoration: none;">Danny Chu</a>.
+    </h2>
 
 {% endblock %}
