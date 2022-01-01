@@ -7,18 +7,24 @@ class Attr:
     FORMAT = "format"
     ID = "id"
     INSTRUCTOR = "instructor"
+    INSTRUCTOR_ID = "instructor_id"
+    INSTRUCTOR_NAME = "instructor_name"
     INSTRUCTOR_TYPE = "instructor_type"
     INSTRUCTORS = "instructors"
     MAX = "max"
     NAME = "name"
     NEXT_PAGE = "next_page"
+    NEXT_SURVEY = "next_survey"
     NUM_STUDENTS = "num_students"
     NUMBER = "number"
     PATH = "path"
+    PAGE_NUMBER = "page_number"
     PAGES = "pages"
     PREVIOUS_PAGE = "previous_page"
+    PREVIOUS_SURVEY = "previous_survey"
     RATINGS = "ratings"
     RESPONSE_COUNT = "response_count"
+    SEARCH_BY = "search_by"
     SECTION_NUMBER = "section_number"
     SEMESTER = "semester"
     SERVICE = "service"
@@ -42,6 +48,7 @@ COURSE_SURVEY_TRANSPARENCY_PAGE_PATHS = [
 ]
 
 COURSE_SURVEY_PREFIX = "Course surveys "
+ITEMS_PER_PAGE = 10
 
 
 class CAS:

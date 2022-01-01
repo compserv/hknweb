@@ -115,6 +115,7 @@
         .search-panel-body {
             text-align: center;
             margin: 0;
+            margin-top: 1.5em;
             padding: 0.5em;
         }
 
@@ -124,7 +125,7 @@
             padding-top: 0;
             padding-bottom: 0;
             margin-top: 0;
-            max-height: 56vh;
+            max-height: 53vh;
             overflow: scroll;
         }
 
@@ -169,11 +170,31 @@
             width: 80%;
             margin: auto;
             margin-top: 0.5em;
+            margin-bottom: 1%;
             padding-left: 0.2em;
             padding-right: 0.2em;
             padding-top: 0.1em;
             padding-bottom: 0.1em;
             text-align: left;
+        }
+
+        .page-number-selector {
+            text-decoration: underline;
+            border: 0.1em solid gainsboro;
+            border-radius: 0.75em;
+            padding: 0;
+            font-size: 80%;
+            width: 30%;
+        }
+
+        .previous-page {
+            float: left;
+            margin-left: 2em;
+        }
+
+        .next-page {
+            float: right;
+            margin-right: 2em;
         }
 
     </style>
@@ -313,6 +334,11 @@
 
             document.getElementById("search-panel-list-course").style.display="block";
             document.getElementById("search-panel-list-instructor").style.display="none";
+
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set("search_by", "courses");
+            urlParams.delete("page_number");
+            window.location.search = urlParams;
         }
 
         function clickSearchByInstructor() {
@@ -321,6 +347,11 @@
 
             document.getElementById("search-panel-list-course").style.display="none";
             document.getElementById("search-panel-list-instructor").style.display="block";
+
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set("search_by", "instructors");
+            urlParams.delete("page_number");
+            window.location.search = urlParams;
         }
 
         function clickInformationInstructor(id) {
@@ -342,6 +373,12 @@
         function clickSurveyNumber(survey_number) {
             const urlParams = new URLSearchParams(window.location.search);
             urlParams.set("survey_number", survey_number);
+            window.location.search = urlParams;
+        }
+
+        function clickPageNumber(page_number) {
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set("page_number", page_number);
             window.location.search = urlParams;
         }
     </script>
@@ -422,25 +459,31 @@
     {% endif %}
 
     <!-- Course and instructor information panels -->
-    {% if courses is not None and instructors is not None %}
+    {% if courses is not None or instructors is not None %}
         <div>
             <div class="panel panel-primary search-panel">
                 <div class="panel-header search-panel-header">
                     Filter by: <br>
-                    <div class="search-panel-selection" id="search-panel-selection-course" onclick="clickSearchByCourse()" {% if not instructor %} style="font-weight: bold;" {% endif %}>
+                    <div class="search-panel-selection" id="search-panel-selection-course" onclick="clickSearchByCourse()" {% if courses %} style="font-weight: bold;" {% endif %}>
                         Course
                     </div>
                     /
-                    <div class="search-panel-selection" id="search-panel-selection-instructor" onclick="clickSearchByInstructor()" {% if instructor %} style="font-weight: bold" {% endif %}>
+                    <div class="search-panel-selection" id="search-panel-selection-instructor" onclick="clickSearchByInstructor()" {% if instructors %} style="font-weight: bold" {% endif %}>
                         Instructor
                     </div>
                     <br>
                     <div class="search-bar">
                         Search bar
                     </div>
+                    <div class="page-number-selector previous-page" {% if previous_page %} onClick="clickPageNumber({{ previous_page }})" {% else %} style="opacity: 0.6; text-decoration: none;" {% endif %}>
+                        Prev
+                    </div>
+                    <div class="page-number-selector next-page" {% if next_page %} onClick="clickPageNumber({{ next_page }})" {% else %} style="opacity: 0.6; text-decoration: none;" {% endif %}>
+                        Next
+                    </div>
                 </div>
                 <div class="panel-body search-panel-body">
-                    <ul class="search-panel-list" id="search-panel-list-course" {% if instructor %} style="display: none;" {% endif %}>
+                    <ul class="search-panel-list" id="search-panel-list-course" {% if not courses %} style="display: none;" {% endif %}>
                         {% for course in courses %}
                             <li class="search-panel-list-item" onclick="clickInformationCourse({{ course.id }})">
                                 <div class="search-panel-list-item-bubble">
@@ -452,7 +495,7 @@
                             </li>
                         {% endfor %}
                     </ul>
-                    <ul class="search-panel-list" id="search-panel-list-instructor"  {% if not instructor %} style="display: none;" {% endif %}>
+                    <ul class="search-panel-list" id="search-panel-list-instructor"  {% if not instructors %} style="display: none;" {% endif %}>
                         {% for instructor in instructors %}
                             <li class="search-panel-list-item" onclick="clickInformationInstructor({{ instructor.id }})">
                                 <div class="search-panel-list-item-bubble" style="padding-left: 20%; padding-right: 20%; width: 60%;">
@@ -496,13 +539,15 @@
             <div class="panel panel-primary ratings-panel">
                 <div class="panel-header ratings-panel-header">
                     {% if course or instructor %}
-                        <div class="survey-number-navigator previous-survey" {% if previous_page %} onClick="clickSurveyNumber({{ previous_page }})" {% else %} style="opacity: 0.6; text-decoration: none;" {% endif %}>
+                        <div class="survey-number-navigator previous-survey" {% if previous_survey %} onClick="clickSurveyNumber({{ previous_survey }})" {% else %} style="opacity: 0.6; text-decoration: none;" {% endif %}>
                             Prev
                         </div>
                     {% endif %}
                     {% if course %}
                         <div style="display: inline-block;">
-                            {{ survey.semester }}: {{ survey.num_students }} students ({{ survey.response_count }} responses)
+                            {{ survey.semester }} taught by <div style="text-decoration: underline; display: inline;" onclick="clickInformationInstructor({{ survey.instructor_id }})">{{ survey.instructor_name }}</div>
+                            <br>
+                            {{ survey.num_students }} students ({{ survey.response_count }} responses)
                         </div>
                     {% elif instructor %}
                         <div style="display: inline-block;">
@@ -512,7 +557,7 @@
                         </div>
                     {% endif %}
                     {% if course or instructor %}
-                        <div class="survey-number-navigator next-survey" {% if next_page %} onClick="clickSurveyNumber({{ next_page }})" {% else %} style="opacity: 0.6; text-decoration: none;" {% endif %}>
+                        <div class="survey-number-navigator next-survey" {% if next_survey %} onClick="clickSurveyNumber({{ next_survey }})" {% else %} style="opacity: 0.6; text-decoration: none;" {% endif %}>
                             Next
                         </div>
                     {% endif %}
