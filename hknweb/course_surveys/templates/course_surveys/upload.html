@@ -13,13 +13,66 @@
             text-align: center;
             padding-bottom: 0.25%;
         }
+
+        .main-panel {
+            box-shadow: 0 0 0.5em #252525;
+            margin: auto;
+            height: 75vh;
+            width: 80vw;
+            border-radius: 0.75em;
+            text-align: center;
+            position: relative;
+        }
+
+        .next-button {
+            position: absolute;
+            right: 1em;
+            bottom: 1em;
+            font-size: 110%;
+            border-radius: 0.8em;
+            border: none;
+            width: 7em;
+            height: 2em;
+            background: #DFF5FF;
+        }
+    </style>
+
+    <!-- Status: finished -->
+    <style>
+        .finished-message {
+            text-align: center;
+            padding-top: 1em;
+        }
     </style>
 {% endblock %}
 
 {% block content %}
     <h1 class="header">
-        Course surveys upload
+        Course surveys upload: {{ title }}
     </h1>
+
+    <div class="panel panel-primary main-panel">
+        {% if status != "finished" %}
+            <form action="{% url 'course_surveys:upload' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="status" value="{{ status }}">
+
+                {% if status == "upload" %}
+                    <input type="file" name="course_surveys_csv" />
+                {% elif status == "questions"%}
+                    questions
+                {% elif status == "instructors"%}
+                    instructors
+                {% endif %}
+
+                <input class="next-button" type="submit" value="Next" />
+            </form>
+        {% else %}
+            <div class="finished-message">
+                Successfully uploaded course surveys!
+            </div>
+        {% endif %}
+    </div>
 
     <!-- Design credit -->
     <h2 style="margin: auto; text-align: center; padding-top: 3%; color: grey; font-weight: normal;">

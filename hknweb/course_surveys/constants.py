@@ -2,6 +2,7 @@ class Attr:
     COLOR = "color"
     COURSE = "course"
     COURSE_ID = "course_id"
+    COURSE_SURVEYS_CSV = "course_surveys_csv"
     COURSES = "courses"
     DEPT = "dept"
     FORMAT = "format"
@@ -28,10 +29,12 @@ class Attr:
     SECTION_NUMBER = "section_number"
     SEMESTER = "semester"
     SERVICE = "service"
+    STATUS = "status"
     SURVEY = "survey"
     SURVEY_NUMBER = "survey_number"
     TEXT = "text"
     TICKET = "ticket"
+    TITLE = "title"
     UPLOAD_ALLOWED = "upload_allowed"
     VALUE = "value"
 
@@ -63,3 +66,29 @@ class COLORS:
     FIRE_BRICK = "FireBrick"
     FOREST_GREEN = "ForestGreen"
     GOLDEN_ROD = "GoldenRod"
+
+
+class UploadStages:
+    UPLOAD = "upload"
+    QUESTIONS = "questions"
+    INSTRUCTORS = "instructors"
+    FINISHED = "finished"
+
+
+class UploadStageInfo:
+    UPLOAD = {
+        Attr.TITLE: "Upload CSV",
+        Attr.STATUS: UploadStages.UPLOAD,
+    }
+    QUESTIONS = {
+        Attr.TITLE: "Merge questions",
+        Attr.STATUS: UploadStages.QUESTIONS,
+    }
+    INSTRUCTORS = {
+        Attr.TITLE: "Merge instructors",
+        Attr.STATUS: UploadStages.INSTRUCTORS,
+    }
+    FINISHED = {
+        Attr.TITLE: "Upload finished!",
+        Attr.STATUS: UploadStages.FINISHED,
+    }
