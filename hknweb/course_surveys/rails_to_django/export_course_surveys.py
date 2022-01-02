@@ -15,12 +15,18 @@ AUTHENTICATION = HTTPBasicAuth()
 
 
 def main():
-    if os.path.exists(ModelUpload.TEMP_FILE_PATH):
-        ModelUpload(None).upload_models()
+    command = "upload"
+    if len(sys.argv) > 1:
+        command = sys.argv[1]
+
+    if command not in FN_MAPPINGS:
+        print(
+            "Command not recognized. Try one of: \n- {}".format(
+                "\n- ".join(FN_MAPPINGS.keys())
+            )
+        )
     else:
-        data = load_data()
-        rails_dtos = data_to_rails_dtos(data)
-        ModelUpload(rails_dtos).upload_models()
+        FN_MAPPINGS[command]()
 
 
 def load_data():
@@ -48,6 +54,22 @@ def data_to_rails_dtos(data):
         print()
 
     return output_dtos
+
+
+def print_update(i, n, start_time, text="Finished"):
+    i = i + 1
+
+    time_spent = time.time() - start_time
+    time_left = (time_spent / i) * (n - i)
+    h = int(time_left // 3600)
+    m = int((time_left % 3600) // 60)
+    s = int((time_left % 60))
+
+    print(
+        "%s %i / %i. Time remaining: %02d:%02d:%02d\r" % (text, i, n, h, m, s),
+        flush=True,
+        end="",
+    )
 
 
 class ModelUpload:
@@ -140,7 +162,7 @@ class ModelUpload:
 
             self.r2d["instructor"][instructor_dto.id] = instructor
 
-            self._print_update(i, len(instructor_dtos), start_time)
+            print_update(i, len(instructor_dtos), start_time)
         print()
 
     def _upload_semesters(self):
@@ -194,7 +216,7 @@ class ModelUpload:
 
             self.r2d["icsr"][instructorship_dto.id] = icsr
 
-            self._print_update(i, len(instructorship_dtos), start_time)
+            print_update(i, len(instructorship_dtos), start_time)
         print()
 
     def _upload_surveys_questions_ratings(self):
@@ -229,7 +251,7 @@ class ModelUpload:
             )
             rating.upload(WEBSITE_BASE_URL, AUTHENTICATION)
 
-            self._print_update(i, len(survey_answer_dtos), start_time)
+            print_update(i, len(survey_answer_dtos), start_time)
         print()
 
     def _get_or_upload_course(self, course_dto):
@@ -252,20 +274,14 @@ class ModelUpload:
 
         return question
 
-    def _print_update(self, i, n, start_time):
-        i = i + 1
 
-        time_spent = time.time() - start_time
-        time_left = (time_spent / i) * (n - i)
-        h = int(time_left // 3600)
-        m = int((time_left % 3600) // 60)
-        s = int((time_left % 60))
-
-        print(
-            "Finished %i / %i. Time remaining: %02d:%02d:%02d\r" % (i, n, h, m, s),
-            flush=True,
-            end="",
-        )
+def upload_rails_data():
+    if os.path.exists(ModelUpload.TEMP_FILE_PATH):
+        ModelUpload(None).upload_models()
+    else:
+        data = load_data()
+        rails_dtos = data_to_rails_dtos(data)
+        ModelUpload(rails_dtos).upload_models()
 
 
 def clear_course_surveys_db():
@@ -293,13 +309,53 @@ def fill_missing_instructor_first_names():
     data.save()
 
 
+def combine_surveys():
+    url = WEBSITE_BASE_URL + DJANGO.Rating.api_url
+    ratings_response = requests.get(url, auth=AUTHENTICATION)
+    assert ratings_response.ok, ratings_response.content
+
+    start_time = time.time()
+    mappings = defaultdict(list)
+    ratings = json.loads(ratings_response.content)
+    for i, rating in enumerate(ratings):
+        survey_response = requests.get(rating["rating_survey"], auth=AUTHENTICATION)
+        assert survey_response.ok, survey_response.content
+
+        survey = json.loads(survey_response.content)
+        icsr = survey["survey_icsr"]
+
+        mappings[icsr].append((survey["url"], rating["url"]))
+        print_update(i, len(ratings), start_time, "Loading rating")
+    print()
+
+    start_time = time.time()
+    for i, s_r_tuple in enumerate(mappings.values()):
+        base_survey = s_r_tuple[0][0]
+        for survey, rating in s_r_tuple[1:]:
+            if survey == base_survey:
+                continue
+
+            data = {
+                "rating_survey": base_survey,
+            }
+            redirect_rating_response = requests.patch(
+                rating, auth=AUTHENTICATION, data=data
+            )
+            assert redirect_rating_response.ok, redirect_rating_response.content
+
+            delete_survey_response = requests.delete(survey, auth=AUTHENTICATION)
+            assert delete_survey_response.ok, delete_survey_response.content
+
+        print_update(i, len(mappings), start_time, "Combined survey")
+    print()
+
+
+FN_MAPPINGS = {
+    "upload": upload_rails_data,
+    "clear": clear_course_surveys_db,
+    "fill_first": fill_missing_instructor_first_names,
+    "combine_surveys": combine_surveys,
+}
+
 if __name__ == "__main__":
-    fn = main
-
-    command = sys.argv[1]
-    if command == "clear":
-        fn = clear_course_surveys_db
-    elif command == "fill_first":
-        fn = fill_missing_instructor_first_names
-
-    fn()
+    main()
