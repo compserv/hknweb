@@ -115,6 +115,7 @@
         .search-panel-body {
             text-align: center;
             margin: 0;
+            margin-top: 1.5em;
             padding: 0.5em;
         }
 
@@ -124,7 +125,7 @@
             padding-top: 0;
             padding-bottom: 0;
             margin-top: 0;
-            max-height: 56vh;
+            max-height: 53vh;
             overflow: scroll;
         }
 
@@ -169,11 +170,31 @@
             width: 80%;
             margin: auto;
             margin-top: 0.5em;
+            margin-bottom: 1%;
             padding-left: 0.2em;
             padding-right: 0.2em;
             padding-top: 0.1em;
             padding-bottom: 0.1em;
             text-align: left;
+        }
+
+        .page-number-selector {
+            text-decoration: underline;
+            border: 0.1em solid gainsboro;
+            border-radius: 0.75em;
+            padding: 0;
+            font-size: 80%;
+            width: 30%;
+        }
+
+        .previous-page {
+            float: left;
+            margin-left: 2em;
+        }
+
+        .next-page {
+            float: right;
+            margin-right: 2em;
         }
 
     </style>
@@ -185,25 +206,24 @@
             height: 25vh;
             margin: auto;
             margin-left: 1%;
-            margin-bottom: 0.1em;
             width: 55vw;
             border-radius: 0.75em;
             text-align: center;
             position: relative;
             display: inline-block;
             float: none;
-            padding: 1em;
+            padding: 0;
         }
 
         .information-panel-header {
             font-size: 150%;
             text-align: center;
-            margin-right: 0;
+            margin: 1em;
         }
 
         .ratings-panel {
             box-shadow: 0 0 0.5em #252525;
-            height: 40vh;
+            height: 50vh;
             margin: auto;
             margin-top: 0;
             margin-left: 1%;
@@ -214,15 +234,16 @@
             position: relative;
             display: inline-block;
             float: none;
-            padding: 1em;
+            padding: 0;
         }
 
         .ratings-panel-header {
             font-size: 125%;
+            margin: 1em;
         }
 
         .ratings-panel-body {
-
+            margin: 1em;
         }
 
         .survey-number-navigator {
@@ -313,6 +334,11 @@
 
             document.getElementById("search-panel-list-course").style.display="block";
             document.getElementById("search-panel-list-instructor").style.display="none";
+
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set("search_by", "courses");
+            urlParams.delete("page_number");
+            window.location.search = urlParams;
         }
 
         function clickSearchByInstructor() {
@@ -321,6 +347,11 @@
 
             document.getElementById("search-panel-list-course").style.display="none";
             document.getElementById("search-panel-list-instructor").style.display="block";
+
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set("search_by", "instructors");
+            urlParams.delete("page_number");
+            window.location.search = urlParams;
         }
 
         function clickInformationInstructor(id) {
@@ -342,6 +373,12 @@
         function clickSurveyNumber(survey_number) {
             const urlParams = new URLSearchParams(window.location.search);
             urlParams.set("survey_number", survey_number);
+            window.location.search = urlParams;
+        }
+
+        function clickPageNumber(page_number) {
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set("page_number", page_number);
             window.location.search = urlParams;
         }
     </script>
@@ -422,25 +459,31 @@
     {% endif %}
 
     <!-- Course and instructor information panels -->
-    {% if courses is not None and instructors is not None %}
+    {% if courses is not None or instructors is not None %}
         <div>
             <div class="panel panel-primary search-panel">
                 <div class="panel-header search-panel-header">
                     Filter by: <br>
-                    <div class="search-panel-selection" id="search-panel-selection-course" onclick="clickSearchByCourse()" {% if not instructor %} style="font-weight: bold;" {% endif %}>
+                    <div class="search-panel-selection" id="search-panel-selection-course" onclick="clickSearchByCourse()" {% if courses %} style="font-weight: bold;" {% endif %}>
                         Course
                     </div>
                     /
-                    <div class="search-panel-selection" id="search-panel-selection-instructor" onclick="clickSearchByInstructor()" {% if instructor %} style="font-weight: bold" {% endif %}>
+                    <div class="search-panel-selection" id="search-panel-selection-instructor" onclick="clickSearchByInstructor()" {% if instructors %} style="font-weight: bold" {% endif %}>
                         Instructor
                     </div>
                     <br>
                     <div class="search-bar">
                         Search bar
                     </div>
+                    <div class="page-number-selector previous-page" {% if previous_page %} onClick="clickPageNumber({{ previous_page }})" {% else %} style="opacity: 0.6; text-decoration: none;" {% endif %}>
+                        Prev
+                    </div>
+                    <div class="page-number-selector next-page" {% if next_page %} onClick="clickPageNumber({{ next_page }})" {% else %} style="opacity: 0.6; text-decoration: none;" {% endif %}>
+                        Next
+                    </div>
                 </div>
                 <div class="panel-body search-panel-body">
-                    <ul class="search-panel-list" id="search-panel-list-course" {% if instructor %} style="display: none;" {% endif %}>
+                    <ul class="search-panel-list" id="search-panel-list-course" {% if not courses %} style="display: none;" {% endif %}>
                         {% for course in courses %}
                             <li class="search-panel-list-item" onclick="clickInformationCourse({{ course.id }})">
                                 <div class="search-panel-list-item-bubble">
@@ -452,7 +495,7 @@
                             </li>
                         {% endfor %}
                     </ul>
-                    <ul class="search-panel-list" id="search-panel-list-instructor"  {% if not instructor %} style="display: none;" {% endif %}>
+                    <ul class="search-panel-list" id="search-panel-list-instructor"  {% if not instructors %} style="display: none;" {% endif %}>
                         {% for instructor in instructors %}
                             <li class="search-panel-list-item" onclick="clickInformationInstructor({{ instructor.id }})">
                                 <div class="search-panel-list-item-bubble" style="padding-left: 20%; padding-right: 20%; width: 60%;">
@@ -495,12 +538,16 @@
 
             <div class="panel panel-primary ratings-panel">
                 <div class="panel-header ratings-panel-header">
-                    <div class="survey-number-navigator previous-survey" {% if previous_page %} onClick="clickSurveyNumber({{ previous_page }})" {% else %} style="opacity: 0.6; text-decoration: none;" {% endif %}>
-                        Prev
-                    </div>
+                    {% if course or instructor %}
+                        <div class="survey-number-navigator previous-survey" {% if previous_survey %} onClick="clickSurveyNumber({{ previous_survey }})" {% else %} style="opacity: 0.6; text-decoration: none;" {% endif %}>
+                            Prev
+                        </div>
+                    {% endif %}
                     {% if course %}
                         <div style="display: inline-block;">
-                            {{ survey.semester }}: {{ survey.num_students }} students ({{ survey.response_count }} responses)
+                            {{ survey.semester }} taught by <div style="text-decoration: underline; display: inline;" onclick="clickInformationInstructor({{ survey.instructor_id }})">{{ survey.instructor_name }}</div>
+                            <br>
+                            {{ survey.num_students }} students ({{ survey.response_count }} responses)
                         </div>
                     {% elif instructor %}
                         <div style="display: inline-block;">
@@ -509,31 +556,37 @@
                             {{ survey.num_students }} students ({{ survey.response_count }} responses)
                         </div>
                     {% endif %}
-                    <div class="survey-number-navigator next-survey" {% if next_page %} onClick="clickSurveyNumber({{ next_page }})" {% else %} style="opacity: 0.6; text-decoration: none;" {% endif %}>
-                        Next
-                    </div>
+                    {% if course or instructor %}
+                        <div class="survey-number-navigator next-survey" {% if next_survey %} onClick="clickSurveyNumber({{ next_survey }})" {% else %} style="opacity: 0.6; text-decoration: none;" {% endif %}>
+                            Next
+                        </div>
+                    {% endif %}
                 </div>
                 <div class="panel-body ratings-panel-body">
-                    <table class="ratings-table">
-                        <tr>
-                            <th style="width: 70%;">
-                                Question
-                            </th>
-                            <th style="width: 30%;">
-                                Rating
-                            </th>
-                        </tr>
-                        {% for rating in survey.ratings %}
+                    {% if survey.ratings %}
+                        <table class="ratings-table">
                             <tr>
-                                <td>
-                                    {{ rating.text }}
-                                </td>
-                                <td class="ratings-item-bubble" style="background-color: {{ rating.color }};">
-                                    {{ rating.value }} / {{ rating.max }}
-                                </td>
+                                <th style="width: 70%;">
+                                    Question
+                                </th>
+                                <th style="width: 30%;">
+                                    Rating
+                                </th>
                             </tr>
-                        {% endfor %}
-                    </table>
+                            {% for rating in survey.ratings %}
+                                <tr>
+                                    <td>
+                                        {{ rating.text }}
+                                    </td>
+                                    <td class="ratings-item-bubble" style="background-color: {{ rating.color }};">
+                                        {{ rating.value }} / {{ rating.max }}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    {% else %}
+                        Course survey information will appear here once a course or instructor is selected.
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -557,5 +610,17 @@
             No course surveys design pages at the moment! Check back later or contact HKN.
         {% endif %}
     </div>
+
+    <!-- Upload link -->
+    {% if upload_allowed %}
+        <div style="margin: auto; text-align: center; padding-top: 1.5%;">
+            <a href="{% url 'course_surveys:upload' %}">Upload</a> course surveys data
+        </div>
+    {% endif %}
+
+    <!-- Design credit -->
+    <h2 style="margin: auto; text-align: center; padding-top: 3%; color: grey; font-weight: normal;">
+        UI/UX designed by <a href="https://www.linkedin.com/in/dan-y-chu/" style="text-decoration: none;">Danny Chu</a>.
+    </h2>
 
 {% endblock %}

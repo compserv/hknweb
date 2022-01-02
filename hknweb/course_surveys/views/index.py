@@ -11,6 +11,7 @@ from hknweb.course_surveys.constants import (
     COLORS,
     COURSE_SURVEY_PREFIX,
     COURSE_SURVEY_TRANSPARENCY_PAGE_PATHS,
+    ITEMS_PER_PAGE,
 )
 
 
@@ -20,11 +21,27 @@ class IndexView(TemplateView):
     def get_context_data(self, **kwargs):
         context = {}
 
+        # Setup various attribute variables
         service = self.request.build_absolute_uri("?")
+        upload_allowed = self.request.user.has_perm(
+            "course_surveys.change_academicentity"
+        )
         cas_signed_in = self._validate_cas(service)
 
+        # Get pagination information
+        page_number = int(self.request.GET.get(Attr.PAGE_NUMBER, 1))
         survey_number = int(self.request.GET.get(Attr.SURVEY_NUMBER, 1))
 
+        # Retrieve courses and instructors for search panel
+        search_by = self.request.GET.get(Attr.SEARCH_BY, Attr.COURSES)
+        courses, _context = self._get_courses(cas_signed_in, search_by, page_number)
+        context = {**context, **_context}
+        instructors, _context = self._get_instructors(
+            cas_signed_in, search_by, page_number
+        )
+        context = {**context, **_context}
+
+        # Retrieve specific course or instructor based on query params
         course, _context = self._get_course(
             cas_signed_in,
             self.request.GET.get(Attr.COURSE, None),
@@ -39,16 +56,17 @@ class IndexView(TemplateView):
         )
         context = {**context, **_context}
 
-        context = {
+        # Create context and return
+        return {
             **context,
             Attr.PAGES: self._get_pages(),
+            Attr.UPLOAD_ALLOWED: upload_allowed,
             Attr.SERVICE: service,
-            Attr.COURSES: self._get_courses(cas_signed_in),
-            Attr.INSTRUCTORS: self._get_instructors(cas_signed_in),
+            Attr.COURSES: courses,
+            Attr.INSTRUCTORS: instructors,
             Attr.COURSE: course,
             Attr.INSTRUCTOR: instructor,
         }
-        return context
 
     def _validate_cas(self, service: str) -> bool:
         """
@@ -70,7 +88,6 @@ class IndexView(TemplateView):
         }
         response = requests.get(CAS.SERVICE_VALIDATE_URL, params=params)
         content = json.loads(response.content.decode("utf-8"))
-        print(content)
         response = content[CAS.SERVICE_RESPONSE]
 
         self.request.session[CAS.SIGNED_IN] = CAS.AUTHENTICATION_SUCCESS in response
@@ -78,35 +95,24 @@ class IndexView(TemplateView):
         return self.request.session[CAS.SIGNED_IN]
 
     @staticmethod
-    def _get_courses(cas_signed_in: bool):
-        if not cas_signed_in:
-            return None
+    def _get_courses(cas_signed_in: bool, search_by: str, page_number: int):
+        if not cas_signed_in or search_by != Attr.COURSES:
+            return None, {}
 
         courses = []
-        seen_courses = set()
-        for course in Course.objects.all():
-            if not course.icsr_course.exists():
-                continue
-
+        i_start, i_end = IndexView._get_start_end_indices(page_number)
+        for course in Course.objects.all()[i_start:i_end]:
             icsrs = course.icsr_course.filter(
                 section_number__exact="1", instructor_type__exact="Professor"
             )
             if not icsrs.exists():
-                continue
+                icsrs = course.icsr_course.all()
 
             most_recent_icsr = icsrs.latest(
                 "icsr_semester__year",
                 "-icsr_semester__year_section",
             )
 
-            key = "{dept} {number}".format(
-                dept=most_recent_icsr.icsr_department.abbr,
-                number=most_recent_icsr.course_number,
-            )
-            if key in seen_courses:
-                continue
-
-            seen_courses.add(key)
             courses.append(
                 {
                     Attr.DEPT: most_recent_icsr.icsr_department.abbr,
@@ -116,19 +122,18 @@ class IndexView(TemplateView):
                 }
             )
 
-        return courses
+        return courses, IndexView._get_pagination_info(
+            page_number, Course.objects.count()
+        )
 
     @staticmethod
-    def _get_instructors(cas_signed_in: bool):
-        if not cas_signed_in:
-            return None
+    def _get_instructors(cas_signed_in: bool, search_by: str, page_number: int):
+        if not cas_signed_in or search_by != Attr.INSTRUCTORS:
+            return None, {}
 
         instructors = []
-        seen_instructors = set()
-        for instructor in Instructor.objects.all():
-            if not instructor.icsr_instructor.exists():
-                continue
-
+        i_start, i_end = IndexView._get_start_end_indices(page_number)
+        for instructor in Instructor.objects.all()[i_start:i_end]:
             most_recent_icsr = instructor.icsr_instructor.latest(
                 "icsr_semester__year",
                 "-icsr_semester__year_section",
@@ -139,11 +144,6 @@ class IndexView(TemplateView):
                 last_name=most_recent_icsr.last_name,
             )
 
-            key = name
-            if key in seen_instructors:
-                continue
-
-            seen_instructors.add(key)
             instructors.append(
                 {
                     Attr.NAME: name,
@@ -151,7 +151,25 @@ class IndexView(TemplateView):
                 }
             )
 
-        return instructors
+        return instructors, IndexView._get_pagination_info(
+            page_number, Instructor.objects.count()
+        )
+
+    @staticmethod
+    def _get_start_end_indices(page_number: int):
+        i_start = ITEMS_PER_PAGE * (page_number - 1)
+        i_end = ITEMS_PER_PAGE * page_number
+
+        return i_start, i_end
+
+    @staticmethod
+    def _get_pagination_info(page_number: int, n: int):
+        return {
+            Attr.PREVIOUS_PAGE: page_number - 1 if page_number > 1 else None,
+            Attr.NEXT_PAGE: page_number + 1
+            if (page_number * ITEMS_PER_PAGE) < n
+            else None,
+        }
 
     @staticmethod
     def _get_pages():
@@ -182,7 +200,13 @@ class IndexView(TemplateView):
         icsrs = course.icsr_course.order_by(
             "-icsr_semester__year",
             "icsr_semester__year_section",
-        ).filter(section_number__exact="1", instructor_type__exact="Professor")
+        )
+        icsrs_filtered = icsrs.filter(
+            section_number__exact="1", instructor_type__exact="Professor"
+        )
+        if icsrs_filtered.exists():
+            icsrs = icsrs_filtered
+
         most_recent_icsr = icsrs.first()
 
         if survey_number > len(icsrs):
@@ -195,12 +219,9 @@ class IndexView(TemplateView):
             Attr.NAME: most_recent_icsr.course_name,
             Attr.ID: course.id,
         }
-        context = {
-            Attr.SURVEY: IndexView._get_survey(icsr),
-            Attr.PREVIOUS_PAGE: survey_number - 1 if survey_number > 1 else None,
-            Attr.NEXT_PAGE: survey_number + 1 if survey_number < len(icsrs) else None,
-        }
-        return course_context, context
+        return course_context, IndexView._get_survey_context(
+            icsr, len(icsrs), survey_number
+        )
 
     @staticmethod
     def _get_instructor(cas_signed_in, id, survey_number):
@@ -229,16 +250,36 @@ class IndexView(TemplateView):
             Attr.ID: instructor.instructor_id,
             Attr.INSTRUCTOR_TYPE: most_recent_icsr.instructor_type,
         }
-        context = {
+        return instructor_context, IndexView._get_survey_context(
+            icsr, len(icsrs), survey_number
+        )
+
+    @staticmethod
+    def _get_survey_context(icsr, n_icsrs, survey_number):
+        return {
             Attr.SURVEY: IndexView._get_survey(icsr),
-            Attr.PREVIOUS_PAGE: survey_number - 1 if survey_number > 1 else None,
-            Attr.NEXT_PAGE: survey_number + 1 if survey_number < len(icsrs) else None,
+            Attr.PREVIOUS_SURVEY: survey_number - 1 if survey_number > 1 else None,
+            Attr.NEXT_SURVEY: survey_number + 1 if survey_number < n_icsrs else None,
         }
-        return instructor_context, context
 
     @staticmethod
     def _get_survey(icsr):
         semester = icsr.icsr_semester
+        instructor = icsr.icsr_instructor
+
+        context = {
+            Attr.DEPT: icsr.icsr_department.abbr,
+            Attr.NUMBER: icsr.course_number,
+            Attr.COURSE_ID: icsr.icsr_course.id,
+            Attr.INSTRUCTOR_ID: instructor.instructor_id,
+            Attr.INSTRUCTOR_NAME: "%s %s" % (icsr.first_name, icsr.last_name),
+            Attr.SECTION_NUMBER: icsr.section_number,
+            Attr.SEMESTER: semester.year_section + str(semester.year)[-2:],
+            Attr.INSTRUCTOR_TYPE: icsr.instructor_type,
+            Attr.RATINGS: None,
+        }
+        if not icsr.survey_icsr.exists():
+            return context
         survey = icsr.survey_icsr.first()
 
         ratings = []
@@ -266,12 +307,7 @@ class IndexView(TemplateView):
             )
 
         return {
-            Attr.DEPT: icsr.icsr_department.abbr,
-            Attr.NUMBER: icsr.course_number,
-            Attr.COURSE_ID: icsr.icsr_course.id,
-            Attr.SECTION_NUMBER: icsr.section_number,
-            Attr.SEMESTER: semester.year_section + str(semester.year)[-2:],
-            Attr.INSTRUCTOR_TYPE: icsr.instructor_type,
+            **context,
             Attr.NUM_STUDENTS: survey.num_students,
             Attr.RESPONSE_COUNT: survey.response_count,
             Attr.RATINGS: ratings,
