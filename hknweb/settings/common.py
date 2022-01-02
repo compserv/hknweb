@@ -278,3 +278,9 @@ MARKDOWNIFY_WHITELIST_ATTRS = [
     "alt",
     "class",
 ]
+
+# djangorestframework settings
+REST_FRAMEWORK = {
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 10,
+}
