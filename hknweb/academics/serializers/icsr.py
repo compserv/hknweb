@@ -7,6 +7,7 @@ from hknweb.academics.models import (
     Semester,
     ICSR,
 )
+from hknweb.academics.serializers.course_surveys.survey import SurveySerializer
 
 
 class ICSRSerializer(serializers.HyperlinkedModelSerializer):
@@ -23,6 +24,8 @@ class ICSRSerializer(serializers.HyperlinkedModelSerializer):
         view_name="academics:semester-detail", queryset=Semester.objects.all()
     )
 
+    survey_icsr = SurveySerializer(many=True, read_only=True)
+
     class Meta:
         model = ICSR
         fields = [
@@ -38,6 +41,7 @@ class ICSRSerializer(serializers.HyperlinkedModelSerializer):
             "course_number",
             "section_number",
             "instructor_type",
+            "survey_icsr",
         ]
         extra_kwargs = {
             "url": {"view_name": "academics:icsr-detail"},
