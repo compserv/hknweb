@@ -5,10 +5,13 @@ class Attr:
     COURSE_SURVEYS_CSV = "course_surveys_csv"
     COURSES = "courses"
     DEPT = "dept"
+    EXISTING_INSTRUCTORS = "existing_instructors"
+    EXISTING_QUESTIONS = "existing_questions"
     FORMAT = "format"
     ID = "id"
     INSTRUCTOR = "instructor"
     INSTRUCTOR_ID = "instructor_id"
+    INSTRUCTOR_IDS = "instructor_ids"
     INSTRUCTOR_NAME = "instructor_name"
     INSTRUCTOR_TYPE = "instructor_type"
     INSTRUCTORS = "instructors"
@@ -18,6 +21,7 @@ class Attr:
     NEXT_SURVEY = "next_survey"
     NUM_STUDENTS = "num_students"
     NUMBER = "number"
+    QUESTION_IDS = "question_ids"
     PATH = "path"
     PAGE_NUMBER = "page_number"
     PAGES = "pages"
@@ -52,6 +56,7 @@ COURSE_SURVEY_TRANSPARENCY_PAGE_PATHS = [
 
 COURSE_SURVEY_PREFIX = "Course surveys "
 ITEMS_PER_PAGE = 10
+COURSE_SURVEYS_EDIT_PERMISSION = "academics.change_academicentity"
 
 
 class CAS:

@@ -112,6 +112,10 @@
             width: 30%;
         }
 
+        .search-panel-selection:hover {
+            cursor: pointer;
+        }
+
         .search-panel-body {
             text-align: center;
             margin: 0;
@@ -137,6 +141,10 @@
             border: 0.1em solid gainsboro;
             border-bottom: none;
             height: 1.75em;
+        }
+
+        .search-panel-list-item:hover {
+            cursor: pointer;
         }
 
         .search-panel-list-item-bubble {
@@ -185,6 +193,10 @@
             padding: 0;
             font-size: 80%;
             width: 30%;
+        }
+
+        .page-number-selector:hover {
+            cursor: pointer;
         }
 
         .previous-page {
@@ -253,6 +265,10 @@
             padding: 0.2em;
         }
 
+        .survey-number-navigator:hover {
+            cursor: pointer;
+        }
+
         .previous-survey {
             float: left;
         }
@@ -270,6 +286,10 @@
         .ratings-item-bubble {
             border-radius: 1em;
             color: white;
+        }
+
+        .related-link:hover {
+            cursor: pointer;
         }
 
     </style>
@@ -545,13 +565,13 @@
                     {% endif %}
                     {% if course %}
                         <div style="display: inline-block;">
-                            {{ survey.semester }} taught by <div style="text-decoration: underline; display: inline;" onclick="clickInformationInstructor({{ survey.instructor_id }})">{{ survey.instructor_name }}</div>
+                            {{ survey.semester }} taught by <div class="related-link" style="text-decoration: underline; display: inline;" onclick="clickInformationInstructor({{ survey.instructor_id }})">{{ survey.instructor_name }}</div>
                             <br>
                             {{ survey.num_students }} students ({{ survey.response_count }} responses)
                         </div>
                     {% elif instructor %}
                         <div style="display: inline-block;">
-                            {{ survey.semester }} as a {{ instructor.instructor_type }} for <div style="text-decoration: underline; display: inline;" onclick="clickInformationCourse({{ survey.course_id }})">{{ survey.dept }} {{ survey.number }}</div>
+                            {{ survey.semester }} as a {{ instructor.instructor_type }} for <div class="related-link" style="text-decoration: underline; display: inline;" onclick="clickInformationCourse({{ survey.course_id }})">{{ survey.dept }} {{ survey.number }}</div>
                             <br>
                             {{ survey.num_students }} students ({{ survey.response_count }} responses)
                         </div>
