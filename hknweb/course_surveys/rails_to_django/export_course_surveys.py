@@ -317,34 +317,31 @@ def combine_surveys():
     icsrs = icsrs_response["results"]
 
     i = 0
+    start_time = time.time()
     while True:
-        start_time = time.time()
         for icsr in icsrs:
             surveys = icsr["survey_icsr"]
-            if len(surveys) == 0:
-                i += 1
-                continue
+            if len(surveys) != 0:
+                base_survey_url = surveys[0]["url"].replace("http", "https")
 
-            base_survey_url = surveys[0]["url"].replace("http", "https")
+                for survey in surveys[1:]:
+                    survey_url = survey["url"].replace("http", "https")
+                    ratings = survey["rating_survey"]
 
-            for survey in surveys[1:]:
-                survey_url = survey["url"].replace("http", "https")
-                ratings = survey["rating_survey"]
+                    for rating in ratings:
+                        rating_url = rating["url"].replace("http", "https")
+                        data = {
+                            "rating_survey": base_survey_url,
+                        }
+                        redirect_rating_response = requests.patch(
+                            rating_url, auth=AUTHENTICATION, data=data
+                        )
+                        assert redirect_rating_response.ok, redirect_rating_response.content
 
-                for rating in ratings:
-                    rating_url = rating["url"].replace("http", "https")
-                    data = {
-                        "rating_survey": base_survey_url,
-                    }
-                    redirect_rating_response = requests.patch(
-                        rating_url, auth=AUTHENTICATION, data=data
+                    delete_survey_response = requests.delete(
+                        survey_url, auth=AUTHENTICATION
                     )
-                    assert redirect_rating_response.ok, redirect_rating_response.content
-
-                delete_survey_response = requests.delete(
-                    survey_url, auth=AUTHENTICATION
-                )
-                assert delete_survey_response.ok, delete_survey_response.content
+                    assert delete_survey_response.ok, delete_survey_response.content
 
             print_update(i, icsrs_response["count"], start_time, "Processing icsr")
             i += 1
