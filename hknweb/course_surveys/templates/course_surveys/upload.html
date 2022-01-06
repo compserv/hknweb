@@ -24,9 +24,8 @@
             position: relative;
         }
 
-        .next-button {
+        .navigation-button {
             position: absolute;
-            right: 1em;
             bottom: 1em;
             font-size: 110%;
             border-radius: 0.8em;
@@ -36,8 +35,16 @@
             background: #DFF5FF;
         }
 
-        .next-button:hover {
+        .navigation-button:hover {
             cursor: pointer;
+        }
+
+        .back-button {
+            left: 1em;
+        }
+
+        .next-button {
+            right: 1em;
         }
 
     </style>
@@ -146,140 +153,162 @@
     </h1>
 
     <div class="panel panel-primary main-panel">
-        {% if status != "finished" %}
-            <div>
-                {% if status == "upload" %}
-                    <div class="upload-instructions">
-                        <div style="font-weight: bold;">
-                            Directions
+        <div>
+            {% if status == "upload" %}
+                <div class="upload-instructions">
+                    <div style="font-weight: bold;">
+                        Directions
+                    </div>
+                    <br>
+                    <div style="text-align: left;">
+                        There are four stages to uploading course surveys data.
+                        <ol>
+                            <li>
+                                Uploading a CSV and selecting the columns
+                            </li>
+                            <li>
+                                Merging in any new questions
+                            </li>
+                            <li>
+                                Merging in any new instructors
+                            </li>
+                            <li>
+                                Wait for changes to be applied
+                            </li>
+                        </ol>
+                        You can merge questions and instructors without having to upload a CSV by clicking the "Next" button.
+                    </div>
+                </div>
+
+                {% for message in messages %}
+                    <span {% if message.tags == "success" %} style="color: blue;" {% else %} style="color: red;" {% endif %}>
+                        {{ message }}
+                    </span>
+                {% endfor %}
+                <form action="{% url 'course_surveys:upload_csv' %}" method="post" enctype="multipart/form-data" onsubmit="submit_button.disabled = true; return true;">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.path }}">
+                    <input class="upload-csv" type="file" name="course_surveys_csv" />
+                    <input class="merge-button" type="submit" name="submit_button" value="Upload CSV" />
+                </form>
+            {% elif status == "questions"%}
+                <div class="merge-instructions">
+                    Check if any of the new questions have similar question text as existing questions. If they do, merge them together!
+                </div>
+
+                <form>
+                    <div class="panel panel-primary merge-panel new-merge-panel">
+                        <div class="panel-header" style="font-weight: bold;">
+                            New questions
                         </div>
-                        <br>
-                        <div style="text-align: left;">
-                            Insert directions here blah blah blah
+                        <div class="panel-body">
+                            {% if new_questions %}
+                                <ul class="object-list">
+                                    {% for q in new_questions %}
+                                    <li class="object-list-item">
+                                        <input type="checkbox" value={{ q.id }}> {{ q.text }}
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                No new questions!
+                            {% endif %}
                         </div>
                     </div>
 
-                    {% for message in messages %}
-                        <span {% if message.tags == "success" %} style="color: blue;" {% else %} style="color: red;" {% endif %}>
-                            {{ message }}
-                        </span>
-                    {% endfor %}
-                    <form action="{% url 'course_surveys:upload_csv' %}" method="post" enctype="multipart/form-data" onsubmit="submit_button.disabled = true; return true;">
-                        {% csrf_token %}
-                        <input type="hidden" name="next" value="{{ request.path }}">
-                        <input class="upload-csv" type="file" name="course_surveys_csv" />
-                        <input class="merge-button" type="submit" name="submit_button" value="Upload CSV" />
-                    </form>
-                {% elif status == "questions"%}
-                    <div class="merge-instructions">
-                        Check if any of the new questions have similar question text as existing questions. If they do, merge them together!
+                    <div class="panel panel-primary merge-panel existing-merge-panel">
+                        <div class="panel-header" style="font-weight: bold;">
+                            Existing questions
+                        </div>
+                        <div class="panel-body">
+                            {% if existing_questions %}
+                                <ul class="object-list">
+                                    {% for q in existing_questions %}
+                                    <li class="object-list-item">
+                                        <input type="checkbox" value={{ q.id }}> {{ q.text }}
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                No existing questions!
+                            {% endif %}
+                        </div>
                     </div>
 
-                    <form>
-                        <div class="panel panel-primary merge-panel new-merge-panel">
-                            <div class="panel-header" style="font-weight: bold;">
-                                New questions
-                            </div>
-                            <div class="panel-body">
-                                {% if new_questions %}
-                                    <ul class="object-list">
-                                        {% for q in new_questions %}
+                    {% if new_questions or existing_questions %}
+                        <input class="merge-button" type="button" value="Merge selected questions" onclick="mergeObjects('{% url 'course_surveys:merge_questions' %}', 'question_ids')">
+                    {% endif %}
+                </form>
+            {% elif status == "instructors"%}
+                <div class="merge-instructions">
+                    Check if any of the new instructors have similar names as existing instructors. If they do, merge them together!
+                </div>
+
+                <form>
+                    <div class="panel panel-primary merge-panel new-merge-panel">
+                        <div class="panel-header" style="font-weight: bold;">
+                            New instructors
+                        </div>
+                        <div class="panel-body">
+                            {% if new_instructors %}
+                                <ul class="object-list">
+                                    {% for i in new_instructors %}
                                         <li class="object-list-item">
-                                            <input type="checkbox" value={{ q.id }}> {{ q.text }}
+                                            <input type="checkbox" value={{ i.id }}> {{ i.name }}
                                         </li>
-                                        {% endfor %}
-                                    </ul>
-                                {% else %}
-                                    No new questions!
-                                {% endif %}
-                            </div>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                No new instructors!
+                            {% endif %}
                         </div>
-
-                        <div class="panel panel-primary merge-panel existing-merge-panel">
-                            <div class="panel-header" style="font-weight: bold;">
-                                Existing questions
-                            </div>
-                            <div class="panel-body">
-                                {% if existing_questions %}
-                                    <ul class="object-list">
-                                        {% for q in existing_questions %}
-                                        <li class="object-list-item">
-                                            <input type="checkbox" value={{ q.id }}> {{ q.text }}
-                                        </li>
-                                        {% endfor %}
-                                    </ul>
-                                {% else %}
-                                    No existing questions!
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        {% if new_questions or existing_questions %}
-                            <input class="merge-button" type="button" value="Merge selected questions" onclick="mergeObjects('{% url 'course_surveys:merge_questions' %}', 'question_ids')">
-                        {% endif %}
-                    </form>
-                {% elif status == "instructors"%}
-                    <div class="merge-instructions">
-                        Check if any of the new instructors have similar names as existing instructors. If they do, merge them together!
                     </div>
 
-                    <form>
-                        <div class="panel panel-primary merge-panel new-merge-panel">
-                            <div class="panel-header" style="font-weight: bold;">
-                                New instructors
-                            </div>
-                            <div class="panel-body">
-                                {% if new_instructors %}
-                                    <ul class="object-list">
-                                        {% for i in new_instructors %}
-                                            <li class="object-list-item">
-                                                <input type="checkbox" value={{ i.id }}> {{ i.name }}
-                                            </li>
-                                        {% endfor %}
-                                    </ul>
-                                {% else %}
-                                    No new instructors!
-                                {% endif %}
-                            </div>
+                    <div class="panel panel-primary merge-panel existing-merge-panel">
+                        <div class="panel-header" style="font-weight: bold;">
+                            Existing instructors
                         </div>
-
-                        <div class="panel panel-primary merge-panel existing-merge-panel">
-                            <div class="panel-header" style="font-weight: bold;">
-                                Existing instructors
-                            </div>
-                            <div class="panel-body">
-                                {% if existing_instructors %}
-                                    <ul class="object-list">
-                                        {% for i in existing_instructors %}
-                                            <li class="object-list-item">
-                                                <input type="checkbox" value={{ i.id }}> {{ i.name }}
-                                            </li>
-                                        {% endfor %}
-                                    </ul>
-                                {% else %}
-                                    No existing instructors!
-                                {% endif %}
-                            </div>
+                        <div class="panel-body">
+                            {% if existing_instructors %}
+                                <ul class="object-list">
+                                    {% for i in existing_instructors %}
+                                        <li class="object-list-item">
+                                            <input type="checkbox" value={{ i.id }}> {{ i.name }}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                No existing instructors!
+                            {% endif %}
                         </div>
+                    </div>
 
-                        {% if new_instructors or existing_instructors %}
-                            <input class="merge-button" type="button" value="Merge selected instructors" onclick="mergeObjects('{% url 'course_surveys:merge_instructors' %}', 'instructor_ids')">
-                        {% endif %}
-                    </form>
-                {% endif %}
-            </div>
+                    {% if new_instructors or existing_instructors %}
+                        <input class="merge-button" type="button" value="Merge selected instructors" onclick="mergeObjects('{% url 'course_surveys:merge_instructors' %}', 'instructor_ids')">
+                    {% endif %}
+                </form>
+            {% elif status == "finished" %}
+                <div class="finished-message">
+                    Successfully uploaded course surveys!
+                    <br>
+                    You can go back and make changes by clicking the "Back" button.
+                </div>
+            {% endif %}
+        </div>
 
-            <form action="{% url 'course_surveys:upload' %}" method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                <input type="hidden" name="status" value="{{ status }}">
+        <form action="{% url 'course_surveys:upload' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="status" value="{{ status }}">
+            <input type="hidden" name="previous_status" value="{{ previous_status }}">
+            <input type="hidden" name="next_status" value="{{ next_status }}">
 
-                <input class="next-button" type="submit" value="Next" />
-            </form>
-        {% else %}
-            <div class="finished-message">
-                Successfully uploaded course surveys!
-            </div>
-        {% endif %}
+            {% if previous_status %}
+                <input class="navigation-button back-button" name="back" type="submit" value="Back" />
+            {% endif %}
+            {% if next_status %}
+                <input class="navigation-button next-button" name="next" type="submit" value="Next" />
+            {% endif %}
+        </form>
     </div>
 
     <!-- Design credit -->

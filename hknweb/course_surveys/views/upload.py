@@ -20,17 +20,22 @@ class UploadView(TemplateView):
         return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        context = {}
+        current_status = self.request.POST.get(Attr.STATUS, UploadStages.UPLOAD)
 
-        status = self.request.POST.get(Attr.STATUS, UploadStages.UPLOAD)
-        if status == UploadStages.UPLOAD:
-            context = self._present_upload()
-        elif status == UploadStages.QUESTIONS:
-            context = self._present_questions()
-        elif status == UploadStages.INSTRUCTORS:
-            context = self._present_instructors()
-        elif status == UploadStages.FINISHED:
-            context = self._finished()
+        status = current_status
+        if self.request.POST.get(Attr.NEXT, None):
+            status = self.request.POST.get(Attr.NEXT_STATUS)
+        elif self.request.POST.get(Attr.BACK, None):
+            status = self.request.POST.get(Attr.PREVIOUS_STATUS)
+
+        status_fn_mapping = {
+            UploadStages.UPLOAD: self._present_upload,
+            UploadStages.QUESTIONS: self._present_questions,
+            UploadStages.INSTRUCTORS: self._present_instructors,
+            UploadStages.FINISHED: self._finished,
+        }
+        fn = status_fn_mapping.get(status, None)
+        context = fn() if fn is not None else {}
 
         return context
 

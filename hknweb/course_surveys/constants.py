@@ -1,4 +1,5 @@
 class Attr:
+    BACK = "back"
     COLOR = "color"
     COURSE = "course"
     COURSE_ID = "course_id"
@@ -17,7 +18,9 @@ class Attr:
     INSTRUCTORS = "instructors"
     MAX = "max"
     NAME = "name"
+    NEXT = "next"
     NEXT_PAGE = "next_page"
+    NEXT_STATUS = "next_status"
     NEXT_SURVEY = "next_survey"
     NUM_STUDENTS = "num_students"
     NUMBER = "number"
@@ -26,6 +29,7 @@ class Attr:
     PAGE_NUMBER = "page_number"
     PAGES = "pages"
     PREVIOUS_PAGE = "previous_page"
+    PREVIOUS_STATUS = "previous_status"
     PREVIOUS_SURVEY = "previous_survey"
     RATINGS = "ratings"
     RESPONSE_COUNT = "response_count"
@@ -84,16 +88,24 @@ class UploadStageInfo:
     UPLOAD = {
         Attr.TITLE: "Upload CSV",
         Attr.STATUS: UploadStages.UPLOAD,
+        Attr.PREVIOUS_STATUS: None,
+        Attr.NEXT_STATUS: UploadStages.QUESTIONS,
     }
     QUESTIONS = {
         Attr.TITLE: "Merge questions",
         Attr.STATUS: UploadStages.QUESTIONS,
+        Attr.PREVIOUS_STATUS: UploadStages.UPLOAD,
+        Attr.NEXT_STATUS: UploadStages.INSTRUCTORS,
     }
     INSTRUCTORS = {
         Attr.TITLE: "Merge instructors",
         Attr.STATUS: UploadStages.INSTRUCTORS,
+        Attr.PREVIOUS_STATUS: UploadStages.QUESTIONS,
+        Attr.NEXT_STATUS: UploadStages.FINISHED,
     }
     FINISHED = {
         Attr.TITLE: "Upload finished!",
         Attr.STATUS: UploadStages.FINISHED,
+        Attr.PREVIOUS_STATUS: UploadStages.INSTRUCTORS,
+        Attr.NEXT_STATUS: None,
     }
