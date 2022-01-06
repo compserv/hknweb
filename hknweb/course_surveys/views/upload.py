@@ -1,5 +1,3 @@
-import csv
-
 from django.views.generic import TemplateView
 
 
@@ -26,26 +24,20 @@ class UploadView(TemplateView):
 
         status = self.request.POST.get(Attr.STATUS, UploadStages.UPLOAD)
         if status == UploadStages.UPLOAD:
-            context = self._do_upload()
+            context = self._present_upload()
         elif status == UploadStages.QUESTIONS:
-            context = self._do_merge_questions()
+            context = self._present_questions()
         elif status == UploadStages.INSTRUCTORS:
-            context = self._do_merge_instructors()
+            context = self._present_instructors()
         elif status == UploadStages.FINISHED:
-            context = self._do_finished()
+            context = self._finished()
 
         return context
 
-    def _do_upload(self):
-        cs_csv = self.request.FILES.get(Attr.COURSE_SURVEYS_CSV, None)
-        if cs_csv is None:
-            return UploadStageInfo.UPLOAD
+    def _present_upload(self):
+        return UploadStageInfo.UPLOAD
 
-        decoded_cs_csv = cs_csv.read().decode("utf-8").splitlines()
-        cs_csv = csv.DictReader(decoded_cs_csv)
-
-        # blah blah blah csv stuff
-
+    def _present_questions(self):
         existing_questions = []
         for q in Question.objects.all():
             most_recent_rating = q.rating_question.latest(
@@ -64,7 +56,7 @@ class UploadView(TemplateView):
             Attr.EXISTING_QUESTIONS: existing_questions,
         }
 
-    def _do_merge_questions(self):
+    def _present_instructors(self):
         existing_instructors = []
         for i in Instructor.objects.all():
             most_recent_icsr = i.icsr_instructor.latest(
@@ -85,8 +77,5 @@ class UploadView(TemplateView):
             Attr.EXISTING_INSTRUCTORS: existing_instructors,
         }
 
-    def _do_merge_instructors(self):
-        return UploadStageInfo.FINISHED
-
-    def _do_finished(self):
+    def _finished(self):
         return UploadStageInfo.FINISHED

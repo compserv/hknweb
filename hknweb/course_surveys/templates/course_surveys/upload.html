@@ -109,10 +109,6 @@
             cursor: pointer;
         }
 
-        .instructors-instructions {
-
-        }
-
     </style>
 
     <!-- Status: finished -->
@@ -162,6 +158,18 @@
                             Insert directions here blah blah blah
                         </div>
                     </div>
+
+                    {% for message in messages %}
+                        <span {% if message.tags == "success" %} style="color: blue;" {% else %} style="color: red;" {% endif %}>
+                            {{ message }}
+                        </span>
+                    {% endfor %}
+                    <form action="{% url 'course_surveys:upload_csv' %}" method="post" enctype="multipart/form-data" onsubmit="submit_button.disabled = true; return true;">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ request.path }}">
+                        <input class="upload-csv" type="file" name="course_surveys_csv" />
+                        <input class="merge-button" type="submit" name="submit_button" value="Upload CSV" />
+                    </form>
                 {% elif status == "questions"%}
                     <div class="merge-instructions">
                         Check if any of the new questions have similar question text as existing questions. If they do, merge them together!
@@ -264,10 +272,6 @@
             <form action="{% url 'course_surveys:upload' %}" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <input type="hidden" name="status" value="{{ status }}">
-
-                {% if status == "upload" %}
-                    <input class="upload-csv" type="file" name="course_surveys_csv"/>
-                {% endif %}
 
                 <input class="next-button" type="submit" value="Next" />
             </form>
