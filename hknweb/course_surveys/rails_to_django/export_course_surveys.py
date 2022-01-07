@@ -336,7 +336,9 @@ def combine_surveys():
                         redirect_rating_response = requests.patch(
                             rating_url, auth=AUTHENTICATION, data=data
                         )
-                        assert redirect_rating_response.ok, redirect_rating_response.content
+                        assert (
+                            redirect_rating_response.ok
+                        ), redirect_rating_response.content
 
                     delete_survey_response = requests.delete(
                         survey_url, auth=AUTHENTICATION

@@ -26,5 +26,7 @@ def upload_csv(request):
 
     # blah blah blah csv stuff
 
-    messages.success(request, "Successfully uploaded CSV! Currently this doesn't do anything...")
+    messages.success(
+        request, "Successfully uploaded CSV! Currently this doesn't do anything..."
+    )
     return redirect(next_page)
