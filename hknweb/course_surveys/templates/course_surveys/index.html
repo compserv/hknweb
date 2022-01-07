@@ -256,6 +256,8 @@
 
         .ratings-panel-body {
             margin: 1em;
+            overflow: scroll;
+            height: 40vh;
         }
 
         .survey-number-navigator {
@@ -567,13 +569,17 @@
                         <div style="display: inline-block;">
                             {{ survey.semester }} taught by <div class="related-link" style="text-decoration: underline; display: inline;" onclick="clickInformationInstructor({{ survey.instructor_id }})">{{ survey.instructor_name }}</div>
                             <br>
-                            {{ survey.num_students }} students ({{ survey.response_count }} responses)
+                            {% if survey.ratings %}
+                                {{ survey.num_students }} students ({{ survey.response_count }} responses)
+                            {% endif %}
                         </div>
                     {% elif instructor %}
                         <div style="display: inline-block;">
                             {{ survey.semester }} as a {{ instructor.instructor_type }} for <div class="related-link" style="text-decoration: underline; display: inline;" onclick="clickInformationCourse({{ survey.course_id }})">{{ survey.dept }} {{ survey.number }}</div>
                             <br>
-                            {{ survey.num_students }} students ({{ survey.response_count }} responses)
+                            {% if survey.ratings %}
+                                {{ survey.num_students }} students ({{ survey.response_count }} responses)
+                            {% endif %}
                         </div>
                     {% endif %}
                     {% if course or instructor %}
@@ -604,6 +610,8 @@
                                 </tr>
                             {% endfor %}
                         </table>
+                    {% elif survey and not survey.ratings %}
+                        No ratings from this semester
                     {% else %}
                         Course survey information will appear here once a course or instructor is selected.
                     {% endif %}
