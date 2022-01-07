@@ -310,43 +310,52 @@ def fill_missing_instructor_first_names():
 
 
 def combine_surveys():
-    url = WEBSITE_BASE_URL + DJANGO.Rating.api_url
-    ratings_response = requests.get(url, auth=AUTHENTICATION)
-    assert ratings_response.ok, ratings_response.content
+    url = WEBSITE_BASE_URL + DJANGO.ICSR.api_url
+    icsrs_response = requests.get(url, auth=AUTHENTICATION)
+    assert icsrs_response.ok, icsrs_response.content
+    icsrs_response = json.loads(icsrs_response.content)
+    icsrs = icsrs_response["results"]
 
+    i = 0
     start_time = time.time()
-    mappings = defaultdict(list)
-    ratings = json.loads(ratings_response.content)
-    for i, rating in enumerate(ratings):
-        survey_response = requests.get(rating["rating_survey"], auth=AUTHENTICATION)
-        assert survey_response.ok, survey_response.content
+    while True:
+        for icsr in icsrs:
+            surveys = icsr["survey_icsr"]
+            if len(surveys) != 0:
+                base_survey_url = surveys[0]["url"].replace("http", "https")
 
-        survey = json.loads(survey_response.content)
-        icsr = survey["survey_icsr"]
+                for survey in surveys[1:]:
+                    survey_url = survey["url"].replace("http", "https")
+                    ratings = survey["rating_survey"]
 
-        mappings[icsr].append((survey["url"], rating["url"]))
-        print_update(i, len(ratings), start_time, "Loading rating")
-    print()
+                    for rating in ratings:
+                        rating_url = rating["url"].replace("http", "https")
+                        data = {
+                            "rating_survey": base_survey_url,
+                        }
+                        redirect_rating_response = requests.patch(
+                            rating_url, auth=AUTHENTICATION, data=data
+                        )
+                        assert (
+                            redirect_rating_response.ok
+                        ), redirect_rating_response.content
 
-    start_time = time.time()
-    for i, s_r_tuple in enumerate(mappings.values()):
-        base_survey = s_r_tuple[0][0]
-        for survey, rating in s_r_tuple[1:]:
-            if survey == base_survey:
-                continue
+                    delete_survey_response = requests.delete(
+                        survey_url, auth=AUTHENTICATION
+                    )
+                    assert delete_survey_response.ok, delete_survey_response.content
 
-            data = {
-                "rating_survey": base_survey,
-            }
-            redirect_rating_response = requests.patch(
-                rating, auth=AUTHENTICATION, data=data
-            )
-            assert redirect_rating_response.ok, redirect_rating_response.content
+            print_update(i, icsrs_response["count"], start_time, "Processing icsr")
+            i += 1
 
-            delete_survey_response = requests.delete(survey, auth=AUTHENTICATION)
-            assert delete_survey_response.ok, delete_survey_response.content
+        if not icsrs_response["next"]:
+            break
 
-        print_update(i, len(mappings), start_time, "Combined survey")
+        url = icsrs_response["next"].replace("http", "https")
+        icsrs_response = requests.get(url, auth=AUTHENTICATION)
+        assert icsrs_response.ok, icsrs_response.content
+        icsrs_response = json.loads(icsrs_response.content)
+        icsrs = icsrs_response["results"]
     print()
 
 

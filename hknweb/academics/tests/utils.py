@@ -113,7 +113,7 @@ class ModelFactory:
             "first_name": "default first_name",
             "last_name": "default last_name",
             "course_number": "default course_number",
-            "section_type": "default section_type",
+            "course_name": "default course_name",
             "section_number": "default section_number",
             "instructor_type": "default instructor_type",
         }

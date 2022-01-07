@@ -301,7 +301,7 @@ class IndexView(TemplateView):
                 {
                     Attr.TEXT: rating.question_text,
                     Attr.MAX: rating.range_max,
-                    Attr.VALUE: rating.rating_value,
+                    Attr.VALUE: round(rating.rating_value, 2),
                     Attr.COLOR: color,
                 }
             )

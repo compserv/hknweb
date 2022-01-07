@@ -1,27 +1,35 @@
 class Attr:
+    BACK = "back"
     COLOR = "color"
     COURSE = "course"
     COURSE_ID = "course_id"
     COURSE_SURVEYS_CSV = "course_surveys_csv"
     COURSES = "courses"
     DEPT = "dept"
+    EXISTING_INSTRUCTORS = "existing_instructors"
+    EXISTING_QUESTIONS = "existing_questions"
     FORMAT = "format"
     ID = "id"
     INSTRUCTOR = "instructor"
     INSTRUCTOR_ID = "instructor_id"
+    INSTRUCTOR_IDS = "instructor_ids"
     INSTRUCTOR_NAME = "instructor_name"
     INSTRUCTOR_TYPE = "instructor_type"
     INSTRUCTORS = "instructors"
     MAX = "max"
     NAME = "name"
+    NEXT = "next"
     NEXT_PAGE = "next_page"
+    NEXT_STATUS = "next_status"
     NEXT_SURVEY = "next_survey"
     NUM_STUDENTS = "num_students"
     NUMBER = "number"
+    QUESTION_IDS = "question_ids"
     PATH = "path"
     PAGE_NUMBER = "page_number"
     PAGES = "pages"
     PREVIOUS_PAGE = "previous_page"
+    PREVIOUS_STATUS = "previous_status"
     PREVIOUS_SURVEY = "previous_survey"
     RATINGS = "ratings"
     RESPONSE_COUNT = "response_count"
@@ -52,6 +60,7 @@ COURSE_SURVEY_TRANSPARENCY_PAGE_PATHS = [
 
 COURSE_SURVEY_PREFIX = "Course surveys "
 ITEMS_PER_PAGE = 10
+COURSE_SURVEYS_EDIT_PERMISSION = "academics.change_academicentity"
 
 
 class CAS:
@@ -79,16 +88,24 @@ class UploadStageInfo:
     UPLOAD = {
         Attr.TITLE: "Upload CSV",
         Attr.STATUS: UploadStages.UPLOAD,
+        Attr.PREVIOUS_STATUS: None,
+        Attr.NEXT_STATUS: UploadStages.QUESTIONS,
     }
     QUESTIONS = {
         Attr.TITLE: "Merge questions",
         Attr.STATUS: UploadStages.QUESTIONS,
+        Attr.PREVIOUS_STATUS: UploadStages.UPLOAD,
+        Attr.NEXT_STATUS: UploadStages.INSTRUCTORS,
     }
     INSTRUCTORS = {
         Attr.TITLE: "Merge instructors",
         Attr.STATUS: UploadStages.INSTRUCTORS,
+        Attr.PREVIOUS_STATUS: UploadStages.QUESTIONS,
+        Attr.NEXT_STATUS: UploadStages.FINISHED,
     }
     FINISHED = {
         Attr.TITLE: "Upload finished!",
         Attr.STATUS: UploadStages.FINISHED,
+        Attr.PREVIOUS_STATUS: UploadStages.INSTRUCTORS,
+        Attr.NEXT_STATUS: None,
     }
