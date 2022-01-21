@@ -4,6 +4,10 @@ hknweb
 Welcome! This is the in-progress redesign for the HKN (Mu Chapter) website,
 built with Django.
 
+**`Mac M1 users or ARM computers`: VirtualBox will not work on the ARM architecture, including M1. Docker using Vagrant exists but currently is not supported and tested.**
+
+**For now, you can create a venv Virtual Environment without the use of a Virtual Machine. Simply follow all the below instructions and ignore any `vagrant ...` commands.**
+
 ## Setup (Quick)
 
 This approach is simpler if you are new to developing software.
