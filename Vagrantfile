@@ -64,7 +64,6 @@ Vagrant.configure("2") do |config|
     ln -fs /usr/share/zoneinfo/US/Pacific /etc/localtime
     dpkg-reconfigure -f noninteractive tzdata
 
-    add-apt-repository ppa:deadsnakes/ppa
 
     apt-get update && apt-get install -y \
         curl \
@@ -74,16 +73,27 @@ Vagrant.configure("2") do |config|
         sqlite3 \
         mariadb-client \
         mariadb-server \
-        python3.7 \
-        python3.7-dev \
-        python3.7-venv \
         build-essential \
         tmux \
         vim
     
+    sudo apt update
+    sudo apt install build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libsqlite3-dev libreadline-dev libffi-dev wget libbz2-dev
+    wget https://www.python.org/ftp/python/3.7.12/Python-3.7.12.tgz
+    tar -xf Python-3.7.12.tgz
+    cd Python-3.7.12
+    sudo ./configure --enable-optimizations
+    make -j 8
+    sudo make altinstall
+    
     # Force set python3.7 to the python and python3 symlinks
-    ln -fs /usr/bin/python3.7 /usr/bin/python
-    ln -fs /usr/bin/python3.7 /usr/bin/python3
+    ln -fs /usr/local/bin/python3.7 /usr/bin/python
+    ln -fs /usr/local/bin/python3.7 /usr/bin/python3
+    ln -s /usr/share/pyshared/lsb_release.py /usr/local/lib/python3.7/site-packages/lsb_release.py
+
+    # Remove the Python executables (they done their purpose)
+    rm -rf Python-3.7.12
+    rm -rf Python-3.7.12.tgz
 
     # Set up MySQL database and development user
     mysql -e "CREATE DATABASE IF NOT EXISTS hknweb;"
