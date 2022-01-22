@@ -42,7 +42,7 @@ from .models import (
     DuePaymentPaidEntry,
     OffChallenge,
 )
-from .utils import send_challenge_confirm_email
+from .utils import send_challenge_confirm_email, spawn_threaded_add_cands_and_email
 from .utils_candportal import CandidatePortalData
 
 @method_login_and_permission("candidate.view_announcement")
@@ -140,35 +140,6 @@ class OfficerPortalView(generic.ListView):
         )
         return result
 
-def check_duplicates(candidatedto: CandidateDTO, row: OrderedDict,
-                     email_set: set, username_set: set, i: int) -> Tuple[bool, str]:
-    error_msg = ""
-    # Check for duplicate Email
-    cand_email_in_set = candidatedto.email in email_set
-    if (cand_email_in_set or User.objects.filter(email=candidatedto.email).count() > 0):
-        if cand_email_in_set:
-            error_msg = "Duplicate email {} in the Candidate data.".format(candidatedto.email)
-        else:
-            error_msg = "Account with email {} already exists.".format(candidatedto.email)
-        error_msg += " "
-        error_msg += "No candidate account actions have been taken, so re-upload the entire file after fixing the errors."
-        error_msg += " "
-        error_msg += "Error Row Information at row {}: {}.".format(i + 1, row)
-        return True, error_msg
-    # Check for duplicate Username
-    cand_username_in_set = candidatedto.username in username_set
-    if (cand_username_in_set or User.objects.filter(username=candidatedto.username).count() > 0):
-        if cand_username_in_set:
-            error_msg = "Duplicate username {} in the Candidate data.".format(candidatedto.username)
-        else:
-            error_msg = "Account of username {} already exists.".format(candidatedto.username)
-        error_msg += " "
-        error_msg += "No candidate account actions have been taken, so re-upload the entire file after fixing the errors."
-        error_msg += " "
-        error_msg += "Error Row Information at row {}: {}.".format(i + 1, row)
-        return True, error_msg
-    return False, ""
-
 @login_and_permission("auth.add_user")
 def add_cands(request):
     if request.method != ATTR.POST:
@@ -180,126 +151,9 @@ def add_cands(request):
         messages.error(request, "Please input a csv file!")
     decoded_cand_csv_file = cand_csv_file.read().decode(ATTR.UTF8SIG).splitlines()
     cand_csv = csv.DictReader(decoded_cand_csv_file)
-
-    candidate_group = Group.objects.get(name=ATTR.CANDIDATE)
-
-    # Pre-screen and validate data
-    new_cand_list = []
-    email_set = set()
-    username_set = set()
-    current_cand_semester = get_current_cand_semester()
-    email_passwords = {}
-    if current_cand_semester is None:
-        error_msg = "Inform CompServ the following: Please add the current semester in CourseSemester."
-        error_msg += " "
-        error_msg += "No candidate account actions have been taken, so re-upload the entire file after fixing the errors."
-        messages.error(request, error_msg)
-        return redirect(next_page)
-    for i, row in enumerate(cand_csv):
-        if i >= 30:
-            error_msg = "Preprocessing stopped! Detected more than 30 account requests!"
-            error_msg += " "
-            error_msg += "Please upload the file in separate batches of 30 account requests each."
-            error_msg += " "
-            error_msg += "No candidate account actions have been taken, so re-upload the entire file after fixing the errors."
-            messages.error(request, error_msg)
-            return redirect(next_page)
-        try:
-            candidatedto = CandidateDTO(row)
-        except AssertionError as e:
-            error_msg = "Invalid CSV format. Check that your columns are correctly labeled, there are NO blank rows, and filled out for each row."
-            error_msg += " "
-            error_msg += "No candidate account actions have been taken, so re-upload the entire file after fixing the errors."
-            error_msg += " "
-            error_msg += "Candidate error message: {}.".format(e)
-            error_msg += " "
-            error_msg += "Row Information at row {}: {}.".format(i + 1, row)
-            messages.error(request, error_msg)
-            return redirect(next_page)
-
-        password = BaseUserManager.make_random_password(
-            None, length=DEFAULT_RANDOM_PASSWORD_LENGTH
-        )
-        
-        duplicate, error_msg = check_duplicates(candidatedto, row, email_set, username_set, i)
-        if duplicate:
-            messages.error(request, error_msg)
-            return redirect(next_page)
-        
-        new_cand = User(
-            username=candidatedto.username,
-            email=candidatedto.email,
-        )
-        email_set.add(candidatedto.email)
-        username_set.add(candidatedto.username)
-        new_cand.first_name = candidatedto.first_name
-        new_cand.last_name = candidatedto.last_name
-        new_cand.set_password(password)
-        new_cand_list.append(new_cand)
-        email_passwords[new_cand.email] = password
     
-    # Release the memory once done
-    del email_set
-    del username_set
+    task_id = spawn_threaded_add_cands_and_email(cand_csv)
     
-    # Add all candidates
-    count = 0
-    email_pool = Pool(processes=4)
-    # This should be capped at 4, since Gmail doesn't like lots
-    #  of emails being sent in succession
-    # If there's a 421 Temp Error from the Mailing Service, adjust this number down
-    email_pool_list = []
-    for new_cand in new_cand_list:
-        new_cand.save()
-        candidate_group.user_set.add(new_cand)
-
-        profile = Profile.objects.get(user=new_cand)
-        profile.candidate_semester = current_cand_semester
-        profile.save()
-
-        subject = "[HKN] Candidate account"
-        html_content = render_to_string(
-            "candidate/new_candidate_account_email.html",
-            {
-                "subject": subject,
-                "first_name": new_cand.first_name,
-                "username": new_cand.username,
-                "password": email_passwords[new_cand.email],
-                "website_link": request.build_absolute_uri("/accounts/login/"),
-                "img_link": get_rand_photo(),
-            },
-        )
-        msg = EmailMultiAlternatives(
-            subject, subject, settings.NO_REPLY_EMAIL, [new_cand.email]
-        )
-        msg.attach_alternative(html_content, "text/html")
-        email_pool_list.append(email_pool.apply_async(msg.send, args=()))
-        count += 1
-    email_pool.close()
-    
-    email_errors = []
-    i = 0
-    while i < len(email_pool_list):
-        try:
-            while i < len(email_pool_list):
-                p = email_pool_list[i]
-                p.get()
-                i += 1
-        except Exception as e:
-            email_errors.append((new_cand_list[i].email, str(e)))
-            i += 1
-    
-    # If gone through everything and no errors
-    if len(email_errors) > 0:
-        messages.warning(request, "An error occured during the sending of emails. "
-                                + "Candidate Email and Error Messages: " + str(email_errors) + " --- "
-                                + "Inform CompServ of the errors, and inform the candidates "
-                                + "to access their accounts by resetting their password "
-                                + "using \"Forget your password?\" in the Login page. "
-                                + "All {} candidates added!".format(count))
-    else:
-        messages.success(request, "Successfully added {} candidates!".format(count))
-
     return redirect(next_page)
 
 
