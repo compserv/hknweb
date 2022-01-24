@@ -77,14 +77,25 @@ Vagrant.configure("2") do |config|
         tmux \
         vim
     
-    sudo apt update
-    sudo apt install build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libsqlite3-dev libreadline-dev libffi-dev wget libbz2-dev
-    wget https://www.python.org/ftp/python/3.7.12/Python-3.7.12.tgz
-    tar -xf Python-3.7.12.tgz
-    cd Python-3.7.12
-    sudo ./configure --enable-optimizations
-    make -j 8
-    sudo make altinstall
+    # Install dependencies related to building Python 3.7 from source
+    apt-get update && apt-get install -y \
+        build-essential \
+        zlib1g-dev \
+        libncurses5-dev \
+        libgdbm-dev \
+        libnss3-dev \
+        libssl-dev \
+        libsqlite3-dev \
+        libreadline-dev \
+        libffi-dev \
+        wget \
+        libbz2-dev
+    cd /tmp
+    wget https://www.python.org/ftp/python/3.7.3/Python-3.7.3.tgz
+    tar -xf Python-3.7.3.tgz
+    cd Python-3.7.3
+    ./configure --enable-optimizations > /dev/null
+    make -j8 altinstall > /dev/null
     
     # Force set python3.7 to the python and python3 symlinks
     ln -fs /usr/local/bin/python3.7 /usr/bin/python
@@ -94,6 +105,9 @@ Vagrant.configure("2") do |config|
     # Remove the Python executables (they done their purpose)
     rm -rf Python-3.7.12
     rm -rf Python-3.7.12.tgz
+
+    # Back to main directory
+    cd ~
 
     # Set up MySQL database and development user
     mysql -e "CREATE DATABASE IF NOT EXISTS hknweb;"
