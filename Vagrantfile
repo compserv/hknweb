@@ -7,11 +7,11 @@ Vagrant.configure("2") do |config|
   # Online documentation: https://docs.vagrantup.com.
   # Boxes: https://vagrantcloud.com/search.
 
-  # ubuntu/focal64 box used instead of debian/stretch64 because
+  # ubuntu/xenial64 box used instead of debian/stretch64 because
   # guest additions are installed by default, so the hknweb shared folder
   # may be synced with virtualbox instead of rsync, and so updates live.
   # Otherwise, both boxes use systemd and have similar packages.
-  config.vm.box = "ubuntu/focal64"
+  config.vm.box = "ubuntu/xenial64"
 
   # Automatic box update checking.
   # Disabling this causes boxes only to be checked when the user
