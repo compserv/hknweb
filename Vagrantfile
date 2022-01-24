@@ -101,11 +101,7 @@ Vagrant.configure("2") do |config|
     ln -fs /usr/local/bin/python3.7 /usr/bin/python
     ln -fs /usr/local/bin/python3.7 /usr/bin/python3
     ln -s /usr/share/pyshared/lsb_release.py /usr/local/lib/python3.7/site-packages/lsb_release.py
-
-    # Remove the Python executables (they done their purpose)
-    rm -rf Python-3.7.3
-    rm -rf Python-3.7.3.tgz
-
+    
     # Back to main directory
     cd ~
 
