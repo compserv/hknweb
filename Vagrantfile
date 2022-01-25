@@ -7,11 +7,11 @@ Vagrant.configure("2") do |config|
   # Online documentation: https://docs.vagrantup.com.
   # Boxes: https://vagrantcloud.com/search.
 
-  # ubuntu/focal64 box used instead of debian/stretch64 because
-  # guest additions are installed by default, so the hknweb shared folder
+  # debian/contrib-buster64 is a version of Debian Buster that has
+  # guest additions installed by default, so the hknweb shared folder
   # may be synced with virtualbox instead of rsync, and so updates live.
   # Otherwise, both boxes use systemd and have similar packages.
-  config.vm.box = "ubuntu/focal64"
+  config.vm.box = "debian/contrib-buster64"
 
   # Automatic box update checking.
   # Disabling this causes boxes only to be checked when the user
@@ -64,27 +64,20 @@ Vagrant.configure("2") do |config|
     ln -fs /usr/share/zoneinfo/US/Pacific /etc/localtime
     dpkg-reconfigure -f noninteractive tzdata
 
-    add-apt-repository ppa:deadsnakes/ppa
-
     apt-get update && apt-get install -y \
         curl \
         git \
-        libmysqlclient-dev \
+        default-libmysqlclient-dev \
         make \
         sqlite3 \
         mariadb-client \
         mariadb-server \
-        python3.7 \
-        python3.7-dev \
-        python3.7-venv \
+        python3-dev \
+        python3-venv \
         build-essential \
         tmux \
         vim
     
-    # Force set python3.7 to the python and python3 symlinks
-    ln -fs /usr/bin/python3.7 /usr/bin/python
-    ln -fs /usr/bin/python3.7 /usr/bin/python3
-
     # Set up MySQL database and development user
     mysql -e "CREATE DATABASE IF NOT EXISTS hknweb;"
     mysql -e "GRANT ALL PRIVILEGES ON hknweb.* TO 'hkn'@'localhost' IDENTIFIED BY 'hknweb-dev';"
