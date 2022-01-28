@@ -77,9 +77,9 @@
       <th class="w4 pv2 bb b--light-gray">{{ day }}</th>
       {% endfor %}
     </tr>
-    {% for hour, hour_pretty in hours %}
+    {% for hour, hour_pretty, hour_nexthour_pretty in hours %}
     <tr>
-        <td class="pv2 w3 bb b--near-white"> {{hour_pretty}} </td>
+        <td class="pv2 w3 bb b--near-white"> {{hour_pretty}} - {{hour_nexthour_pretty}} </td>
         {% for slotfields in form|access_slotfields_at_hour:hour%}
         <td class="pv2 w ba b--near-white">
             {% for field in slotfields %}

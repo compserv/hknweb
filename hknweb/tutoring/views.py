@@ -91,7 +91,7 @@ def tutor_slot_preference(request):
         day_of_weeks.append(TimeSlot.DAYS_OF_WEEK[day])
     hours = []
     for hour in TimeSlot.objects.values_list("hour", flat=True).distinct():
-        hours.append((hour, TimeSlot.time(hour)))
+        hours.append((hour, TimeSlot.time(hour), TimeSlot.time_nexthour(hour)))
     context = {"form": form, "days": day_of_weeks, "hours": hours, "message": ""}
     if request.method == "POST":
         if form.is_valid():
