@@ -81,6 +81,7 @@ class TimeSlotPreferenceForm(forms.Form):
                 room = rooms_slot_available.first().room
                 field_name = 'timeslot_office_preference_%s_%s' % (timeslot.timeslot_id, room.id)
                 self.fields[field_name] = forms.IntegerField(widget=forms.NumberInput(attrs={'type':'range', 'min':0, 'max': 0, 'step': 0}))
+                self.fields[field_name].initial = 0
                 self.fields[field_name].label = "%s only" % (str(room), )
                 self.fields[field_name].disabled = True
                 pass
@@ -113,13 +114,15 @@ class TimeSlotPreferenceForm(forms.Form):
 
                 timeslot = TimeSlot.objects.get(timeslot_id=timeslot_id)
                 room_pref_for_timeslot = RoomPreference.objects.filter(timeslot=timeslot, tutor=self.tutor)
-                
+
                 number_of_tutor_rooms = Slot.objects.filter(timeslot=timeslot).count()
 
                 if number_of_tutor_rooms == 1:
                     # Just in case a Preference is assigned to the room
-                    room_pref = room_pref_for_timeslot.first()
-                    assert room_pref.room.id == room_id, "The room ids somehow did not match: {} vs {}".format(room_pref.room.id, room_id)
+                    room_pref = room_pref_for_timeslot.filter(room__id=room_id).first()
+                    assert room_pref.room.id == room_id, "The room ids somehow did not match: {} - {} vs {} - {}".format(
+                            room_pref.room.id, room_pref.room, room_id, Room.objects.filter(id=room_id).first()
+                        )
                     room_pref.preference = value
                     room_pref.save(update_fields=["preference"])
                 elif number_of_tutor_rooms == 2:
@@ -128,7 +131,7 @@ class TimeSlotPreferenceForm(forms.Form):
                         room_pref.preference = value * (1 if (room_pref.room.id == room_id) else -1)
                         room_pref.save(update_fields=["preference"])
                 else:
-                    # Room IDs sourced from each slider
+                    # Room IDs sourced from each slider, assumes each room has individual slider
                     room_pref = room_pref_for_timeslot.get(room_id=room_id)
                     room_pref.preference = value
                     room_pref.save(update_fields=["preference"])

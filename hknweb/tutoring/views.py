@@ -100,9 +100,9 @@ def tutor_slot_preference(request):
                 "message"
             ] = "Sign up form saved! (Don't forget to screenshot your selections)"
         else:
-            context[
-                "message"
-            ] = "An error occured, please screenshot your current entries and contact CompServ"
+            msg = "An error occured, please screenshot your current entries and contact CompServ."
+            msg += " " + "Also send them the following: " + str(form.errors)
+            context["message"] = msg
     return render(request, "tutoring/slotpref.html", context)
 
 
