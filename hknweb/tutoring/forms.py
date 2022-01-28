@@ -84,7 +84,6 @@ class TimeSlotPreferenceForm(forms.Form):
                 self.fields[field_name].initial = 0   # 0 is fine, since only one Room option in the timeslot
                 self.fields[field_name].label = "%s only" % (str(room), )
                 self.fields[field_name].disabled = True
-                pass
             elif number_of_tutor_rooms == 2:
                 room, other_room = rooms_slot_available.first().room, rooms_slot_available.last().room
                 field_name = 'timeslot_office_preference_%s_%s' % (timeslot.timeslot_id, room.id)
@@ -118,7 +117,6 @@ class TimeSlotPreferenceForm(forms.Form):
                 number_of_tutor_rooms = Slot.objects.filter(timeslot=timeslot).count()
 
                 if number_of_tutor_rooms == 1:
-                    # Just in case a Preference is assigned to the room
                     room_pref = room_pref_for_timeslot.filter(room__id=room_id).first()
                     assert room_pref.room.id == room_id, "The room ids somehow did not match: {} - {} vs {} - {}".format(
                             room_pref.room.id, room_pref.room, room_id, Room.objects.filter(id=room_id).first()
