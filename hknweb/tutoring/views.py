@@ -100,9 +100,9 @@ def tutor_slot_preference(request):
                 "message"
             ] = "Sign up form saved! (Don't forget to screenshot your selections)"
         else:
-            context[
-                "message"
-            ] = "An error occured, please screenshot your current entries and contact CompServ"
+            msg = "An error occured, please screenshot your current entries and contact CompServ."
+            msg += " " + "Also send them the following: " + str(form.errors)
+            context["message"] = msg
     return render(request, "tutoring/slotpref.html", context)
 
 
@@ -124,10 +124,9 @@ def generate_all_slots():
     room_querySet = Room.objects.all()
     for hour, _ in TimeSlot.HOUR_CHOICES:
         for day, _ in TimeSlot.DAY_CHOICES:
-            timeslot, _ = TimeSlot.objects.get_or_create(
-                hour=hour, day=day, timeslot_id=timeslot_id
-            )
+            timeslot = TimeSlot(hour=hour, day=day, timeslot_id=timeslot_id)
             timeslot_id += 1
+            timeslot.save()
             for room in room_querySet:
                 slot = Slot(timeslot=timeslot, room=room, slot_id=id)
                 slot.save()
@@ -189,14 +188,9 @@ def prepare_algorithm_input(request):
                 slot_time_prefs.append(timeslot_pref.preference)
 
         for room_pref in tutor.get_room_preferences():
-            if (
-                Slot.objects.filter(
-                    timeslot=room_pref.timeslot, room=room_pref.room
-                ).count()
-                > 0
-            ):
+            if Slot.objects.filter(timeslot=room_pref.timeslot, room=room_pref.room).count() > 0:
                 slot_office_prefs.append(room_pref.preference)
-
+        
         tutor_dict["timeSlots"] = slot_time_prefs
         tutor_dict["officePrefs"] = slot_office_prefs
         course_prefs = []
@@ -225,7 +219,6 @@ def prepare_algorithm_input(request):
         slots.append(slot_dict)
     input_data["slots"] = slots
     return JsonResponse(input_data)
-
 
 def get_adjacent_slot_ids(slot):
     slots_to_check = [
