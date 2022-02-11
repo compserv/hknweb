@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "hknweb.serv",
     "hknweb.tours",
     "hknweb.reviewsessions",
+    "hknweb.thread",
     "dal",  # must be before django.contrib.admin
     "dal_select2",  # must be before django.contrib.admin
     "django.contrib.admin",
