@@ -34,6 +34,7 @@ class Attr:
     RATINGS = "ratings"
     RESPONSE_COUNT = "response_count"
     SEARCH_BY = "search_by"
+    SEARCH_VALUE = "search_value"
     SECTION_NUMBER = "section_number"
     SEMESTER = "semester"
     SERVICE = "service"

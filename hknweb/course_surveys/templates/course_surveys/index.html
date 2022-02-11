@@ -343,6 +343,7 @@
             padding-top: 0.1em;
             padding-bottom: 0.1em;
             text-align: left;
+            font-size: 100%;
         }
 
         .page-number-selector:hover {
@@ -730,6 +731,7 @@
             const urlParams = new URLSearchParams(window.location.search);
             urlParams.set("search_by", "courses");
             urlParams.delete("page_number");
+            urlParams.delete("search_value");
             window.location.search = urlParams;
         }
 
@@ -743,6 +745,7 @@
             const urlParams = new URLSearchParams(window.location.search);
             urlParams.set("search_by", "instructors");
             urlParams.delete("page_number");
+            urlParams.delete("search_value");
             window.location.search = urlParams;
         }
 
@@ -864,9 +867,10 @@
                         Instructor
                     </div>
                     <br>
-                    <div class="search-bar">
-                        Search bar
-                    </div>
+                    <form action="{% url 'course_surveys:index' %}">
+                        <input type="hidden" name="search_by" value="{{ search_by }}">
+                        <input class="search-bar" type="text" placeholder="Search" name="search_value" {% if search_value %} value={{ search_value }} {% endif %}>
+                    </form>
                     <div class="page-number-selector previous-page" {% if previous_page %} onClick="clickPageNumber({{ previous_page }})" {% else %} style="opacity: 0.6; text-decoration: none;" {% endif %}>
                         Prev
                     </div>
