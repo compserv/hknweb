@@ -8,6 +8,7 @@ from django.db.models import Q
 from collections import OrderedDict
 import itertools
 import threading
+import time
 from typing import Tuple, Union
 
 from hknweb.models import Profile
@@ -547,6 +548,8 @@ def add_cands_and_email(cand_csv, num_rows, website_login_link, task=None):
     
     email_errors = []
     for i, new_cand in enumerate(new_cand_list):
+        if i != 0 and i % 50 == 0:
+            time.sleep(10)
         new_cand.save()
         candidate_group.user_set.add(new_cand)
 
@@ -581,7 +584,7 @@ def add_cands_and_email(cand_csv, num_rows, website_login_link, task=None):
             except Exception as e:
                 email_errors.append((new_cand_list[i].email, str(e)))
         
-        progress_float = EMAIL_WEIGHT * 100 * (i + 1) / num_of_accounts
+        progress_float = (CAND_ACC_WEIGHT * 100) + (EMAIL_WEIGHT * 100 * (i + 1) / num_of_accounts)
         if task is not None:
             task.progress = round(progress_float)
             task.save()
