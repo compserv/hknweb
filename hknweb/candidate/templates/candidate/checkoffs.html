@@ -64,7 +64,7 @@ Mass Checkoffs
                 <label for="project_selection">Committee Project:</label>
                 <select id="project_selection" name="project_selection">
                     {% for project in projects %}
-                        <option value="{{project.id}}">{{project.name}}</option>
+                        <option value="{{project.id}}">{{project.candidateSemesterActive}} - {{project.name}}</option>
                     {% endfor %}
                 </select><br><br>
             </div>
@@ -72,7 +72,7 @@ Mass Checkoffs
                 <label for="dues_selection">Dues:</label>
                 <select id="dues_selection" name="dues_selection">
                     {% for due in dues %}
-                        <option value="{{due.id}}">{{due.name}}</option>
+                        <option value="{{due.id}}">{{due.candidateSemesterActive}} - {{due.name}}</option>
                     {% endfor %}
                 </select><br><br>
             </div>
@@ -80,7 +80,7 @@ Mass Checkoffs
                 <label for="forms_selection">Forms:</label>
                 <select id="forms_selection" name="forms_selection">
                     {% for form in forms %}
-                        <option value="{{form.id}}">{{form.name}}</option>
+                        <option value="{{form.id}}">{{form.candidateSemesterActive}} - {{form.name}}</option>
                     {% endfor %}
                 </select><br><br>
             </div>
