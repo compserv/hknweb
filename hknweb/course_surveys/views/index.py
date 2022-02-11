@@ -1,6 +1,7 @@
 import requests, json
 
 from django.views.generic import TemplateView
+from django.db.models import Q
 
 from hknweb.markdown_pages.models import MarkdownPage
 from hknweb.academics.models import Course, Instructor
@@ -34,10 +35,11 @@ class IndexView(TemplateView):
 
         # Retrieve courses and instructors for search panel
         search_by = self.request.GET.get(Attr.SEARCH_BY, Attr.COURSES)
-        courses, _context = self._get_courses(cas_signed_in, search_by, page_number)
+        search_value = self.request.GET.get(Attr.SEARCH_VALUE, "")
+        courses, _context = self._get_courses(cas_signed_in, search_by, page_number, search_value)
         context = {**context, **_context}
         instructors, _context = self._get_instructors(
-            cas_signed_in, search_by, page_number
+            cas_signed_in, search_by, page_number, search_value
         )
         context = {**context, **_context}
 
@@ -66,6 +68,8 @@ class IndexView(TemplateView):
             Attr.INSTRUCTORS: instructors,
             Attr.COURSE: course,
             Attr.INSTRUCTOR: instructor,
+            Attr.SEARCH_BY: search_by,
+            Attr.SEARCH_VALUE: search_value,
         }
 
     def _validate_cas(self, service: str) -> bool:
@@ -95,7 +99,7 @@ class IndexView(TemplateView):
         return self.request.session[CAS.SIGNED_IN]
 
     @staticmethod
-    def _get_courses(cas_signed_in: bool, search_by: str, page_number: int):
+    def _get_courses(cas_signed_in: bool, search_by: str, page_number: int, search_value: str):
         if not cas_signed_in or search_by != Attr.COURSES:
             return None, {}
 
@@ -107,6 +111,17 @@ class IndexView(TemplateView):
             )
             if not icsrs.exists():
                 icsrs = course.icsr_course.all()
+
+            icsrs = icsrs.filter(
+                Q(course_number__contains=search_value) \
+                | Q(icsr_department__abbr__contains=search_value)
+                | Q(icsr_department__name__contains=search_value)
+                | Q(course_name__contains=search_value)
+                | Q(icsr_semester__year__contains=search_value)
+                | Q(icsr_semester__year_section__contains=search_value)
+            )
+            if not icsrs.exists():
+                continue
 
             most_recent_icsr = icsrs.latest(
                 "icsr_semester__year",
@@ -127,14 +142,21 @@ class IndexView(TemplateView):
         )
 
     @staticmethod
-    def _get_instructors(cas_signed_in: bool, search_by: str, page_number: int):
+    def _get_instructors(cas_signed_in: bool, search_by: str, page_number: int, search_value: str):
         if not cas_signed_in or search_by != Attr.INSTRUCTORS:
             return None, {}
 
         instructors = []
         i_start, i_end = IndexView._get_start_end_indices(page_number)
         for instructor in Instructor.objects.all()[i_start:i_end]:
-            most_recent_icsr = instructor.icsr_instructor.latest(
+            icsrs = instructor.icsr_instructor.filter(
+                Q(first_name__contains=search_value) \
+                | Q(last_name__contains=search_value)
+            )
+            if not icsrs.exists():
+                continue
+
+            most_recent_icsr = icsrs.latest(
                 "icsr_semester__year",
                 "-icsr_semester__year_section",
             )
@@ -278,7 +300,7 @@ class IndexView(TemplateView):
             Attr.INSTRUCTOR_TYPE: icsr.instructor_type,
             Attr.RATINGS: None,
         }
-        if not icsr.survey_icsr.exists():
+        if not icsr.survey_icsr.exists() or icsr.survey_icsr.first().is_private:
             return context
         survey = icsr.survey_icsr.first()
 
