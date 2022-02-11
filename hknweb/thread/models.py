@@ -18,3 +18,12 @@ class ThreadTask(models.Model):
         self.error_text = error_text
         self.is_successful = False
         self.is_done = True
+    
+    def startThread(self, thread):
+        """
+        Abstraction of starting a thread
+        Main requirement is the "setDaemon" to be true
+        alongside the "start" (of course)
+        """
+        thread.setDaemon(True)
+        thread.start()
