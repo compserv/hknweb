@@ -64,7 +64,9 @@
           <label for="toggle-outreach">Outreach</label>
           <label for="toggle-events">Events</label>
           <label for="toggle-about">About</label>
+          {% if viewer_is_an_officer %}
           <label for="toggle-candidate-admin">Candidate Administration</label>
+          {% endif %}
           {% if user.is_authenticated %}
             <span style="height: 1.8em; width: 1px; border-left: 1px black solid;"></span>
             <label for="toggle-account">
@@ -172,7 +174,7 @@
     {% if viewer_is_an_officer %}
     <div class="navi-container mobile-nav-bar" style="text-align: center;">
       <label for="toggle-candidate-admin">
-        Candidate Admin
+        Candidate Administration
       </label>
     </div>
     <div id="candidate-admin-nav-bar" class="sub-nav-bar navi-container">
