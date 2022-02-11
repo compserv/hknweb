@@ -7,7 +7,7 @@ from hknweb.candidate.models.requirements.committee_project.committee_project im
 
 
 class CommitteeProjectDoneEntry(models.Model):
-    users = models.ManyToManyField(User)
+    users = models.ManyToManyField(User, blank=True)
     committeeProject = models.OneToOneField(CommitteeProject, models.CASCADE)
     notes = models.TextField(blank=True, default="")
 

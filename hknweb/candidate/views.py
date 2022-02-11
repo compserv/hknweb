@@ -200,18 +200,21 @@ def checkoff_csv(request):
 
     checkoff_type = request.POST.get("checkoff_type", "")
     if checkoff_type == "event":
-        event_id = request.POST.get("event_id", "")
-        if not event_id:
+        event_id = request.POST.get("event_id", None)
+        if event_id is None:
             messages.error(request, "Please input an event ID!")
             return redirect(next_page)
         event = Event.objects.filter(pk=event_id)
         if not event:
             messages.error(request, "Please input a valid event ID!")
             return redirect(next_page)
-        event = event[0]
+        event = event.first()
     elif checkoff_type == "project":
-        project_name = request.POST.get("project_name", "")
-        project = CommitteeProject.objects.get(name=project_name)
+        project_id = request.POST.get("project_selection", None)
+        if project_id is None:
+            messages.error(request, "Please select a valid committee project!")
+            return redirect(next_page)
+        project = CommitteeProject.objects.get(id=project_id)
         projectDoneEntry = CommitteeProjectDoneEntry.objects.filter(
             committeeProject=project
         ).first()
@@ -222,8 +225,11 @@ def checkoff_csv(request):
             )
             return redirect(next_page)
     elif checkoff_type == "dues":
-        dues_name = request.POST.get("dues_name", "")
-        due = DuePayment.objects.get(name=dues_name)
+        dues_id = request.POST.get("dues_selection", None)
+        if dues_id is None:
+            messages.error(request, "Please input a valid Dues entry!")
+            return redirect(next_page)
+        due = DuePayment.objects.get(id=dues_id)
         duesDoneEntry = DuePaymentPaidEntry.objects.filter(duePayment=due).first()
         if duesDoneEntry is None:
             messages.error(
@@ -232,8 +238,11 @@ def checkoff_csv(request):
             )
             return redirect(next_page)
     elif checkoff_type == "forms":
-        forms_name = request.POST.get("forms_name", "")
-        form = CandidateForm.objects.get(name=forms_name)
+        forms_id = request.POST.get("forms_selection", None)
+        if forms_id is None:
+            messages.error(request, "Please input a valid Forms entry!")
+            return redirect(next_page)
+        form = CandidateForm.objects.get(id=forms_id)
         formsDoneEntry = CandidateFormDoneEntry.objects.filter(form=form).first()
         if formsDoneEntry is None:
             messages.error(
@@ -241,6 +250,9 @@ def checkoff_csv(request):
                 "Could not find a corresponding CandidateFormDoneEntry. Please make sure one is created for the form.",
             )
             return redirect(next_page)
+    else:
+        messages.error(request, "Invalid checkoff type")
+        return redirect(next_page)
 
     # Pre-screen and validate data
     users = []

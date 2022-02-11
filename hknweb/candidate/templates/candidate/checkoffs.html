@@ -61,26 +61,26 @@ Mass Checkoffs
                 <input type="number" id="event_id" name="event_id"/><br><br>
             </div>
             <div id="project_id_div">
-                <label for="project_name">Committee Project:</label>
-                <select id="project_name" name="project_name">
+                <label for="project_selection">Committee Project:</label>
+                <select id="project_selection" name="project_selection">
                     {% for project in projects %}
-                        <option value="{{project.name}}">{{project.name}}</option>
+                        <option value="{{project.id}}">{{project.candidateSemesterActive}} - {{project.name}}</option>
                     {% endfor %}
                 </select><br><br>
             </div>
             <div id="dues_id_div">
-                <label for="dues_name">Dues:</label>
-                <select id="dues_name" name="dues_name">
+                <label for="dues_selection">Dues:</label>
+                <select id="dues_selection" name="dues_selection">
                     {% for due in dues %}
-                        <option value="{{due.name}}">{{due.name}}</option>
+                        <option value="{{due.id}}">{{due.candidateSemesterActive}} - {{due.name}}</option>
                     {% endfor %}
                 </select><br><br>
             </div>
             <div id="forms_id_div">
-                <label for="forms_name">Forms:</label>
-                <select id="forms_name" name="forms_name">
+                <label for="forms_selection">Forms:</label>
+                <select id="forms_selection" name="forms_selection">
                     {% for form in forms %}
-                        <option value="{{form.name}}">{{form.name}}</option>
+                        <option value="{{form.id}}">{{form.candidateSemesterActive}} - {{form.name}}</option>
                     {% endfor %}
                 </select><br><br>
             </div>
@@ -89,11 +89,11 @@ Mass Checkoffs
             <input type="submit" value="Checkoff" />
         </form>
     </div>
-
 </div>
 {% else %}
     <h3 style="text-align: center;">Sorry, you do not have access to this page.</h3>
 {% endif %}
+
 <script>
     function change_secondary_id(select_id) {
         var selectedValue = select_id.options[select_id.selectedIndex].value;
