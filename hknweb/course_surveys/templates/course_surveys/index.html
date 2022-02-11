@@ -97,10 +97,27 @@
             float: left;
         }
 
-        .search-panel-header {
-            font-weight: normal;
-            font-size: 135%;
-            margin-top: 1%;
+        .search-panel-list-item-text {
+            margin: 0;
+            padding: 0;
+            padding-top: 0.2em;
+            display: inline-block;
+            width: 50%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .search-panel-list-item-bubble {
+            border: 0.1em solid gainsboro;
+            border-radius: 0.75em;
+            background-color: rgb(135, 206, 250, 0.9);
+            width: 40%;
+            margin: 0;
+            padding: 0;
+            display: inline;
+            float: left;
+            font-size: 110%;
         }
 
         .search-panel-selection {
@@ -110,6 +127,172 @@
             border: 0.1em solid gainsboro;
             border-radius: 0.75em;
             width: 30%;
+        }
+
+        .previous-page {
+            float: left;
+            margin-left: 2em;
+        }
+
+        .next-page {
+            float: right;
+            margin-right: 2em;
+        }
+
+        .page-number-selector {
+            text-decoration: underline;
+            border: 0.1em solid gainsboro;
+            border-radius: 0.75em;
+            padding: 0;
+            font-size: 80%;
+            width: 30%;
+        }
+
+        @media screen and (max-height: 768px) {
+            .search-panel {
+                box-shadow: 0 0 0.5em #252525;
+                margin: auto;
+                margin-left: 5%;
+                margin-bottom: 2%;
+                height: 90vh;
+                width: 30vw;
+                border-radius: 0.75em;
+                text-align: center;
+                position: relative;
+                float: left;
+            }
+
+            .search-panel-list-item-text {
+                display: none;
+            }
+
+            .search-panel-list-item-bubble {
+                border: 0.1em solid gainsboro;
+                border-radius: 0.75em;
+                background-color: rgb(135, 206, 250, 0.9);
+                width: 100%;
+                margin: 0;
+                padding: 0;
+                display: inline;
+                float: left;
+                font-size: 110%;
+            }
+        }
+
+        @media screen and (max-height: 600px) {
+            .search-panel {
+                box-shadow: 0 0 0.5em #252525;
+                margin: auto;
+                margin-left: 5%;
+                margin-bottom: 2%;
+                height: 120vh;
+                width: 30vw;
+                border-radius: 0.75em;
+                text-align: center;
+                position: relative;
+                float: left;
+            }
+        }
+
+        @media screen and (max-height: 450px) {
+            .search-panel {
+                box-shadow: 0 0 0.5em #252525;
+                margin: auto;
+                margin-left: 5%;
+                margin-bottom: 2%;
+                height: 150vh;
+                width: 30vw;
+                border-radius: 0.75em;
+                text-align: center;
+                position: relative;
+                float: left;
+            }
+        }
+
+        @media screen and (max-width: 1024px) {
+            .search-panel {
+                box-shadow: 0 0 0.5em #252525;
+                margin: auto;
+                margin-left: 5%;
+                margin-bottom: 2%;
+                height: 90vh;
+                width: 90%;
+                border-radius: 0.75em;
+                text-align: center;
+            }
+
+            .previous-page {
+                float: none;
+                margin: auto;
+            }
+
+            .next-page {
+                float: none;
+                margin: auto;
+            }
+
+            .page-number-selector {
+                text-decoration: underline;
+                border: 0.1em solid gainsboro;
+                border-radius: 0.75em;
+                padding: 0;
+                font-size: 100%;
+                width: 80%;
+            }
+
+            @media screen and (max-height: 768px) {
+                .search-panel {
+                    box-shadow: 0 0 0.5em #252525;
+                    margin: auto;
+                    margin-left: 5%;
+                    margin-bottom: 2%;
+                    height: 90vh;
+                    width: 90%;
+                    border-radius: 0.75em;
+                    text-align: center;
+                }
+            }
+
+            @media screen and (max-height: 600px) {
+                .search-panel {
+                    box-shadow: 0 0 0.5em #252525;
+                    margin: auto;
+                    margin-left: 5%;
+                    margin-bottom: 2%;
+                    height: 120vh;
+                    width: 90%;
+                    border-radius: 0.75em;
+                    text-align: center;
+                }
+            }
+
+            @media screen and (max-height: 450px) {
+                .search-panel {
+                    box-shadow: 0 0 0.5em #252525;
+                    margin: auto;
+                    margin-left: 5%;
+                    margin-bottom: 2%;
+                    height: 150vh;
+                    width: 90%;
+                    border-radius: 0.75em;
+                    text-align: center;
+                }
+            }
+
+            .search-panel-selection {
+                display: inline-block;
+                margin-left: 1em;
+                margin-right: 1em;
+                border: 0.1em solid gainsboro;
+                border-radius: 0.75em;
+                width: 80%;
+            }
+        }
+
+        .search-panel-header {
+            font-weight: normal;
+            font-size: 135%;
+            margin-top: 1%;
         }
 
         .search-panel-selection:hover {
@@ -129,7 +312,6 @@
             padding-top: 0;
             padding-bottom: 0;
             margin-top: 0;
-            max-height: 53vh;
             overflow: scroll;
         }
 
@@ -145,29 +327,6 @@
 
         .search-panel-list-item:hover {
             cursor: pointer;
-        }
-
-        .search-panel-list-item-bubble {
-            border: 0.1em solid gainsboro;
-            border-radius: 0.75em;
-            background-color: rgb(135, 206, 250, 0.9);
-            width: 40%;
-            margin: 0;
-            padding: 0;
-            display: inline;
-            float: left;
-            font-size: 110%;
-        }
-
-        .search-panel-list-item-text {
-            margin: 0;
-            padding: 0;
-            padding-top: 0.2em;
-            display: inline-block;
-            width: 50%;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
 
         .search-bar {
@@ -186,27 +345,8 @@
             text-align: left;
         }
 
-        .page-number-selector {
-            text-decoration: underline;
-            border: 0.1em solid gainsboro;
-            border-radius: 0.75em;
-            padding: 0;
-            font-size: 80%;
-            width: 30%;
-        }
-
         .page-number-selector:hover {
             cursor: pointer;
-        }
-
-        .previous-page {
-            float: left;
-            margin-left: 2em;
-        }
-
-        .next-page {
-            float: right;
-            margin-right: 2em;
         }
 
     </style>
@@ -227,12 +367,6 @@
             padding: 0;
         }
 
-        .information-panel-header {
-            font-size: 150%;
-            text-align: center;
-            margin: 1em;
-        }
-
         .ratings-panel {
             box-shadow: 0 0 0.5em #252525;
             height: 50vh;
@@ -249,6 +383,251 @@
             padding: 0;
         }
 
+        .previous-survey {
+            float: left;
+        }
+
+        .next-survey {
+            float: right;
+        }
+
+        @media screen and (max-height: 768px) {
+            .information-panel {
+                box-shadow: 0 0 0.5em #252525;
+                height: 30vh;
+                margin: auto;
+                margin-left: 1%;
+                width: 55vw;
+                border-radius: 0.75em;
+                text-align: center;
+                position: relative;
+                display: inline-block;
+                float: none;
+                padding: 0;
+            }
+
+            .ratings-panel {
+                box-shadow: 0 0 0.5em #252525;
+                height: 60vh;
+                margin: auto;
+                margin-top: 0;
+                margin-left: 1%;
+                margin-bottom: 3%;
+                width: 55vw;
+                border-radius: 0.75em;
+                text-align: center;
+                position: relative;
+                display: inline-block;
+                float: none;
+                padding: 0;
+            }
+        }
+
+        @media screen and (max-height: 600px) {
+            .information-panel {
+                box-shadow: 0 0 0.5em #252525;
+                height: 40vh;
+                margin: auto;
+                margin-left: 1%;
+                width: 55vw;
+                border-radius: 0.75em;
+                text-align: center;
+                position: relative;
+                display: inline-block;
+                float: none;
+                padding: 0;
+            }
+
+            .ratings-panel {
+                box-shadow: 0 0 0.5em #252525;
+                height: 80vh;
+                margin: auto;
+                margin-top: 0;
+                margin-left: 1%;
+                margin-bottom: 3%;
+                width: 55vw;
+                border-radius: 0.75em;
+                text-align: center;
+                position: relative;
+                display: inline-block;
+                float: none;
+                padding: 0;
+            }
+        }
+
+        @media screen and (max-height: 450px) {
+            .information-panel {
+                box-shadow: 0 0 0.5em #252525;
+                height: 60vh;
+                margin: auto;
+                margin-left: 1%;
+                width: 55vw;
+                border-radius: 0.75em;
+                text-align: center;
+                position: relative;
+                display: inline-block;
+                float: none;
+                padding: 0;
+            }
+
+            .ratings-panel {
+                box-shadow: 0 0 0.5em #252525;
+                height: 90vh;
+                margin: auto;
+                margin-top: 0;
+                margin-left: 1%;
+                margin-bottom: 3%;
+                width: 55vw;
+                border-radius: 0.75em;
+                text-align: center;
+                position: relative;
+                display: inline-block;
+                float: none;
+                padding: 0;
+            }
+        }
+
+        @media screen and (max-width: 1024px) {
+            .information-panel {
+                box-shadow: 0 0 0.5em #252525;
+                height: 100%;
+                margin: auto;
+                margin-left: 5%;
+                width: 90%;
+                border-radius: 0.75em;
+                text-align: center;
+                position: relative;
+                display: inline-block;
+                float: none;
+                padding: 0;
+            }
+
+            .ratings-panel {
+                box-shadow: 0 0 0.5em #252525;
+                height: 100%;
+                margin: auto;
+                margin-top: 0;
+                margin-left: 5%;
+                margin-bottom: 3%;
+                width: 90%;
+                border-radius: 0.75em;
+                text-align: center;
+                position: relative;
+                display: inline-block;
+                float: none;
+                padding: 0;
+            }
+            @media screen and (max-height: 768px) {
+                .information-panel {
+                    box-shadow: 0 0 0.5em #252525;
+                    height: 100%;
+                    margin: auto;
+                    margin-left: 5%;
+                    width: 90%;
+                    border-radius: 0.75em;
+                    text-align: center;
+                    position: relative;
+                    display: inline-block;
+                    float: none;
+                    padding: 0;
+                }
+
+                .ratings-panel {
+                    box-shadow: 0 0 0.5em #252525;
+                    height: 100%;
+                    margin: auto;
+                    margin-top: 0;
+                    margin-left: 5%;
+                    margin-bottom: 3%;
+                    width: 90%;
+                    border-radius: 0.75em;
+                    text-align: center;
+                    position: relative;
+                    display: inline-block;
+                    float: none;
+                    padding: 0;
+                }
+            }
+
+            @media screen and (max-height: 600px) {
+                .information-panel {
+                    box-shadow: 0 0 0.5em #252525;
+                    height: 40vh;
+                    margin: auto;
+                    margin-left: 5%;
+                    width: 90%;
+                    border-radius: 0.75em;
+                    text-align: center;
+                    position: relative;
+                    display: inline-block;
+                    float: none;
+                    padding: 0;
+                }
+
+                .ratings-panel {
+                    box-shadow: 0 0 0.5em #252525;
+                    height: 100%;
+                    margin: auto;
+                    margin-top: 0;
+                    margin-left: 5%;
+                    margin-bottom: 3%;
+                    width: 90%;
+                    border-radius: 0.75em;
+                    text-align: center;
+                    position: relative;
+                    display: inline-block;
+                    float: none;
+                    padding: 0;
+                }
+            }
+
+            @media screen and (max-height: 450px) {
+                .information-panel {
+                    box-shadow: 0 0 0.5em #252525;
+                    height: 60vh;
+                    margin: auto;
+                    margin-left: 5%;
+                    width: 90%;
+                    border-radius: 0.75em;
+                    text-align: center;
+                    position: relative;
+                    display: inline-block;
+                    float: none;
+                    padding: 0;
+                }
+
+                .ratings-panel {
+                    box-shadow: 0 0 0.5em #252525;
+                    height: 100%;
+                    margin: auto;
+                    margin-top: 0;
+                    margin-left: 5%;
+                    margin-bottom: 3%;
+                    width: 90%;
+                    border-radius: 0.75em;
+                    text-align: center;
+                    position: relative;
+                    display: inline-block;
+                    float: none;
+                    padding: 0;
+                }
+            }
+
+            .previous-survey {
+                float: none;
+            }
+
+            .next-survey {
+                float: none;
+            }
+        }
+
+        .information-panel-header {
+            font-size: 150%;
+            text-align: center;
+            margin: 1em;
+        }
+
         .ratings-panel-header {
             font-size: 125%;
             margin: 1em;
@@ -257,7 +636,6 @@
         .ratings-panel-body {
             margin: 1em;
             overflow: scroll;
-            height: 40vh;
         }
 
         .survey-number-navigator {
@@ -269,14 +647,6 @@
 
         .survey-number-navigator:hover {
             cursor: pointer;
-        }
-
-        .previous-survey {
-            float: left;
-        }
-
-        .next-survey {
-            float: right;
         }
 
         .ratings-table {
