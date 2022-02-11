@@ -575,7 +575,7 @@ def add_cands_and_email(cand_csv, num_rows, website_login_link, task=None):
         )
         if settings.DEBUG:
             print("\n")
-            print(new_cand.first_name, new_cand.username)
+            print(new_cand.first_name, new_cand.username, new_cand.email)
             print(html_content)
             print("\n")
         else:
