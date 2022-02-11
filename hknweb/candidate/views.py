@@ -1,36 +1,32 @@
-from collections import OrderedDict
-import csv
-from typing import Tuple
-
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import BaseUserManager, Group, User
+from django.contrib.auth.models import User
 from django.core.mail import EmailMultiAlternatives
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
-from django.http import Http404, HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render, reverse
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.views import generic
 from django.views.generic.edit import FormView
 
+import csv
 from dal import autocomplete
-from multiprocessing import Pool
-from hknweb.models import Profile
-from hknweb.views.users import get_current_cand_semester
-from hknweb.utils import get_access_level, GROUP_TO_ACCESSLEVEL
 
+from hknweb.thread.models import ThreadTask
 from hknweb.utils import (
+    get_access_level,
     get_rand_photo,
+    GROUP_TO_ACCESSLEVEL,
     login_and_permission,
     method_login_and_permission,
 )
 
 from ..events.models import Event, Rsvp
 
-from .constants import ATTR, DEFAULT_RANDOM_PASSWORD_LENGTH, CandidateDTO
+from .constants import ATTR, CandidateDTO
 from .forms import BitByteRequestForm, ChallengeConfirmationForm, ChallengeRequestForm
 from .models import (
     BitByteActivity,
@@ -140,21 +136,41 @@ class OfficerPortalView(generic.ListView):
         )
         return result
 
+
+@login_and_permission("auth.add_user")
+def create_candidates_view(request):
+    """
+    View for creating multiple candidates given a CSV of their information
+    See "add_cands" for more details
+    """
+    return render(request, "candidate/create_candidates.html")
+
 @login_and_permission("auth.add_user")
 def add_cands(request):
     if request.method != ATTR.POST:
         raise Http404()
-    next_page = request.POST.get(ATTR.NEXT, "/")
+    
+    print(request.FILES)
 
     cand_csv_file = request.FILES.get(ATTR.CAND_CSV, None)
-    if not cand_csv_file.name.endswith(ATTR.CSV_ENDING):
-        messages.error(request, "Please input a csv file!")
+    if (cand_csv_file is None):
+        return JsonResponse({'success': False, 'id': -1, 'message': "No file detected (can be internal error)"})
+    if (not cand_csv_file.name.endswith(ATTR.CSV_ENDING)):
+        return JsonResponse({'success': False, 'id': -1, 'message': "Please input a csv file!"})
     decoded_cand_csv_file = cand_csv_file.read().decode(ATTR.UTF8SIG).splitlines()
     cand_csv = csv.DictReader(decoded_cand_csv_file)
+    num_rows = sum(1 for _ in csv.DictReader(decoded_cand_csv_file))
     
-    task_id = spawn_threaded_add_cands_and_email(cand_csv)
+    website_login_link = request.build_absolute_uri("/accounts/login/")
+    task_id = spawn_threaded_add_cands_and_email(cand_csv, website_login_link, num_rows)
     
-    return redirect(next_page)
+    return JsonResponse({'success': True, 'id': task_id, 'message': ''})
+
+@login_and_permission("auth.add_user")
+def check_mass_candidate_status(request, id):
+    task = ThreadTask.objects.get(pk=id)
+    return JsonResponse({'progress': task.progress, 'message': task.message,
+                         'is_successful': task.is_successful, 'is_done': task.is_done})
 
 
 class MemberCheckoffView(generic.TemplateView):

@@ -1,20 +1,26 @@
 from django.conf import settings
+from django.contrib.auth.models import BaseUserManager, Group, User
 from django.core.mail import EmailMultiAlternatives
 from django.shortcuts import reverse
 from django.template.loader import render_to_string
 from django.db.models import Q
 
+from collections import OrderedDict
 import itertools
-from typing import Union
+import threading
+from typing import Tuple, Union
 
+from hknweb.models import Profile
+from hknweb.thread.models import ThreadTask
 from hknweb.utils import get_rand_photo, get_semester_bounds
-from hknweb.thread import ThreadTask
+from hknweb.views.users import get_current_cand_semester
 
 from ..events.models import Event, EventType
 from .models import BitByteActivity, OffChallenge, RequirementHangout, \
                     RequirementMergeRequirement
 
-from .constants import REQUIREMENT_TITLES_TEMPLATE, REQUIREMENT_TITLES_ALL
+from .constants import ATTR, CandidateDTO, DEFAULT_RANDOM_PASSWORD_LENGTH, \
+                       REQUIREMENT_TITLES_ALL, REQUIREMENT_TITLES_TEMPLATE
 
 MANDATORY = "Mandatory"
 
@@ -406,17 +412,20 @@ class MergedEvents:
 
 NO_ACTION_PLS_FIX = "No candidate account actions have been taken, so re-upload the entire file after fixing the errors."
 
-def spawn_threaded_add_cands_and_email(cand_csv):
+def spawn_threaded_add_cands_and_email(cand_csv, website_login_link, num_rows):
+    """
+    Spawn a single background thread to provision candidate
+    
+    """
     task = ThreadTask()
     task.save()
-    t = threading.Thread(target=threaded_add_cands_and_email,args=[cand_csv, task])
-    t.setDaemon(True)
-    t.start()
+    t = threading.Thread(target=threaded_add_cands_and_email,args=[cand_csv, num_rows, website_login_link, task])
+    task.startThread(t)
     return task.id
 
-def threaded_add_cands_and_email(cand_csv, task):
+def threaded_add_cands_and_email(cand_csv, num_rows, website_login_link, task):
     try:
-        result, msg = add_cands_and_email(cand_csv, task)
+        result, msg = add_cands_and_email(cand_csv, num_rows, website_login_link, task)
     except Exception as e:
         result = False
         msg = str(e)
@@ -457,15 +466,16 @@ def check_duplicates(candidatedto: CandidateDTO, row: OrderedDict,
         return True, error_msg
     return False, ""
 
-def add_cands_and_email(cand_csv, task=None):
+def add_cands_and_email(cand_csv, num_rows, website_login_link, task=None):
     candidate_group = Group.objects.get(name=ATTR.CANDIDATE)
     progress_float = 0.0
-    CAND_ACC_WEIGHT = 0.25
-    EMAIL_WEIGHT = 0.75
+    CAND_ACC_WEIGHT = 0.75
+    EMAIL_WEIGHT = 0.25
 
     # Sanity check progress
     if task is not None:
         task.progress = 1
+        task.save()
 
     # Pre-screen and validate data
     new_cand_list = []
@@ -478,6 +488,7 @@ def add_cands_and_email(cand_csv, task=None):
         error_msg += " "
         error_msg += NO_ACTION_PLS_FIX
         return False, error_msg
+
     for i, row in enumerate(cand_csv):
         # if i >= 30:
         #     error_msg = "Preprocessing stopped! Detected more than 30 account requests!"
@@ -518,19 +529,28 @@ def add_cands_and_email(cand_csv, task=None):
         new_cand_list.append(new_cand)
         email_passwords[new_cand.email] = password
 
-    # Since no number of rows avaiable, can't live track progress
+        progress_float = CAND_ACC_WEIGHT * 100 * (i + 1) / num_rows
+        if task is not None:
+            task.progress = round(progress_float)
+            task.save()
+    
+    # Reset to CAND_ACC_WEIGHT in case floating point errors
     progress_float = CAND_ACC_WEIGHT * 100
     if task is not None:
         task.progress = round(progress_float)
+        task.save()
     
     num_of_accounts = len(email_set)
+
+    if num_of_accounts != num_rows:
+        error_msg = "Internal Error: number of accounts ({}) != number of rows ({})".format(num_of_accounts, num_rows)
+        error_msg += " "
+        error_msg += NO_ACTION_PLS_FIX
+        return False, error_msg
     
     # Release the memory once done
     del email_set
     del username_set
-    
-    # Add all candidates
-    count = 0
     
     email_errors = []
     for i, new_cand in enumerate(new_cand_list):
@@ -549,22 +569,29 @@ def add_cands_and_email(cand_csv, task=None):
                 "first_name": new_cand.first_name,
                 "username": new_cand.username,
                 "password": email_passwords[new_cand.email],
-                "website_link": request.build_absolute_uri("/accounts/login/"),
+                "website_link": website_login_link,
                 "img_link": get_rand_photo(),
             },
         )
-        msg = EmailMultiAlternatives(
-            subject, subject, settings.NO_REPLY_EMAIL, [new_cand.email]
-        )
-        msg.attach_alternative(html_content, "text/html")
-        try:
-            msg.send()
-        except Exception as e:
-            email_errors.append((new_cand_list[i].email, str(e)))
+        if settings.DEBUG:
+            print("\n")
+            print(new_cand.first_name, new_cand.username)
+            print(html_content)
+            print("\n")
+        else:
+            msg = EmailMultiAlternatives(
+                subject, subject, settings.NO_REPLY_EMAIL, [new_cand.email]
+            )
+            msg.attach_alternative(html_content, "text/html")
+            try:
+                msg.send()
+            except Exception as e:
+                email_errors.append((new_cand_list[i].email, str(e)))
         
-        progress_float += EMAIL_WEIGHT * 100 * (i + 1)/num_of_accounts
+        progress_float = EMAIL_WEIGHT * 100 * (i + 1) / num_of_accounts
         if task is not None:
             task.progress = round(progress_float)
+            task.save()
         
     
     # If gone through everything and no errors
@@ -574,8 +601,8 @@ def add_cands_and_email(cand_csv, task=None):
                     + "Inform CompServ of the errors, and inform the candidates " \
                     + "to access their accounts by resetting their password " \
                     + "using \"Forget your password?\" in the Login page. " \
-                    + "All {} candidates added!".format(count)
+                    + "All {} candidates added!".format(num_of_accounts)
         return False, error_msg
     else:
-        return True, "Successfully added {} candidates!".format(count)
+        return True, "Successfully added {} candidates!".format(num_of_accounts)
 
