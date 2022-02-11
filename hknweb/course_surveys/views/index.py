@@ -300,7 +300,7 @@ class IndexView(TemplateView):
             Attr.INSTRUCTOR_TYPE: icsr.instructor_type,
             Attr.RATINGS: None,
         }
-        if not icsr.survey_icsr.exists():
+        if not icsr.survey_icsr.exists() or icsr.survey_icsr.first().is_private:
             return context
         survey = icsr.survey_icsr.first()
 
