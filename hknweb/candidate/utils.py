@@ -474,7 +474,7 @@ def add_cands_and_email(cand_csv, num_rows, website_login_link, task=None):
 
     # Sanity check progress
     if task is not None:
-        task.progress = 1
+        task.progress = 1.0
         task.save()
 
     # Pre-screen and validate data
@@ -490,13 +490,6 @@ def add_cands_and_email(cand_csv, num_rows, website_login_link, task=None):
         return False, error_msg
 
     for i, row in enumerate(cand_csv):
-        # if i >= 30:
-        #     error_msg = "Preprocessing stopped! Detected more than 30 account requests!"
-        #     error_msg += " "
-        #     error_msg += "Please upload the file in separate batches of 30 account requests each."
-        #     error_msg += " "
-        #     error_msg += NO_ACTION_PLS_FIX
-        #     return False, error_msg
         try:
             candidatedto = CandidateDTO(row)
         except AssertionError as e:
