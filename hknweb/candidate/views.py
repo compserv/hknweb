@@ -1,36 +1,32 @@
-from collections import OrderedDict
-import csv
-from typing import Tuple
-
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import BaseUserManager, Group, User
+from django.contrib.auth.models import User
 from django.core.mail import EmailMultiAlternatives
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
-from django.http import Http404, HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render, reverse
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.views import generic
 from django.views.generic.edit import FormView
 
+import csv
 from dal import autocomplete
-from multiprocessing import Pool
-from hknweb.models import Profile
-from hknweb.views.users import get_current_cand_semester
-from hknweb.utils import get_access_level, GROUP_TO_ACCESSLEVEL
 
+from hknweb.thread.models import ThreadTask
 from hknweb.utils import (
+    get_access_level,
     get_rand_photo,
+    GROUP_TO_ACCESSLEVEL,
     login_and_permission,
     method_login_and_permission,
 )
 
 from ..events.models import Event, Rsvp
 
-from .constants import ATTR, DEFAULT_RANDOM_PASSWORD_LENGTH, CandidateDTO
+from .constants import ATTR, CandidateDTO
 from .forms import BitByteRequestForm, ChallengeConfirmationForm, ChallengeRequestForm
 from .models import (
     BitByteActivity,
@@ -42,7 +38,7 @@ from .models import (
     DuePaymentPaidEntry,
     OffChallenge,
 )
-from .utils import send_challenge_confirm_email
+from .utils import send_challenge_confirm_email, spawn_threaded_add_cands_and_email
 from .utils_candportal import CandidatePortalData
 
 @method_login_and_permission("candidate.view_announcement")
@@ -140,167 +136,39 @@ class OfficerPortalView(generic.ListView):
         )
         return result
 
-def check_duplicates(candidatedto: CandidateDTO, row: OrderedDict,
-                     email_set: set, username_set: set, i: int) -> Tuple[bool, str]:
-    error_msg = ""
-    # Check for duplicate Email
-    cand_email_in_set = candidatedto.email in email_set
-    if (cand_email_in_set or User.objects.filter(email=candidatedto.email).count() > 0):
-        if cand_email_in_set:
-            error_msg = "Duplicate email {} in the Candidate data.".format(candidatedto.email)
-        else:
-            error_msg = "Account with email {} already exists.".format(candidatedto.email)
-        error_msg += " "
-        error_msg += "No candidate account actions have been taken, so re-upload the entire file after fixing the errors."
-        error_msg += " "
-        error_msg += "Error Row Information at row {}: {}.".format(i + 1, row)
-        return True, error_msg
-    # Check for duplicate Username
-    cand_username_in_set = candidatedto.username in username_set
-    if (cand_username_in_set or User.objects.filter(username=candidatedto.username).count() > 0):
-        if cand_username_in_set:
-            error_msg = "Duplicate username {} in the Candidate data.".format(candidatedto.username)
-        else:
-            error_msg = "Account of username {} already exists.".format(candidatedto.username)
-        error_msg += " "
-        error_msg += "No candidate account actions have been taken, so re-upload the entire file after fixing the errors."
-        error_msg += " "
-        error_msg += "Error Row Information at row {}: {}.".format(i + 1, row)
-        return True, error_msg
-    return False, ""
+
+@login_and_permission("auth.add_user")
+def create_candidates_view(request):
+    """
+    View for creating multiple candidates given a CSV of their information
+    See "add_cands" for more details
+    """
+    return render(request, "candidate/create_candidates.html")
 
 @login_and_permission("auth.add_user")
 def add_cands(request):
     if request.method != ATTR.POST:
         raise Http404()
-    next_page = request.POST.get(ATTR.NEXT, "/")
 
     cand_csv_file = request.FILES.get(ATTR.CAND_CSV, None)
-    if not cand_csv_file.name.endswith(ATTR.CSV_ENDING):
-        messages.error(request, "Please input a csv file!")
+    if (cand_csv_file is None):
+        return JsonResponse({'success': False, 'id': -1, 'message': "No file detected (can be internal error)"})
+    if (not cand_csv_file.name.endswith(ATTR.CSV_ENDING)):
+        return JsonResponse({'success': False, 'id': -1, 'message': "Please input a csv file!"})
     decoded_cand_csv_file = cand_csv_file.read().decode(ATTR.UTF8SIG).splitlines()
     cand_csv = csv.DictReader(decoded_cand_csv_file)
-
-    candidate_group = Group.objects.get(name=ATTR.CANDIDATE)
-
-    # Pre-screen and validate data
-    new_cand_list = []
-    email_set = set()
-    username_set = set()
-    current_cand_semester = get_current_cand_semester()
-    email_passwords = {}
-    if current_cand_semester is None:
-        error_msg = "Inform CompServ the following: Please add the current semester in CourseSemester."
-        error_msg += " "
-        error_msg += "No candidate account actions have been taken, so re-upload the entire file after fixing the errors."
-        messages.error(request, error_msg)
-        return redirect(next_page)
-    for i, row in enumerate(cand_csv):
-        if i >= 30:
-            error_msg = "Preprocessing stopped! Detected more than 30 account requests!"
-            error_msg += " "
-            error_msg += "Please upload the file in separate batches of 30 account requests each."
-            error_msg += " "
-            error_msg += "No candidate account actions have been taken, so re-upload the entire file after fixing the errors."
-            messages.error(request, error_msg)
-            return redirect(next_page)
-        try:
-            candidatedto = CandidateDTO(row)
-        except AssertionError as e:
-            error_msg = "Invalid CSV format. Check that your columns are correctly labeled, there are NO blank rows, and filled out for each row."
-            error_msg += " "
-            error_msg += "No candidate account actions have been taken, so re-upload the entire file after fixing the errors."
-            error_msg += " "
-            error_msg += "Candidate error message: {}.".format(e)
-            error_msg += " "
-            error_msg += "Row Information at row {}: {}.".format(i + 1, row)
-            messages.error(request, error_msg)
-            return redirect(next_page)
-
-        password = BaseUserManager.make_random_password(
-            None, length=DEFAULT_RANDOM_PASSWORD_LENGTH
-        )
-        
-        duplicate, error_msg = check_duplicates(candidatedto, row, email_set, username_set, i)
-        if duplicate:
-            messages.error(request, error_msg)
-            return redirect(next_page)
-        
-        new_cand = User(
-            username=candidatedto.username,
-            email=candidatedto.email,
-        )
-        email_set.add(candidatedto.email)
-        username_set.add(candidatedto.username)
-        new_cand.first_name = candidatedto.first_name
-        new_cand.last_name = candidatedto.last_name
-        new_cand.set_password(password)
-        new_cand_list.append(new_cand)
-        email_passwords[new_cand.email] = password
+    num_rows = sum(1 for _ in csv.DictReader(decoded_cand_csv_file))
     
-    # Release the memory once done
-    del email_set
-    del username_set
+    website_login_link = request.build_absolute_uri("/accounts/login/")
+    task_id = spawn_threaded_add_cands_and_email(cand_csv, website_login_link, num_rows)
     
-    # Add all candidates
-    count = 0
-    email_pool = Pool(processes=4)
-    # This should be capped at 4, since Gmail doesn't like lots
-    #  of emails being sent in succession
-    # If there's a 421 Temp Error from the Mailing Service, adjust this number down
-    email_pool_list = []
-    for new_cand in new_cand_list:
-        new_cand.save()
-        candidate_group.user_set.add(new_cand)
+    return JsonResponse({'success': True, 'id': task_id, 'message': ''})
 
-        profile = Profile.objects.get(user=new_cand)
-        profile.candidate_semester = current_cand_semester
-        profile.save()
-
-        subject = "[HKN] Candidate account"
-        html_content = render_to_string(
-            "candidate/new_candidate_account_email.html",
-            {
-                "subject": subject,
-                "first_name": new_cand.first_name,
-                "username": new_cand.username,
-                "password": email_passwords[new_cand.email],
-                "website_link": request.build_absolute_uri("/accounts/login/"),
-                "img_link": get_rand_photo(),
-            },
-        )
-        msg = EmailMultiAlternatives(
-            subject, subject, settings.NO_REPLY_EMAIL, [new_cand.email]
-        )
-        msg.attach_alternative(html_content, "text/html")
-        email_pool_list.append(email_pool.apply_async(msg.send, args=()))
-        count += 1
-    email_pool.close()
-    
-    email_errors = []
-    i = 0
-    while i < len(email_pool_list):
-        try:
-            while i < len(email_pool_list):
-                p = email_pool_list[i]
-                p.get()
-                i += 1
-        except Exception as e:
-            email_errors.append((new_cand_list[i].email, str(e)))
-            i += 1
-    
-    # If gone through everything and no errors
-    if len(email_errors) > 0:
-        messages.warning(request, "An error occured during the sending of emails. "
-                                + "Candidate Email and Error Messages: " + str(email_errors) + " --- "
-                                + "Inform CompServ of the errors, and inform the candidates "
-                                + "to access their accounts by resetting their password "
-                                + "using \"Forget your password?\" in the Login page. "
-                                + "All {} candidates added!".format(count))
-    else:
-        messages.success(request, "Successfully added {} candidates!".format(count))
-
-    return redirect(next_page)
+@login_and_permission("auth.add_user")
+def check_mass_candidate_status(request, id):
+    task = ThreadTask.objects.get(pk=id)
+    return JsonResponse({'progress': task.progress, 'message': task.message,
+                         'is_successful': task.is_successful, 'is_done': task.is_done})
 
 
 class MemberCheckoffView(generic.TemplateView):
@@ -332,18 +200,21 @@ def checkoff_csv(request):
 
     checkoff_type = request.POST.get("checkoff_type", "")
     if checkoff_type == "event":
-        event_id = request.POST.get("event_id", "")
-        if not event_id:
+        event_id = request.POST.get("event_id", None)
+        if event_id is None:
             messages.error(request, "Please input an event ID!")
             return redirect(next_page)
         event = Event.objects.filter(pk=event_id)
         if not event:
             messages.error(request, "Please input a valid event ID!")
             return redirect(next_page)
-        event = event[0]
+        event = event.first()
     elif checkoff_type == "project":
-        project_name = request.POST.get("project_name", "")
-        project = CommitteeProject.objects.get(name=project_name)
+        project_id = request.POST.get("project_selection", None)
+        if project_id is None:
+            messages.error(request, "Please select a valid committee project!")
+            return redirect(next_page)
+        project = CommitteeProject.objects.get(id=project_id)
         projectDoneEntry = CommitteeProjectDoneEntry.objects.filter(
             committeeProject=project
         ).first()
@@ -354,8 +225,11 @@ def checkoff_csv(request):
             )
             return redirect(next_page)
     elif checkoff_type == "dues":
-        dues_name = request.POST.get("dues_name", "")
-        due = DuePayment.objects.get(name=dues_name)
+        dues_id = request.POST.get("dues_selection", None)
+        if dues_id is None:
+            messages.error(request, "Please input a valid Dues entry!")
+            return redirect(next_page)
+        due = DuePayment.objects.get(id=dues_id)
         duesDoneEntry = DuePaymentPaidEntry.objects.filter(duePayment=due).first()
         if duesDoneEntry is None:
             messages.error(
@@ -364,8 +238,11 @@ def checkoff_csv(request):
             )
             return redirect(next_page)
     elif checkoff_type == "forms":
-        forms_name = request.POST.get("forms_name", "")
-        form = CandidateForm.objects.get(name=forms_name)
+        forms_id = request.POST.get("forms_selection", None)
+        if forms_id is None:
+            messages.error(request, "Please input a valid Forms entry!")
+            return redirect(next_page)
+        form = CandidateForm.objects.get(id=forms_id)
         formsDoneEntry = CandidateFormDoneEntry.objects.filter(form=form).first()
         if formsDoneEntry is None:
             messages.error(
@@ -373,6 +250,9 @@ def checkoff_csv(request):
                 "Could not find a corresponding CandidateFormDoneEntry. Please make sure one is created for the form.",
             )
             return redirect(next_page)
+    else:
+        messages.error(request, "Invalid checkoff type")
+        return redirect(next_page)
 
     # Pre-screen and validate data
     users = []

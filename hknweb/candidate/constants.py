@@ -47,10 +47,11 @@ class CandidateDTO:
         self.first_name = candidate_attributes.get(ATTR.FIRST_NAME, None)
         self.last_name = candidate_attributes.get(ATTR.LAST_NAME, None)
         self.username = self.email
-        if self.email.endswith(BERKELEY_EMAIL_DOMAIN):
-            self.username = self.email.replace(BERKELEY_EMAIL_DOMAIN, "")
-        elif self.email.endswith(HKN_EMAIL_DOMAIN):
-            self.username = self.email.replace(HKN_EMAIL_DOMAIN, "")
+        if self.email is not None:
+            if self.email.endswith(BERKELEY_EMAIL_DOMAIN):
+                self.username = self.email.replace(BERKELEY_EMAIL_DOMAIN, "")
+            elif self.email.endswith(HKN_EMAIL_DOMAIN):
+                self.username = self.email.replace(HKN_EMAIL_DOMAIN, "")
         self.validate()
 
     def validate(self):

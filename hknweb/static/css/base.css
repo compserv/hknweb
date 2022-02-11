@@ -150,6 +150,7 @@ body {
 #toggle-account:not(:checked) ~ #toggle-outreach:checked ~ .navi-container label[for="toggle-outreach"],
 #toggle-account:not(:checked) ~ #toggle-events:checked ~ .navi-container label[for="toggle-events"],
 #toggle-account:not(:checked) ~ #toggle-about:checked ~ .navi-container label[for="toggle-about"],
+#toggle-account:not(:checked) ~ #toggle-candidate-admin:checked ~ .navi-container label[for="toggle-candidate-admin"],
 #toggle-account:checked ~ .navi-container label[for="toggle-account"] {
   text-decoration: underline;
 }
@@ -158,6 +159,7 @@ body {
 #toggle-account:not(:checked) ~ #toggle-outreach:checked ~ #outreach-nav-bar,
 #toggle-account:not(:checked) ~ #toggle-events:checked ~ #events-nav-bar,
 #toggle-account:not(:checked) ~ #toggle-about:checked ~ #about-nav-bar,
+#toggle-account:not(:checked) ~ #toggle-candidate-admin:checked ~ #candidate-admin-nav-bar,
 #toggle-account:checked ~ #account-nav-bar {
   opacity: 1;
   z-index: 1;
@@ -167,6 +169,7 @@ body {
 #toggle-account:not(:checked) ~ #toggle-outreach:checked ~ #outreach-nav-bar *,
 #toggle-account:not(:checked) ~ #toggle-events:checked ~ #events-nav-bar *,
 #toggle-account:not(:checked) ~ #toggle-about:checked ~ #about-nav-bar *,
+#toggle-account:not(:checked) ~ #toggle-candidate-admin:checked ~ #candidate-admin-nav-bar *,
 #toggle-account:checked ~ #account-nav-bar * {
   display: inline;
 }
@@ -176,6 +179,7 @@ body {
   #toggle-mobile:checked ~ #toggle-account:not(:checked) ~ #toggle-outreach:checked ~ #outreach-nav-bar,
   #toggle-mobile:checked ~ #toggle-account:not(:checked) ~ #toggle-events:checked ~ #events-nav-bar,
   #toggle-mobile:checked ~ #toggle-account:not(:checked) ~ #toggle-about:checked ~ #about-nav-bar,
+  #toggle-mobile:checked ~ #toggle-account:not(:checked) ~ #toggle-candidate-admin:checked ~ #candidate-admin-nav-bar,
   #toggle-mobile:checked ~ #toggle-account:checked ~ #account-nav-bar {
     display: block;
   }

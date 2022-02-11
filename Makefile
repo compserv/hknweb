@@ -50,7 +50,7 @@ install:
 	#  - https://github.com/compserv/hknweb/commit/124b108
 	#  - https://github.com/hashicorp/vagrant/issues/12057
 	# This is mainly a Vagrant workaround to allow pip upgrade
-	$(PYTHON) -m pip install --upgrade pip --ignore-installed
+	$(PYTHON) -m pip install --upgrade pip setuptools --ignore-installed
 
 	make install-prod
 	$(PYTHON) -m pip install -r requirements-dev.txt

@@ -56,16 +56,18 @@
   <p> Example: BOB BOBERTSON should be entered as: Bob Bobertson. </p>
   {{form.tutor_name}}
   <h2> Timeslot preferences </h2>
-  <!-- <p>For each time slot below, indicate your preference level for office hours.</p>
-  <p>You can also indicate your office preference for individual time slots.</p>
+  <p>For each time slot below, indicate your preference level for office hours.</p>
 
   <p>
-    For each time slot below, indicate your preference level for office hours for each room:<br/>
+    You can also indicate your office preference for individual time slots.<br/>
+    No Preference (<i>center</i>), Slightly Prefered (<i>halfway center to edge</i>), and Strongly Prefered (<i>all the way to edge</i>)
+    towards the room listed in each slot.
+  </p>
+
+  <p>
+    If there are multiple room options, indicate your preference level for office hours for each room:<br/>
     Strongly undesired (<i>leftmost</i>), slightly undesired (<i>halfway left and center</i>), 
     no preference (<i>center</i>), slightly prefered (<i>halfway right and center</i>), and strongly prefered (<i>rightmost</i>).
-  </p> -->
-  <p>
-    Select your <b>availability</b> using the first set of options and your <b>preferred location</b> using the second set of options.
   </p>
 
   <table border="1" cellpadding="10px">
@@ -75,9 +77,9 @@
       <th class="w4 pv2 bb b--light-gray">{{ day }}</th>
       {% endfor %}
     </tr>
-    {% for hour, hour_pretty in hours %}
+    {% for hour, hour_pretty, hour_nexthour_pretty in hours %}
     <tr>
-        <td class="pv2 w3 bb b--near-white"> {{hour_pretty}} </td>
+        <td class="pv2 w3 bb b--near-white"> {{hour_pretty}} - {{hour_nexthour_pretty}} </td>
         {% for slotfields in form|access_slotfields_at_hour:hour%}
         <td class="pv2 w ba b--near-white">
             {% for field in slotfields %}
@@ -95,7 +97,14 @@
     </tr>
     {% endfor %}
   </table>
-  <p> </p>
+  <p>
+    DISCLAIMER: While the scheduler tries to make everyone as happy as possible, it is likely that you won't
+    get exactly the perfect assignment that you were looking for.
+  </p>
+  <p>
+    Depending on which is more important to you, keep in mind that a more restrictive office preference
+    may dominate your time slot preferences (or vice-versa).
+  </p>
   <div id="submit">
     <input type="submit" name="submit_button" value="Submit" style="width: 90px; height: 40px; font-size: 16px;"/>
   </div>

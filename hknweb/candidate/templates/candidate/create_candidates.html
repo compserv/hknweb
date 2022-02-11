@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static "candidate/style.css" %}">
+{% endblock %}
+
+{% block title %}Create Candidates{% endblock %}
+
+{% block heading %}
+Create Candidates
+{% endblock %}
+
+{% block content %}
+<div class="parent">
+    <div class="table-div">
+        <h3>Add new candidates (this may take a few minutes!)</h3>
+        <ul>
+         <li>Admins and Executives should be granted permission to use this tool and see this page!</li>
+         <li>The uploaded CSV <b>must have headers</b> for "Email", "First Name", and "Last Name"</li>
+         <li>Once you upload, you will be given a status screen to monitor the provisioning progress</li>
+         <li>
+             The progress bar has a 600 seconds (or 5 minutes) timeout. If a timeout occurs, a message
+             will inform you to contact CompServ. However, candidates will still be continued to be added
+             in the background.
+         </li>
+         <li>0 to 75% progress means it is checking the accounts. 75% to 100% means the accounts are being created and emails are being sent</li>
+        </ul>
+        {% for message in messages %}
+            <span {% if messages.tags %} class="{{ message.tags }}" {% endif %}
+                class="blue">{{ message }}</span>
+        {% endfor %}
+        <form action="{% url 'candidate:add_cands' %}" id="submit_cands_csv" method="post" enctype="multipart/form-data" onsubmit="submit_button.disabled = true; return true;">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.path }}">
+            <input type="file" name="cand_csv" />
+            <input type="submit" name="submit_button" value="Add candidates" />
+        </form>
+    </div>
+    <br/>
+    <div class='row'>
+        <div id='thread_msg'></div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" ></script>
+    <script type='text/javascript'>
+        $(document).ready(function(){
+            var form = $('form#submit_cands_csv');
+            form.submit(function(e) {
+                // Source: https://stackoverflow.com/questions/1960240/jquery-ajax-submit-form
+                e.preventDefault();
+                var actionUrl = form.attr('action');
+
+                $.ajax({
+                    type: "POST",
+                    cache: false,
+                    url: actionUrl,
+                    data: new FormData(form[0]),
+                    dataType: "json",
+                    success: function(data) {
+                        var msg = $('<div id=" '+ data.id +'">').text('Task ' + data.id + ' working')
+                        $('#thread_msg').append(msg)
+                        if (!data.success) {
+                            msg.text('Task failure. ' + data.message);
+                            $('#submit_button').attr('disabled', false);
+                            return
+                        }
+                        var i = 0;
+                        var threadInterval = setInterval(function() {
+                            checkTask("/cand/check_create_cand_status/" + data.id, function(check) {
+                                msg.text('Task ' + data.id + ' ' +'Progress: ' + check.progress + '%')
+                                if (check.is_done) {
+                                    let status_txt = check.is_successful ? "succeeded" : "failed";
+                                    msg.text('Task ' + data.id + ' ' + status_txt + '. ' + check.message);
+                                    window.clearInterval(threadInterval);
+                                }
+                                if (++i === 600) {
+                                    msg.text('Task ' + data.id + ' timeout, but task continuing to run in background.' + ' '
+                                                + 'Provide CompServ the thread id to check the thread status.');
+                                    window.clearInterval(threadInterval);
+                                }
+                            })
+                        }, 1000); // Interval of 1000 ms or 1 second
+                    },
+                    processData: false,
+                    contentType: false
+                })
+            })
+
+            function checkTask(url, cb){
+                $.ajax({
+                    type: "GET",
+                    cache: false,
+                    url: url,
+                    dataType: "json",
+                    success: function(data) {
+                        cb(data)
+                    }
+                })
+            }
+        })
+    </script>
+</div>
+
+{% endblock %}

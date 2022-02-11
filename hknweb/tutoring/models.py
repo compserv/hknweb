@@ -64,10 +64,12 @@ class TimeSlot(models.Model):
         (FRI, "Fri"),
     ]
     HOUR_CHOICES = [
+        (12, "12pm"),
         (13, "1pm"),
         (14, "2pm"),
         (15, "3pm"),
         (16, "4pm"),
+        (20, "8pm"),
         (21, "9pm"),
     ]
     hour = models.IntegerField(choices=HOUR_CHOICES)
@@ -84,6 +86,10 @@ class TimeSlot(models.Model):
             return "12pm"
         else:
             return "{}pm".format(hour - 12)
+    
+    @staticmethod
+    def time_nexthour(hour):
+        return TimeSlot.time((hour + 1) % 24)
 
     DAYS_OF_WEEK = ["Sun", "Mon", "Tues", "Wed", "Thus", "Fri", "Sat"]
 
