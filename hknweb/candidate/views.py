@@ -149,8 +149,6 @@ def create_candidates_view(request):
 def add_cands(request):
     if request.method != ATTR.POST:
         raise Http404()
-    
-    print(request.FILES)
 
     cand_csv_file = request.FILES.get(ATTR.CAND_CSV, None)
     if (cand_csv_file is None):
