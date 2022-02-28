@@ -10,6 +10,10 @@ urlpatterns = [
     path("reviewsessions", views.reviewsessions, name="reviewsessions"),
     path("reviewsessions/<int:id>", views.reviewsession_details),
     path("reviewsessions/new", views.add_reviewsession),
-    path("reviewsessions/<int:pk>/edit", views.ReviewSessionUpdateView.as_view(), name="reviewsession_edit"),
+    path(
+        "reviewsessions/<int:pk>/edit",
+        views.ReviewSessionUpdateView.as_view(),
+        name="reviewsession_edit",
+    ),
     path("tours", views.tour, name="tours"),
 ]
