@@ -50,16 +50,6 @@
     <p><b>Semester</b>: {{event.semester}}</p>
     <p><b>Access level</b>: {{ event_access_level }}</p>
 
-    <p>
-      <div>
-        <a href={{gcal_link}}>Add to Google calendar</a>
-        <div style="display: inline-block">
-          <img class="info_img" src="{% static "events/information.png" %}">
-          <span class="info_img_info">Event time changes will not update calendar invites.</span>
-        </div>
-      </div>
-    </p>
-
     {% if can_edit %}
       <p><a href="{% url 'events:edit' event.id %}">
           Edit This Event

@@ -1,6 +1,11 @@
 from django.contrib import admin
 from django.shortcuts import redirect
-from .models import EventType, Event, Rsvp
+from django.utils import timezone
+
+from hknweb.utils import get_access_level
+
+from hknweb.events.models import EventType, Event, Rsvp, GoogleCalendarCredentials
+import hknweb.events.google_calendar_utils as gcal
 
 
 @admin.register(EventType)
@@ -14,7 +19,6 @@ class EventAdmin(admin.ModelAdmin):
 
     fields = [
         "name",
-        "slug",
         "start_time",
         "end_time",
         "location",
@@ -53,6 +57,12 @@ class EventAdmin(admin.ModelAdmin):
     ordering = ["-created_at"]
     autocomplete_fields = ["event_type", "created_by"]
 
+    def delete_queryset(self, request, queryset):
+        for e in queryset:
+            gcal.delete_event(e.google_calendar_event_id)
+
+        super().delete_queryset(request, queryset)
+
 
 @admin.register(Rsvp)
 class RsvpAdmin(admin.ModelAdmin):
@@ -89,3 +99,23 @@ class RsvpAdmin(admin.ModelAdmin):
         return redirect("https://www.google.com/search?q=cute+cats&tbm=isch")
 
     cute_animal.short_description = "I wanna see a cute animal"
+
+
+@admin.register(GoogleCalendarCredentials)
+class GoogleCalendarCredentialsAdmin(admin.ModelAdmin):
+    fields = ["file"]
+
+    actions = ["provision_calendar"]
+
+    def provision_calendar(self, request, queryset):
+        gcal.clear_calendar()
+
+        upcoming_events = Event.objects.filter(start_time__gte=timezone.now()).filter(
+            access_level__gte=get_access_level(request.user)
+        )
+
+        for e in upcoming_events:
+            e.google_calendar_event_id = None
+            e.save()
+
+    provision_calendar.short_description = "Provision the events Google calendar"

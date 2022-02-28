@@ -4,13 +4,13 @@ from django.contrib.auth.models import User
 from markdownx.models import MarkdownxField
 
 from hknweb.utils import get_semester
+import hknweb.events.google_calendar_utils as gcal
 
 from hknweb.events.models.event_type import EventType
 
 
 class Event(models.Model):
     name = models.CharField(max_length=255)
-    slug = models.CharField(max_length=255)
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
     location = models.CharField(max_length=255)
@@ -27,6 +27,7 @@ class Event(models.Model):
     )
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     created_at = models.DateTimeField(auto_now_add=True)
+    google_calendar_event_id = models.CharField(max_length=255, null=True, blank=True)
 
     @property
     def semester(self):
@@ -66,3 +67,24 @@ class Event(models.Model):
         """old_admitted must be a set, not a QuerySet. QuerySets are mutable views into the database."""
         new_admitted = set(self.admitted_set())
         return new_admitted - old_admitted
+
+    def save(self, *args, **kwargs):
+        if self.google_calendar_event_id is None:
+            self.google_calendar_event_id = gcal.create_event(
+                self.name,
+                self.location,
+                self.description,
+                self.start_time.isoformat(),
+                self.end_time.isoformat(),
+            )
+        else:
+            gcal.update_event(
+                self.google_calendar_event_id,
+                summary=self.name,
+                location=self.location,
+                description=self.description,
+                start=self.start_time.isoformat(),
+                end=self.end_time.isoformat(),
+            )
+
+        super().save(*args, **kwargs)

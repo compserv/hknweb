@@ -80,6 +80,12 @@ Upcoming Events
         {% endfor %}
     {% endif %}
 
+    {% if perms.events.view_event %}
+        <p>
+            Add <a href="{{ google_calendar_add_link }}">our events calendar</a> to your own Google Calendar!
+        </p>
+    {% endif %}
+
     <!-- Event type legend -->
     <ul class="list w-100 flex flex-wrap justify-end">
     {% for event_type in event_types %}

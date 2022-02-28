@@ -12,10 +12,7 @@ from hknweb.events.constants import (
     RSVPS_PER_PAGE,
 )
 from hknweb.events.models import Event, Rsvp
-from hknweb.events.utils import (
-    create_gcal_link,
-    format_url,
-)
+from hknweb.events.utils import format_url
 from hknweb.utils import get_access_level
 
 
@@ -46,7 +43,6 @@ def show_details(request, id):
     rsvps = event.admitted_set()
     waitlists = event.waitlist_set()
     limit = event.rsvp_limit
-    gcal_link = create_gcal_link(event)
 
     event_location = format_url(event.location)
 
@@ -89,6 +85,5 @@ def show_details(request, id):
         "waitlisted": waitlisted,
         "waitlist_position": waitlist_position,
         "can_edit": request.user.has_perm("events.change_event"),
-        ATTR.GCAL_INVITE_TEMPLATE: gcal_link,
     }
     return render(request, "events/show_details.html", context)

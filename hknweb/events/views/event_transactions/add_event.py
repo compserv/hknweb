@@ -18,7 +18,7 @@ def add_event(request):
             data = form.cleaned_data
 
             times = generate_recurrence_times(
-                data[ATTR.START_TIME],
+                data["start_time"],
                 data["end_time"],
                 data["recurring_num_times"],
                 data["recurring_period"],
