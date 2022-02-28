@@ -3,47 +3,14 @@ from datetime import datetime, timedelta
 from django import forms
 from django.core.validators import URLValidator
 from django.utils.safestring import mark_safe
-import urllib.parse
 
-from .constants import ATTR, GCAL_INVITE_TEMPLATE, GCAL_DATETIME_TEMPLATE
-from .models import Event
-
-
-def create_gcal_link(event: Event) -> str:
-    attrs = {
-        ATTR.EVENT_NAME: urllib.parse.quote_plus(event.name, safe=""),
-        ATTR.DESCRIPTION: urllib.parse.quote_plus(event.description, safe=""),
-        ATTR.LOCATION: urllib.parse.quote_plus(event.location, safe=""),
-        ATTR.START_TIME: format_gcal_time(event.start_time),
-        ATTR.END_TIME: format_gcal_time(event.end_time),
-    }
-    return GCAL_INVITE_TEMPLATE.format(**attrs)
-
-
-def format_gcal_time(time: datetime) -> str:
-    attrs = {
-        ATTR.YEAR: time.year,
-        ATTR.MONTH: time.month,
-        ATTR.DAY: time.day,
-        ATTR.HOUR: time.hour,
-        ATTR.MINUTES: time.minute,
-        ATTR.SECONDS: time.second,
-    }
-    return GCAL_DATETIME_TEMPLATE.format(**attrs)
-
-
-def generate_repeated_slug(base_slug, start_time, end_time):
-    return "{base_slug}-{start_time}-{end_time}".format(
-        base_slug=base_slug,
-        start_time=format_gcal_time(start_time),
-        end_time=format_gcal_time(end_time),
-    )
+from hknweb.events.constants import ATTR
+from hknweb.events.models import Event
 
 
 def create_event(data, start_time, end_time, user):
     event = Event.objects.create(
         name=data[ATTR.NAME],
-        slug=generate_repeated_slug(data[ATTR.SLUG], start_time, end_time),
         start_time=start_time,
         end_time=end_time,
         location=data[ATTR.LOCATION],

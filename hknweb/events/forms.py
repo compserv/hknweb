@@ -1,8 +1,8 @@
 from django import forms
 
 from hknweb.utils import DATETIME_12_HOUR_FORMAT
-from .models import Event
-from .utils import DATETIME_WIDGET_NO_AUTOCOMPLETE
+from hknweb.events.models import Event
+from hknweb.events.utils import DATETIME_WIDGET_NO_AUTOCOMPLETE
 
 
 class EventForm(forms.ModelForm):
@@ -26,7 +26,6 @@ class EventForm(forms.ModelForm):
         model = Event
         fields = (
             "name",
-            "slug",
             "location",
             "description",
             "event_type",
@@ -36,12 +35,7 @@ class EventForm(forms.ModelForm):
             "access_level",
         )
 
-        widgets = {
-            "slug": forms.TextInput(attrs={"placeholder": "e.g. <semester>-<name>"}),
-        }
-
         labels = {
-            "slug": "URL-friendly name",
             "rsvp_limit": "RSVP limit",
         }
 
@@ -54,7 +48,6 @@ class EventUpdateForm(forms.ModelForm):
         model = Event
         fields = [
             "name",
-            "slug",
             "start_time",
             "end_time",
             "location",
@@ -64,11 +57,6 @@ class EventUpdateForm(forms.ModelForm):
             "access_level",
         ]
 
-        widgets = {
-            "slug": forms.TextInput(attrs={"placeholder": "e.g. <semester>-<name>"}),
-        }
-
         labels = {
-            "slug": "URL-friendly name",
             "rsvp_limit": "RSVP limit",
         }

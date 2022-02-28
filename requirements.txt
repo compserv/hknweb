@@ -9,3 +9,6 @@ fabric==2.6.0
 social-auth-app-django==3.1.0
 django-autocomplete-light==3.5.1
 djangorestframework==3.11.0
+google-api-python-client
+google-auth-httplib2
+google-auth-oauthlib

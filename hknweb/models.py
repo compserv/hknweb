@@ -38,8 +38,9 @@ class Profile(models.Model):
         help_text="Formats: '%Y-%m-%d', '%m/%d/%Y', '%m/%d/%y' (Examples: '2006-10-25', '10/25/2006', '10/25/06')",
     )
     candidate_semester = models.ForeignKey(
-        Semester, on_delete=models.SET_NULL, null=True
+        Semester, on_delete=models.SET_NULL, null=True, blank=True
     )
+    google_calendar_id = models.CharField(max_length=255, null=True, blank=True)
 
     @receiver(post_save, sender=User)
     def create_user_profile(sender, instance, created, **kwargs):
