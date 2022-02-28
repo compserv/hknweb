@@ -1,4 +1,4 @@
-import json, base64, datetime
+import base64
 
 import google.oauth2.service_account as service_account
 from googleapiclient.discovery import build
@@ -69,6 +69,7 @@ def create_event(
     description: str,
     start: str,
     end: str,
+    calendar_id: str=CALENDAR_ID,
 ) -> str:
     event_resource = create_event_resource(
         summary=summary,
@@ -82,7 +83,7 @@ def create_event(
         get_service()
         .events()
         .insert(
-            calendarId=CALENDAR_ID,
+            calendarId=calendar_id,
             body=event_resource,
         )
         .execute()
@@ -91,31 +92,31 @@ def create_event(
     return event["id"]
 
 
-def update_event(event_id: str, **kwargs) -> None:
+def update_event(event_id: str, calendar_id: str=CALENDAR_ID, **kwargs) -> None:
     event_resource = create_event_resource(**kwargs)
 
     get_service().events().patch(
-        calendarId=CALENDAR_ID,
+        calendarId=calendar_id,
         eventId=event_id,
         body=event_resource,
     ).execute()
 
 
-def delete_event(event_id: str) -> None:
+def delete_event(event_id: str, calendar_id: str=CALENDAR_ID) -> None:
     get_service().events().delete(
-        calendarId=CALENDAR_ID,
+        calendarId=calendar_id,
         eventId=event_id,
     ).execute()
 
 
-def clear_calendar() -> None:
+def clear_calendar(calendar_id: str=CALENDAR_ID) -> None:
     events_to_delete = []
     page_token = None
     while True:
         events = (
             get_service()
             .events()
-            .list(calendarId=CALENDAR_ID, pageToken=page_token)
+            .list(calendarId=calendar_id, pageToken=page_token)
             .execute()
         )
         for event in events["items"]:
@@ -125,14 +126,32 @@ def clear_calendar() -> None:
             break
 
     for e in events_to_delete:
-        get_service().events().delete(calendarId=CALENDAR_ID, eventId=e).execute()
+        get_service().events().delete(calendarId=calendar_id, eventId=e).execute()
 
 
-def get_calendar_link() -> None:
-    calendar_id = CALENDAR_ID
+def get_calendar_link(calendar_id: str=CALENDAR_ID) -> str:
     calendar_id_bytes = calendar_id.encode("utf-8")
     calendar_id_base64 = base64.b64encode(calendar_id_bytes)
     calendar_id = calendar_id_base64.decode().rstrip("=")
 
     link = SHARE_LINK_TEMPLATE.format(cid=calendar_id)
     return link
+
+
+def create_personal_calendar() -> str:
+    calendar = {
+        "summary": "HKN RSVPs",
+        "timeZone": TIMEZONE,
+    }
+
+    created_calendar = get_service().calendars().insert(body=calendar).execute()
+
+    rule = {
+        "scope": {
+            "type": "default",
+        },
+        "role": "reader"
+    }
+    get_service().acl().insert(calendarId=created_calendar["id"], body=rule).execute()
+
+    return created_calendar["id"]

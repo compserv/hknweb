@@ -4,6 +4,7 @@ from django.utils import timezone
 
 from hknweb.utils import get_access_level
 
+from hknweb.models import Profile
 from hknweb.events.models import EventType, Event, Rsvp, GoogleCalendarCredentials
 import hknweb.events.google_calendar_utils as gcal
 
@@ -100,6 +101,15 @@ class RsvpAdmin(admin.ModelAdmin):
 
     cute_animal.short_description = "I wanna see a cute animal"
 
+    def delete_queryset(self, request, queryset):
+        for r in queryset:
+            gcal.delete_event(
+                r.google_calendar_event_id,
+                calendar_id=r.user.google_calendar_id,
+            )
+
+        super().delete_queryset(request, queryset)
+
 
 @admin.register(GoogleCalendarCredentials)
 class GoogleCalendarCredentialsAdmin(admin.ModelAdmin):
@@ -108,7 +118,13 @@ class GoogleCalendarCredentialsAdmin(admin.ModelAdmin):
     actions = ["provision_calendar"]
 
     def provision_calendar(self, request, queryset):
+        # Clear existing calendars
         gcal.clear_calendar()
+        for u in Profile.objects.all():
+            if not u.google_calendar_id:
+                continue
+
+            gcal.clear_calendar(calendar_id=u.google_calendar_id)
 
         upcoming_events = Event.objects.filter(start_time__gte=timezone.now()).filter(
             access_level__gte=get_access_level(request.user)
@@ -118,4 +134,8 @@ class GoogleCalendarCredentialsAdmin(admin.ModelAdmin):
             e.google_calendar_event_id = None
             e.save()
 
-    provision_calendar.short_description = "Provision the events Google calendar"
+            for r in Rsvp.objects.filter(event=e):
+                r.google_calendar_event_id = None
+                r.save()
+
+    provision_calendar.short_description = "Provision the events Google calendar and all personalized GCals"

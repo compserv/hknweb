@@ -80,9 +80,10 @@ Upcoming Events
         {% endfor %}
     {% endif %}
 
-    {% if perms.events.view_event %}
+    {% if perms.rsvps.edit_rsvp %}
         <p>
-            Add <a href="{{ google_calendar_add_link }}">our events calendar</a> to your own Google Calendar!
+            Add <a href="{{ gcal_all_add_link }}">our events calendar</a> 
+            {% if gcal_personal_add_link %} or <a href="{{ gcal_personal_add_link }}">your personalized events calendar</a> {% endif %} to your own Google Calendar!
         </p>
     {% endif %}
 
