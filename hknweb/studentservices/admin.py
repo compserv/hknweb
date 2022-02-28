@@ -1,5 +1,6 @@
 from django.contrib import admin
-from hknweb.resume.models import Resume
+
+from hknweb.studentservices.models import Resume
 
 
 class ResumeAdmin(admin.ModelAdmin):
