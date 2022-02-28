@@ -1,14 +1,14 @@
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import permission_required
 from django.http import HttpResponseRedirect, HttpResponseBadRequest
 from django.shortcuts import render
 
 from hknweb.exams.forms import ExamUploadForm
-from .models import Course, CourseSemester, Department, Instructor, Semester
+from hknweb.exams.models import Course, CourseSemester, Department
 
 
 def index(request):
     courses = Course.objects.order_by("name")
-    departments = Department.objects.order_by("long_name")
+    departments = Department.objects.order_by("name")
 
     context = {
         "courses": courses,
@@ -23,11 +23,11 @@ def exams_for_course(request, department, number):
 
     specificSemester = request.GET.get("term", "")
 
-    department = Department.objects.get(abbreviated_name=department)
-    course = Course.objects.filter(department__exact=department.id).get(
+    department = Department.objects.get(abbr=department)
+    course = Course.objects.filter(department=department).get(
         number__exact=number
     )
-    semesters = CourseSemester.objects.filter(course__exact=course.id)
+    semesters = CourseSemester.objects.filter(course=course)
 
     if specificSemester:
         subSemesters = semesters.filter(semester__semester__exact=specificSemester)
