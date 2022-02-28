@@ -86,5 +86,7 @@ class Event(models.Model):
                 start=self.start_time.isoformat(),
                 end=self.end_time.isoformat(),
             )
+            for r in self.rsvp_set.all():
+                r.save()
 
         super().save(*args, **kwargs)
