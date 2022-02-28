@@ -95,17 +95,17 @@
       </label>
     </div>
     <div id="student-nav-bar" class="sub-nav-bar navi-container">
-      <a href="/exams">Exam Archive</a>
-      <span class="slash">/</span>
       <a href="/tutoring">Tutoring Hours</a>
       <span class="slash">/</span>
-      <a href="/reviewsessions">Review Sessions</a>
+      <a href="/studentservices/reviewsessions">Review Sessions</a>
       <span class="slash">/</span>
       <a href="{% url 'course_surveys:index' %}">Course Surveys</a>
       <span class="slash">/</span>
       <a href="">Course Guide</a>
       <span class="slash">/</span>
-      <a href="{% url 'tours:index' %}">Department Tours</a>
+      <a href="{% url 'studentservices:tours' %}">Department Tours</a>
+      <span class="slash">/</span>
+      <a href="{% url 'studentservices:resume' %}">Resume Critique</a>
     </div>
     <div class="navi-container mobile-nav-bar" style="text-align: center;">
       <label for="toggle-industry">
@@ -195,8 +195,6 @@
           <a href="{% url 'candidate:officer' %}">Officer Portal</a>
           <span class="slash">/</span>
         {% endif %}
-        <a href="{% url 'resume:index' %}">Resume Review</a>
-        <span class="slash">/</span>
         <a href="/cand">Candidate Portal</a>
         <span class="slash">/</span>
         <a href="/accounts/settings">Settings</a>
@@ -218,7 +216,9 @@
         <span class="slash">/</span>
         Course Guide
         <span class="slash">/</span>
-        <a href="{% url 'tours:index' %}">Department Tours</a>
+        <a href="{% url 'studentservices:tours' %}">Department Tours</a>
+        <span class="slash">/</span>
+        <a href="{% url 'studentservices:resume' %}">Resume Critique</a>
       </div>
 
       <div class="heading">

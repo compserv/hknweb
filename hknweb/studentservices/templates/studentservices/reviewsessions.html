@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Events{% endblock %}
+{% block title %}Review Sessions{% endblock %}
 
-{% load event_filters %}
+{% load reviewsessions_filters %}
 
 {% block header %}
 <!-- Scripts which make the calendar work:-->
-<link rel="stylesheet" href="{% static "events/style.css" %}">
+<link rel="stylesheet" href="{% static "studentservices/style.css" %}">
 <link rel="stylesheet" href="https://unpkg.com/@fullcalendar/core@4.4.0/main.css" />
 <link rel="stylesheet" href="https://unpkg.com/@fullcalendar/daygrid@4.4.0/main.css" />
 <link rel="stylesheet" href="https://unpkg.com/@fullcalendar/timegrid@4.4.0/main.css" />
@@ -32,7 +32,7 @@
             },
             navLinks: true,
             eventLimit: true,
-            aspectRatio: 1.25,
+            aspectRatio: 1.75,
             views: {
                 dayGrid: {
                     fixedWeekCount: false,
@@ -43,14 +43,13 @@
                     nowIndicator: true,
                 }
             },
-            // Events
-            events: [{% for event in events %}
+            // Review sessions
+            events: [{% for reviewsession in reviewsessions %}
                 {
-                    title: "{{ event.name | event_name | safe }}",
-                    start: '{{ event.start_time|date:"c" }}',
-                    end: '{{ event.end_time|date:"c" }}',
-                    url: '{{ event.id }}',
-                    color: '{{ event.event_type.color }}'
+                    title: "{{ reviewsession.name | reviewsession_name | safe }}",
+                    start: '{{ reviewsession.start_time|date:"c" }}',
+                    end: '{{ reviewsession.end_time|date:"c" }}',
+                    url: '{{ reviewsession.get_absolute_url }}',
                 },
             {% endfor %}]
         });
@@ -69,7 +68,7 @@
 {% endblock %}
 
 {% block heading %}
-Upcoming Events
+Upcoming Review Sessions
 {% endblock %}
 
 {% block content %}
@@ -80,27 +79,19 @@ Upcoming Events
         {% endfor %}
     {% endif %}
 
-    {% if gcal_all_add_link %}
-        <p>
-            Add <a href="{{ gcal_all_add_link }}">our events calendar</a> 
-            {% if gcal_personal_add_link %} or <a href="{{ gcal_personal_add_link }}">your personalized events calendar</a> {% endif %} to your own Google Calendar!
-        </p>
-    {% endif %}
-
     <!-- Event type legend -->
-    <ul class="list w-100 flex flex-wrap justify-end">
+    <!-- <ul class="list w-100 flex flex-wrap justify-end">
     {% for event_type in event_types %}
         <li class="dib pa2 ml1 br2 white" style="background-color: {{event_type.color}};">{{event_type.type}}</li>
     {% endfor %}
-    </ul>
+    </ul> -->
 
     <!-- FullCalendar -->
-    <section id='calendar'></section>
+    <section class="pb3" id='calendar'></section>
 
-    {% if perms.events.add_event %}
-    <br>
-    <form action="{% url 'events:new' %}" method="GET" id="button" onsubmit="submit_button.disabled = true; return true;">
-        <button type='submit' name="submit_button">Add an event</button>
+    {% if perms.studentservices.add_reviewsession %}
+    <form action="reviewsessions/new" method="GET" id="button" onsubmit="submit_button.disabled = true; return true;">
+        <button type='submit' name="submit_button">Add a review session</button>
     </form>
     {% endif %}
     <br>
