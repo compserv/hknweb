@@ -1,16 +1,10 @@
-import urllib
-import json
-
 from django import forms
-from hknweb.models import User
-from hknweb.models import Profile
-from hknweb.alumni.models import Alumnus
 from django.contrib.auth.forms import (
     UserCreationForm,
-    PasswordChangeForm,
     SetPasswordForm,
 )
-from django.conf import settings
+
+from hknweb.models import User, Profile
 
 
 class SettingsForm(forms.ModelForm):

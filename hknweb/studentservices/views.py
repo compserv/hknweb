@@ -1,11 +1,18 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.shortcuts import get_object_or_404
 from django.views import generic
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
 
 from hknweb.utils import login_and_permission, method_login_and_permission
-from hknweb.studentservices.models import ReviewSession
-from hknweb.studentservices.forms import DocumentForm, ReviewSessionForm, ReviewSessionUpdateForm
+
+from hknweb.studentservices.models import DepTour, ReviewSession
+from hknweb.studentservices.forms import (
+    DocumentForm,
+    ReviewSessionForm,
+    ReviewSessionUpdateForm,
+    TourRequest,
+)
 
 
 SUBMIT_TEMPLATE = "studentservices/resume_critique_submit.html"
@@ -94,3 +101,52 @@ class ReviewSessionUpdateView(generic.edit.UpdateView):
     model = ReviewSession
     form_class = ReviewSessionUpdateForm
     template_name_suffix = "_edit"
+
+
+def tours(request):
+    tour = DepTour.objects
+
+    context = {
+        "tour": tour,
+    }
+    return render(request, "studentservices/tours.html", context)
+
+
+def send_request_email(request, form):
+    subject = "Department Tour Request"
+    officer_email = "deprel@hkn.eecs.berkeley.edu"
+
+    html_content = render_to_string(
+        "studentservices/tour_request_email.html",
+        {
+            "name": form.instance.name,
+            "time": form.instance.desired_time,
+            "date": form.instance.date,
+            "email": form.instance.email,
+            "phone": form.instance.phone,
+            "comments": form.instance.comments,
+        },
+    )
+    msg = EmailMessage(
+        subject, html_content, "no-reply@hkn.eecs.berkeley.edu", [officer_email]
+    )
+    msg.content_subtype = "html"
+    msg.send()
+
+
+def tour(request):
+    form = TourRequest(request.POST or None)
+    if request.method == "POST":
+
+        if form.is_valid():
+            tour = form.save(commit=False)
+            tour.save()
+
+            # send_request_email(request, form)
+
+            messages.success(request, "Your request has been sent!")
+            return redirect("studentservices:tours")
+        else:
+            msg = "Something went wrong! Your request did not send. Try again, or email deprel@hkn.mu."
+            messages.error(request, msg)
+    return render(request, "studentservices/tours.html", {"form": form})
