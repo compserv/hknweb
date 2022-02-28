@@ -6,7 +6,7 @@ from markdownx.models import MarkdownxField
 from hknweb.utils import get_semester
 import hknweb.events.google_calendar_utils as gcal
 
-from hknweb.events.models import EventType, Rsvp
+from hknweb.events.models.event_type import EventType
 
 
 class Event(models.Model):
@@ -86,14 +86,7 @@ class Event(models.Model):
                 start=self.start_time.isoformat(),
                 end=self.end_time.isoformat(),
             )
-            for r in Rsvp.objects.filter(event=self):
-                gcal.update_event(
-                    r.google_calendar_event_id,
-                    summary=self.name,
-                    location=self.location,
-                    description=self.description,
-                    start=self.start_time.isoformat(),
-                    end=self.end_time.isoformat(),
-                )
+            for r in self.rsvp_set.all():
+                r.save()
 
         super().save(*args, **kwargs)

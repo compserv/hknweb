@@ -63,8 +63,9 @@ class EventAdmin(admin.ModelAdmin):
         for e in queryset:
             gcal.delete_event(e.google_calendar_event_id)
 
-            for r in Rsvp.objects.filter(event=e):
-                gcal.delete_event(r.google_calendar_event_id)
+            for r in e.rsvp_set.all():
+                profile = Profile.objects.filter(user=request.user).first()
+                gcal.delete_event(r.google_calendar_event_id, calendar_id=profile.google_calendar_id)
 
         super().delete_queryset(request, queryset)
 
