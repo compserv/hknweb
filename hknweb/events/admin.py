@@ -6,6 +6,7 @@ from hknweb.utils import get_access_level
 
 from hknweb.models import Profile
 from hknweb.events.models import EventType, Event, Rsvp, GoogleCalendarCredentials
+from hknweb.events.utils import SingleThreadWrapper
 import hknweb.events.google_calendar_utils as gcal
 
 
@@ -118,6 +119,11 @@ class GoogleCalendarCredentialsAdmin(admin.ModelAdmin):
     actions = ["provision_calendar"]
 
     def provision_calendar(self, request, queryset):
+        thread = SingleThreadWrapper(lambda: self._provision_calendar(request))
+        thread.start()
+
+    @staticmethod
+    def _provision_calendar(request):
         # Clear existing calendars
         gcal.clear_calendar()
         for u in Profile.objects.all():

@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from threading import Thread
 
 from django import forms
 from django.core.validators import URLValidator
@@ -64,3 +65,12 @@ def format_url(s: str, max_width: int = None) -> str:
         return mark_safe(link_with_tag)
     except:
         return s
+
+
+class SingleThreadWrapper(Thread):
+    def __init__(self, fn):
+        super().__init__()
+        self.fn = fn
+
+    def run(self):
+        self.fn()
