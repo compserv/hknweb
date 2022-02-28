@@ -3,9 +3,7 @@ from django.utils import timezone
 from hknweb.models import Announcement
 
 from hknweb.events.models import Event
-from hknweb.reviewsessions.models import ReviewSession
-
-# from hknweb.tutoring.models import Tutor
+from hknweb.studentservices.models import ReviewSession
 
 
 def home(request):
@@ -20,7 +18,6 @@ def home(request):
     announcements = Announcement.objects.filter(visible=True).order_by("-release_date")
 
     context = {
-        # 'tutors': tutors,
         "events": upcoming_events,
         "announcements": announcements,
         "reviewsessions": upcoming_review_sessions,

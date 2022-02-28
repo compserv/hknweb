@@ -37,7 +37,6 @@ INSTALLED_APPS = [
     "hknweb.indrel",
     "hknweb.serv",
     "hknweb.tours",
-    "hknweb.reviewsessions",
     "hknweb.studentservices",
     "hknweb.thread",
     "dal",  # must be before django.contrib.admin

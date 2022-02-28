@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block header %}
-<link rel="stylesheet" href="{% static "reviewsessions/style.css" %}">
+<link rel="stylesheet" href="{% static "studentservices/style.css" %}">
 <style>
     .heading {
         display: none;
@@ -33,12 +33,12 @@
     <p><b>Time</b>: {{reviewsession.start_time|time}} to {{reviewsession.end_time|time}}</p>
 
     {% if can_edit %}
-      <p><a href="{% url 'reviewsessions:edit' reviewsession.id %}">
+      <p><a href="{% url 'studentservices:reviewsession_edit' reviewsession.id %}">
           Edit This Review Session
       </a></p>
     {% endif %}
 
-    <p><a href="{% url 'reviewsessions:index' %}">
+    <p><a href="{% url 'studentservices:reviewsessions' %}">
         Go Back to Calendar
     </a></p>
   </div>

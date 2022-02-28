@@ -7,7 +7,7 @@
 
 {% block header %}
 <!-- Scripts which make the calendar work:-->
-<link rel="stylesheet" href="{% static "reviewsessions/style.css" %}">
+<link rel="stylesheet" href="{% static "studentservices/style.css" %}">
 <link rel="stylesheet" href="https://unpkg.com/@fullcalendar/core@4.4.0/main.css" />
 <link rel="stylesheet" href="https://unpkg.com/@fullcalendar/daygrid@4.4.0/main.css" />
 <link rel="stylesheet" href="https://unpkg.com/@fullcalendar/timegrid@4.4.0/main.css" />
@@ -49,7 +49,7 @@
                     title: "{{ reviewsession.name | reviewsession_name | safe }}",
                     start: '{{ reviewsession.start_time|date:"c" }}',
                     end: '{{ reviewsession.end_time|date:"c" }}',
-                    url: '{{ reviewsession.id }}',
+                    url: '{{ reviewsession.get_absolute_url }}',
                 },
             {% endfor %}]
         });
@@ -89,8 +89,8 @@ Upcoming Review Sessions
     <!-- FullCalendar -->
     <section class="pb3" id='calendar'></section>
 
-    {% if perms.reviewsessions.add_reviewsession %}
-    <form action="new" method="GET" id="button" onsubmit="submit_button.disabled = true; return true;">
+    {% if perms.studentservices.add_reviewsession %}
+    <form action="reviewsessions/new" method="GET" id="button" onsubmit="submit_button.disabled = true; return true;">
         <button type='submit' name="submit_button">Add a review session</button>
     </form>
     {% endif %}

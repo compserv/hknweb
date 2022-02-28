@@ -32,7 +32,6 @@ urlpatterns = [
     path("about/", landing.about, name="about"),
     path("academics/", include("hknweb.academics.urls")),
     path("events/", include("hknweb.events.urls")),
-    path("reviewsessions/", include("hknweb.reviewsessions.urls")),
     path("indrel/", include("hknweb.indrel.urls")),
     path("exams/", include("hknweb.exams.urls")),
     path("alumni/", include("hknweb.alumni.urls")),
