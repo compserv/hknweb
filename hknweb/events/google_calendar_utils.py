@@ -4,7 +4,7 @@ import google.oauth2.service_account as service_account
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
-from hknweb.events.models.google_calendar_credentials import GoogleCalendarCredentials
+from hknweb.events.models.google_calendar import GoogleCalendarCredentials
 
 
 CALENDAR_ID = "hknwebsite@hkn.eecs.berkeley.edu"

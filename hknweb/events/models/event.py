@@ -7,6 +7,8 @@ from hknweb.utils import get_semester
 import hknweb.events.google_calendar_utils as gcal
 
 from hknweb.events.models.event_type import EventType
+from hknweb.events.models.google_calendar import GCalAccessLevelMapping
+from hknweb.events.models.constants import ACCESS_LEVELS
 
 
 class Event(models.Model):
@@ -18,11 +20,7 @@ class Event(models.Model):
     description = MarkdownxField()
     rsvp_limit = models.PositiveIntegerField(null=True, blank=True)
     access_level = models.IntegerField(
-        choices=[
-            (0, "internal"),
-            (1, "candidate"),
-            (2, "external"),
-        ],
+        choices=ACCESS_LEVELS,
         default=0,
     )
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
@@ -69,6 +67,7 @@ class Event(models.Model):
         return new_admitted - old_admitted
 
     def save(self, *args, **kwargs):
+        calendar_id = GCalAccessLevelMapping.get_calendar_id(self.access_level)
         if self.google_calendar_event_id is None:
             self.google_calendar_event_id = gcal.create_event(
                 self.name,
@@ -76,6 +75,7 @@ class Event(models.Model):
                 self.description,
                 self.start_time.isoformat(),
                 self.end_time.isoformat(),
+                calendar_id=calendar_id,
             )
         else:
             gcal.update_event(
@@ -85,6 +85,7 @@ class Event(models.Model):
                 description=self.description,
                 start=self.start_time.isoformat(),
                 end=self.end_time.isoformat(),
+                calendar_id=calendar_id,
             )
             for r in self.rsvp_set.all():
                 r.save()

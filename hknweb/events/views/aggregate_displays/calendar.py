@@ -1,7 +1,8 @@
 from django.shortcuts import render
 
 from hknweb.models import Profile
-from hknweb.events.models import Event, EventType
+from hknweb.events.models import Event, EventType, GCalAccessLevelMapping
+from hknweb.events.models.constants import ACCESS_LEVELS
 from hknweb.utils import get_access_level
 from hknweb.events.google_calendar_utils import get_calendar_link
 
@@ -9,28 +10,35 @@ from hknweb.events.google_calendar_utils import get_calendar_link
 def index(request):
     context = dict()
 
-    events = Event.objects.order_by("-start_time").filter(
-        access_level__gte=get_access_level(request.user)
-    )
+    user_access_level = get_access_level(request.user)
+    events = Event.objects.order_by("-start_time").filter(access_level__gte=user_access_level)
     event_types = EventType.objects.order_by("type")
+
+    calendars = []
+    for access_level, name in ACCESS_LEVELS:
+        if user_access_level > access_level:
+            continue
+
+        calendar_id = GCalAccessLevelMapping.get_calendar_id(access_level)  # Link
+        calendars.append({
+            "name": name,
+            "link": get_calendar_link(calendar_id=calendar_id),
+        })
+
+    profile = Profile.objects.filter(user=request.user).first()
+    if profile.google_calendar_id:
+        calendars.append({
+            "name": "personal",
+            "link": get_calendar_link(calendar_id=profile.google_calendar_id),
+        })
+
+    for calendar in calendars[:-1]:
+        calendar["separator"] = "/"
+    calendars[-1]["separator"] = ""
+
     context = {
-        **context,
         "events": events,
         "event_types": event_types,
+        "calendars": calendars,
     }
-
-    if request.user.is_authenticated:
-        gcal_all_add_link = get_calendar_link()
-
-        profile = Profile.objects.filter(user=request.user).first()
-        gcal_personal_add_link = None
-        if profile.google_calendar_id:
-            gcal_personal_add_link = get_calendar_link(calendar_id=profile.google_calendar_id)
-
-        context = {
-            **context,
-            "gcal_all_add_link": gcal_all_add_link,
-            "gcal_personal_add_link": gcal_personal_add_link,
-        }
-
     return render(request, "events/index.html", context)
