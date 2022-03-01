@@ -5,7 +5,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 from .shortlinks import views as viewsShortlink
-from hknweb.views import landing, users, indrel
+from hknweb.views import landing, users, indrel, serv
 
 
 urlpatterns = [
@@ -19,7 +19,6 @@ urlpatterns = [
     path("events/", include("hknweb.events.urls")),
     path("alumni/", include("hknweb.alumni.urls")),
     path("studentservices/", include("hknweb.studentservices.urls")),
-    path("serv/", include("hknweb.serv.urls")),
     path("tutoring/", include("hknweb.tutoring.urls")),
     path("cand/", include("hknweb.candidate.urls")),
     path("pages/", include("hknweb.markdown_pages.urls")),
@@ -38,7 +37,18 @@ indrel_urlpatterns = [
     path("indrel/contact_us", indrel.contact_us, name="contact_us"),
 ]
 
+serv_urlpatterns = [
+    path("serv", serv.index, name="serv"),
+    path("serv/eecsday", serv.eecsday, name="eecsday"),
+    path("serv/jreecs", serv.jreecs, name="jreecs"),
+    path("serv/bearhacks", serv.bearhacks, name="bearhacks"),
+    path("serv/makershops", serv.maker, name="makershops"),
+    path("serv/calday", serv.calday, name="calday"),
+]
+
 urlpatterns.extend(indrel_urlpatterns)
+urlpatterns.extend(serv_urlpatterns)
+
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
