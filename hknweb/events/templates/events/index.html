@@ -80,12 +80,12 @@ Upcoming Events
         {% endfor %}
     {% endif %}
 
-    {% if gcal_all_add_link %}
-        <p>
-            Add <a href="{{ gcal_all_add_link }}">our events calendar</a> 
-            {% if gcal_personal_add_link %} or <a href="{{ gcal_personal_add_link }}">your personalized events calendar</a> {% endif %} to your own Google Calendar!
-        </p>
-    {% endif %}
+    <p>
+        Add HKN's calendars to your own Google Calendar! 
+        {% for calendar in calendars %}
+            <a href="{{ calendar.link }}">{{ calendar.name }}</a> {{ calendar.separator }}
+        {% endfor %}
+    </p>
 
     <!-- Event type legend -->
     <ul class="list w-100 flex flex-wrap justify-end">

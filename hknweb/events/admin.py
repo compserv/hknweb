@@ -5,7 +5,8 @@ from django.utils import timezone
 from hknweb.utils import get_access_level
 
 from hknweb.models import Profile
-from hknweb.events.models import EventType, Event, Rsvp, GoogleCalendarCredentials
+from hknweb.events.models import EventType, Event, Rsvp, GoogleCalendarCredentials, GCalAccessLevelMapping
+from hknweb.events.models.constants import ACCESS_LEVELS
 from hknweb.events.utils import SingleThreadWrapper
 import hknweb.events.google_calendar_utils as gcal
 
@@ -30,6 +31,7 @@ class EventAdmin(admin.ModelAdmin):
         "created_by",
         "created_at",
         "access_level",
+        "google_calendar_event_id",
     ]
     # NOTE: created_by should be read only, but I don't know how to set it to default to current user
     readonly_fields = ["created_at"]
@@ -61,7 +63,8 @@ class EventAdmin(admin.ModelAdmin):
 
     def delete_queryset(self, request, queryset):
         for e in queryset:
-            gcal.delete_event(e.google_calendar_event_id)
+            calendar_id = GCalAccessLevelMapping.get_calendar_id(e.access_level)
+            gcal.delete_event(e.google_calendar_event_id, calendar_id=calendar_id)
 
             for r in e.rsvp_set.all():
                 profile = Profile.objects.filter(user=request.user).first()
@@ -129,7 +132,10 @@ class GoogleCalendarCredentialsAdmin(admin.ModelAdmin):
     @staticmethod
     def _provision_calendar(request):
         # Clear existing calendars
-        gcal.clear_calendar()
+        for access_level, _ in ACCESS_LEVELS:
+            calendar_id = GCalAccessLevelMapping.get_calendar_id(access_level=access_level)
+            gcal.clear_calendar(calendar_id=calendar_id)
+
         for u in Profile.objects.all():
             if not u.google_calendar_id:
                 continue
@@ -149,3 +155,9 @@ class GoogleCalendarCredentialsAdmin(admin.ModelAdmin):
                 r.save()
 
     provision_calendar.short_description = "Provision the events Google calendar and all personalized GCals"
+
+
+@admin.register(GCalAccessLevelMapping)
+class GCalAccessLevelMappingAdmin(admin.ModelAdmin):
+    fields = ["access_level", "calendar_id"]
+    list_display = ["access_level", "calendar_id"]
