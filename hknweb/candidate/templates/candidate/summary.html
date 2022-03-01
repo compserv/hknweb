@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static "candidate/style.css" %}">
+<style>
+    .table {
+        text-align: center;
+        margin: auto;
+        font-size: 110%;
+    }
+    .header {
+        text-align: center;
+        margin: auto;
+        padding: 1em;
+    }
+</style>
+{% endblock %}
+
+{% block title %}VP Summary{% endblock %}
+
+{% block heading %}
+VP Summary
+{% endblock %}
+
+{% block content %}
+    <table class="table">
+        <thead>
+            {% for header in headers %}
+                <th class="header">{{ header }}</th>
+            {% endfor %}
+        </thead>
+        <tbody>
+            {% for row in rows %}
+                <tr>
+                    <td>{{ row.name }}</td>
+                    {% for data in row.status %}
+                        <td>{% if data %} &#10060 {% else %} &#10004 {% endif %}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

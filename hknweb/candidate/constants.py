@@ -56,9 +56,9 @@ class CandidateDTO:
 
     def validate(self):
         assert self.email, "Candidate email must not be empty"
-        assert self.email.endswith(BERKELEY_EMAIL_DOMAIN) \
-                or self.email.endswith(HKN_EMAIL_DOMAIN), \
-               "Candidate email must be an @berkeley.edu or @hkn.eecs.berkeley.edu email"
+        assert self.email.endswith(BERKELEY_EMAIL_DOMAIN) or self.email.endswith(
+            HKN_EMAIL_DOMAIN
+        ), "Candidate email must be an @berkeley.edu or @hkn.eecs.berkeley.edu email"
         assert self.first_name, "Candidate first name must not be empty"
         assert self.last_name, "Candidate last name must not be empty"
         assert self.username, "Candidate username must not be empty"

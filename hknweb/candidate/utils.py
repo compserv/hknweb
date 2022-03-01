@@ -17,11 +17,20 @@ from hknweb.utils import get_rand_photo, get_semester_bounds
 from hknweb.views.users import get_current_cand_semester
 
 from ..events.models import Event, EventType
-from .models import BitByteActivity, OffChallenge, RequirementHangout, \
-                    RequirementMergeRequirement
+from .models import (
+    BitByteActivity,
+    OffChallenge,
+    RequirementHangout,
+    RequirementMergeRequirement,
+)
 
-from .constants import ATTR, CandidateDTO, DEFAULT_RANDOM_PASSWORD_LENGTH, \
-                       REQUIREMENT_TITLES_ALL, REQUIREMENT_TITLES_TEMPLATE
+from .constants import (
+    ATTR,
+    CandidateDTO,
+    DEFAULT_RANDOM_PASSWORD_LENGTH,
+    REQUIREMENT_TITLES_ALL,
+    REQUIREMENT_TITLES_TEMPLATE,
+)
 
 MANDATORY = "Mandatory"
 
@@ -156,12 +165,13 @@ def get_events(
 
     return events
 
+
 def count_challenges(requested_user, candidateSemester):
     challenges = OffChallenge.objects.filter(requester__exact=requested_user)
     req_challenges_models = RequirementHangout.objects.filter(
-                            eventType=settings.CHALLENGE_ATTRIBUTE_NAME,
-                            candidateSemesterActive=candidateSemester,
-                        ).first()
+        eventType=settings.CHALLENGE_ATTRIBUTE_NAME,
+        candidateSemesterActive=candidateSemester,
+    ).first()
     if req_challenges_models is not None:
         if req_challenges_models.hangoutsDateStart is not None:
             challenges = challenges.filter(
@@ -172,7 +182,7 @@ def count_challenges(requested_user, candidateSemester):
                 request_date__lt=req_challenges_models.hangoutsDateEnd,
             )
     # if either one is waiting, challenge is still being reviewed
-    
+
     ## Count number of confirmed
     challenges_confirmed = challenges.filter(
         Q(officer_confirmed=True) & Q(csec_confirmed=True)
@@ -187,15 +197,17 @@ def count_challenges(requested_user, candidateSemester):
     num_challenges_rejected = challenges_rejected.count()
     ##
 
-    num_pending = challenges.count() - num_challenges_confirmed - num_challenges_rejected
+    num_pending = (
+        challenges.count() - num_challenges_confirmed - num_challenges_rejected
+    )
 
     return num_challenges_confirmed, num_challenges_rejected, num_pending
 
+
 def count_num_bitbytes(requested_user, bitbyte_requirement):
     bitbyte_models = BitByteActivity.objects.filter(
-                        participants__exact=requested_user,
-                        confirmed=True
-                    )
+        participants__exact=requested_user, confirmed=True
+    )
     if bitbyte_requirement is not None:
         if bitbyte_requirement.bitByteDateStart is not None:
             bitbyte_models = bitbyte_models.filter(
@@ -207,6 +219,7 @@ def count_num_bitbytes(requested_user, bitbyte_requirement):
             )
     num_bitbytes = bitbyte_models.count()
     return num_bitbytes
+
 
 # Done: increase flexibility by fetching event requirement count from database
 # req_list = {
@@ -411,18 +424,24 @@ class MergedEvents:
     def multiplier(self):
         return self.multiplier_event.values()
 
+
 NO_ACTION_PLS_FIX = "No candidate account actions have been taken, so re-upload the entire file after fixing the errors."
+
 
 def spawn_threaded_add_cands_and_email(cand_csv, website_login_link, num_rows):
     """
     Spawn a single background thread to provision candidate
-    
+
     """
     task = ThreadTask()
     task.save()
-    t = threading.Thread(target=threaded_add_cands_and_email,args=[cand_csv, num_rows, website_login_link, task])
+    t = threading.Thread(
+        target=threaded_add_cands_and_email,
+        args=[cand_csv, num_rows, website_login_link, task],
+    )
     task.startThread(t)
     return task.id
+
 
 def threaded_add_cands_and_email(cand_csv, num_rows, website_login_link, task):
     try:
@@ -438,16 +457,26 @@ def threaded_add_cands_and_email(cand_csv, num_rows, website_login_link, task):
     task.progress = 100
     task.save()
 
-def check_duplicates(candidatedto: CandidateDTO, row: OrderedDict,
-                     email_set: set, username_set: set, i: int) -> Tuple[bool, str]:
+
+def check_duplicates(
+    candidatedto: CandidateDTO,
+    row: OrderedDict,
+    email_set: set,
+    username_set: set,
+    i: int,
+) -> Tuple[bool, str]:
     error_msg = ""
     # Check for duplicate Email
     cand_email_in_set = candidatedto.email in email_set
-    if (cand_email_in_set or User.objects.filter(email=candidatedto.email).count() > 0):
+    if cand_email_in_set or User.objects.filter(email=candidatedto.email).count() > 0:
         if cand_email_in_set:
-            error_msg = "Duplicate email {} in the Candidate data.".format(candidatedto.email)
+            error_msg = "Duplicate email {} in the Candidate data.".format(
+                candidatedto.email
+            )
         else:
-            error_msg = "Account with email {} already exists.".format(candidatedto.email)
+            error_msg = "Account with email {} already exists.".format(
+                candidatedto.email
+            )
         error_msg += " "
         error_msg += "No candidate account actions have been taken, so re-upload the entire file after fixing the errors."
         error_msg += " "
@@ -455,17 +484,25 @@ def check_duplicates(candidatedto: CandidateDTO, row: OrderedDict,
         return True, error_msg
     # Check for duplicate Username
     cand_username_in_set = candidatedto.username in username_set
-    if (cand_username_in_set or User.objects.filter(username=candidatedto.username).count() > 0):
+    if (
+        cand_username_in_set
+        or User.objects.filter(username=candidatedto.username).count() > 0
+    ):
         if cand_username_in_set:
-            error_msg = "Duplicate username {} in the Candidate data.".format(candidatedto.username)
+            error_msg = "Duplicate username {} in the Candidate data.".format(
+                candidatedto.username
+            )
         else:
-            error_msg = "Account of username {} already exists.".format(candidatedto.username)
+            error_msg = "Account of username {} already exists.".format(
+                candidatedto.username
+            )
         error_msg += " "
         error_msg += "No candidate account actions have been taken, so re-upload the entire file after fixing the errors."
         error_msg += " "
         error_msg += "Error Row Information at row {}: {}.".format(i + 1, row)
         return True, error_msg
     return False, ""
+
 
 def add_cands_and_email(cand_csv, num_rows, website_login_link, task=None):
     candidate_group = Group.objects.get(name=ATTR.CANDIDATE)
@@ -506,11 +543,13 @@ def add_cands_and_email(cand_csv, num_rows, website_login_link, task=None):
         password = BaseUserManager.make_random_password(
             None, length=DEFAULT_RANDOM_PASSWORD_LENGTH
         )
-        
-        duplicate, error_msg = check_duplicates(candidatedto, row, email_set, username_set, i)
+
+        duplicate, error_msg = check_duplicates(
+            candidatedto, row, email_set, username_set, i
+        )
         if duplicate:
             return False, error_msg
-        
+
         new_cand = User(
             username=candidatedto.username,
             email=candidatedto.email,
@@ -527,25 +566,29 @@ def add_cands_and_email(cand_csv, num_rows, website_login_link, task=None):
         if task is not None:
             task.progress = round(progress_float)
             task.save()
-    
+
     # Reset to CAND_ACC_WEIGHT in case floating point errors
     progress_float = CAND_ACC_WEIGHT * 100
     if task is not None:
         task.progress = round(progress_float)
         task.save()
-    
+
     num_of_accounts = len(email_set)
 
     if num_of_accounts != num_rows:
-        error_msg = "Internal Error: number of accounts ({}) != number of rows ({})".format(num_of_accounts, num_rows)
+        error_msg = (
+            "Internal Error: number of accounts ({}) != number of rows ({})".format(
+                num_of_accounts, num_rows
+            )
+        )
         error_msg += " "
         error_msg += NO_ACTION_PLS_FIX
         return False, error_msg
-    
+
     # Release the memory once done
     del email_set
     del username_set
-    
+
     email_errors = []
     for i, new_cand in enumerate(new_cand_list):
         if i != 0 and i % 50 == 0:
@@ -583,22 +626,26 @@ def add_cands_and_email(cand_csv, num_rows, website_login_link, task=None):
                 msg.send()
             except Exception as e:
                 email_errors.append((new_cand_list[i].email, str(e)))
-        
-        progress_float = (CAND_ACC_WEIGHT * 100) + (EMAIL_WEIGHT * 100 * (i + 1) / num_of_accounts)
+
+        progress_float = (CAND_ACC_WEIGHT * 100) + (
+            EMAIL_WEIGHT * 100 * (i + 1) / num_of_accounts
+        )
         if task is not None:
             task.progress = round(progress_float)
             task.save()
-        
-    
+
     # If gone through everything and no errors
     if len(email_errors) > 0:
-        error_msg = "An error occured during the sending of emails. " \
-                    + "Candidate Email and Error Messages: " + str(email_errors) + " --- " \
-                    + "Inform CompServ of the errors, and inform the candidates " \
-                    + "to access their accounts by resetting their password " \
-                    + "using \"Forget your password?\" in the Login page. " \
-                    + "All {} candidates added!".format(num_of_accounts)
+        error_msg = (
+            "An error occured during the sending of emails. "
+            + "Candidate Email and Error Messages: "
+            + str(email_errors)
+            + " --- "
+            + "Inform CompServ of the errors, and inform the candidates "
+            + "to access their accounts by resetting their password "
+            + 'using "Forget your password?" in the Login page. '
+            + "All {} candidates added!".format(num_of_accounts)
+        )
         return False, error_msg
     else:
         return True, "Successfully added {} candidates!".format(num_of_accounts)
-
