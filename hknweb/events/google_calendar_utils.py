@@ -2,6 +2,7 @@ import base64
 
 import google.oauth2.service_account as service_account
 from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
 
 from hknweb.events.models.google_calendar_credentials import GoogleCalendarCredentials
 
@@ -115,10 +116,14 @@ def update_event(event_id: str, calendar_id: str=CALENDAR_ID, **kwargs) -> None:
 
 @check_credentials_wrapper
 def delete_event(event_id: str, calendar_id: str=CALENDAR_ID) -> None:
-    get_service().events().delete(
-        calendarId=calendar_id,
-        eventId=event_id,
-    ).execute()
+    try:
+        get_service().events().delete(
+            calendarId=calendar_id,
+            eventId=event_id,
+        ).execute()
+    except HttpError as e:
+        if e.resp["status"] != "404":
+            raise e
 
 
 @check_credentials_wrapper
