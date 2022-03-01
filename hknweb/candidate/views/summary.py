@@ -41,6 +41,7 @@ def summary(request):
         row = {
             "name": f"{cand.first_name} {cand.last_name} ({cand.username})",
             "status": status,
+            "link": f"/cand/portal/{cand.username}",
         }
         rows.append(row)
 
