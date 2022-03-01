@@ -31,12 +31,13 @@ from .utils import (
     MergedEvents,
 )
 
-class CandidatePortalData():
+
+class CandidatePortalData:
     user = None
 
     def __init__(self, user):
         self.user = user
-    
+
     def get_event_types_and_times_map(
         self, candidateSemester, required_events_merger=None
     ):
@@ -94,7 +95,11 @@ class CandidatePortalData():
         )
 
         req_statuses, req_remaining = check_requirements(
-            confirmed_events, unconfirmed_events, num_challenges_confirmed, num_bitbytes, req_list
+            confirmed_events,
+            unconfirmed_events,
+            num_challenges_confirmed,
+            num_bitbytes,
+            req_list,
         )
 
         return confirmed_events, unconfirmed_events, req_statuses, req_remaining
@@ -138,7 +143,10 @@ class CandidatePortalData():
         # num_required_hangouts is None, since Merger nodes should not use it
         if node.all_required:
             # TODO Support for All Required for Merged Requirement (probably not a huge priority)
-            req_titles[node_string_key] = node_string + " - Looped Merged Requirements for all required currently unsupported"
+            req_titles[node_string_key] = (
+                node_string
+                + " - Looped Merged Requirements for all required currently unsupported"
+            )
         else:
             req_titles[node_string_key] = create_title(
                 "", remaining_count, node_string, grand_total, None
@@ -210,9 +218,12 @@ class CandidatePortalData():
 
         candidateSemester = self.user.profile.candidate_semester
 
-        num_challenges_confirmed, num_challenges_rejected, num_pending \
-            = count_challenges(self.user, candidateSemester)
-        
+        (
+            num_challenges_confirmed,
+            num_challenges_rejected,
+            num_pending,
+        ) = count_challenges(self.user, candidateSemester)
+
         required_events_merger = set()
 
         seen_merger_nodes = set()
@@ -300,11 +311,12 @@ class CandidatePortalData():
         )
         if bitbyte_requirement is not None and bitbyte_requirement.enable:
             req_list[settings.BITBYTE_ACTIVITY] = bitbyte_requirement.numberRequired
-        
+
         num_bitbytes = count_num_bitbytes(self.user, bitbyte_requirement)
 
-        announcements = Announcement.objects.filter(visible=True) \
-                                            .order_by("-release_date")
+        announcements = Announcement.objects.filter(visible=True).order_by(
+            "-release_date"
+        )
         ###
 
         ### Candidate Forms
@@ -397,7 +409,9 @@ class CandidatePortalData():
         # Process Merged Events here
         req_colors.update(
             get_requirement_colors(
-                merger_nodes, lambda view_key: view_key, lambda get_key: get_key.get_events_str()
+                merger_nodes,
+                lambda view_key: view_key,
+                lambda get_key: get_key.get_events_str(),
             )
         )
         merge_names = []
@@ -414,10 +428,12 @@ class CandidatePortalData():
                 merge_names,
             )
 
-        upcoming_events = Event.objects.filter(
-            start_time__range=(today, today + timezone.timedelta(days=7))
-        ).order_by("start_time").filter(
-            access_level__gte=get_access_level(self.user)
+        upcoming_events = (
+            Event.objects.filter(
+                start_time__range=(today, today + timezone.timedelta(days=7))
+            )
+            .order_by("start_time")
+            .filter(access_level__gte=get_access_level(self.user))
         )
 
         events = []
@@ -491,8 +507,8 @@ class CandidatePortalData():
             "interactivities": interactivities,
             "bitbyte": bitbyte,
             "candidate_semester": candidateSemester
-                                or "Please set your candidate semester in your Account Settings",
+            or "Please set your candidate semester in your Account Settings",
             "username": self.user.username,
-            "user_self": True
+            "user_self": True,
         }
         return context

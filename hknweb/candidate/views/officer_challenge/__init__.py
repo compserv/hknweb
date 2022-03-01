@@ -1,4 +1,3 @@
-
 from hknweb.candidate.views.officer_challenge.confirm import (
     officer_confirm_view,
     confirm_challenge,

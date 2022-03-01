@@ -18,7 +18,7 @@ def candidate_portal_view_by_username(request, username):
     if GROUP_TO_ACCESSLEVEL["member"] < get_access_level(request.user):
         messages.warning(request, "Insufficent permission to access a user.")
         return HttpResponseRedirect("/")
-    
+
     user = User.objects.filter(username=username).first()
     if user is None:
         messages.warning(request, "User {} does not exist.".format(username))
