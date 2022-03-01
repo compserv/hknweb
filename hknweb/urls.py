@@ -1,18 +1,3 @@
-"""hknweb URL Configuration
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/2.0/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  url(r'^$', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  url(r'^$', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.conf.urls import url, include
-    2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
-"""
 from django.contrib import admin
 from django.urls import include
 from django.urls import path
@@ -20,8 +5,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 from .shortlinks import views as viewsShortlink
-from .views import landing
-from .views import users
+from hknweb.views import landing, users, indrel
+
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -32,7 +17,6 @@ urlpatterns = [
     path("about/", landing.about, name="about"),
     path("academics/", include("hknweb.academics.urls")),
     path("events/", include("hknweb.events.urls")),
-    path("indrel/", include("hknweb.indrel.urls")),
     path("alumni/", include("hknweb.alumni.urls")),
     path("studentservices/", include("hknweb.studentservices.urls")),
     path("serv/", include("hknweb.serv.urls")),
@@ -45,6 +29,16 @@ urlpatterns = [
     path("", landing.home, name="home"),
     path("<slug:temp>/", viewsShortlink.openLink),
 ]
+
+indrel_urlpatterns = [
+    path("indrel", indrel.index, name="indrel"),
+    path("indrel/resume_book", indrel.resume_book, name="resume_book"),
+    path("indrel/infosessions", indrel.infosessions, name="infosessions"),
+    path("indrel/career_fair", indrel.career_fair, name="career_fair"),
+    path("indrel/contact_us", indrel.contact_us, name="contact_us"),
+]
+
+urlpatterns.extend(indrel_urlpatterns)
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
