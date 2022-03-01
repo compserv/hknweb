@@ -23,6 +23,15 @@ def get_credentials():
     return creds
 
 
+def check_credentials_wrapper(fn):
+    def new_fn(*args, **kwargs):
+        if not GoogleCalendarCredentials.objects.exists():
+            return
+        return fn(*args, **kwargs)
+
+    return new_fn
+
+
 def get_service():
     creds = get_credentials()
     service = build("calendar", "v3", credentials=creds)
@@ -63,6 +72,7 @@ def create_event_resource(
     return event
 
 
+@check_credentials_wrapper
 def create_event(
     summary: str,
     location: str,
@@ -92,6 +102,7 @@ def create_event(
     return event["id"]
 
 
+@check_credentials_wrapper
 def update_event(event_id: str, calendar_id: str=CALENDAR_ID, **kwargs) -> None:
     event_resource = create_event_resource(**kwargs)
 
@@ -102,6 +113,7 @@ def update_event(event_id: str, calendar_id: str=CALENDAR_ID, **kwargs) -> None:
     ).execute()
 
 
+@check_credentials_wrapper
 def delete_event(event_id: str, calendar_id: str=CALENDAR_ID) -> None:
     get_service().events().delete(
         calendarId=calendar_id,
@@ -109,6 +121,7 @@ def delete_event(event_id: str, calendar_id: str=CALENDAR_ID) -> None:
     ).execute()
 
 
+@check_credentials_wrapper
 def clear_calendar(calendar_id: str=CALENDAR_ID) -> None:
     events_to_delete = []
     page_token = None
@@ -138,6 +151,7 @@ def get_calendar_link(calendar_id: str=CALENDAR_ID) -> str:
     return link
 
 
+@check_credentials_wrapper
 def create_personal_calendar() -> str:
     calendar = {
         "summary": "HKN RSVPs",
