@@ -25,12 +25,13 @@ def index(request):
             "link": get_calendar_link(calendar_id=calendar_id),
         })
 
-    profile = Profile.objects.filter(user=request.user).first()
-    if profile.google_calendar_id:
-        calendars.append({
-            "name": "personal",
-            "link": get_calendar_link(calendar_id=profile.google_calendar_id),
-        })
+    if request.user.is_authenticated:
+        profile = Profile.objects.filter(user=request.user).first()
+        if profile.google_calendar_id:
+            calendars.append({
+                "name": "personal",
+                "link": get_calendar_link(calendar_id=profile.google_calendar_id),
+            })
 
     for calendar in calendars[:-1]:
         calendar["separator"] = "/"
