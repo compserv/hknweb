@@ -122,7 +122,7 @@ def delete_event(event_id: str, calendar_id: str=CALENDAR_ID) -> None:
             eventId=event_id,
         ).execute()
     except HttpError as e:
-        if e.resp["status"] != "404":
+        if e.resp["status"] not in ["404", "410"]:
             raise e
 
 
