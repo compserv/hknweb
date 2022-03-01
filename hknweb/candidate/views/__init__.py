@@ -16,3 +16,4 @@ from hknweb.candidate.views.officer_challenge import (
 from hknweb.candidate.views.officer_portal import OfficerPortalView
 from hknweb.candidate.views.bitbyte import BitByteView
 from hknweb.candidate.views.view_by_username import candidate_portal_view_by_username
+from hknweb.candidate.views.summary import summary

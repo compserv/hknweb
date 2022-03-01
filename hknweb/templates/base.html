@@ -181,6 +181,8 @@
       <a href="{% url 'candidate:checkoff' %}">Mass Checkoffs</a>
       <span class="slash">/</span>
       <a href="{% url 'candidate:create_candidates' %}">Create Candidates</a>
+      <span class="slash">/</span>
+      <a href="{% url 'candidate:summary' %}">VP Summary</a>
     </div>
     {% endif %}
     {% if user.is_authenticated %}
