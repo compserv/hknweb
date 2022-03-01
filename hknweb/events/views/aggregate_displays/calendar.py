@@ -25,9 +25,8 @@ def index(request):
             "link": get_calendar_link(calendar_id=calendar_id),
         })
 
-    profiles = Profile.objects.filter(user=request.user)
-    if profiles.exists():
-        profile = profiles.first()
+    if request.user.is_authenticated:
+        profile = Profile.objects.filter(user=request.user).first()
         if profile.google_calendar_id:
             calendars.append({
                 "name": "personal",
