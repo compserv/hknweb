@@ -33,7 +33,7 @@ VP Summary
         <tbody>
             {% for row in rows %}
                 <tr>
-                    <td>{{ row.name }}</td>
+                    <td><a href="{{ row.link }}">{{ row.name }}</a></td>
                     {% for data in row.status %}
                         <td>{% if data %} &#10004 {% else %} &#10060 {% endif %}</td>
                     {% endfor %}
