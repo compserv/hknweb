@@ -26,20 +26,22 @@
 {% block heading %}Course Guide{% endblock %}
 
 {% block content %}
-    <svg class="graph" width="800" height="800"></svg>
+    <svg class="graph" width="1600" height="800"></svg>
 
     <!-- From https://bl.ocks.org/heybignick/3faf257bbbbc7743bb72310d03b86ee8 -->
     <script>
         var svg = d3.select("svg"),
             width = +svg.attr("width"),
-            height = +svg.attr("height");
+            height = +svg.attr("height")
+            circle_radius = 25;
 
         var color = d3.scaleOrdinal(d3.schemeCategory20);
 
         var simulation = d3.forceSimulation()
-            .force("link", d3.forceLink().id(function(d) { return d.id; }))
-            .force("charge", d3.forceManyBody().strength(-200))
-            .force("center", d3.forceCenter(width / 2, height / 2));
+            .force("link", d3.forceLink().id(function(d) { return d.id; }).distance(50))
+            .force("charge", d3.forceManyBody().strength(-100))
+            .force("center", d3.forceCenter(width / 2, height / 2))
+            .force("collision", d3.forceCollide().radius(circle_radius));
 
         d3.json("{% url 'studentservices:course_guide_data' %}", function(error, graph) {
             if (error) throw error;
@@ -50,7 +52,8 @@
                 .selectAll("line")
                     .data(graph.links)
                     .enter().append("line")
-                        .attr("stroke-width", function(d) { return Math.sqrt(d.value); });
+                        .attr("stroke-width", 2)
+                        .attr("marker-end", "url(#end)");
 
             var node = svg
                 .append("g")
@@ -61,7 +64,7 @@
 
             var circles = node
                 .append("circle")
-                    .attr("r", 20)
+                    .attr("r", circle_radius)
                     .attr("fill", function(d) { return color(d.group); })
                     .attr("stroke", "gray");
 
@@ -76,11 +79,25 @@
             var labels = node
                 .append("text")
                     .text(function(d) { return d.id; })
+                    .attr("text-anchor", "middle")
                     .attr("x", 0)
-                    .attr("y", 0);
+                    .attr("y", 5);
 
             node.append("title")
                 .text(function(d) { return d.id; });
+
+            svg.append("svg:defs").selectAll("marker")
+                .data(["end"])
+                .enter().append("svg:marker")
+                    .attr("id", String)
+                    .attr("viewBox", "0 -5 10 10")
+                    .attr("refX", 40)
+                    .attr("refY", 0)
+                    .attr("markerWidth", 4)
+                    .attr("markerHeight", 4)
+                    .attr("orient", "auto")
+                .append("svg:path")
+                    .attr("d", "M0,-5L10,0L0,5");
 
             simulation
                 .nodes(graph.nodes)

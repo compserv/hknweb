@@ -1,5 +1,3 @@
-import json
-
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.contrib import messages
@@ -160,5 +158,86 @@ def course_guide(request):
 
 
 def course_guide_data(request):
-    data = json.load(open("hknweb/studentservices/templates/studentservices/course_guide_data.json"))
+    graph = {
+        "16A": ["16B"],
+        "16B": ["70", "Circuits", "Devices", "Signals/Control", "AI/ML", "Theory"],
+        "70": ["Signals/Control", "AI/ML", "Theory"],
+        "53": ["Signals/Control", "AI/ML"],
+        "61A": ["61B"],
+        "61B": ["61C", "AI/ML", "Theory", "Graphics", "Design"],
+        "61C": ["Architecture", "Systems"],
+        "Circuits": ["151", "105"],
+        "105": ["140", "142", "113", "130"],
+        "Devices": ["130", "117"],
+        "130": ["134", "143"],
+        "134": ["137A"],
+        "113": ["137A"],
+        "Signals/Control": ["127", "106A", "120", "128"],
+        "106A": ["106B"],
+        "106B": ["287"],
+        "120": ["226A", "123", "221A", "229A", "128"],
+        "123": ["145"],
+        "128": ["221A", "192"],
+        "AI/ML": ["126", "127"],
+        "126": ["229A", "281A", "188", "189"],
+        "127": ["189", "227B", "227C"],
+        "188": ["189", "288"],
+        "189": ["281A", "280", "182"],
+        "281A": ["288", "281B"],
+        "227B": ["227C"],
+        "Theory": ["127", "170", "Math 113"],
+        "170": ["172", "191", "174", "270", "271", "176"],
+        "191": ["294"],
+        "Graphics": ["184", "194-26"],
+        "184": ["284B"],
+        "Design": ["160", "169"],
+        "160": ["260B"],
+        "Architecture": ["151", "152"],
+        "Systems": ["267", "164", "149", "168", "162", "186"],
+        "164": ["264"],
+        "168": ["268", "261N", "122", "161"],
+        "122": ["261N"],
+        "161": ["261", "194-35"],
+        "261": ["261N"],
+        "162": ["262A"],
+        "262A": ["262B"],
+    }
+
+    groups = [
+        ["16A", "16B", "70", "53", "61A", "61B", "61C"],
+        ["Circuits", "151", "105", "140", "142"],
+        ["Devices", "130", "117", "134", "143", "137A", "113"],
+        ["Signals/Control", "127", "106A", "120", "128", "106B", "287", "226A", "123", "221A", "229A", "145", "192"],
+        ["AI/ML", "126", "127", "281A", "188", "189", "227B", "227C", "288", "280", "182", "281B"],
+        ["Theory", "127", "170", "Math 113", "172", "191", "174", "270", "271", "176", "294"],
+        ["Graphics", "184", "194-26", "284B"],
+        ["Design", "160", "169", "260B"],
+        ["Architecture", "151", "152"],
+        ["Systems", "267", "164", "149", "168", "162", "186", "264", "268", "261N", "122", "161", "261", "194-35", "262A", "262B"],
+    ]
+
+    ids = set(graph)
+    for v in graph.values():
+        ids.update(v)
+
+    node_groups = dict()
+    for i, g in enumerate(groups):
+        i += 1  # Start at group 1
+        for n in g:
+            node_groups[n] = i
+
+    nodes = [{"id": n, "group": node_groups[n]} for n in ids]
+
+    links = []
+    for s, es in graph.items():
+        for e in es:
+            links.append({
+                "source": s,
+                "target": e,
+            })
+
+    data = {
+        "nodes": nodes,
+        "links": links,
+    }
     return JsonResponse(data)

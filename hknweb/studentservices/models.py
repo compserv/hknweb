@@ -70,3 +70,16 @@ class DepTour(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class CourseGuideNode(models.Model):
+    name = models.CharField(max_length=MAX_STRLEN, blank=False)
+
+
+class CourseGuideAdjacencyList(models.Model):
+    source = models.ForeignKey(CourseGuideNode, models.CASCADE)
+    targets = models.ManyToManyField(CourseGuideNode)
+
+
+class CourseGuideGroups(models.Model):
+    nodes = models.ManyToManyField(CourseGuideNode)
