@@ -77,6 +77,9 @@
             drag_handler(node);
 
             var labels = node
+                .append("a")
+                    .attr("xlink:href", function (d) { return d.link; })
+                    .attr("target", "_blank")
                 .append("text")
                     .text(function(d) { return d.id; })
                     .attr("text-anchor", "middle")

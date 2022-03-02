@@ -75,11 +75,22 @@ class DepTour(models.Model):
 class CourseGuideNode(models.Model):
     name = models.CharField(max_length=MAX_STRLEN, blank=False)
 
+    def __str__(self):
+        return self.name
+
 
 class CourseGuideAdjacencyList(models.Model):
-    source = models.ForeignKey(CourseGuideNode, models.CASCADE)
-    targets = models.ManyToManyField(CourseGuideNode)
+    source = models.ForeignKey(CourseGuideNode, models.CASCADE, related_name="adjacency_list_source")
+    targets = models.ManyToManyField(CourseGuideNode, related_name="adjacency_list_target")
+
+    def __str__(self):
+        source = str(self.source)
+        targets = ", ".join(str(t) for t in self.targets.all())
+        return f"{source}: [{targets}]"
 
 
-class CourseGuideGroups(models.Model):
+class CourseGuideGroup(models.Model):
     nodes = models.ManyToManyField(CourseGuideNode)
+
+    def __str__(self):
+        return ", ".join(str(n) for n in self.nodes.all())

@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
 from django.http import JsonResponse
 from django.contrib import messages
 from django.views import generic
@@ -7,7 +8,12 @@ from django.template.loader import render_to_string
 
 from hknweb.utils import login_and_permission, method_login_and_permission
 
-from hknweb.studentservices.models import DepTour, ReviewSession
+from hknweb.studentservices.models import (
+    DepTour,
+    ReviewSession,
+    CourseGuideAdjacencyList,
+    CourseGuideGroup,
+)
 from hknweb.studentservices.forms import (
     DocumentForm,
     ReviewSessionForm,
@@ -158,63 +164,13 @@ def course_guide(request):
 
 
 def course_guide_data(request):
-    graph = {
-        "16A": ["16B"],
-        "16B": ["70", "Circuits", "Devices", "Signals/Control", "AI/ML", "Theory"],
-        "70": ["Signals/Control", "AI/ML", "Theory"],
-        "53": ["Signals/Control", "AI/ML"],
-        "61A": ["61B"],
-        "61B": ["61C", "AI/ML", "Theory", "Graphics", "Design"],
-        "61C": ["Architecture", "Systems"],
-        "Circuits": ["151", "105"],
-        "105": ["140", "142", "113", "130"],
-        "Devices": ["130", "117"],
-        "130": ["134", "143"],
-        "134": ["137A"],
-        "113": ["137A"],
-        "Signals/Control": ["127", "106A", "120", "128"],
-        "106A": ["106B"],
-        "106B": ["287"],
-        "120": ["226A", "123", "221A", "229A", "128"],
-        "123": ["145"],
-        "128": ["221A", "192"],
-        "AI/ML": ["126", "127"],
-        "126": ["229A", "281A", "188", "189"],
-        "127": ["189", "227B", "227C"],
-        "188": ["189", "288"],
-        "189": ["281A", "280", "182"],
-        "281A": ["288", "281B"],
-        "227B": ["227C"],
-        "Theory": ["127", "170", "Math 113"],
-        "170": ["172", "191", "174", "270", "271", "176"],
-        "191": ["294"],
-        "Graphics": ["184", "194-26"],
-        "184": ["284B"],
-        "Design": ["160", "169"],
-        "160": ["260B"],
-        "Architecture": ["151", "152"],
-        "Systems": ["267", "164", "149", "168", "162", "186"],
-        "164": ["264"],
-        "168": ["268", "261N", "122", "161"],
-        "122": ["261N"],
-        "161": ["261", "194-35"],
-        "261": ["261N"],
-        "162": ["262A"],
-        "262A": ["262B"],
-    }
+    graph = dict()
+    for adjacency_list in CourseGuideAdjacencyList.objects.all():
+        graph[adjacency_list.source.name] = [node.name for node in adjacency_list.targets.all()]
 
-    groups = [
-        ["16A", "16B", "70", "53", "61A", "61B", "61C"],
-        ["Circuits", "151", "105", "140", "142"],
-        ["Devices", "130", "117", "134", "143", "137A", "113"],
-        ["Signals/Control", "127", "106A", "120", "128", "106B", "287", "226A", "123", "221A", "229A", "145", "192"],
-        ["AI/ML", "126", "127", "281A", "188", "189", "227B", "227C", "288", "280", "182", "281B"],
-        ["Theory", "127", "170", "Math 113", "172", "191", "174", "270", "271", "176", "294"],
-        ["Graphics", "184", "194-26", "284B"],
-        ["Design", "160", "169", "260B"],
-        ["Architecture", "151", "152"],
-        ["Systems", "267", "164", "149", "168", "162", "186", "264", "268", "261N", "122", "161", "261", "194-35", "262A", "262B"],
-    ]
+    groups = []
+    for group in CourseGuideGroup.objects.all():
+        groups.append([node.name for node in group.nodes.all()])
 
     ids = set(graph)
     for v in graph.values():
@@ -226,7 +182,16 @@ def course_guide_data(request):
         for n in g:
             node_groups[n] = i
 
-    nodes = [{"id": n, "group": node_groups[n]} for n in ids]
+    course_surveys_link = reverse("course_surveys:index")
+    link_template = f"{course_surveys_link}?search_by=courses&search_value="
+    nodes = []
+    for n in ids:
+        nodes.append({
+            "id": n,
+            "link": link_template + n,
+        })
+        if n in node_groups:
+            nodes[-1]["group"] = node_groups[n]
 
     links = []
     for s, es in graph.items():
