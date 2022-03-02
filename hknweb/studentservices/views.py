@@ -1,4 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
+from django.http import JsonResponse
 from django.contrib import messages
 from django.views import generic
 from django.core.mail import EmailMessage
@@ -6,7 +8,12 @@ from django.template.loader import render_to_string
 
 from hknweb.utils import login_and_permission, method_login_and_permission
 
-from hknweb.studentservices.models import DepTour, ReviewSession
+from hknweb.studentservices.models import (
+    DepTour,
+    ReviewSession,
+    CourseGuideAdjacencyList,
+    CourseGuideGroup,
+)
 from hknweb.studentservices.forms import (
     DocumentForm,
     ReviewSessionForm,
@@ -150,3 +157,53 @@ def tour(request):
             msg = "Something went wrong! Your request did not send. Try again, or email deprel@hkn.mu."
             messages.error(request, msg)
     return render(request, "studentservices/tours.html", {"form": form})
+
+
+def course_guide(request):
+    return render(request, "studentservices/course_guide.html")
+
+
+def course_guide_data(request):
+    graph = dict()
+    for adjacency_list in CourseGuideAdjacencyList.objects.all():
+        graph[adjacency_list.source.name] = [node.name for node in adjacency_list.targets.all()]
+
+    groups = []
+    for group in CourseGuideGroup.objects.all():
+        groups.append([node.name for node in group.nodes.all()])
+
+    ids = set(graph)
+    for v in graph.values():
+        ids.update(v)
+
+    node_groups = dict()
+    for i, g in enumerate(groups):
+        i += 1  # Start at group 1
+        for n in g:
+            node_groups[n] = i
+
+    course_surveys_link = reverse("course_surveys:index")
+    link_template = f"{course_surveys_link}?search_by=courses&search_value="
+    nodes = []
+    for n in ids:
+        nodes.append({
+            "id": n,
+            "link": link_template + n,
+            "title": sum(l.isalpha() for l in n) > 3,
+        })
+        if n in node_groups:
+            nodes[-1]["group"] = node_groups[n]
+
+    links = []
+    for s, es in graph.items():
+        for e in es:
+            links.append({
+                "source": s,
+                "target": e,
+            })
+
+    data = {
+        "nodes": nodes,
+        "links": links,
+    }
+    return JsonResponse(data)

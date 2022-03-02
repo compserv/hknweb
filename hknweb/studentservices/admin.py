@@ -1,6 +1,13 @@
 from django.contrib import admin
 
-from hknweb.studentservices.models import DepTour, Resume, ReviewSession
+from hknweb.studentservices.models import (
+    CourseGuideNode,
+    CourseGuideAdjacencyList,
+    CourseGuideGroup,
+    DepTour,
+    Resume,
+    ReviewSession,
+)
 
 
 @admin.register(Resume)
@@ -59,3 +66,21 @@ class ToursAdmin(admin.ModelAdmin):
         "comments",
         "deprel_comments",
     )
+
+
+@admin.register(CourseGuideNode)
+class CourseGuideNodeAdmin(admin.ModelAdmin):
+    fields = ["name"]
+    list_display = ["name"]
+
+
+@admin.register(CourseGuideAdjacencyList)
+class CourseGuideAdjacencyListAdmin(admin.ModelAdmin):
+    fields = ["source", "targets"]
+    list_display = ["source"]
+    filter_horizontal = ["targets"]
+
+
+@admin.register(CourseGuideGroup)
+class CourseGuideGroupAdmin(admin.ModelAdmin):
+    filter_horizontal = ["nodes"]
