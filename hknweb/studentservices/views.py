@@ -189,6 +189,7 @@ def course_guide_data(request):
         nodes.append({
             "id": n,
             "link": link_template + n,
+            "title": sum(l.isalpha() for l in n) > 3,
         })
         if n in node_groups:
             nodes[-1]["group"] = node_groups[n]

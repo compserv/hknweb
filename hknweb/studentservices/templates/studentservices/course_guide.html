@@ -34,7 +34,8 @@
         var svg = d3.select("svg"),
             width = +svg.attr("width"),
             height = +svg.attr("height"),
-            circle_radius = 25,
+            circle_radius = 30,
+            title_circle_radius = circle_radius * 2,
             node_stroke_width = 1,
             node_stroke_width_bold = 2,
             node_stroke = "gray",
@@ -46,7 +47,10 @@
             .force("link", d3.forceLink().id(function(d) { return d.id; }).distance(50))
             .force("charge", d3.forceManyBody().strength(-100))
             .force("center", d3.forceCenter(width / 2, height / 2))
-            .force("collision", d3.forceCollide().radius(circle_radius));
+            .force("collision", d3.forceCollide().radius(function(d) { 
+                if (d.title) return title_circle_radius;
+                else return circle_radius;
+            }));
 
         d3.json("{% url 'studentservices:course_guide_data' %}", function(error, graph) {
             if (error) throw error;
@@ -73,6 +77,9 @@
                     .attr("fill", function(d) { return color(d.group); })
                     .attr("stroke", node_stroke)
                     .attr("stroke-width", node_stroke_width);
+            circles
+                .filter(function(d) { return d.title })
+                .attr("r", title_circle_radius);
 
             // Create a drag handler and append it to the node object instead
             var drag_handler = d3.drag()
