@@ -91,3 +91,9 @@ class Event(models.Model):
                 r.save()
 
         super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        calendar_id = GCalAccessLevelMapping.get_calendar_id(self.access_level)
+        gcal.delete_event(self.google_calendar_event_id, calendar_id=calendar_id)
+
+        super().delete(*args, **kwargs)

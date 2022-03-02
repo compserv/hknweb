@@ -12,4 +12,5 @@ from hknweb.events.views.event_transactions import (
     EventUpdateView,
     add_event,
     show_details,
+    delete_event,
 )
