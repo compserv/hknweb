@@ -3,19 +3,37 @@
 {% block title %}Course Guide{% endblock %}
 
 {% block header %}
-    <script src="https://d3js.org/d3.v6.js"></script>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <style>
+        .graph {
+            width: 800px;
+            height: 800px;
+            margin: auto;
+            text-align: center;
+            background-color: ghostwhite;
+        }
+        .links line {
+            stroke: #aaa;
+        }
+        .nodes circle {
+            pointer-events: all;
+        }
+
+    </style>
 {% endblock %}
 
 {% block heading %}Course Guide{% endblock %}
 
 {% block content %}
-    <div style="text-align: center;" id="my_dataviz"></div>
+    <div class="graph" id="my_dataviz"></div>
 
+    <!-- From https://bl.ocks.org/steveharoz/8c3e2524079a8c440df60c1ab72b5d03 -->
     <script>
+        const maxWidth = 800, maxHeight = 800;
         // set the dimensions and margins of the graph
         const margin = {top: 10, right: 30, bottom: 30, left: 40},
-            width = 400 - margin.left - margin.right,
-            height = 400 - margin.top - margin.bottom;
+            width = maxWidth - margin.left - margin.right,
+            height = maxHeight - margin.top - margin.bottom;
 
         // append the svg object to the body of the page
         const svg = d3.select("#my_dataviz")
@@ -25,45 +43,198 @@
             .append("g")
             .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
-        d3.json("{% url 'studentservices:course_guide_data' %}").then( function( data) {
+        // svg objects
+        var link, node;
+        // the data - an object with nodes and links
+        var graph;
 
-            // Initialize the links
-            const link = svg
-                .selectAll("line")
-                .data(data.links)
-                .join("line")
-                .style("stroke", "#aaa")
-
-            // Initialize the nodes
-            const node = svg
-                .selectAll("circle")
-                .data(data.nodes)
-                .join("circle")
-                .attr("r", 20)
-                .style("fill", "#69b3a2")
-
-            // Let's list the force we wanna apply on the network
-            const simulation = d3.forceSimulation(data.nodes)                 // Force algorithm is applied to data.nodes
-                .force("link", d3.forceLink()                                 // This force provides links between nodes
-                        .id(function(d) { return d.id; })                     // This provide  the id of a node
-                        .links(data.links)                                    // and this the list of links
-                )
-                .force("charge", d3.forceManyBody().strength(-400))           // This adds repulsion between nodes. Play with the -400 for the repulsion strength
-                .force("center", d3.forceCenter(width / 2, height / 2))       // This force attracts nodes to the center of the svg area
-                .on("end", ticked);
-
-            // This function is run at each iteration of the force algorithm, updating the nodes position.
-            function ticked() {
-                link
-                    .attr("x1", function(d) { return d.source.x; })
-                    .attr("y1", function(d) { return d.source.y; })
-                    .attr("x2", function(d) { return d.target.x; })
-                    .attr("y2", function(d) { return d.target.y; });
-
-                node
-                    .attr("cx", function (d) { return d.x+6; })
-                    .attr("cy", function(d) { return d.y-6; });
-            }
+        // load the data
+        d3.json("{% url 'studentservices:course_guide_data' %}", function(error, _graph) {
+            if (error) throw error;
+            graph = _graph;
+            initializeDisplay();
+            initializeSimulation();
         });
+
+        //////////// FORCE SIMULATION //////////// 
+
+        // force simulator
+        var simulation = d3.forceSimulation();
+
+        // set up the simulation and event to update locations after each tick
+        function initializeSimulation() {
+            simulation.nodes(graph.nodes);
+            initializeForces();
+            simulation.on("tick", ticked);
+        }
+
+        // values for all forces
+        forceProperties = {
+            center: {
+                x: 0.5,
+                y: 0.5
+            },
+            charge: {
+                enabled: true,
+                strength: -200,
+                distanceMin: 1,
+                distanceMax: 2000
+            },
+            collide: {
+                enabled: true,
+                strength: .7,
+                iterations: 1,
+                radius: 20,
+                fill: "lightskyblue"
+            },
+            forceX: {
+                enabled: false,
+                strength: .1,
+                x: .5
+            },
+            forceY: {
+                enabled: false,
+                strength: .1,
+                y: .5
+            },
+            link: {
+                enabled: true,
+                distance: 10,
+                iterations: 1
+            }
+        }
+
+        // add forces to the simulation
+        function initializeForces() {
+            // add forces and associate each with a name
+            simulation
+                .force("link", d3.forceLink())
+                .force("charge", d3.forceManyBody())
+                .force("collide", d3.forceCollide())
+                .force("center", d3.forceCenter())
+                .force("forceX", d3.forceX())
+                .force("forceY", d3.forceY());
+            // apply properties to each of the forces
+            updateForces();
+        }
+
+        // apply new force properties
+        function updateForces() {
+            // get each force by name and update the properties
+            simulation.force("center")
+                .x(width * forceProperties.center.x)
+                .y(height * forceProperties.center.y);
+            simulation.force("charge")
+                .strength(forceProperties.charge.strength * forceProperties.charge.enabled)
+                .distanceMin(forceProperties.charge.distanceMin)
+                .distanceMax(forceProperties.charge.distanceMax);
+            simulation.force("collide")
+                .strength(forceProperties.collide.strength * forceProperties.collide.enabled)
+                .radius(forceProperties.collide.radius)
+                .iterations(forceProperties.collide.iterations);
+            simulation.force("forceX")
+                .strength(forceProperties.forceX.strength * forceProperties.forceX.enabled)
+                .x(width * forceProperties.forceX.x);
+            simulation.force("forceY")
+                .strength(forceProperties.forceY.strength * forceProperties.forceY.enabled)
+                .y(height * forceProperties.forceY.y);
+            simulation.force("link")
+                .id(function(d) {return d.id;})
+                .distance(forceProperties.link.distance)
+                .iterations(forceProperties.link.iterations)
+                .links(forceProperties.link.enabled ? graph.links : []);
+
+            // updates ignored until this is run
+            // restarts the simulation (important if simulation has already slowed down)
+            simulation.alpha(1).restart();
+        }
+
+        //////////// DISPLAY ////////////
+
+        // generate the svg objects and force simulation
+        function initializeDisplay() {
+            // set the data and properties of link lines
+            link = svg.append("g")
+                .attr("class", "links")
+                .selectAll("line")
+                .data(graph.links)
+                .enter().append("line");
+
+            // set the data and properties of node circles
+            node = svg.append("g")
+                .attr("class", "nodes")
+                .selectAll("circle")
+                .data(graph.nodes)
+                .enter().append("circle")
+                .call(d3.drag()
+                    .on("start", dragstarted)
+                    .on("drag", dragged)
+                    .on("end", dragended))
+
+            node.append("text")
+                .text(function(d) { return d.id; })
+
+            // visualize the graph
+            updateDisplay();
+        }
+
+        // update the display based on the forces (but not positions)
+        function updateDisplay() {
+            node
+                .attr("r", forceProperties.collide.radius)
+                .attr("fill", forceProperties.collide.fill)
+                .attr("stroke", "grey")
+
+            link
+                .attr("stroke-width", forceProperties.link.enabled ? 1 : .5)
+                .attr("opacity", forceProperties.link.enabled ? 1 : 0);
+        }
+
+        // update the display positions after each simulation tick
+        function ticked() {
+            link
+                .attr("x1", function(d) { return d.source.x; })
+                .attr("y1", function(d) { return d.source.y; })
+                .attr("x2", function(d) { return d.target.x; })
+                .attr("y2", function(d) { return d.target.y; });
+
+            node
+                .attr("cx", function(d) { return d.x; })
+                .attr("cy", function(d) { return d.y; });
+
+            d3.select('#alpha_value').style('flex-basis', (simulation.alpha()*100) + '%');
+        }
+
+        //////////// UI EVENTS ////////////
+
+        function dragstarted(d) {
+            if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+        }
+
+        function dragged(d) {
+            d.fx = d3.event.x;
+            d.fy = d3.event.y;
+        }
+
+        function dragended(d) {
+            if (!d3.event.active) simulation.alphaTarget(0.0001);
+            d.fx = null;
+            d.fy = null;
+        }
+
+        // update size-related forces
+        d3.select(window).on("resize", function(){
+            width = +svg.node().getBoundingClientRect().width;
+            height = +svg.node().getBoundingClientRect().height;
+            updateForces();
+        });
+
+        // convenience function to update everything (run after UI input)
+        function updateAll() {
+            updateForces();
+            updateDisplay();
+        }
     </script>
 {% endblock %}
