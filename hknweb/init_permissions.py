@@ -16,14 +16,18 @@ cand_permission_names = [
     ("change_offchallenge", OffChallenge),
     ("add_bitbyteactivity", BitByteActivity),
     ("add_rsvp", Rsvp),
+    ("view_rsvp", Rsvp),
+    ("change_rsvp", Rsvp),
     ("delete_rsvp", Rsvp),
     ("view_user", User),
+    ("view_event", Event),
 ]
 
 # OFFICER ONLY PERMISSIONS
 off_permission_names = [
     ("add_event", Event),
     ("change_event", Event),
+    ("delete_event", Event),
     ("add_academicentity", AcademicEntity),
     ("view_academicentity", AcademicEntity),
     ("change_academicentity", AcademicEntity),

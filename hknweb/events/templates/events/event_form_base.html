@@ -54,8 +54,7 @@
                 </tr>
             </tbody>
         </table>
-        
-        Note: You can bulk delete recurring events through the websites <a href="{% url 'admin:index' %}">admin</a>.
+
         <br><br>
 
         <div id="submit">
@@ -68,6 +67,14 @@
             {% endif %}
         </div>
     </form>
+
+    {% if event.id %}
+        <form action="{% url 'events:delete' event.id %}" method="post" onsubmit="submit_button.disabled = true; return true;">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{% url 'events:index' %}">
+            <input type="submit" name="submit_button" value="Delete event" />
+        </form>
+    {% endif %}
 
     <script>
         $(function () {
