@@ -1,4 +1,7 @@
+import json
+
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import JsonResponse
 from django.contrib import messages
 from django.views import generic
 from django.core.mail import EmailMessage
@@ -150,3 +153,12 @@ def tour(request):
             msg = "Something went wrong! Your request did not send. Try again, or email deprel@hkn.mu."
             messages.error(request, msg)
     return render(request, "studentservices/tours.html", {"form": form})
+
+
+def course_guide(request):
+    return render(request, "studentservices/course_guide.html")
+
+
+def course_guide_data(request):
+    data = json.load(open("hknweb/studentservices/templates/studentservices/course_guide_data.json"))
+    return JsonResponse(data)
