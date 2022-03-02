@@ -4,6 +4,7 @@
 
 {% block header %}
     <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="//d3js.org/d3-scale-chromatic.v0.3.min.js"></script>
     <style>
         .graph {
             display: block;
@@ -35,7 +36,7 @@
             height = +svg.attr("height")
             circle_radius = 25;
 
-        var color = d3.scaleOrdinal(d3.schemeCategory20);
+        var color = d3.scaleOrdinal(d3.schemeSet2);
 
         var simulation = d3.forceSimulation()
             .force("link", d3.forceLink().id(function(d) { return d.id; }).distance(50))
