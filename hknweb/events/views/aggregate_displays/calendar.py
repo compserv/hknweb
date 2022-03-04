@@ -20,6 +20,9 @@ def index(request):
             continue
 
         calendar_id = GCalAccessLevelMapping.get_calendar_id(access_level)  # Link
+        if not calendar_id:
+            continue
+
         calendars.append({
             "name": name,
             "link": get_calendar_link(calendar_id=calendar_id),
@@ -35,7 +38,8 @@ def index(request):
 
     for calendar in calendars[:-1]:
         calendar["separator"] = "/"
-    calendars[-1]["separator"] = ""
+    if len(calendars) > 0:
+        calendars[-1]["separator"] = ""
 
     context = {
         "events": events,

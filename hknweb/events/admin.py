@@ -111,9 +111,10 @@ class RsvpAdmin(admin.ModelAdmin):
 
     def delete_queryset(self, request, queryset):
         for r in queryset:
+            profile = Profile.objects.filter(user=self.user).first()
             gcal.delete_event(
                 r.google_calendar_event_id,
-                calendar_id=r.user.google_calendar_id,
+                calendar_id=profile.google_calendar_id,
             )
 
         super().delete_queryset(request, queryset)

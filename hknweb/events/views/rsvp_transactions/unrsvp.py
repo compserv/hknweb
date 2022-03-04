@@ -1,5 +1,4 @@
-from django.shortcuts import redirect
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, reverse
 from django.core.mail import EmailMultiAlternatives
@@ -27,8 +26,8 @@ def unrsvp(request, id):
         rsvp.delete()
         for off_waitlist_rsvp in event.newly_off_waitlist_rsvps(old_admitted):
             send_off_waitlist_email(request, off_waitlist_rsvp.user, event)
-    next_page = request.POST.get("next", "/")
-    return redirect(next_page)
+
+    return HttpResponse()
 
 
 def send_off_waitlist_email(request, user, event):

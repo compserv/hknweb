@@ -19,5 +19,9 @@ class GCalAccessLevelMapping(models.Model):
 
     @staticmethod
     def get_calendar_id(access_level: int) -> str:
-        mapping = GCalAccessLevelMapping.objects.filter(access_level=access_level).first()
+        mappings = GCalAccessLevelMapping.objects.filter(access_level=access_level)
+        if not mappings.exists():
+            return None
+
+        mapping = mappings.first()
         return mapping.calendar_id

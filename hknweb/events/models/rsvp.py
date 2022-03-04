@@ -53,10 +53,11 @@ class Rsvp(models.Model):
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
-        profile = Profile.objects.filter(user=self.user).first()
-        gcal.delete_event(
-            self.google_calendar_event_id,
-            calendar_id=profile.google_calendar_id,
-        )
+        if self.google_calendar_event_id:
+            profile = Profile.objects.filter(user=self.user).first()
+            gcal.delete_event(
+                self.google_calendar_event_id,
+                calendar_id=profile.google_calendar_id,
+            )
 
         super().delete(*args, **kwargs)

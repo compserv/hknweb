@@ -632,13 +632,13 @@
         .ratings-panel-header {
             font-size: 125%;
             margin: 1em;
-            height: 20%;
+            height: calc(20% - 2em);
         }
 
         .ratings-panel-body {
             padding: 1em;
             overflow: scroll;
-            height: 80%;
+            height: calc(80% - 2em);
         }
 
         .survey-number-navigator {
@@ -957,6 +957,8 @@
                                 {{ survey.num_students }} students ({{ survey.response_count }} responses)
                             {% endif %}
                         </div>
+                    {% else %}
+                        Course survey information will appear here once a course or instructor is selected.
                     {% endif %}
                     {% if course or instructor %}
                         <div class="survey-number-navigator next-survey" {% if next_survey %} onClick="clickSurveyNumber({{ next_survey }})" {% else %} style="opacity: 0.6; text-decoration: none;" {% endif %}>
@@ -988,8 +990,6 @@
                         </table>
                     {% elif survey and not survey.ratings %}
                         No ratings from this semester
-                    {% else %}
-                        Course survey information will appear here once a course or instructor is selected.
                     {% endif %}
                 </div>
             </div>

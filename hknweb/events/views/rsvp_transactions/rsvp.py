@@ -1,5 +1,4 @@
-from django.shortcuts import redirect
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from hknweb.utils import login_and_permission
@@ -17,5 +16,5 @@ def rsvp(request, id):
         Rsvp.objects.create(user=request.user, event=event, confirmed=False)
     else:
         messages.error(request, "You have already RSVP'd.")
-    next_page = request.POST.get("next", "/")
-    return redirect(next_page)
+
+    return HttpResponse()

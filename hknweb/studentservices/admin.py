@@ -70,8 +70,8 @@ class ToursAdmin(admin.ModelAdmin):
 
 @admin.register(CourseGuideNode)
 class CourseGuideNodeAdmin(admin.ModelAdmin):
-    fields = ["name"]
-    list_display = ["name"]
+    fields = ["name", "is_title", "x_0", "y_0"]
+    list_display = ["name", "is_title", "x_0", "y_0"]
 
 
 @admin.register(CourseGuideAdjacencyList)
