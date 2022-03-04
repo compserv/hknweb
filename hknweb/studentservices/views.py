@@ -208,6 +208,8 @@ def course_guide_data(request):
             links.append({
                 "source": s,
                 "target": e,
+                "source_group": node_groups[s],
+                "target_group": node_groups[e],
             })
 
     data = {
