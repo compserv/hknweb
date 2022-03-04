@@ -21,12 +21,53 @@
             pointer-events: all;
         }
 
+        .group_selection {
+            text-align: center;
+            font-size: 125%;
+        }
+
     </style>
+    <script>
+        function action(group) {
+            const urlParams = new URLSearchParams(window.location.search);
+
+            var groups = urlParams.get("groups");
+            if (!groups) {
+                groups = "Core";
+            }
+            groups = groups.split(",")
+
+            const checkbox = document.getElementById(group);
+            if (checkbox.checked == true) {
+                groups.push(group)
+            } else {
+                const index = groups.indexOf(group);
+                if (index > -1) {
+                    groups.splice(index, 1);
+                }
+            }
+
+            groups = groups.join();
+
+            if (history.pushState) {
+                var newurl = window.location.origin + window.location.pathname + "?groups=" + groups;
+                window.history.replaceState({path: newurl}, "", newurl);
+            }
+
+            window.location = window.location;
+        }
+    </script>
 {% endblock %}
 
 {% block heading %}Course Guide{% endblock %}
 
 {% block content %}
+    <div class="group_selection">
+        {% for group in groups %}
+            <input type="checkbox" id="{{ group }}" {% if group in request.GET.groups %} checked {% endif %} onclick="action('{{ group }}')"> {{ group }}
+        {% endfor %}
+    </div>
+
     <svg class="graph" width="1600" height="800"></svg>
 
     <!-- From https://bl.ocks.org/heybignick/3faf257bbbbc7743bb72310d03b86ee8 -->
@@ -50,7 +91,7 @@
                 else return circle_radius;
             }));
 
-        d3.json("{% url 'studentservices:course_guide_data' %}", function(error, graph) {
+        d3.json("{% url 'studentservices:course_guide_data' %}?groups={{ request.GET.groups }}", function(error, graph) {
             if (error) throw error;
 
             var link = svg

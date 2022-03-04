@@ -93,6 +93,7 @@ class CourseGuideAdjacencyList(models.Model):
 
 
 class CourseGuideGroup(models.Model):
+    name = models.CharField(max_length=MAX_STRLEN, blank=True)
     nodes = models.ManyToManyField(CourseGuideNode)
 
     def __str__(self):
