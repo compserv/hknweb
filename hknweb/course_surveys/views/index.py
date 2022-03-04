@@ -104,24 +104,21 @@ class IndexView(TemplateView):
             return None, {}
 
         courses = []
+        courses_to_search = Course.objects.filter(
+            Q(icsr_course__course_number__contains=search_value) \
+            | Q(icsr_course__icsr_department__abbr__contains=search_value)
+            | Q(icsr_course__icsr_department__name__contains=search_value)
+            | Q(icsr_course__course_name__contains=search_value)
+            | Q(icsr_course__icsr_semester__year__contains=search_value)
+            | Q(icsr_course__icsr_semester__year_section__contains=search_value)
+        )
         i_start, i_end = IndexView._get_start_end_indices(page_number)
-        for course in Course.objects.all()[i_start:i_end]:
+        for course in courses_to_search[i_start:i_end]:
             icsrs = course.icsr_course.filter(
                 section_number__exact="1", instructor_type__exact="Professor"
             )
             if not icsrs.exists():
                 icsrs = course.icsr_course.all()
-
-            icsrs = icsrs.filter(
-                Q(course_number__contains=search_value) \
-                | Q(icsr_department__abbr__contains=search_value)
-                | Q(icsr_department__name__contains=search_value)
-                | Q(course_name__contains=search_value)
-                | Q(icsr_semester__year__contains=search_value)
-                | Q(icsr_semester__year_section__contains=search_value)
-            )
-            if not icsrs.exists():
-                continue
 
             most_recent_icsr = icsrs.latest(
                 "icsr_semester__year",
@@ -138,7 +135,7 @@ class IndexView(TemplateView):
             )
 
         return courses, IndexView._get_pagination_info(
-            page_number, Course.objects.count()
+            page_number, courses_to_search.count()
         )
 
     @staticmethod
@@ -147,14 +144,13 @@ class IndexView(TemplateView):
             return None, {}
 
         instructors = []
+        instructors_to_search = Instructor.objects.filter(
+            Q(icsr_instructor__first_name__contains=search_value) \
+            | Q(icsr_instructor__last_name__contains=search_value)
+        )
         i_start, i_end = IndexView._get_start_end_indices(page_number)
-        for instructor in Instructor.objects.all()[i_start:i_end]:
-            icsrs = instructor.icsr_instructor.filter(
-                Q(first_name__contains=search_value) \
-                | Q(last_name__contains=search_value)
-            )
-            if not icsrs.exists():
-                continue
+        for instructor in instructors_to_search[i_start:i_end]:
+            icsrs = instructor.icsr_instructor.all()
 
             most_recent_icsr = icsrs.latest(
                 "icsr_semester__year",
@@ -174,7 +170,7 @@ class IndexView(TemplateView):
             )
 
         return instructors, IndexView._get_pagination_info(
-            page_number, Instructor.objects.count()
+            page_number, instructors_to_search.count()
         )
 
     @staticmethod
