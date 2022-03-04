@@ -10,11 +10,15 @@ from .forms import AlumniForm
 import operator
 from functools import reduce
 
+from hknweb.utils import method_login_and_permission, login_and_permission
 
+
+@method_login_and_permission("alumni.view_alumnus")
 class IndexView(generic.TemplateView):
     template_name = "alumni/index.html"
 
 
+@method_login_and_permission("alumni.view_alumnus")
 class SearchView(generic.ListView):
     """
     Display an alumni list page filtered by the search query.
@@ -90,16 +94,19 @@ SearchView.search_field = "name"
 SearchView.status = None
 
 
+@login_and_permission("alumni.view_alumnus")
 def search_type(request):
     SearchView.search_field = request.POST.get("search_by", None)
     return HttpResponseRedirect(reverse("alumni:search"))
 
 
+@login_and_permission("alumni.view_alumnus")
 def alumni_detail_view(request, pk):
     alumnus = Alumnus.objects.get(id=pk)
     return render(request, "alumni/alumni_detail.html", context={"alumnus": alumnus})
 
 
+@login_and_permission("alumni.view_alumnus")
 def form(request):
     form = AlumniForm(request.POST or None)
     if request.method == "POST":
