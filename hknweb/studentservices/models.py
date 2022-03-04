@@ -97,3 +97,23 @@ class CourseGuideGroup(models.Model):
 
     def __str__(self):
         return ", ".join(str(n) for n in self.nodes.all())
+
+
+class CourseGuideParam(models.Model):
+    link_distance = models.IntegerField()
+    circle_radius = models.IntegerField()
+    force_strength = models.IntegerField()
+    marker_width = models.IntegerField()
+    marker_height = models.IntegerField()
+
+    def __str__(self):
+        return str(self.to_dict())
+
+    def to_dict(self):
+        return {
+            "link_distance": self.link_distance,
+            "circle_radius": self.circle_radius,
+            "force_strength": self.force_strength,
+            "marker_width": self.marker_width,
+            "marker_height": self.marker_height,
+        }

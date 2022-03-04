@@ -34,7 +34,7 @@
         var svg = d3.select("svg"),
             width = +svg.attr("width"),
             height = +svg.attr("height"),
-            circle_radius = 30,
+            circle_radius = {{ params.circle_radius }},
             title_circle_radius = circle_radius * 2,
             node_stroke_width = 1,
             node_stroke_width_bold = 2,
@@ -44,8 +44,8 @@
         var color = d3.scaleOrdinal(d3.schemeSet2);
 
         var simulation = d3.forceSimulation()
-            .force("link", d3.forceLink().id(function(d) { return d.id; }).distance(50))
-            .force("charge", d3.forceManyBody().strength(-100))
+            .force("link", d3.forceLink().id(function(d) { return d.id; }).distance({{ params.link_distance }}))
+            .force("charge", d3.forceManyBody().strength({{ params.force_strength }}))
             .force("center", d3.forceCenter(width / 2, height / 2))
             .force("collision", d3.forceCollide().radius(function(d) { 
                 if (d.title) return title_circle_radius;
@@ -123,8 +123,8 @@
                     .attr("viewBox", "0 -5 10 10")
                     .attr("refX", 40)
                     .attr("refY", 0)
-                    .attr("markerWidth", 4)
-                    .attr("markerHeight", 4)
+                    .attr("markerWidth", {{ params.marker_width }})
+                    .attr("markerHeight", {{ params.marker_height }})
                     .attr("orient", "auto")
                 .append("svg:path")
                     .attr("d", "M0,-5L10,0L0,5");

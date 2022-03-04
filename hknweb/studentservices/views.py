@@ -14,6 +14,7 @@ from hknweb.studentservices.models import (
     CourseGuideNode,
     CourseGuideAdjacencyList,
     CourseGuideGroup,
+    CourseGuideParam,
 )
 from hknweb.studentservices.forms import (
     DocumentForm,
@@ -161,7 +162,12 @@ def tour(request):
 
 
 def course_guide(request):
-    return render(request, "studentservices/course_guide.html")
+    context = dict()
+
+    if CourseGuideParam.objects.exists():
+        context["params"] = CourseGuideParam.objects.first().to_dict()
+
+    return render(request, "studentservices/course_guide.html", context=context)
 
 
 def course_guide_data(request):
