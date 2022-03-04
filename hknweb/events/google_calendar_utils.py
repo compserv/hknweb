@@ -107,11 +107,15 @@ def create_event(
 def update_event(event_id: str, calendar_id: str=CALENDAR_ID, **kwargs) -> None:
     event_resource = create_event_resource(**kwargs)
 
-    get_service().events().patch(
-        calendarId=calendar_id,
-        eventId=event_id,
-        body=event_resource,
-    ).execute()
+    try:
+        get_service().events().patch(
+            calendarId=calendar_id,
+            eventId=event_id,
+            body=event_resource,
+        ).execute()
+    except HttpError as e:
+        if e.resp["status"] not in ["404", "410"]:
+            raise e
 
 
 @check_credentials_wrapper
