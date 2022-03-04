@@ -38,6 +38,13 @@ class EventForm(forms.ModelForm):
         labels = {
             "rsvp_limit": "RSVP limit",
         }
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        start_time = cleaned_data.get("start_time")
+        end_time = cleaned_data.get("end_time")
+        if end_time < start_time:
+            self.add_error("end_time", "End Time is not after Start Time")
 
 
 class EventUpdateForm(forms.ModelForm):
@@ -60,3 +67,10 @@ class EventUpdateForm(forms.ModelForm):
         labels = {
             "rsvp_limit": "RSVP limit",
         }
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        start_time = cleaned_data.get("start_time")
+        end_time = cleaned_data.get("end_time")
+        if end_time < start_time:
+            self.add_error("end_time", "End Time is not after Start Time")
