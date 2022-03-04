@@ -35,6 +35,23 @@
       vertical-align: middle;
     }
 </style>
+<script>
+    function RSVP(link) {
+        var xhr = new XMLHttpRequest();
+
+        xhr.onreadystatechange = function () {
+            if (this.readyState != 4) return;
+
+            if (this.status == 200) {
+                window.location = window.location;
+            }
+        };
+
+        xhr.open("POST", link, true);
+        xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+        xhr.send();
+    }
+</script>
 {% endblock %}
 
 {% block content %}
@@ -71,19 +88,11 @@
 
     <!-- RSVP/un-RSVP button -->
     {% if rsvpd %}
-      <form action="{% url 'events:unrsvp' event.id %}" method="post" onsubmit="submit_button.disabled = true; return true;">
-        {% csrf_token %}
-        <input type="hidden" name="next" value="{{ request.path }}">
-        <input type="submit" name="submit_button" value="un-RSVP" />
-      </form>
+        <button onclick="RSVP('{% url 'events:unrsvp' event.id %}')">un-RSVP</button>
     {% else %}
-      <form action="{% url 'events:rsvp' event.id %}" method="post" onsubmit="submit_button.disabled = true; return true;">
-        {% csrf_token %}
-        <input type="hidden" name="next" value="{{ request.path }}">
-        <input type="submit" name="submit_button" value="RSVP" />
-      </form>
+        <button onclick="RSVP('{% url 'events:rsvp' event.id %}')">RSVP</button>
     {% endif %}
-    
+
     {% if waitlisted %}
       <p class="rsvp-list">You are at position {{waitlist_position}} on the waitlist. <img src="{% static 'candidate/maybe.png'%}" alt="waitlisted" class="table-icon"></p>
     {% elif rsvpd %}
@@ -130,11 +139,7 @@
                                 </td>
                                 {% if user_access_level == "Internal" %}
                                     <td>
-                                        <form action="{% url 'events:confirm_rsvp' rsvp.id 1 %}" method="POST" onsubmit="submit_button.disabled = true; return true;">
-                                            {% csrf_token %}
-                                            <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                                            <input type="submit" name="submit_button" value="Un-confirm" />
-                                        </form>
+                                        <button onclick="RSVP('{% url 'events:confirm_rsvp' rsvp.id 1 %}')">Un-confirm</button>
                                     </td>
                                 {% endif %}
                             {% else %}
@@ -143,11 +148,7 @@
                                 </td>
                                 {% if user_access_level == "Internal" %}
                                     <td>
-                                        <form action="{% url 'events:confirm_rsvp' rsvp.id 0 %}" method="POST" onsubmit="submit_button.disabled = true; return true;">
-                                            {% csrf_token %}
-                                            <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                                            <input type="submit" name="submit_button" value="Confirm" />
-                                        </form>
+                                        <button onclick="RSVP('{% url 'events:confirm_rsvp' rsvp.id 0 %}')">Confirm</button>
                                     </td>
                                 {% endif %}
                             {% endif %}

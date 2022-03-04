@@ -1,5 +1,4 @@
-from django.shortcuts import redirect
-from django.http import Http404, HttpResponseForbidden
+from django.http import Http404, HttpResponseForbidden, HttpResponse
 from hknweb.events.models import Rsvp
 from hknweb.utils import get_access_level
 
@@ -16,5 +15,4 @@ def confirm_rsvp(request, id, operation):
     rsvp.confirmed = operation == 0  # { confirmed: 0, unconfirmed: 1 }
     rsvp.save()
 
-    next_page = request.POST.get("next", "/")
-    return redirect(next_page)
+    return HttpResponse()
