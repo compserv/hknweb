@@ -11,6 +11,7 @@ from hknweb.utils import login_and_permission, method_login_and_permission
 from hknweb.studentservices.models import (
     DepTour,
     ReviewSession,
+    CourseGuideNode,
     CourseGuideAdjacencyList,
     CourseGuideGroup,
 )
@@ -172,10 +173,6 @@ def course_guide_data(request):
     for group in CourseGuideGroup.objects.all():
         groups.append([node.name for node in group.nodes.all()])
 
-    ids = set(graph)
-    for v in graph.values():
-        ids.update(v)
-
     node_groups = dict()
     for i, g in enumerate(groups):
         i += 1  # Start at group 1
@@ -185,14 +182,19 @@ def course_guide_data(request):
     course_surveys_link = reverse("course_surveys:index")
     link_template = f"{course_surveys_link}?search_by=courses&search_value="
     nodes = []
-    for n in ids:
-        nodes.append({
-            "id": n,
-            "link": link_template + n,
-            "title": sum(l.isalpha() for l in n) > 3,
-        })
-        if n in node_groups:
-            nodes[-1]["group"] = node_groups[n]
+    for n in CourseGuideNode.objects.all():
+        node_info = {
+            "id": n.name,
+            "link": link_template + n.name,
+            "title": n.is_title,
+        }
+        if n.name in node_groups:
+            node_info["group"] = node_groups[n.name]
+        if n.x_0:
+            node_info["fx"] = n.x_0
+        if n.y_0:
+            node_info["fy"] = n.y_0
+        nodes.append(node_info)
 
     links = []
     for s, es in graph.items():

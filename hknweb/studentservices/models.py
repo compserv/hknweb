@@ -74,6 +74,9 @@ class DepTour(models.Model):
 
 class CourseGuideNode(models.Model):
     name = models.CharField(max_length=MAX_STRLEN, blank=False)
+    is_title = models.BooleanField(default=False)
+    x_0 = models.IntegerField(blank=True, null=True)
+    y_0 = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
         return self.name
