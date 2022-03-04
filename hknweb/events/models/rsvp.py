@@ -14,6 +14,9 @@ class Rsvp(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="rsvp time")
     google_calendar_event_id = models.CharField(max_length=255, null=True, blank=True)
 
+    class Meta:
+        unique_together = [["user", "event"]]
+
     def __repr__(self):
         return "Rsvp(event={}, user={})".format(self.event, self.user.username)
 
