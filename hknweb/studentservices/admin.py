@@ -4,6 +4,7 @@ from hknweb.studentservices.models import (
     CourseGuideNode,
     CourseGuideAdjacencyList,
     CourseGuideGroup,
+    CourseGuideParam,
     DepTour,
     Resume,
     ReviewSession,
@@ -84,3 +85,14 @@ class CourseGuideAdjacencyListAdmin(admin.ModelAdmin):
 @admin.register(CourseGuideGroup)
 class CourseGuideGroupAdmin(admin.ModelAdmin):
     filter_horizontal = ["nodes"]
+
+
+@admin.register(CourseGuideParam)
+class CourseGuideParamAdmin(admin.ModelAdmin):
+    fields = list_display = [
+        "link_distance",
+        "circle_radius",
+        "force_strength",
+        "marker_width",
+        "marker_height",
+    ]

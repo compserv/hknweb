@@ -14,6 +14,7 @@ from hknweb.studentservices.models import (
     CourseGuideNode,
     CourseGuideAdjacencyList,
     CourseGuideGroup,
+    CourseGuideParam,
 )
 from hknweb.studentservices.forms import (
     DocumentForm,
@@ -161,16 +162,26 @@ def tour(request):
 
 
 def course_guide(request):
-    return render(request, "studentservices/course_guide.html")
+    context = dict()
+
+    if CourseGuideParam.objects.exists():
+        context["params"] = CourseGuideParam.objects.first().to_dict()
+
+    context["groups"] = [g.name for g in CourseGuideGroup.objects.all() if g.name != "Core"]
+
+    return render(request, "studentservices/course_guide.html", context=context)
 
 
 def course_guide_data(request):
-    graph = dict()
-    for adjacency_list in CourseGuideAdjacencyList.objects.all():
-        graph[adjacency_list.source.name] = [node.name for node in adjacency_list.targets.all()]
+    group_names = request.GET.get("groups", None)
+    group_names = group_names.split(",") if group_names else []
+    group_names.append("Core")
 
     groups = []
     for group in CourseGuideGroup.objects.all():
+        if group_names and group.name not in group_names:
+            continue
+
         groups.append([node.name for node in group.nodes.all()])
 
     node_groups = dict()
@@ -179,22 +190,30 @@ def course_guide_data(request):
         for n in g:
             node_groups[n] = i
 
+    graph = dict()
+    for adjacency_list in CourseGuideAdjacencyList.objects.all():
+        if adjacency_list.source.name not in node_groups:
+            continue
+
+        graph[adjacency_list.source.name] = [
+            node.name for node in adjacency_list.targets.all() if node.name in node_groups
+        ]
+
     course_surveys_link = reverse("course_surveys:index")
     link_template = f"{course_surveys_link}?search_by=courses&search_value="
     nodes = []
     for n in CourseGuideNode.objects.all():
-        node_info = {
+        if n.name not in node_groups:
+            continue
+
+        nodes.append({
             "id": n.name,
             "link": link_template + n.name,
             "title": n.is_title,
-        }
-        if n.name in node_groups:
-            node_info["group"] = node_groups[n.name]
-        if n.x_0:
-            node_info["fx"] = n.x_0
-        if n.y_0:
-            node_info["fy"] = n.y_0
-        nodes.append(node_info)
+            "group": node_groups[n.name],
+            "fx": n.x_0,
+            "fy": n.y_0,
+        })
 
     links = []
     for s, es in graph.items():
@@ -202,6 +221,8 @@ def course_guide_data(request):
             links.append({
                 "source": s,
                 "target": e,
+                "source_group": node_groups[s],
+                "target_group": node_groups[e],
             })
 
     data = {

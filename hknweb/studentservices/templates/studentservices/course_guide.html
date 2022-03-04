@@ -21,12 +21,53 @@
             pointer-events: all;
         }
 
+        .group_selection {
+            text-align: center;
+            font-size: 125%;
+        }
+
     </style>
+    <script>
+        function action(group) {
+            const urlParams = new URLSearchParams(window.location.search);
+
+            var groups = urlParams.get("groups");
+            if (!groups) {
+                groups = "Core";
+            }
+            groups = groups.split(",")
+
+            const checkbox = document.getElementById(group);
+            if (checkbox.checked == true) {
+                groups.push(group)
+            } else {
+                const index = groups.indexOf(group);
+                if (index > -1) {
+                    groups.splice(index, 1);
+                }
+            }
+
+            groups = groups.join();
+
+            if (history.pushState) {
+                var newurl = window.location.origin + window.location.pathname + "?groups=" + groups;
+                window.history.replaceState({path: newurl}, "", newurl);
+            }
+
+            window.location = window.location;
+        }
+    </script>
 {% endblock %}
 
 {% block heading %}Course Guide{% endblock %}
 
 {% block content %}
+    <div class="group_selection">
+        {% for group in groups %}
+            <input type="checkbox" id="{{ group }}" {% if group in request.GET.groups %} checked {% endif %} onclick="action('{{ group }}')"> {{ group }}
+        {% endfor %}
+    </div>
+
     <svg class="graph" width="1600" height="800"></svg>
 
     <!-- From https://bl.ocks.org/heybignick/3faf257bbbbc7743bb72310d03b86ee8 -->
@@ -34,25 +75,23 @@
         var svg = d3.select("svg"),
             width = +svg.attr("width"),
             height = +svg.attr("height"),
-            circle_radius = 30,
+            circle_radius = {{ params.circle_radius }},
             title_circle_radius = circle_radius * 2,
             node_stroke_width = 1,
-            node_stroke_width_bold = 2,
-            node_stroke = "gray",
-            node_stroke_bold = "black";
+            node_stroke = "gray";
 
         var color = d3.scaleOrdinal(d3.schemeSet2);
 
         var simulation = d3.forceSimulation()
-            .force("link", d3.forceLink().id(function(d) { return d.id; }).distance(50))
-            .force("charge", d3.forceManyBody().strength(-100))
+            .force("link", d3.forceLink().id(function(d) { return d.id; }).distance({{ params.link_distance }}))
+            .force("charge", d3.forceManyBody().strength({{ params.force_strength }}))
             .force("center", d3.forceCenter(width / 2, height / 2))
             .force("collision", d3.forceCollide().radius(function(d) { 
                 if (d.title) return title_circle_radius;
                 else return circle_radius;
             }));
 
-        d3.json("{% url 'studentservices:course_guide_data' %}", function(error, graph) {
+        d3.json("{% url 'studentservices:course_guide_data' %}?groups={{ request.GET.groups }}", function(error, graph) {
             if (error) throw error;
 
             var link = svg
@@ -104,16 +143,23 @@
 
             node.on("mouseover", function(d) {
                 circles
-                    .filter(function(d2) { return d.group == d2.group; })
-                    .attr("stroke-width", node_stroke_width_bold)
-                    .attr("stroke", node_stroke_bold);
+                    .filter(function(d2) { return d.group != d2.group; })
+                    .attr("opacity", 0.6);
+                link
+                    .filter(function(l) {
+                        return (l.source_group != d.group) && (l.target_group != d.group);
+                    })
+                    .attr("opacity", 0.1);
+                labels
+                    .filter(function(d2) { return d.group != d2.group; })
+                    .attr("opacity", 0.5);
             });
 
             // Set the stroke width back to normal when mouse leaves the node.
             node.on("mouseout", function() {
-                circles
-                    .attr("stroke-width", node_stroke_width)
-                    .attr("stroke", node_stroke);
+                circles.attr("opacity", 1.0);
+                link.attr("opacity", 1.0);
+                labels.attr("opacity", 1.0);
             });
 
             svg.append("svg:defs").selectAll("marker")
@@ -123,8 +169,8 @@
                     .attr("viewBox", "0 -5 10 10")
                     .attr("refX", 40)
                     .attr("refY", 0)
-                    .attr("markerWidth", 4)
-                    .attr("markerHeight", 4)
+                    .attr("markerWidth", {{ params.marker_width }})
+                    .attr("markerHeight", {{ params.marker_height }})
                     .attr("orient", "auto")
                 .append("svg:path")
                     .attr("d", "M0,-5L10,0L0,5");
