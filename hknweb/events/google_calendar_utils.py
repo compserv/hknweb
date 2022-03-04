@@ -82,6 +82,9 @@ def create_event(
     end: str,
     calendar_id: str=CALENDAR_ID,
 ) -> str:
+    if not calendar_id:
+        return
+
     event_resource = create_event_resource(
         summary=summary,
         location=location,
@@ -105,6 +108,9 @@ def create_event(
 
 @check_credentials_wrapper
 def update_event(event_id: str, calendar_id: str=CALENDAR_ID, **kwargs) -> None:
+    if not calendar_id:
+        return
+
     event_resource = create_event_resource(**kwargs)
 
     try:
@@ -120,6 +126,9 @@ def update_event(event_id: str, calendar_id: str=CALENDAR_ID, **kwargs) -> None:
 
 @check_credentials_wrapper
 def delete_event(event_id: str, calendar_id: str=CALENDAR_ID) -> None:
+    if not calendar_id:
+        return
+
     try:
         get_service().events().delete(
             calendarId=calendar_id,
@@ -132,6 +141,9 @@ def delete_event(event_id: str, calendar_id: str=CALENDAR_ID) -> None:
 
 @check_credentials_wrapper
 def clear_calendar(calendar_id: str=CALENDAR_ID) -> None:
+    if not calendar_id:
+        return
+
     events_to_delete = []
     page_token = None
     while True:
