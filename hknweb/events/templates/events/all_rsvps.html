@@ -23,7 +23,9 @@
     }
 </style>
 <script>
-    function action(link) {
+    function action(button, link) {
+        button.disabled = true;
+
         var xhr = new XMLHttpRequest();
 
         xhr.onreadystatechange = function () {
@@ -111,7 +113,7 @@
                                             </div>
                                         </td>
                                         <td align="center">
-                                            <button onclick="action('{{ action }}')">{{ rsvp_type_data.display_value }}</button>
+                                            <button onclick="action(this, '{{ action }}')">{{ rsvp_type_data.display_value }}</button>
                                         </td>
                                     </tr>
                                 {% endfor %}

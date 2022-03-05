@@ -36,7 +36,9 @@
     }
 </style>
 <script>
-    function RSVP(link) {
+    function RSVP(button, link) {
+        button.disabled = true;
+
         var xhr = new XMLHttpRequest();
 
         xhr.onreadystatechange = function () {
@@ -88,9 +90,9 @@
 
     <!-- RSVP/un-RSVP button -->
     {% if rsvpd %}
-        <button onclick="RSVP('{% url 'events:unrsvp' event.id %}')">un-RSVP</button>
+        <button onclick="RSVP(this, '{% url 'events:unrsvp' event.id %}')">un-RSVP</button>
     {% else %}
-        <button onclick="RSVP('{% url 'events:rsvp' event.id %}')">RSVP</button>
+        <button onclick="RSVP(this, '{% url 'events:rsvp' event.id %}')">RSVP</button>
     {% endif %}
 
     {% if waitlisted %}
@@ -139,7 +141,7 @@
                                 </td>
                                 {% if user_access_level == "Internal" %}
                                     <td>
-                                        <button onclick="RSVP('{% url 'events:confirm_rsvp' rsvp.id 1 %}')">Un-confirm</button>
+                                        <button onclick="RSVP(this, '{% url 'events:confirm_rsvp' rsvp.id 1 %}')">Un-confirm</button>
                                     </td>
                                 {% endif %}
                             {% else %}
@@ -148,7 +150,7 @@
                                 </td>
                                 {% if user_access_level == "Internal" %}
                                     <td>
-                                        <button onclick="RSVP('{% url 'events:confirm_rsvp' rsvp.id 0 %}')">Confirm</button>
+                                        <button onclick="RSVP(this, '{% url 'events:confirm_rsvp' rsvp.id 0 %}')">Confirm</button>
                                     </td>
                                 {% endif %}
                             {% endif %}
