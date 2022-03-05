@@ -1,9 +1,7 @@
-from django.http import HttpResponseRedirect
 from django.views import generic
 from django.shortcuts import render, redirect
 from django.db.models import Q
 from django.contrib import messages
-from django.urls import reverse
 
 from .models import Alumnus
 from .forms import AlumniForm
@@ -28,10 +26,17 @@ class SearchView(generic.ListView):
     context_object_name = "matching_alumni_list"
     paginate_by = 10
 
+    FIELD_TO_ATTR_MAPPING = {
+        "company": "company__icontains",
+        "graduation year": "grad_year__icontains",
+        "email": "perm_email__icontains",
+        "city": "city__icontains",
+    }
+
     def get_context_data(self, **kwargs):
         context = super(SearchView, self).get_context_data(**kwargs)
-        context["search_field"] = SearchView.search_field
-        context["status"] = SearchView.status
+        context["search_field"] = self.request.GET.get("search_field", "name")
+        context["status"] = self.request.GET.get("status", None)
         return context
 
     def get_queryset(self):
@@ -44,11 +49,14 @@ class SearchView(generic.ListView):
             return ["\\"]
 
         query_list = query.split()
-        SearchView.status = None
 
-        if SearchView.search_field == "name":
+        self.request.GET = self.request.GET.copy()
+        search_field = self.request.GET.get("search_field")
+
+        if search_field == "name":
             if "sahai" in [item.lower() for item in query_list]:
-                SearchView.status = "sahai"
+                self.request.GET["status"] = "sahai"
+
             result = result.filter(
                 reduce(
                     operator.and_,  # first name narrows it down
@@ -59,21 +67,9 @@ class SearchView(generic.ListView):
                     (Q(last_name__icontains=q) for q in query_list),
                 )
             )
-        elif SearchView.search_field == "city":
-            result = result.filter(
-                reduce(operator.and_, (Q(city__icontains=q) for q in query_list))
-            )
-        elif SearchView.search_field == "email":
-            result = result.filter(
-                reduce(operator.and_, (Q(perm_email__icontains=q) for q in query_list))
-            )
-        elif SearchView.search_field == "graduation year":
-            result = result.filter(
-                reduce(operator.and_, (Q(grad_year__icontains=q) for q in query_list))
-            )
-        elif SearchView.search_field == "grad school":
+        elif search_field == "grad school":
             if "stanford" in [item.lower() for item in query_list]:
-                SearchView.status = "stanford"
+                self.request.GET["status"] = "stanford"
                 return []
             query_list = [
                 "stanford" if item == "worse-than-cal" else item for item in query_list
@@ -81,23 +77,14 @@ class SearchView(generic.ListView):
             result = result.filter(
                 reduce(operator.and_, (Q(grad_school__icontains=q) for q in query_list))
             )
-        elif SearchView.search_field == "company":
+        elif search_field in self.FIELD_TO_ATTR_MAPPING:
+            attr = self.FIELD_TO_ATTR_MAPPING[search_field]
             result = result.filter(
-                reduce(operator.and_, (Q(company__icontains=q) for q in query_list))
+                reduce(operator.and_, (Q(**{attr: q}) for q in query_list))
             )
 
         result = result.order_by("-grad_year")
         return result
-
-
-SearchView.search_field = "name"
-SearchView.status = None
-
-
-@login_and_permission("alumni.view_alumnus")
-def search_type(request):
-    SearchView.search_field = request.POST.get("search_by", None)
-    return HttpResponseRedirect(reverse("alumni:search"))
 
 
 @login_and_permission("alumni.view_alumnus")
