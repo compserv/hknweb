@@ -15,11 +15,10 @@ Search for HKN Alumni
 <div class="parent">
 
     <div class="left-pad">
+        <form id="searchform" action="{% url 'alumni:search' %}" method="get" accept-charset="utf-8" onsubmit="submit_button.disabled = true; return true;">
+            {% csrf_token %}
 
-        <h3>You can search by:</h3>
-
-        <form action="{% url 'alumni:search_type' %}" method="post" onsubmit="submit_button.disabled = true; return true;">
-        {% csrf_token %}
+            Search by: 
             <select action="{% url 'alumni:search' %}" name="search_by" id="search_by">
                 <option value="name">Name</option><br>
                 <option value="city">City</label><br>
@@ -29,20 +28,15 @@ Search for HKN Alumni
                 <option value="company">Company</label><br>
             </select>
 
-        <br><br><input type="submit" name="submit_button" value="Search by this please!">
-        </form>
+            <input type="hidden" value="{{ search_field }}" name="search_field">
+            <input class="searchfield" id="searchbox" name="q" type="text" placeholder="Search">
 
-        <h3>You are searching by {{ search_field }}</h3>
-
-
-        <form id="searchform" action="{% url 'alumni:search' %}" method="get" accept-charset="utf-8" onsubmit="submit_button.disabled = true; return true;">
             <button class="searchbutton" name="submit_button" type="submit">
                 <i class="fa fa-search">Search</i>
             </button>
-            <input class="searchfield" id="searchbox" name="q" type="text" placeholder="Search">
         </form>
 
-        {% if status == 'sahai' %}
+        {% if request.GET.status == 'sahai' %}
             <br><img src="{% static 'alumni/sahai.gif' %}" alt="Anant Sahai">
         {% endif %}
 
