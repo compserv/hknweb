@@ -18,7 +18,10 @@ from hknweb.candidate.models import (
     DuePaymentPaidEntry,
 )
 
+from hknweb.utils import method_login_and_permission, login_and_permission
 
+
+@method_login_and_permission("candidate.change_offchallenge")
 class MemberCheckoffView(generic.TemplateView):
     """Form for submitting csv of members for mass checkoffs."""
 
@@ -35,6 +38,7 @@ class MemberCheckoffView(generic.TemplateView):
         return context
 
 
+@login_and_permission("candidate.change_offchallenge")
 def checkoff_csv(request):
     if request.method != ATTR.POST:
         raise Http404()
