@@ -26,6 +26,13 @@ class SearchView(generic.ListView):
     context_object_name = "matching_alumni_list"
     paginate_by = 10
 
+    FIELD_TO_ATTR_MAPPING = {
+        "company": "company__icontains",
+        "graduation year": "grad_year__icontains",
+        "email": "perm_email__icontains",
+        "city": "city__icontains",
+    }
+
     def get_context_data(self, **kwargs):
         context = super(SearchView, self).get_context_data(**kwargs)
         context["search_field"] = self.request.GET.get("search_field", "name")
@@ -60,18 +67,6 @@ class SearchView(generic.ListView):
                     (Q(last_name__icontains=q) for q in query_list),
                 )
             )
-        elif search_field == "city":
-            result = result.filter(
-                reduce(operator.and_, (Q(city__icontains=q) for q in query_list))
-            )
-        elif search_field == "email":
-            result = result.filter(
-                reduce(operator.and_, (Q(perm_email__icontains=q) for q in query_list))
-            )
-        elif search_field == "graduation year":
-            result = result.filter(
-                reduce(operator.and_, (Q(grad_year__icontains=q) for q in query_list))
-            )
         elif search_field == "grad school":
             if "stanford" in [item.lower() for item in query_list]:
                 self.request.GET["status"] = "stanford"
@@ -82,9 +77,10 @@ class SearchView(generic.ListView):
             result = result.filter(
                 reduce(operator.and_, (Q(grad_school__icontains=q) for q in query_list))
             )
-        elif search_field == "company":
+        elif search_field in self.FIELD_TO_ATTR_MAPPING:
+            attr = self.FIELD_TO_ATTR_MAPPING[search_field]
             result = result.filter(
-                reduce(operator.and_, (Q(company__icontains=q) for q in query_list))
+                reduce(operator.and_, (Q(**{attr: q}) for q in query_list))
             )
 
         result = result.order_by("-grad_year")

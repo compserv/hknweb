@@ -17,7 +17,7 @@ Search for HKN Alumni
     <div class="left-pad">
         <form id="searchform" action="{% url 'alumni:search' %}" method="get" accept-charset="utf-8" onsubmit="submit_button.disabled = true; return true;">
             Search by: 
-            <select action="{% url 'alumni:search' %}" name="search_by" id="search_by">
+            <select action="{% url 'alumni:search' %}" name="search_field" id="search_field">
                 <option value="name">Name</option><br>
                 <option value="city">City</label><br>
                 <option value="email">Email</label><br>
@@ -26,7 +26,6 @@ Search for HKN Alumni
                 <option value="company">Company</label><br>
             </select>
 
-            <input type="hidden" value="{{ search_field }}" name="search_field">
             <input class="searchfield" id="searchbox" name="q" type="text" placeholder="Search">
 
             <button class="searchbutton" name="submit_button" type="submit">
