@@ -1,9 +1,7 @@
-from django.http import HttpResponseRedirect
 from django.views import generic
 from django.shortcuts import render, redirect
 from django.db.models import Q
 from django.contrib import messages
-from django.urls import reverse
 
 from .models import Alumnus
 from .forms import AlumniForm
@@ -91,12 +89,6 @@ class SearchView(generic.ListView):
 
         result = result.order_by("-grad_year")
         return result
-
-
-@login_and_permission("alumni.view_alumnus")
-def search_type(request):
-    SearchView.search_field = request.POST.get("search_by", None)
-    return HttpResponseRedirect(reverse("alumni:search"))
 
 
 @login_and_permission("alumni.view_alumnus")

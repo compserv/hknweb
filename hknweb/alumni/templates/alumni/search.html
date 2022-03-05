@@ -16,8 +16,6 @@ Search for HKN Alumni
 
     <div class="left-pad">
         <form id="searchform" action="{% url 'alumni:search' %}" method="get" accept-charset="utf-8" onsubmit="submit_button.disabled = true; return true;">
-            {% csrf_token %}
-
             Search by: 
             <select action="{% url 'alumni:search' %}" name="search_by" id="search_by">
                 <option value="name">Name</option><br>
