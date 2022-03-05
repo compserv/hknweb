@@ -111,7 +111,7 @@ class IndexView(TemplateView):
             | Q(icsr_course__course_name__contains=search_value)
             | Q(icsr_course__icsr_semester__year__contains=search_value)
             | Q(icsr_course__icsr_semester__year_section__contains=search_value)
-        )
+        ).distinct()
         i_start, i_end = IndexView._get_start_end_indices(page_number)
         for course in courses_to_search[i_start:i_end]:
             icsrs = course.icsr_course.filter(
@@ -147,7 +147,7 @@ class IndexView(TemplateView):
         instructors_to_search = Instructor.objects.filter(
             Q(icsr_instructor__first_name__contains=search_value) \
             | Q(icsr_instructor__last_name__contains=search_value)
-        )
+        ).distinct()
         i_start, i_end = IndexView._get_start_end_indices(page_number)
         for instructor in instructors_to_search[i_start:i_end]:
             icsrs = instructor.icsr_instructor.all()
