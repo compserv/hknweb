@@ -18,12 +18,12 @@ Search for HKN Alumni
         <form id="searchform" action="{% url 'alumni:search' %}" method="get" accept-charset="utf-8" onsubmit="submit_button.disabled = true; return true;">
             Search by: 
             <select action="{% url 'alumni:search' %}" name="search_field" id="search_field">
-                <option value="name">Name</option><br>
-                <option value="city">City</label><br>
-                <option value="email">Email</label><br>
-                <option value="graduation year">Graduation Year</label><br>
-                <option value="grad school">Grad School</label><br>
-                <option value="company">Company</label><br>
+                <option {% if search_field == "name" %} selected="selected" {% endif %} value="name">Name</option><br>
+                <option {% if search_field == "city" %} selected="selected" {% endif %} value="city">City</label><br>
+                <option {% if search_field == "email" %} selected="selected" {% endif %} value="email">Email</label><br>
+                <option {% if search_field == "graduation year" %} selected="selected" {% endif %} value="graduation year">Graduation Year</label><br>
+                <option {% if search_field == "grad school" %} selected="selected" {% endif %} value="grad school">Grad School</label><br>
+                <option {% if search_field == "company" %} selected="selected" {% endif %} value="company">Company</label><br>
             </select>
 
             <input class="searchfield" id="searchbox" name="q" type="text" placeholder="Search">
