@@ -35,7 +35,7 @@ class IndexView(TemplateView):
 
         # Retrieve courses and instructors for search panel
         search_by = self.request.GET.get(Attr.SEARCH_BY, Attr.COURSES)
-        search_value = self.request.GET.get(Attr.SEARCH_VALUE, "")
+        search_value = self.request.GET.get(Attr.SEARCH_VALUE, "").lower()
         courses, _context = self._get_courses(cas_signed_in, search_by, page_number, search_value)
         context = {**context, **_context}
         instructors, _context = self._get_instructors(
