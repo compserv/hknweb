@@ -11,7 +11,9 @@ def index(request):
     context = dict()
 
     user_access_level = get_access_level(request.user)
-    events = Event.objects.order_by("-start_time").filter(access_level__gte=user_access_level)
+    events = Event.objects.order_by("-start_time").filter(
+        access_level__gte=user_access_level
+    )
     event_types = EventType.objects.order_by("type")
 
     calendars = []
@@ -23,18 +25,22 @@ def index(request):
         if not calendar_id:
             continue
 
-        calendars.append({
-            "name": name,
-            "link": get_calendar_link(calendar_id=calendar_id),
-        })
+        calendars.append(
+            {
+                "name": name,
+                "link": get_calendar_link(calendar_id=calendar_id),
+            }
+        )
 
     if request.user.is_authenticated:
         profile = Profile.objects.filter(user=request.user).first()
         if profile.google_calendar_id:
-            calendars.append({
-                "name": "personal",
-                "link": get_calendar_link(calendar_id=profile.google_calendar_id),
-            })
+            calendars.append(
+                {
+                    "name": "personal",
+                    "link": get_calendar_link(calendar_id=profile.google_calendar_id),
+                }
+            )
 
     for calendar in calendars[:-1]:
         calendar["separator"] = "/"

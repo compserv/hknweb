@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 
 from hknweb.utils import login_and_permission
-from hknweb.events.constants import ATTR
 from hknweb.events.forms import EventForm
 from hknweb.events.utils import (
     create_event,
@@ -31,4 +30,9 @@ def add_event(request):
             return redirect("/events")
         else:
             messages.error(request, "Something went wrong oops")
-    return render(request, "events/event_add.html", {"form": form})
+
+    context = {
+        "form": form,
+        "title": "Add an event",
+    }
+    return render(request, "events/event_manage.html", context)

@@ -5,7 +5,15 @@ from django.utils import timezone
 from hknweb.utils import get_access_level
 
 from hknweb.models import Profile
-from hknweb.events.models import EventType, Event, Rsvp, GoogleCalendarCredentials, GCalAccessLevelMapping
+from hknweb.events.models import (
+    EventType,
+    Event,
+    Rsvp,
+    GoogleCalendarCredentials,
+    GCalAccessLevelMapping,
+    AttendanceForm,
+    AttendanceResponse,
+)
 from hknweb.events.models.constants import ACCESS_LEVELS
 from hknweb.events.utils import SingleThreadWrapper
 import hknweb.events.google_calendar_utils as gcal
@@ -68,7 +76,9 @@ class EventAdmin(admin.ModelAdmin):
 
             for r in e.rsvp_set.all():
                 profile = Profile.objects.filter(user=request.user).first()
-                gcal.delete_event(r.google_calendar_event_id, calendar_id=profile.google_calendar_id)
+                gcal.delete_event(
+                    r.google_calendar_event_id, calendar_id=profile.google_calendar_id
+                )
 
         super().delete_queryset(request, queryset)
 
@@ -134,7 +144,9 @@ class GoogleCalendarCredentialsAdmin(admin.ModelAdmin):
     def _provision_calendar(request):
         # Clear existing calendars
         for access_level, _ in ACCESS_LEVELS:
-            calendar_id = GCalAccessLevelMapping.get_calendar_id(access_level=access_level)
+            calendar_id = GCalAccessLevelMapping.get_calendar_id(
+                access_level=access_level
+            )
             gcal.clear_calendar(calendar_id=calendar_id)
 
         for u in Profile.objects.all():
@@ -155,10 +167,24 @@ class GoogleCalendarCredentialsAdmin(admin.ModelAdmin):
                 r.google_calendar_event_id = None
                 r.save()
 
-    provision_calendar.short_description = "Provision the events Google calendar and all personalized GCals"
+    provision_calendar.short_description = (
+        "Provision the events Google calendar and all personalized GCals"
+    )
 
 
 @admin.register(GCalAccessLevelMapping)
 class GCalAccessLevelMappingAdmin(admin.ModelAdmin):
     fields = ["access_level", "calendar_id"]
     list_display = ["access_level", "calendar_id"]
+
+
+@admin.register(AttendanceForm)
+class AttendanceFormAdmin(admin.ModelAdmin):
+    fields = ["event", "secret_word", "description"]
+    list_display = ["event", "secret_word", "description"]
+
+
+@admin.register(AttendanceResponse)
+class AttendanceResponseAdmin(admin.ModelAdmin):
+    fields = ["attendance_form", "rsvp", "feedback"]
+    list_display = ["attendance_form", "rsvp", "feedback"]
