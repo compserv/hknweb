@@ -79,7 +79,7 @@ class EventUpdateForm(forms.ModelForm):
 class AttendanceFormForm(forms.ModelForm):
     class Meta:
         model = AttendanceForm
-        fields = ("event", "secret_word")
+        fields = ("event", "secret_word", "description")
 
         labels = {
             "secret_word": "Secret word (this is the link to this attendance form)",

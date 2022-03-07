@@ -174,8 +174,8 @@ class GCalAccessLevelMappingAdmin(admin.ModelAdmin):
 
 @admin.register(AttendanceForm)
 class AttendanceFormAdmin(admin.ModelAdmin):
-    fields = ["event", "secret_word"]
-    list_display = ["event", "secret_word"]
+    fields = ["event", "secret_word", "description"]
+    list_display = ["event", "secret_word", "description"]
 
 
 @admin.register(AttendanceResponse)

@@ -19,8 +19,7 @@ def manage_attendance(request, event_id):
         if form.is_valid():
             form.save()
             messages.success(request, "Attendance form saved!")
-        else:
-            messages.error(request, form.errors)
+            return redirect("events:detail", id=event_id)
 
     if instance:
         feedback = [r.feedback for r in instance.attendanceresponse_set.all()]
@@ -36,6 +35,8 @@ def manage_attendance(request, event_id):
 
 @login_and_permission("events.change_rsvp")
 def submit_attendance(request, event_id, attendance_form_id, rsvp_id):
+    attendance_form = AttendanceForm.objects.get(pk=attendance_form_id)
+
     form = AttendanceResponseForm(request.POST or None)
     if request.method == "POST":
         form.data = form.data.copy()
@@ -43,7 +44,7 @@ def submit_attendance(request, event_id, attendance_form_id, rsvp_id):
         form.data["rsvp"] = rsvp_id
 
         if form.is_valid():
-            if form.data["secret_word"] == AttendanceForm.objects.get(pk=attendance_form_id).secret_word:
+            if form.data["secret_word"] == attendance_form.secret_word:
                 form.save()
                 messages.success(request, "RSVP confirmed!")
                 return redirect("events:detail", id=event_id)
@@ -52,4 +53,8 @@ def submit_attendance(request, event_id, attendance_form_id, rsvp_id):
         else:
             messages.error(request, form.errors)
 
-    return render(request, "events/attendance_submit.html", {"form": form})
+    context = {
+        "form": form,
+        "description": attendance_form.description,
+    }
+    return render(request, "events/attendance_submit.html", context)

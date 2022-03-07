@@ -4,5 +4,10 @@
 {% block heading %}Attendance sign-in{% endblock %}
 
 {% block content %}
-{% include 'events/attendance.html' %}
+    <div style="margin: auto; text-align: center;">
+        {{ description }}
+    </div>
+    <br>
+
+    {% include 'events/attendance.html' %}
 {% endblock %}
