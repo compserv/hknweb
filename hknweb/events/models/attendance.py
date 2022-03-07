@@ -18,6 +18,7 @@ class AttendanceForm(models.Model):
 class AttendanceResponse(models.Model):
     attendance_form = models.ForeignKey(AttendanceForm, on_delete=models.CASCADE)
     rsvp = models.ForeignKey(Rsvp, on_delete=models.CASCADE)
+    feedback = models.TextField(blank=True)
 
     def __repr__(self):
         return f"AttendanceResponse(attendance_form={str(self.attendance_form)}, rsvp={str(self.rsvp)})"

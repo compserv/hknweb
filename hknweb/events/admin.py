@@ -12,6 +12,7 @@ from hknweb.events.models import (
     GoogleCalendarCredentials,
     GCalAccessLevelMapping,
     AttendanceForm,
+    AttendanceResponse,
 )
 from hknweb.events.models.constants import ACCESS_LEVELS
 from hknweb.events.utils import SingleThreadWrapper
@@ -175,3 +176,9 @@ class GCalAccessLevelMappingAdmin(admin.ModelAdmin):
 class AttendanceFormAdmin(admin.ModelAdmin):
     fields = ["event", "secret_word"]
     list_display = ["event", "secret_word"]
+
+
+@admin.register(AttendanceResponse)
+class AttendanceResponseAdmin(admin.ModelAdmin):
+    fields = ["attendance_form", "rsvp", "feedback"]
+    list_display = ["attendance_form", "rsvp", "feedback"]

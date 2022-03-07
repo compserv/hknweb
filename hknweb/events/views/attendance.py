@@ -22,7 +22,16 @@ def manage_attendance(request, event_id):
         else:
             messages.error(request, form.errors)
 
-    return render(request, "events/attendance_manage.html", {"form": form})
+    if instance:
+        feedback = [r.feedback for r in instance.attendanceresponse_set.all()]
+    else:
+        feedback = None
+
+    context = {
+        "form": form,
+        "feedback": feedback,
+    }
+    return render(request, "events/attendance_manage.html", context)
 
 
 @login_and_permission("events.change_rsvp")

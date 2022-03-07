@@ -1,0 +1,9 @@
+<form style="text-align: center;" method="POST" onsubmit="submit_button.disabled = true; return true;">
+    {% csrf_token %}
+
+    <table style="margin: auto; text-align: left;">
+        {{ form }}
+    </table>
+
+    <input type="submit" name="submit_button" value="Submit" />
+</form>

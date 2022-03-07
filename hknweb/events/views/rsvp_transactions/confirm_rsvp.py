@@ -15,4 +15,7 @@ def confirm_rsvp(request, id, operation):
     rsvp.confirmed = operation == 0  # { confirmed: 0, unconfirmed: 1 }
     rsvp.save()
 
+    if operation == 1:  # unconfirm
+        rsvp.attendanceresponse_set.all().delete()
+
     return HttpResponse()

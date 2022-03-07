@@ -85,10 +85,23 @@ class AttendanceFormForm(forms.ModelForm):
             "secret_word": "Secret word (this is the link to this attendance form)",
         }
 
+        widgets = {
+            "event": forms.HiddenInput(),
+        }
+
 
 class AttendanceResponseForm(forms.ModelForm):
     secret_word = forms.CharField(max_length=255)
 
     class Meta:
         model = AttendanceResponse
-        fields = ("attendance_form", "rsvp", "secret_word")
+        fields = ("attendance_form", "rsvp", "secret_word", "feedback")
+
+        labels = {
+            "feedback": "Submit anonymous feedback on this event",
+        }
+
+        widgets = {
+            "attendance_form": forms.HiddenInput(),
+            "rsvp": forms.HiddenInput(),
+        }
