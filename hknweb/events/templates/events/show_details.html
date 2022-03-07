@@ -76,7 +76,7 @@
             </a>
         </p>
         <p>
-            <a href="{% url 'events:attendance' event.id %}">
+            <a href="{% url 'events:manage_attendance' event.id %}">
                 Manage attendance form
             </a>
         </p>
@@ -96,7 +96,7 @@
     {% endif %}
 
     <!-- RSVP/un-RSVP button -->
-    {% if rsvpd %}
+    {% if rsvp %}
         <button onclick="RSVP(this, '{% url 'events:unrsvp' event.id %}')">un-RSVP</button>
     {% else %}
         <button onclick="RSVP(this, '{% url 'events:rsvp' event.id %}')">RSVP</button>
@@ -104,12 +104,18 @@
 
     {% if waitlisted %}
       <p class="rsvp-list">You are at position {{waitlist_position}} on the waitlist. <img src="{% static 'candidate/maybe.png'%}" alt="waitlisted" class="table-icon"></p>
-    {% elif rsvpd %}
+    {% elif rsvp %}
       <p class="rsvp-list">You have rsvp'd <img src="{% static 'candidate/yes.png'%}" alt="rsvp'd" class="table-icon"></p>
     {% else %}
       <p class="rsvp-list">You have not rsvp'd </p>
     {% endif %}
-    
+
+    {% if rsvp and not rsvp.confirmed and attendance_form %}
+        <a href="{% url 'events:submit_attendance' event.id attendance_form.id rsvp.id %}">
+            Attendance sign-in
+        </a>
+    {% endif %}
+
     <table style="margin: auto;">
         {% for rsvp_type_data in data %}
             <tr>

@@ -1,6 +1,7 @@
 from django.db import models
 
 from hknweb.events.models.event import Event
+from hknweb.events.models.rsvp import Rsvp
 
 
 class AttendanceForm(models.Model):
@@ -8,7 +9,24 @@ class AttendanceForm(models.Model):
     secret_word = models.CharField(max_length=255)
 
     def __repr__(self):
-        return f"AttendanceForm(event={str(self.event)}, secret_word={self.secret_word}"
+        return f"AttendanceForm(event={str(self.event)}, secret_word={self.secret_word})"
 
     def __str__(self):
         return str(repr(self))
+
+
+class AttendanceResponse(models.Model):
+    attendance_form = models.ForeignKey(AttendanceForm, on_delete=models.CASCADE)
+    rsvp = models.ForeignKey(Rsvp, on_delete=models.CASCADE)
+
+    def __repr__(self):
+        return f"AttendanceResponse(attendance_form={str(self.attendance_form)}, rsvp={str(self.rsvp)})"
+
+    def __str__(self):
+        return str(repr(self))
+
+    def save(self, *args, **kwargs):
+        self.rsvp.confirmed = True
+        self.rsvp.save()
+
+        super().save(*args, **kwargs)

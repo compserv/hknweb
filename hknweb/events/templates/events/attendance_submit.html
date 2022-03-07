@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Manage attendance form{% endblock %}
+{% block heading %}Manage attendance form{% endblock %}
+
+{% block header %}
+    <link rel="stylesheet" href="{% static 'events/style.css' %}">
+
+    <style>
+        .errorlist {
+            color: red;
+        }
+        .message {
+            color: green;
+        }
+    </style>
+{% endblock %}
+
+{% block content%}
+    <div class="centered">
+        <form method="POST" id="form" onsubmit="submit_button.disabled = true; return true;">
+            {% csrf_token %}
+            <table style="margin: auto; text-align: center;">
+                <tbody>
+                    <tr>
+                        <td style="padding-right: 5em;">
+                            {% for field in form %}
+                                {% if field.label != "Attendance form" and field.label != "Rsvp" %}
+                                    <div class="row">
+                                        <span class="left-side">
+                                            {{ field.label }}
+                                            {% if field.field.required %}
+                                                <span class="errorlist">*</span>
+                                            {% endif %}
+                                            {{ field }}
+                                            {{ field.errors }}
+                                        </span>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <br><br>
+
+            <input type="submit" name="submit_button" value="Submit" />
+            <br>
+
+            {% if messages %}
+                <div class="errorlist">
+                    {% for message in messages %}
+                        {{ message }}<br>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </form>
+    </div>
+{% endblock %}

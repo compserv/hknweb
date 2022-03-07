@@ -1,7 +1,7 @@
 from django import forms
 
 from hknweb.utils import DATETIME_12_HOUR_FORMAT
-from hknweb.events.models import Event, AttendanceForm
+from hknweb.events.models import Event, AttendanceForm, AttendanceResponse
 from hknweb.events.utils import DATETIME_WIDGET_NO_AUTOCOMPLETE
 
 
@@ -84,3 +84,11 @@ class AttendanceFormForm(forms.ModelForm):
         labels = {
             "secret_word": "Secret word (this is the link to this attendance form)",
         }
+
+
+class AttendanceResponseForm(forms.ModelForm):
+    secret_word = forms.CharField(max_length=255)
+
+    class Meta:
+        model = AttendanceResponse
+        fields = ("attendance_form", "rsvp", "secret_word")

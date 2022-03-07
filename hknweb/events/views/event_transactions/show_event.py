@@ -11,7 +11,7 @@ from hknweb.events.constants import (
     ATTR,
     RSVPS_PER_PAGE,
 )
-from hknweb.events.models import Event, Rsvp
+from hknweb.events.models import Event, Rsvp, AttendanceForm
 from hknweb.events.utils import format_url
 from hknweb.utils import get_access_level
 
@@ -23,13 +23,14 @@ def show_details(request, id):
         messages.warning(request, "Insufficent permission to access event.")
         return redirect("/events")
     rsvps = Rsvp.objects.filter(event=event)
-    rsvpd = Rsvp.objects.filter(user=request.user, event=event).exists()
     waitlisted = False
     waitlist_position = 0
 
-    if rsvpd:
+    rsvp = None
+    user_rsvps = rsvps.filter(user=request.user)
+    if user_rsvps.exists():
         # Gets the rsvp object for the user
-        rsvp = Rsvp.objects.filter(user=request.user, event=event)[:1].get()
+        rsvp = user_rsvps.first()
         # Check if waitlisted
         if event.rsvp_limit:
             rsvps_before = rsvps.filter(created_at__lt=rsvp.created_at).count()
@@ -81,7 +82,8 @@ def show_details(request, id):
         "event_location": event_location,
         "user_access_level": user_access_level,
         "event_access_level": event_access_level,
-        "rsvpd": rsvpd,
+        "rsvp": rsvp,
+        "attendance_form": AttendanceForm.objects.filter(event=event).first(),
         "waitlisted": waitlisted,
         "waitlist_position": waitlist_position,
         "can_edit": request.user.has_perm("events.change_event"),
