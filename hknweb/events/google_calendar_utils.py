@@ -80,7 +80,7 @@ def create_event(
     description: str,
     start: str,
     end: str,
-    calendar_id: str=CALENDAR_ID,
+    calendar_id: str = CALENDAR_ID,
 ) -> str:
     if not calendar_id:
         return
@@ -107,7 +107,7 @@ def create_event(
 
 
 @check_credentials_wrapper
-def update_event(event_id: str, calendar_id: str=CALENDAR_ID, **kwargs) -> None:
+def update_event(event_id: str, calendar_id: str = CALENDAR_ID, **kwargs) -> None:
     if not calendar_id:
         return
 
@@ -125,7 +125,7 @@ def update_event(event_id: str, calendar_id: str=CALENDAR_ID, **kwargs) -> None:
 
 
 @check_credentials_wrapper
-def delete_event(event_id: str, calendar_id: str=CALENDAR_ID) -> None:
+def delete_event(event_id: str, calendar_id: str = CALENDAR_ID) -> None:
     if not calendar_id:
         return
 
@@ -140,7 +140,7 @@ def delete_event(event_id: str, calendar_id: str=CALENDAR_ID) -> None:
 
 
 @check_credentials_wrapper
-def clear_calendar(calendar_id: str=CALENDAR_ID) -> None:
+def clear_calendar(calendar_id: str = CALENDAR_ID) -> None:
     if not calendar_id:
         return
 
@@ -163,7 +163,7 @@ def clear_calendar(calendar_id: str=CALENDAR_ID) -> None:
         get_service().events().delete(calendarId=calendar_id, eventId=e).execute()
 
 
-def get_calendar_link(calendar_id: str=CALENDAR_ID) -> str:
+def get_calendar_link(calendar_id: str = CALENDAR_ID) -> str:
     calendar_id_bytes = calendar_id.encode("utf-8")
     calendar_id_base64 = base64.b64encode(calendar_id_bytes)
     calendar_id = calendar_id_base64.decode().rstrip("=")
@@ -185,7 +185,7 @@ def create_personal_calendar() -> str:
         "scope": {
             "type": "default",
         },
-        "role": "reader"
+        "role": "reader",
     }
     get_service().acl().insert(calendarId=created_calendar["id"], body=rule).execute()
 

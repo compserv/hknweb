@@ -39,7 +39,7 @@ class EventForm(forms.ModelForm):
         labels = {
             "rsvp_limit": "RSVP limit",
         }
-    
+
     def clean(self):
         cleaned_data = super().clean()
         start_time = cleaned_data.get("start_time")
@@ -69,7 +69,7 @@ class EventUpdateForm(forms.ModelForm):
         labels = {
             "rsvp_limit": "RSVP limit",
         }
-    
+
     def clean(self):
         cleaned_data = super().clean()
         start_time = cleaned_data.get("start_time")
@@ -80,6 +80,7 @@ class EventUpdateForm(forms.ModelForm):
 
 class AttendanceFormForm(forms.ModelForm):
     required_css_class = "required"
+
     class Meta:
         model = AttendanceForm
         fields = ("event", "secret_word", "description")

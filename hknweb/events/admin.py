@@ -76,7 +76,9 @@ class EventAdmin(admin.ModelAdmin):
 
             for r in e.rsvp_set.all():
                 profile = Profile.objects.filter(user=request.user).first()
-                gcal.delete_event(r.google_calendar_event_id, calendar_id=profile.google_calendar_id)
+                gcal.delete_event(
+                    r.google_calendar_event_id, calendar_id=profile.google_calendar_id
+                )
 
         super().delete_queryset(request, queryset)
 
@@ -142,7 +144,9 @@ class GoogleCalendarCredentialsAdmin(admin.ModelAdmin):
     def _provision_calendar(request):
         # Clear existing calendars
         for access_level, _ in ACCESS_LEVELS:
-            calendar_id = GCalAccessLevelMapping.get_calendar_id(access_level=access_level)
+            calendar_id = GCalAccessLevelMapping.get_calendar_id(
+                access_level=access_level
+            )
             gcal.clear_calendar(calendar_id=calendar_id)
 
         for u in Profile.objects.all():
@@ -163,7 +167,9 @@ class GoogleCalendarCredentialsAdmin(admin.ModelAdmin):
                 r.google_calendar_event_id = None
                 r.save()
 
-    provision_calendar.short_description = "Provision the events Google calendar and all personalized GCals"
+    provision_calendar.short_description = (
+        "Provision the events Google calendar and all personalized GCals"
+    )
 
 
 @admin.register(GCalAccessLevelMapping)
