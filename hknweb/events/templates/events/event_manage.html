@@ -18,7 +18,6 @@
         {% if event.id %}
             <form style="text-align: center;" action="{% url 'events:delete' event.id %}" method="post" onsubmit="submit_button.disabled = true; return true;">
                 {% csrf_token %}
-                <input type="hidden" name="next" value="{% url 'events:index' %}">
                 <input type="submit" name="submit_button" value="Delete event" />
             </form>
         {% endif %}

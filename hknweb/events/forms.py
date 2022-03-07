@@ -6,6 +6,7 @@ from hknweb.events.utils import DATETIME_WIDGET_NO_AUTOCOMPLETE
 
 
 class EventForm(forms.ModelForm):
+    required_css_class = "required"
     start_time = forms.DateTimeField(
         input_formats=(DATETIME_12_HOUR_FORMAT,), widget=DATETIME_WIDGET_NO_AUTOCOMPLETE
     )
@@ -48,6 +49,7 @@ class EventForm(forms.ModelForm):
 
 
 class EventUpdateForm(forms.ModelForm):
+    required_css_class = "required"
     start_time = forms.DateTimeField(input_formats=(DATETIME_12_HOUR_FORMAT,))
     end_time = forms.DateTimeField(input_formats=(DATETIME_12_HOUR_FORMAT,))
 
@@ -77,6 +79,7 @@ class EventUpdateForm(forms.ModelForm):
 
 
 class AttendanceFormForm(forms.ModelForm):
+    required_css_class = "required"
     class Meta:
         model = AttendanceForm
         fields = ("event", "secret_word", "description")
@@ -91,6 +94,7 @@ class AttendanceFormForm(forms.ModelForm):
 
 
 class AttendanceResponseForm(forms.ModelForm):
+    required_css_class = "required"
     secret_word = forms.CharField(max_length=255)
 
     class Meta:

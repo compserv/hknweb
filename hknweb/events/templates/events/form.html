@@ -1,3 +1,10 @@
+<style>
+    label.required:after {
+        content: " *";
+        color: red;
+    }
+</style>
+
 <form style="text-align: center;" method="POST" onsubmit="submit_button.disabled = true; return true;">
     {% csrf_token %}
 
