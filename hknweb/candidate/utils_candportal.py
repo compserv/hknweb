@@ -488,12 +488,14 @@ class CandidatePortalData:
         context = {
             "announcements": announcements,
             "confirmed_events": {
-                event_key: confirmed_events[event_key]
-                for event_key in self.get_event_types_map(candidateSemester)
+                **{event_key: confirmed_events[event_key]
+                for event_key in self.get_event_types_map(candidateSemester)},
+                "hangout": confirmed_events["Hangout"],
             },
             "unconfirmed_events": {
-                event_key: unconfirmed_events[event_key]
-                for event_key in self.get_event_types_map(candidateSemester)
+                **{event_key: unconfirmed_events[event_key]
+                for event_key in self.get_event_types_map(candidateSemester)},
+                "hangout": unconfirmed_events["Hangout"],
             },
             "req_statuses": {
                 event_key: req_statuses[event_key]
