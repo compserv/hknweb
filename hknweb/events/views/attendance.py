@@ -30,7 +30,7 @@ def manage_attendance(request, event_id):
         "form": form,
         "feedback": feedback,
     }
-    return render(request, "events/attendance_manage.html", context)
+    return render(request, "events/attendance.html", context)
 
 
 @login_and_permission("events.change_rsvp")
@@ -57,4 +57,4 @@ def submit_attendance(request, event_id, attendance_form_id, rsvp_id):
         "form": form,
         "description": attendance_form.description,
     }
-    return render(request, "events/attendance_submit.html", context)
+    return render(request, "events/attendance.html", context)

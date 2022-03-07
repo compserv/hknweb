@@ -30,4 +30,9 @@ def add_event(request):
             return redirect("/events")
         else:
             messages.error(request, "Something went wrong oops")
-    return render(request, "events/event_add.html", {"form": form})
+
+    context = {
+        "form": form,
+        "title": "Add an event",
+    }
+    return render(request, "events/event_manage.html", context)

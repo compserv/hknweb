@@ -14,7 +14,12 @@ from hknweb.events.forms import EventUpdateForm
 class EventUpdateView(UpdateView):
     model = Event
     form_class = EventUpdateForm
-    template_name_suffix = "_edit"
+    template_name_suffix = "_manage"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = f"Edit Event: {self.object.name}"
+        return context
 
     def get_initial(self):
         """Override some prepopulated data with custom data; in this case, make times

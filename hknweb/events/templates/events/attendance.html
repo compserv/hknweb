@@ -1,9 +1,29 @@
-<form style="text-align: center;" method="POST" onsubmit="submit_button.disabled = true; return true;">
-    {% csrf_token %}
+{% extends "base.html" %}
 
-    <table style="margin: auto; text-align: left;">
-        {{ form }}
-    </table>
+{% block title %}Manage attendance form{% endblock %}
+{% block heading %}Manage attendance form{% endblock %}
 
-    <input type="submit" name="submit_button" value="Submit" />
-</form>
+{% block content %}
+
+    {% if description %}
+        <div style="margin: auto; text-align: center;">
+            {{ description }}
+        </div>
+        <br>
+    {% endif %}
+
+    {% include 'events/form.html' %}
+
+    {% if feedback %}
+        <br>
+        <div style="display: table; text-align: center; margin: auto;">
+            <h3>Feedback</h3>
+            <ul>
+                {% for f in feedback %}
+                    <li>{{ f }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+{% endblock %}
