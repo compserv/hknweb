@@ -1,23 +1,24 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.contrib import messages
 
 from hknweb.utils import login_and_permission
-from hknweb.events.models import Event
+from hknweb.events.models import AttendanceForm
 from hknweb.events.forms import AttendanceFormForm
 
 
 @login_and_permission("events.add_attendanceform")
 def attendance(request, event_id):
-    form = AttendanceFormForm(request.POST or None)
+    forms = AttendanceForm.objects.filter(event=event_id)
+    instance = forms.first() if forms.exists() else None
+    form = AttendanceFormForm(request.POST or None, instance=instance)
+
     if request.method == "POST":
         form.data = form.data.copy()
         form.data["event"] = event_id
 
         if form.is_valid():
             form.save()
-
-            messages.success(request, "Attendance form has been added!")
-            return redirect("events:detail", id=event_id)
+            messages.success(request, "Attendance form saved!")
         else:
             messages.error(request, form.errors)
 

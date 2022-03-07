@@ -1,16 +1,18 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Create an attendance form{% endblock %}
-{% block heading %}Create an attendance form{% endblock %}
+{% block title %}Manage attendance form{% endblock %}
+{% block heading %}Manage attendance form{% endblock %}
 
 {% block header %}
     <link rel="stylesheet" href="{% static 'events/style.css' %}">
 
     <style>
         .errorlist {
-            list-style: none;
             color: red;
+        }
+        .message {
+            color: green;
         }
     </style>
 {% endblock %}
@@ -29,7 +31,7 @@
                                         <span class="left-side">
                                             {{ field.label }}
                                             {% if field.field.required %}
-                                                <span class="message">*</span>
+                                                <span class="errorlist">*</span>
                                             {% endif %}
                                             {{ field }}
                                             {{ field.errors }}
@@ -46,10 +48,10 @@
 
             <div id="submit">
                 <input type="submit" name="submit_button" value="Submit" />
+                <br>
                 {% if messages %}
                     {% for message in messages %}
-                        <br>
-                        <span class="message">{{ message }}</span>
+                        {{ message }}<br>
                     {% endfor %}
                 {% endif %}
             </div>
