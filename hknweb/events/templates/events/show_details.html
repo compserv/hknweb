@@ -70,9 +70,16 @@
     <p><b>Access level</b>: {{ event_access_level }}</p>
 
     {% if can_edit %}
-      <p><a href="{% url 'events:edit' event.id %}">
-          Edit This Event
-      </a></p>
+        <p>
+            <a href="{% url 'events:edit' event.id %}">
+                Edit This Event
+            </a>
+        </p>
+        <p>
+            <a href="{% url 'events:attendance' event.id %}">
+                Create attendance form
+            </a>
+        </p>
     {% endif %}
 
     <p><a href="{% url 'events:index' %}">

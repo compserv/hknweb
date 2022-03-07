@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Create an attendance form{% endblock %}
+{% block heading %}Create an attendance form{% endblock %}
+
+{% block header %}
+    <link rel="stylesheet" href="{% static 'events/style.css' %}">
+
+    <style>
+        .errorlist {
+            list-style: none;
+            color: red;
+        }
+    </style>
+{% endblock %}
+
+{% block content%}
+    <div class="centered">
+        <form method="POST" id="form" onsubmit="submit_button.disabled = true; return true;">
+            {% csrf_token %}
+            <table style="margin: auto; text-align: center;">
+                <tbody>
+                    <tr>
+                        <td style="padding-right: 5em;">
+                            {% for field in form %}
+                                {% if field.label != "Event" %}
+                                    <div class="row">
+                                        <span class="left-side">
+                                            {{ field.label }}
+                                            {% if field.field.required %}
+                                                <span class="message">*</span>
+                                            {% endif %}
+                                            {{ field }}
+                                            {{ field.errors }}
+                                        </span>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <br><br>
+
+            <div id="submit">
+                <input type="submit" name="submit_button" value="Submit" />
+                {% if messages %}
+                    {% for message in messages %}
+                        <br>
+                        <span class="message">{{ message }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </form>
+    </div>
+{% endblock %}

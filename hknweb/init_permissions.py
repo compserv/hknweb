@@ -1,5 +1,5 @@
 from hknweb.candidate.models import Announcement, OffChallenge, BitByteActivity
-from hknweb.events.models import Event, Rsvp
+from hknweb.events.models import Event, Rsvp, AttendanceForm
 from hknweb.academics.models import AcademicEntity
 from hknweb.alumni.models import Alumnus
 
@@ -33,6 +33,7 @@ off_permission_names = [
     ("view_academicentity", AcademicEntity),
     ("change_academicentity", AcademicEntity),
     ("view_alumnus", Alumnus),
+    ("add_attendanceform", AttendanceForm),
 ]
 
 # SETTING PERMISSIONS TO GROUPS

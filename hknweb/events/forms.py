@@ -1,7 +1,7 @@
 from django import forms
 
 from hknweb.utils import DATETIME_12_HOUR_FORMAT
-from hknweb.events.models import Event
+from hknweb.events.models import Event, AttendanceForm
 from hknweb.events.utils import DATETIME_WIDGET_NO_AUTOCOMPLETE
 
 
@@ -74,3 +74,13 @@ class EventUpdateForm(forms.ModelForm):
         end_time = cleaned_data.get("end_time")
         if end_time < start_time:
             self.add_error("end_time", "End Time is not after Start Time")
+
+
+class AttendanceFormForm(forms.ModelForm):
+    class Meta:
+        model = AttendanceForm
+        fields = ("event", "secret_word")
+
+        labels = {
+            "secret_word": "Secret word (this is the link to this attendance form)",
+        }

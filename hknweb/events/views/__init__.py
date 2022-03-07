@@ -14,3 +14,4 @@ from hknweb.events.views.event_transactions import (
     show_details,
     delete_event,
 )
+from hknweb.events.views.attendance import attendance

@@ -15,4 +15,5 @@ urlpatterns = [
     path("rsvps", views.AllRsvpsView.as_view(), name="rsvps"),
     path("leaderboard", views.get_leaderboard, name="leaderboard"),
     path("", views.index, name="index"),
+    path("<int:event_id>/attendance", views.attendance, name="attendance"),
 ]

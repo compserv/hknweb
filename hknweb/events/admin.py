@@ -5,7 +5,14 @@ from django.utils import timezone
 from hknweb.utils import get_access_level
 
 from hknweb.models import Profile
-from hknweb.events.models import EventType, Event, Rsvp, GoogleCalendarCredentials, GCalAccessLevelMapping
+from hknweb.events.models import (
+    EventType,
+    Event,
+    Rsvp,
+    GoogleCalendarCredentials,
+    GCalAccessLevelMapping,
+    AttendanceForm,
+)
 from hknweb.events.models.constants import ACCESS_LEVELS
 from hknweb.events.utils import SingleThreadWrapper
 import hknweb.events.google_calendar_utils as gcal
@@ -162,3 +169,9 @@ class GoogleCalendarCredentialsAdmin(admin.ModelAdmin):
 class GCalAccessLevelMappingAdmin(admin.ModelAdmin):
     fields = ["access_level", "calendar_id"]
     list_display = ["access_level", "calendar_id"]
+
+
+@admin.register(AttendanceForm)
+class AttendanceFormAdmin(admin.ModelAdmin):
+    fields = ["event", "secret_word"]
+    list_display = ["event", "secret_word"]
