@@ -1,8 +1,12 @@
+from django.conf import settings
 from django.contrib import admin
-from hknweb.utils import export_model_as_csv
+from django.core.mail import EmailMultiAlternatives
+from django.shortcuts import reverse
+from django.template.loader import render_to_string
+
+from hknweb.utils import export_model_as_csv, get_rand_photo
 
 from hknweb.candidate.models import BitByteActivity
-from hknweb.candidate.utils import send_bitbyte_confirm_email
 
 
 @admin.register(BitByteActivity)
@@ -38,12 +42,34 @@ class BitByteActivityAdmin(admin.ModelAdmin):
     @staticmethod
     def check_send_email(request, obj):
         if obj.is_confirmed:
-            send_bitbyte_confirm_email(request, obj, True)
+            BitByteActivityAdmin.send_bitbyte_confirm_email(request, obj, True)
         elif obj.is_rejected:
-            send_bitbyte_confirm_email(request, obj, False)
+            BitByteActivityAdmin.send_bitbyte_confirm_email(request, obj, False)
         # if neither is true, it means it became someone changed the nullable boolean to 'Unknown'
 
     actions = ["export_as_csv", "confirm", "reject"]
+
+    @staticmethod
+    def send_bitbyte_confirm_email(request, bitbyte, confirmed):
+        subject = "[HKN] Your bit-byte request was reviewed"
+        participant_emails = [part.email for part in bitbyte.participants.all()]
+
+        bitbyte_link = request.build_absolute_uri(reverse("candidate:bitbyte"))
+        html_content = render_to_string(
+            "candidate/bitbyte_confirm_email.html",
+            {
+                "subject": subject,
+                "confirmed": confirmed,
+                "participants": bitbyte.participants.all(),
+                "bitbyte_link": bitbyte_link,
+                "img_link": get_rand_photo(),
+            },
+        )
+        msg = EmailMultiAlternatives(
+            subject, subject, settings.NO_REPLY_EMAIL, participant_emails
+        )
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
 
     def export_as_csv(self, request, queryset):
         return export_model_as_csv(self, queryset)
