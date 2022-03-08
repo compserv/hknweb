@@ -43,15 +43,17 @@ class AllRsvpsView(TemplateView):
         for event in all_events:
             if event.rsvp_set.filter(user=self.request.user):
                 data, url = rsvpd_data, "events:unrsvp"
+                waitlisted = event.on_waitlist(self.request.user)
             else:
                 data, url = not_rsvpd_data, "events:rsvp"
+                waitlisted = False
 
             data.append(
                 {
                     "event": event,
                     "action": reverse(url, args=[event.id]),
                     "location": format_url(event.location),
-                    "waitlisted": event.on_waitlist(self.request.user),
+                    "waitlisted": waitlisted,
                 }
             )
 
