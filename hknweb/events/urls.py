@@ -1,5 +1,6 @@
 from django.urls import path
-from . import views
+import hknweb.events.views as views
+
 
 app_name = "events"
 urlpatterns = [

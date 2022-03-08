@@ -3,13 +3,6 @@ from django.db import models
 from hknweb.events.models.constants import ACCESS_LEVELS
 
 
-class GoogleCalendarCredentials(models.Model):
-    file = models.FileField()
-
-    class Meta:
-        verbose_name_plural = "GoogleCalendarCredentials"
-
-
 class GCalAccessLevelMapping(models.Model):
     access_level = models.IntegerField(
         choices=ACCESS_LEVELS,
