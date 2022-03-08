@@ -536,9 +536,7 @@ def sort_rsvps_into_events(rsvps, required_events):
     # Events in admin are currently in a readable format, must convert them to callable keys for Django template
     # sorted_events = dict.fromkeys(map_event_vars.keys())
     sorted_events = {}
-    for event_type in required_events:
-        temp = []
-        event_time_range = required_events[event_type]
+    for event_type, event_time_range in required_events.items():
         query = Q(event__event_type__type=event_type)
         if event_time_range is not None:
             if event_time_range["eventsDateStart"] is not None:
@@ -547,9 +545,9 @@ def sort_rsvps_into_events(rsvps, required_events):
                 )
             if event_time_range["eventsDateEnd"] is not None:
                 query = query & Q(event__end_time__lt=event_time_range["eventsDateEnd"])
-        for rsvp in rsvps.filter(query):
-            temp.append(rsvp.event)
-        sorted_events[event_type] = temp
+
+        sorted_events[event_type] = [r.event for r in rsvps.filter(query)]
+
     return sorted_events
 
 
