@@ -105,12 +105,12 @@ class IndexView(TemplateView):
 
         courses = []
         courses_to_search = Course.objects.filter(
-            Q(icsr_course__course_number__contains=search_value) \
-            | Q(icsr_course__icsr_department__abbr__contains=search_value)
-            | Q(icsr_course__icsr_department__name__contains=search_value)
-            | Q(icsr_course__course_name__contains=search_value)
-            | Q(icsr_course__icsr_semester__year__contains=search_value)
-            | Q(icsr_course__icsr_semester__year_section__contains=search_value)
+            Q(icsr_course__course_number__icontains=search_value) \
+            | Q(icsr_course__icsr_department__abbr__icontains=search_value)
+            | Q(icsr_course__icsr_department__name__icontains=search_value)
+            | Q(icsr_course__course_name__icontains=search_value)
+            | Q(icsr_course__icsr_semester__year__icontains=search_value)
+            | Q(icsr_course__icsr_semester__year_section__icontains=search_value)
         ).distinct()
         i_start, i_end = IndexView._get_start_end_indices(page_number)
         for course in courses_to_search[i_start:i_end]:
@@ -145,8 +145,8 @@ class IndexView(TemplateView):
 
         instructors = []
         instructors_to_search = Instructor.objects.filter(
-            Q(icsr_instructor__first_name__contains=search_value) \
-            | Q(icsr_instructor__last_name__contains=search_value)
+            Q(icsr_instructor__first_name__icontains=search_value) \
+            | Q(icsr_instructor__last_name__icontains=search_value)
         ).distinct()
         i_start, i_end = IndexView._get_start_end_indices(page_number)
         for instructor in instructors_to_search[i_start:i_end]:
