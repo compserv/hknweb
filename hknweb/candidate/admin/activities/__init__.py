@@ -1,0 +1,2 @@
+from hknweb.candidate.admin.activities.officer_challenge import OffChallengeAdmin
+from hknweb.candidate.admin.activities.bitbyteactivity import BitByteActivityAdmin
