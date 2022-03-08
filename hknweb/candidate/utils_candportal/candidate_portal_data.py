@@ -93,25 +93,18 @@ class CandidatePortalData:
         num_bitbytes,
         req_list,
     ):
-        # Confirmed (confirmed=True)
-        confirmed_events = get_events(
-            rsvps,
-            today,
-            required_events,
-            candidateSemester,
-            requirement_mandatory,
-            confirmed=True,
-        )
+        def get_events_by_confirmed(confirmed):
+            return get_events(
+                rsvps,
+                today,
+                required_events,
+                candidateSemester,
+                requirement_mandatory,
+                confirmed=confirmed,
+            )
 
-        # Unconfirmed (confirmed=False)
-        unconfirmed_events = get_events(
-            rsvps,
-            today,
-            required_events,
-            candidateSemester,
-            requirement_mandatory,
-            confirmed=False,
-        )
+        confirmed_events = get_events_by_confirmed(True)
+        unconfirmed_events = get_events_by_confirmed(False)
 
         req_statuses, req_remaining = check_requirements(
             confirmed_events,
