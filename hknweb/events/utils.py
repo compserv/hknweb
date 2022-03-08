@@ -44,12 +44,6 @@ def generate_recurrence_times(
     return times
 
 
-def get_padding(l1, l2):
-    l1, l2 = max(l1, 1), max(l2, 1)
-    p1, p2 = max(l1 - l2, 0), max(l2 - l1, 0)
-    return [None] * (p1 + 1), [None] * (p2 + 1)
-
-
 DATETIME_WIDGET_NO_AUTOCOMPLETE = forms.DateTimeInput(attrs={"autocomplete": "off"})
 
 

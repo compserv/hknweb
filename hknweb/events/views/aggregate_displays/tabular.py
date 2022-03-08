@@ -7,11 +7,8 @@ from hknweb.utils import (
     get_semester_bounds,
 )
 from hknweb.events.constants import ATTR
-from hknweb.events.models import Event, EventType, Rsvp
-from hknweb.events.utils import (
-    format_url,
-    get_padding,
-)
+from hknweb.events.models import Event, EventType
+from hknweb.events.utils import format_url
 from hknweb.utils import get_access_level
 
 
@@ -22,65 +19,39 @@ class AllRsvpsView(TemplateView):
     template_name = "events/all_rsvps.html"
 
     def get_context_data(self):
-        view_option = self.request.GET.get("option")
-        semester_start, semester_end = get_semester_bounds(timezone.now())
-        all_events = (
-            Event.objects.filter(start_time__gte=semester_start)
-            .filter(start_time__lte=semester_end)
-            .filter(access_level__gte=get_access_level(self.request.user))
-            .order_by("start_time")
-        )
-        if view_option == "upcoming":
-            all_events = all_events.filter(start_time__gte=timezone.now())
-        rsvpd_event_ids = Rsvp.objects.filter(
-            user__exact=self.request.user
-        ).values_list("event", flat=True)
-        rsvpd_events = all_events.filter(pk__in=rsvpd_event_ids)
-        not_rsvpd_events = all_events.exclude(pk__in=rsvpd_event_ids)
+        # Get the start and end time for event filtering
+        start_time, end_time = get_semester_bounds(timezone.now())
+        if self.request.GET.get("option") == "upcoming":
+            start_time = timezone.now()
 
-        for event in rsvpd_events:
-            event.waitlisted = event.on_waitlist(
-                self.request.user
-            )  # Is this bad practice? idk
-
+        # Get the current event type
         event_types = EventType.objects.order_by("type").all()
         event_types = sorted(event_types, key=lambda e: not (e.type == ATTR.MANDATORY))
 
+        event_type = self.request.GET.get("event_type", event_types[0].type)
+        event_type = EventType.objects.filter(type=event_type).first()
+
+        # Get all events
+        all_events = Event.objects.filter(
+            start_time__gte=start_time,
+            start_time__lte=end_time,
+            access_level__gte=get_access_level(self.request.user),
+            event_type=event_type,
+        ).order_by("start_time")
+
         rsvpd_data, not_rsvpd_data = [], []
-        for event_type in event_types:
-            typed_rsvpd_events = rsvpd_events.filter(event_type=event_type)
-            typed_not_rsvpd_events = not_rsvpd_events.filter(event_type=event_type)
+        for event in all_events:
+            if event.rsvp_set.filter(user=self.request.user):
+                data, url = rsvpd_data, "events:unrsvp"
+            else:
+                data, url = not_rsvpd_data, "events:rsvp"
 
-            rsvpd_padding, not_rsvpd_padding = get_padding(
-                len(typed_not_rsvpd_events), len(typed_rsvpd_events)
-            )
-
-            rsvpd_data.append(
+            data.append(
                 {
-                    ATTR.EVENT_TYPE: event_type,
-                    ATTR.EVENTS: [
-                        [
-                            event,
-                            reverse("events:unrsvp", args=[event.id]),
-                            format_url(event.location),
-                        ]
-                        for event in typed_rsvpd_events
-                    ],
-                    ATTR.PADDING: rsvpd_padding,
-                }
-            )
-            not_rsvpd_data.append(
-                {
-                    ATTR.EVENT_TYPE: event_type,
-                    ATTR.EVENTS: [
-                        [
-                            event,
-                            reverse("events:rsvp", args=[event.id]),
-                            format_url(event.location),
-                        ]
-                        for event in typed_not_rsvpd_events
-                    ],
-                    ATTR.PADDING: not_rsvpd_padding,
+                    "event": event,
+                    "action": reverse(url, args=[event.id]),
+                    "location": format_url(event.location),
+                    "waitlisted": event.on_waitlist(self.request.user),
                 }
             )
 
@@ -88,18 +59,20 @@ class AllRsvpsView(TemplateView):
             {
                 ATTR.CLASS: "right-half",
                 ATTR.TITLE: "RSVP'd / Waitlist",
-                ATTR.EVENTS_DATA: rsvpd_data,
+                ATTR.EVENTS: rsvpd_data,
                 ATTR.DISPLAY_VALUE: "un-RSVP",
             },
             {
                 ATTR.CLASS: "left-half",
                 ATTR.TITLE: "Not RSVP'd",
-                ATTR.EVENTS_DATA: not_rsvpd_data,
+                ATTR.EVENTS: not_rsvpd_data,
                 ATTR.DISPLAY_VALUE: "RSVP",
             },
         ]
 
         context = {
-            ATTR.DATA: data,
+            "data": data,
+            "event_types": event_types,
+            "event_type": event_type,
         }
         return context
