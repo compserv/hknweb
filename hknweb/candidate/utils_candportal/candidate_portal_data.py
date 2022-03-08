@@ -55,32 +55,32 @@ class CandidatePortalData:
     def __init__(self, user):
         self.user = user
 
-    def get_event_types_and_times_map(
-        self, candidateSemester, required_events_merger=None
+    def get_required_events(
+        self, candidate_semester, required_events_merger
     ):
-        res = []
-        if candidateSemester is None:
-            return res
+        required_events = {}
+        if candidate_semester is None:
+            return required_events
 
         merger_enabled = required_events_merger is not None
         requirement_events = RequriementEvent.objects.filter(
-            candidateSemesterActive=candidateSemester.id
+            candidateSemesterActive=candidate_semester.id
         )
         for r in requirement_events:
             enabled = r.enable
-            merged = merger_enabled and (r.eventType.type in required_events_merger)
+            event_type = r.eventType.type
+            merged = merger_enabled and (event_type in required_events_merger)
             if enabled or merged:
-                res.append((
-                    r.eventType.type,
-                    r.eventsDateStart,
-                    r.eventsDateEnd,
-                    r.title if r.enableTitle else None,
-                ))
+                required_events[event_type] = {
+                    "eventsDateStart": r.eventsDateStart,
+                    "eventsDateEnd": r.eventsDateEnd,
+                    "title": r.title if r.enableTitle else None,
+                }
 
-        return res
+        return required_events
 
-    def get_event_types_map(self, candidateSemester):
-        return [t[0] for t in self.get_event_types_and_times_map(candidateSemester)]
+    def get_event_types_map(self, candidate_semester):
+        return list(self.get_required_events(candidate_semester))
 
     def process_events(
         self,
@@ -260,20 +260,9 @@ class CandidatePortalData:
             for eventType in node.events():
                 required_events_merger.add(eventType)
 
-        required_events = {}
-        for (
-            eventType,
-            eventsDateStart,
-            eventsDateEnd,
-            title,
-        ) in self.get_event_types_and_times_map(
+        required_events = self.get_required_events(
             candidateSemester, required_events_merger
-        ):
-            required_events[eventType] = {
-                "eventsDateStart": eventsDateStart,
-                "eventsDateEnd": eventsDateEnd,
-                "title": title,
-            }
+        )
 
         req_list = {}
         # Can't use "get", since no guarantee that the Mandatory object of a semester always exist
