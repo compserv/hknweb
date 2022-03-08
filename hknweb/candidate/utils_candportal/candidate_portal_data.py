@@ -58,27 +58,29 @@ class CandidatePortalData:
     def get_event_types_and_times_map(
         self, candidateSemester, required_events_merger=None
     ):
-        if candidateSemester is not None:
-            for requirementEvent in RequriementEvent.objects.filter(
-                candidateSemesterActive=candidateSemester.id
-            ):
-                if requirementEvent.enable or (
-                    (required_events_merger is not None)
-                    and (requirementEvent.eventType.type in required_events_merger)
-                ):
-                    title = None
-                    if requirementEvent.enableTitle:
-                        title = requirementEvent.title
-                    yield (
-                        requirementEvent.eventType.type,
-                        requirementEvent.eventsDateStart,
-                        requirementEvent.eventsDateEnd,
-                        title,
-                    )
+        res = []
+        if candidateSemester is None:
+            return res
+
+        merger_enabled = required_events_merger is not None
+        requirement_events = RequriementEvent.objects.filter(
+            candidateSemesterActive=candidateSemester.id
+        )
+        for r in requirement_events:
+            enabled = r.enable
+            merged = merger_enabled and (r.eventType.type in required_events_merger)
+            if enabled or merged:
+                res.append((
+                    r.eventType.type,
+                    r.eventsDateStart,
+                    r.eventsDateEnd,
+                    r.title if r.enableTitle else None,
+                ))
+
+        return res
 
     def get_event_types_map(self, candidateSemester):
-        for eventType, _, _, _ in self.get_event_types_and_times_map(candidateSemester):
-            yield eventType
+        return [t[0] for t in self.get_event_types_and_times_map(candidateSemester)]
 
     def process_events(
         self,
