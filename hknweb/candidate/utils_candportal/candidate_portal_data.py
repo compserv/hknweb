@@ -247,7 +247,7 @@ class CandidatePortalData:
         def helper(events):
             return {
                 **{e: events[e] for e in event_types},
-                "hangout": events["Hangout"],
+                "hangout": events.get("Hangout", []),
             }
 
         return {
