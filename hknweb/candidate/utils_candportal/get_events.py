@@ -1,18 +1,23 @@
 import itertools
 
-from django.db.models import Q
+from django.db.models import Q, QuerySet
 from django.utils import timezone
+from django.contrib.auth.models import User
 
+from hknweb.coursesemester.models import Semester
 from hknweb.utils import get_semester_bounds, get_access_level
 
 from hknweb.events.models import Event
-from hknweb.candidate.models import RequriementEvent
+from hknweb.candidate.models import RequriementEvent, RequirementMandatory
 
 
 MANDATORY = "Mandatory"
 
 
-def sort_rsvps_into_events(rsvps, required_events):
+def sort_rsvps_into_events(
+    rsvps: QuerySet,
+    required_events: dict,
+) -> dict:
     """Takes in all confirmed rsvps and sorts them into types."""
     # Events in admin are currently in a readable format, must convert them to callable keys for Django template
     # sorted_events = dict.fromkeys(map_event_vars.keys())
@@ -33,14 +38,18 @@ def sort_rsvps_into_events(rsvps, required_events):
 
 
 def get_events(
-    rsvps, date, required_events, candidateSemester, requirement_mandatory, confirmed
-):
+    rsvps: QuerySet,
+    required_events: dict,
+    candidate_semester: Semester,
+    requirement_mandatory: RequirementMandatory,
+    confirmed: bool,
+) -> dict:
     rsvp_models = rsvps.filter(confirmed=confirmed)
     events = sort_rsvps_into_events(rsvp_models, required_events)
 
     # We want to show all mandatory events, not just the events the candidate has RSVP'd to
     # Get all mandatory events i.e. events with event type "Mandatory"
-    if candidateSemester and requirement_mandatory:
+    if candidate_semester and requirement_mandatory:
         mandatory_events = requirement_mandatory.events.all()
         if (
             requirement_mandatory.eventsDateStart
@@ -55,7 +64,7 @@ def get_events(
                 ),
             )
     else:
-        curr_sem_start, curr_sem_end = get_semester_bounds(date)
+        curr_sem_start, curr_sem_end = get_semester_bounds(timezone.now())
         mandatory_events = Event.objects.filter(
             event_type__type=MANDATORY,
             start_time__gt=curr_sem_start,
@@ -81,7 +90,7 @@ def get_events(
     return events
 
 
-def get_required_events(candidate_semester, required_events_merger):
+def get_required_events(candidate_semester: Semester, required_events_merger: set) -> dict:
     required_events = {}
     if candidate_semester is None:
         return required_events
@@ -104,7 +113,7 @@ def get_required_events(candidate_semester, required_events_merger):
     return required_events
 
 
-def get_upcoming_events(user):
+def get_upcoming_events(user: User) -> QuerySet:
     today = timezone.now()
     return Event.objects.filter(
         start_time__range=(today, today + timezone.timedelta(days=7)),

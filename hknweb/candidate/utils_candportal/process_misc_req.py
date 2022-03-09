@@ -1,3 +1,9 @@
+from typing import Callable
+from django.contrib.auth.models import User
+from django.db.models import Model, QuerySet
+
+from hknweb.coursesemester.models import Semester
+
 from hknweb.candidate.models import (
     CandidateForm,
     CandidateFormDoneEntry,
@@ -9,25 +15,25 @@ from hknweb.candidate.models import (
 
 
 class MiscReqProcessorBase:
-    roster_model = None
-    completed_roster_model = None
-    order_by = None
+    roster_model: Model = None
+    completed_roster_model: Model = None
+    order_by: str = None
 
-    all_done_processor = lambda all_done, other_bool: all_done and other_bool
-    all_done_initial = True
+    all_done_processor: Callable = lambda all_done, other_bool: all_done and other_bool
+    all_done_initial: bool = True
 
-    title = None
-    filter_model_by = None
+    title: str = None
+    filter_model_by: str = None
 
     @classmethod
-    def completed_process(cls, user, required, completed):
+    def completed_process(cls, user: User, required: Model, completed: QuerySet) -> bool:
         entry = completed.filter(**{cls.filter_model_by: required.id}).first()
         if entry is None:
             return False
         return user in entry.users.all()
 
     @classmethod
-    def process_status(cls, user, candidate_semester):
+    def process_status(cls, user: User, candidate_semester: Semester) -> dict:
         requirements = candidate_semester and cls.roster_model.objects.filter(
             visible=True, candidateSemesterActive=candidate_semester.id
         ).order_by(cls.order_by)

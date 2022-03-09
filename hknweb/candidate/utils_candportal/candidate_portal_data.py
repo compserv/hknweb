@@ -1,6 +1,7 @@
 from django.conf import settings
-from django.utils import timezone
+from django.contrib.auth.models import User
 
+from hknweb.coursesemester.models import Semester
 from hknweb.events.models import Rsvp, EventType
 
 from hknweb.candidate.constants import ATTR
@@ -49,9 +50,7 @@ from hknweb.candidate.utils_candportal.req_info import ReqInfo
 
 
 class CandidatePortalData:
-    user = None
-
-    def __init__(self, user):
+    def __init__(self, user: User):
         self.user = user
 
     def process_events(
@@ -67,7 +66,6 @@ class CandidatePortalData:
         def get_events_by_confirmed(confirmed):
             return get_events(
                 rsvps,
-                timezone.now(),
                 required_events,
                 candidateSemester,
                 requirement_mandatory,
@@ -138,7 +136,7 @@ class CandidatePortalData:
 
         return node_string_key
 
-    def get_user_cand_data(self):
+    def get_user_cand_data(self) -> dict:
         candidate_semester = self.user.profile.candidate_semester
 
         (
@@ -243,16 +241,6 @@ class CandidatePortalData:
         # Process Merged Events here
         merge_names = [self.process_merge_node(node, req_info) for node in merger_nodes]
 
-        events = [
-            {
-                ATTR.TITLE: req_info.titles[t],
-                ATTR.STATUS: req_info.statuses[t],
-                ATTR.COLOR: req_info.colors[t],
-                ATTR.CONFIRMED: req_info.confirmed_events[t],
-                ATTR.UNCONFIRMED: req_info.unconfirmed_events[t]
-            }
-        for t in (event_types + merge_names)]
-
         interactivities = {
             ATTR.TITLE: req_info.titles[settings.HANGOUT_EVENT][
                 settings.EITHER_ATTRIBUTE_NAME
@@ -280,27 +268,17 @@ class CandidatePortalData:
             ATTR.NUM_BITBYTES: num_bitbytes,
         }
 
-        context = {
+        return {
             "req_statuses": {e: req_info.statuses[e] for e in event_types},
-            "events": events,
             "interactivities": interactivities,
             "bitbyte": bitbyte,
+            **self._get_misc_context(self.user, candidate_semester),
+            **self._get_event_related_context(self.user, req_info, event_types, merge_names),
+            **self._get_misc_req_related_context(self.user, candidate_semester)
         }
-        context.update(self._get_misc_context(self.user, candidate_semester))
-        context.update(self._get_event_related_context(
-            self.user,
-            req_info.confirmed_events,
-            req_info.unconfirmed_events,
-            event_types,
-        ))
-        context.update(self._get_misc_req_related_context(
-            self.user, candidate_semester
-        ))
-
-        return context
 
     @staticmethod
-    def _get_misc_context(user, candidate_semester):
+    def _get_misc_context(user: User, candidate_semester: Semester) -> dict:
         announcements = Announcement.objects \
             .filter(visible=True) \
             .order_by("-release_date")
@@ -314,7 +292,22 @@ class CandidatePortalData:
         }
 
     @staticmethod
-    def _get_event_related_context(user, confirmed_events, unconfirmed_events, event_types):
+    def _get_event_related_context(
+        user: User,
+        req_info: ReqInfo,
+        event_types: list,
+        merge_names: list,
+    ) -> dict:
+        events = [
+            {
+                ATTR.TITLE: req_info.titles[t],
+                ATTR.STATUS: req_info.statuses[t],
+                ATTR.COLOR: req_info.colors[t],
+                ATTR.CONFIRMED: req_info.confirmed_events[t],
+                ATTR.UNCONFIRMED: req_info.unconfirmed_events[t]
+            }
+        for t in (event_types + merge_names)]
+
         def helper(events):
             return {
                 **{e: events[e] for e in event_types},
@@ -322,13 +315,14 @@ class CandidatePortalData:
             }
 
         return {
-            "confirmed_events": helper(confirmed_events),
-            "unconfirmed_events": helper(unconfirmed_events),
+            "events": events,
+            "confirmed_events": helper(req_info.confirmed_events),
+            "unconfirmed_events": helper(req_info.unconfirmed_events),
             "upcoming_events": get_upcoming_events(user),
         }
 
     @staticmethod
-    def _get_misc_req_related_context(user, candidate_semester):
+    def _get_misc_req_related_context(user: User, candidate_semester: Semester) -> dict:
         return {
             "committee_project": CommitteeProjectProcessor.process_status(user, candidate_semester),
             "candidate_forms": CandidateFormProcessor.process_status(user, candidate_semester),

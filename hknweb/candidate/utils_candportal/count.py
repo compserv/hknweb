@@ -1,17 +1,27 @@
+from typing import Tuple
+
 from django.conf import settings
 from django.db.models import Q
+from django.contrib.auth.models import User
+
+from hknweb.coursesemester.models import Semester
+
 from hknweb.candidate.models import (
     BitByteActivity,
     OffChallenge,
+    RequirementBitByteActivity,
     RequirementHangout,
 )
 
 
-def count_challenges(requested_user, candidateSemester):
+def count_challenges(
+    requested_user: User,
+    candidate_semester: Semester,
+) -> Tuple[int, int, int]:
     challenges = OffChallenge.objects.filter(requester__exact=requested_user)
     req_challenges_models = RequirementHangout.objects.filter(
         eventType=settings.CHALLENGE_ATTRIBUTE_NAME,
-        candidateSemesterActive=candidateSemester,
+        candidateSemesterActive=candidate_semester,
     ).first()
     if req_challenges_models is not None:
         if req_challenges_models.hangoutsDateStart is not None:
@@ -45,7 +55,10 @@ def count_challenges(requested_user, candidateSemester):
     return num_challenges_confirmed, num_challenges_rejected, num_pending
 
 
-def count_num_bitbytes(requested_user, bitbyte_requirement):
+def count_num_bitbytes(
+    requested_user: User,
+    bitbyte_requirement: RequirementBitByteActivity,
+) -> int:
     bitbyte_models = BitByteActivity.objects.filter(
         participants__exact=requested_user, confirmed=True
     )

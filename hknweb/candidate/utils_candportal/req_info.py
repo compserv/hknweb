@@ -7,7 +7,13 @@ from hknweb.candidate.utils_candportal.utils import (
 
 
 class ReqInfo:
-    def __init__(self, lst, statuses, remaining, confirmed_events, unconfirmed_events):
+    def __init__(self,
+        lst: dict,
+        statuses: dict,
+        remaining: dict,
+        confirmed_events: dict,
+        unconfirmed_events: dict,
+    ):
         self.lst = lst
         self.statuses = statuses
         self.remaining = remaining
@@ -17,7 +23,7 @@ class ReqInfo:
         self.titles = None
         self.colors = None
 
-    def set_titles(self, required_events):
+    def set_titles(self, required_events: dict):
         titles = {}
         for req_type in self.statuses:
             name = required_events.get(req_type, {}).get("title", req_type)
@@ -34,7 +40,7 @@ class ReqInfo:
 
         self.titles = titles
 
-    def set_colors(self, event_types, merger_nodes):
+    def set_colors(self, event_types: list, merger_nodes):
         colors = get_requirement_colors(event_types)
         colors.update(
             get_requirement_colors(

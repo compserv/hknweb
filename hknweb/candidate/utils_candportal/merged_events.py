@@ -1,3 +1,7 @@
+from typing import Iterable, Tuple
+
+from hknweb.coursesemester.models import Semester
+
 from hknweb.candidate.models import RequirementMergeRequirement
 
 
@@ -5,8 +9,8 @@ class MergedEvents:
     def __init__(
         self,
         merger_node: RequirementMergeRequirement,
-        candidateSemester,
-        seen_merger_nodes=set(),
+        candidateSemester: Semester,
+        seen_merger_nodes: set=set(),
     ):
         assert merger_node.enable, "The first Merger Node must be enabled"
 
@@ -47,13 +51,13 @@ class MergedEvents:
             else:
                 current_merger_node = None
 
-    def __str__(self):
+    def __str__(self) -> str:
         text = self.get_events_str()
         all_required_text = "self.all_required = {}".format(self.all_required)
         all_color_text = "self.color = {}".format(self.color)
         return "{}, {}, {}".format(text, all_required_text, all_color_text)
 
-    def get_events_str(self):
+    def get_events_str(self) -> str:
         if self.title:
             return self.title
         text = []
@@ -65,7 +69,7 @@ class MergedEvents:
         self.title = " + ".join(text)
         return self.title
 
-    def get_counts(self, req_remaining, req_list):
+    def get_counts(self, req_remaining: dict, req_list: dict) -> Tuple[int, int]:
         remaining_count = 0
         grand_total = 0
         for event, multiplier in zip(self.events(), self.multiplier()):
@@ -75,8 +79,8 @@ class MergedEvents:
             grand_total = self.grand_total
         return remaining_count, grand_total
 
-    def events(self):
+    def events(self) -> Iterable:
         return self.multiplier_event.keys()
 
-    def multiplier(self):
+    def multiplier(self) -> Iterable:
         return self.multiplier_event.values()

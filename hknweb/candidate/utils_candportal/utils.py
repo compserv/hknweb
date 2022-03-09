@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Callable, Union
 
 from django.conf import settings
 
@@ -48,9 +48,9 @@ def create_title(
 
 
 def get_requirement_colors(
-    required_events,
-    color_source=lambda view_key: EventType.objects.get(type=view_key),
-    get_key=lambda x: x,
+    required_events: dict,
+    color_source: Callable=lambda view_key: EventType.objects.get(type=view_key),
+    get_key: Callable=lambda x: x,
 ) -> dict:
     req_colors = {}
     for event in required_events:

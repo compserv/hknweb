@@ -1,9 +1,15 @@
+from typing import Tuple
+
 from django.conf import settings
 
 
 def check_requirements(
-    confirmed_events, unconfirmed_events, num_challenges, num_bitbytes, req_list
-):
+    confirmed_events: dict,
+    unconfirmed_events: dict,
+    num_challenges: int,
+    num_bitbytes: int,
+    req_list: dict,
+) -> Tuple[dict, dict]:
     """Checks which requirements have been fulfilled by a candidate."""
     req_statuses = dict.fromkeys(req_list.keys(), False)
     req_remaining = {**req_list}  # Makes deep copy of "req_list"
@@ -42,7 +48,10 @@ def check_requirements(
     return req_statuses, req_remaining
 
 
-def check_interactivity_requirements(interactivities, interactivity_requirements):
+def check_interactivity_requirements(
+    interactivities: dict,
+    interactivity_requirements: dict,
+) -> Tuple[bool, dict]:
     """Returns whether officer interactivities are satisfied."""
     req_remaining = {}
     for req_type, num_required in interactivity_requirements.items():
