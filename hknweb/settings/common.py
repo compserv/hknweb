@@ -206,20 +206,6 @@ CAND_GROUP = "candidate"
 OFFICER_GROUP = "officer"
 EXEC_GROUP = "exec"
 
-# default hard-coded event types for candidate semester
-# NOTE: these strings are also hard-coded in candidate/index.html
-MANDATORY_EVENT = "mandatory"
-# FUN_EVENT = 'fun'                 # These currently commented strings are not
-# BIG_FUN_EVENT = 'big_fun'
-# SERV_EVENT = 'serv'
-# PRODEV_EVENT = 'prodev'
-HANGOUT_EVENT = "hangout"
-BITBYTE_ACTIVITY = "bitbyte"
-HANGOUT_ATTRIBUTE_NAME = "officer_hangout"
-CHALLENGE_ATTRIBUTE_NAME = "officer_challenge"
-EITHER_ATTRIBUTE_NAME = "either"
-EVENTS_ATTRIBUTE_NAME = "events"
-INTERACTIVITIES_ATTRIBUTE_NAME = "interactivities"
 
 # Note: both candidate and officer group should have permission to add officer challenges
 

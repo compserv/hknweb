@@ -1,12 +1,11 @@
 from typing import Tuple
 
-from django.conf import settings
 from django.contrib.auth.models import User
 
 from hknweb.coursesemester.models import Semester
 from hknweb.events.models import Rsvp
 
-from hknweb.candidate.constants import ATTR
+from hknweb.candidate.constants import ATTR, EVENT_NAMES
 from hknweb.candidate.models import (
     Announcement,
     RequirementMergeRequirement,
@@ -29,19 +28,6 @@ from hknweb.candidate.utils_candportal.process_misc_req import (
     DuePaymentProjectProcessor,
 )
 from hknweb.candidate.utils_candportal.req_info import ReqInfo
-
-
-""" What the event types are called on admin site.
-    Code will not work if they're called something else!! """
-# map_event_vars = {
-#     settings.MANDATORY_EVENT: 'Mandatory',
-#     settings.FUN_EVENT: 'Fun',
-#     settings.BIG_FUN_EVENT: 'Big Fun',
-#     settings.SERV_EVENT: 'Serv',
-#     settings.PRODEV_EVENT: 'Prodev',
-#     settings.HANGOUT_EVENT: 'Hangout',
-#     settings.BITBYTE_ACTIVITY: "Bit-Byte",
-# }
 
 
 class CandidatePortalData:
@@ -182,23 +168,23 @@ class CandidatePortalData:
         num_challenges_pending: int,
     ) -> dict:
         return {
-            "interactivities": {
-                ATTR.TITLE: req_info.titles[settings.HANGOUT_EVENT][
-                    settings.EITHER_ATTRIBUTE_NAME
+            EVENT_NAMES.INTERACTIVITIES: {
+                ATTR.TITLE: req_info.titles[EVENT_NAMES.INTERACTIVITIES][
+                    EVENT_NAMES.EITHER
                 ],
-                ATTR.STATUS: req_info.statuses[settings.HANGOUT_EVENT],
-                settings.CHALLENGE_ATTRIBUTE_NAME: {
-                    ATTR.TITLE: req_info.titles[settings.HANGOUT_EVENT][
-                        settings.CHALLENGE_ATTRIBUTE_NAME
+                ATTR.STATUS: req_info.statuses[EVENT_NAMES.INTERACTIVITIES],
+                EVENT_NAMES.CHALLENGE: {
+                    ATTR.TITLE: req_info.titles[EVENT_NAMES.INTERACTIVITIES][
+                        EVENT_NAMES.CHALLENGE
                     ],
                     ATTR.NUM_PENDING: num_challenges_pending,
                     ATTR.NUM_REJECTED: num_challenges_rejected,
                     # anything not pending or rejected is confirmed
                     ATTR.NUM_CONFIRMED: num_challenges_confirmed,
                 },
-                settings.HANGOUT_ATTRIBUTE_NAME: {
-                    ATTR.TITLE: req_info.titles[settings.HANGOUT_EVENT][
-                        settings.HANGOUT_ATTRIBUTE_NAME
+                EVENT_NAMES.HANGOUT: {
+                    ATTR.TITLE: req_info.titles[EVENT_NAMES.INTERACTIVITIES][
+                        EVENT_NAMES.HANGOUT
                     ],
                 },
             }
@@ -208,8 +194,8 @@ class CandidatePortalData:
     def _get_bitbyte_context(req_info: ReqInfo, num_bitbytes: int) -> dict:
         return {
             "bitbyte": {
-                ATTR.TITLE: req_info.titles[settings.BITBYTE_ACTIVITY],
-                ATTR.STATUS: req_info.statuses[settings.BITBYTE_ACTIVITY],
+                ATTR.TITLE: req_info.titles[EVENT_NAMES.BITBYTE],
+                ATTR.STATUS: req_info.statuses[EVENT_NAMES.BITBYTE],
                 ATTR.NUM_BITBYTES: num_bitbytes,
             }
         }

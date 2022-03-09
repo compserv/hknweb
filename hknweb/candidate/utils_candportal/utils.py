@@ -4,13 +4,13 @@ from django.conf import settings
 
 from hknweb.events.models import EventType
 
-from hknweb.candidate.constants import REQUIREMENT_TITLES_TEMPLATE
+from hknweb.candidate.constants import REQUIREMENT_TITLES_TEMPLATE, EVENT_NAMES
 
 
 INTERACTIVITY_NAMES = {
-    settings.EITHER_ATTRIBUTE_NAME: "Interactivities",
-    settings.HANGOUT_ATTRIBUTE_NAME: "Officer Hangouts",
-    settings.CHALLENGE_ATTRIBUTE_NAME: "Officer Challenges",
+    EVENT_NAMES.EITHER: "Interactivities",
+    EVENT_NAMES.HANGOUT: "Officer Hangouts",
+    EVENT_NAMES.CHALLENGE: "Officer Challenges",
 }
 
 
@@ -21,7 +21,7 @@ def create_title(
     num_required: int,
     num_required_hangouts: dict,
 ) -> str:
-    if req_type == settings.HANGOUT_EVENT:
+    if req_type == EVENT_NAMES.INTERACTIVITIES:
         return {
             name: create_title(
                 name,

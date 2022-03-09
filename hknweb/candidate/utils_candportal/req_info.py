@@ -1,10 +1,10 @@
 from copy import deepcopy
 
-from django.conf import settings
 from django.db.models import Q, QuerySet
 
 from hknweb.coursesemester.models import Semester
 
+from hknweb.candidate.constants import EVENT_NAMES
 from hknweb.candidate.models import (
     RequirementBitByteActivity,
     RequriementEvent,
@@ -25,16 +25,16 @@ from hknweb.candidate.utils_candportal.get_events import (
 
 class ReqInfo:
     EMPTY_REQ_LIST = {
-        settings.HANGOUT_EVENT: {
-            settings.HANGOUT_ATTRIBUTE_NAME: 0,
-            settings.CHALLENGE_ATTRIBUTE_NAME: 0,
-            settings.EITHER_ATTRIBUTE_NAME: 0,
+        EVENT_NAMES.INTERACTIVITIES: {
+            EVENT_NAMES.HANGOUT: 0,
+            EVENT_NAMES.CHALLENGE: 0,
+            EVENT_NAMES.EITHER: 0,
         },
-        settings.BITBYTE_ACTIVITY: 0,
+        EVENT_NAMES.BITBYTE: 0,
     }
 
     TYPE_TO_TITLE_MAPPING = {
-        settings.BITBYTE_ACTIVITY: "Bit-Byte",
+        EVENT_NAMES.BITBYTE: "Bit-Byte",
     }
 
     def __init__(self):
@@ -83,22 +83,22 @@ class ReqInfo:
         ):
             lst[r.eventType.type] = r.numberRequired
 
-        num_required_hangouts = lst[settings.HANGOUT_EVENT]
+        num_required_hangouts = lst[EVENT_NAMES.INTERACTIVITIES]
         for r in RequirementHangout.objects.filter(
             candidateSemesterActive=candidate_semester.id,
             enable=True,
         ):
             num_required_hangouts[r.eventType] = r.numberRequired
-        num_required_hangouts[settings.EITHER_ATTRIBUTE_NAME] =\
-            num_required_hangouts[settings.HANGOUT_ATTRIBUTE_NAME] \
-            + num_required_hangouts[settings.CHALLENGE_ATTRIBUTE_NAME]
+        num_required_hangouts[EVENT_NAMES.EITHER] =\
+            num_required_hangouts[EVENT_NAMES.HANGOUT] \
+            + num_required_hangouts[EVENT_NAMES.CHALLENGE]
 
         bitbyte_requirement = RequirementBitByteActivity.objects.filter(
             candidateSemesterActive=candidate_semester,
             enable=True,
         ).first()
         if bitbyte_requirement:
-            lst[settings.BITBYTE_ACTIVITY] = bitbyte_requirement.numberRequired
+            lst[EVENT_NAMES.BITBYTE] = bitbyte_requirement.numberRequired
 
         lst[MANDATORY] =\
             len(self.confirmed_events[MANDATORY]) \
@@ -110,12 +110,12 @@ class ReqInfo:
         # TODO: Hardcoded-ish for now, allow for choice of Hangout events
         confirmed_hangouts = len(self.confirmed_events.get("Hangout", []))
         confirmed = {
-            settings.HANGOUT_EVENT: {
-                settings.HANGOUT_ATTRIBUTE_NAME: confirmed_hangouts,
-                settings.CHALLENGE_ATTRIBUTE_NAME: num_challenges,
-                settings.EITHER_ATTRIBUTE_NAME: confirmed_hangouts + num_challenges,
+            EVENT_NAMES.INTERACTIVITIES: {
+                EVENT_NAMES.HANGOUT: confirmed_hangouts,
+                EVENT_NAMES.CHALLENGE: num_challenges,
+                EVENT_NAMES.EITHER: confirmed_hangouts + num_challenges,
             },
-            settings.BITBYTE_ACTIVITY: num_bitbytes,
+            EVENT_NAMES.BITBYTE: num_bitbytes,
             **{r: len(self.confirmed_events[r]) for r in self.confirmed_events},
         }
 
@@ -158,7 +158,7 @@ class ReqInfo:
                 self.remaining[req_type],
                 name,
                 self.lst[req_type],
-                self.lst.get(settings.HANGOUT_EVENT, {}),
+                self.lst.get(EVENT_NAMES.INTERACTIVITIES, {}),
             )
 
         self.titles = titles

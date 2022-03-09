@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.db.models import Q, QuerySet
 from django.utils import timezone
 from django.contrib.auth.models import User
@@ -7,6 +6,8 @@ from hknweb.coursesemester.models import Semester
 from hknweb.utils import get_semester_bounds, get_access_level
 
 from hknweb.events.models import Event, EventType
+
+from hknweb.candidate.constants import EVENT_NAMES
 from hknweb.candidate.models import RequriementEvent, RequirementHangout, RequirementMandatory
 
 
@@ -86,7 +87,7 @@ def get_required_hangouts(candidate_semester: Semester) -> dict:
     semester_start, semester_end = get_semester_bounds(timezone.now())
     requirement_hangout = RequirementHangout.objects.filter(
         candidateSemesterActive=candidate_semester.id,
-        eventType=settings.HANGOUT_ATTRIBUTE_NAME,
+        eventType=EVENT_NAMES.HANGOUT,
         enable=True,
     ).first()
     if not requirement_hangout:

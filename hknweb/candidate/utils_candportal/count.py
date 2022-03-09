@@ -1,6 +1,5 @@
 from typing import Tuple
 
-from django.conf import settings
 from django.db.models import Q
 from django.contrib.auth.models import User
 from django.utils import timezone
@@ -8,6 +7,7 @@ from django.utils import timezone
 from hknweb.utils import get_semester_bounds
 from hknweb.coursesemester.models import Semester
 
+from hknweb.candidate.constants import EVENT_NAMES
 from hknweb.candidate.models import (
     BitByteActivity,
     OffChallenge,
@@ -23,7 +23,7 @@ def count_challenges(
     challenges = OffChallenge.objects.filter(requester__exact=requested_user)
     r = candidate_semester \
         and RequirementHangout.objects.filter(
-            eventType=settings.CHALLENGE_ATTRIBUTE_NAME,
+            eventType=EVENT_NAMES.CHALLENGE,
             candidateSemesterActive=candidate_semester,
         ).first()
 
