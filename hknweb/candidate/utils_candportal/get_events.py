@@ -1,10 +1,12 @@
 import itertools
 
 from django.db.models import Q
+from django.utils import timezone
 
-from hknweb.utils import get_semester_bounds
+from hknweb.utils import get_semester_bounds, get_access_level
 
 from hknweb.events.models import Event
+from hknweb.candidate.models import RequriementEvent
 
 
 MANDATORY = "Mandatory"
@@ -77,3 +79,34 @@ def get_events(
     events[MANDATORY].sort(key=lambda x: x.start_time)
 
     return events
+
+
+def get_required_events(candidate_semester, required_events_merger):
+    required_events = {}
+    if candidate_semester is None:
+        return required_events
+
+    merger_enabled = required_events_merger is not None
+    requirement_events = RequriementEvent.objects.filter(
+        candidateSemesterActive=candidate_semester.id
+    )
+    for r in requirement_events:
+        enabled = r.enable
+        event_type = r.eventType.type
+        merged = merger_enabled and (event_type in required_events_merger)
+        if enabled or merged:
+            required_events[event_type] = {
+                "eventsDateStart": r.eventsDateStart,
+                "eventsDateEnd": r.eventsDateEnd,
+                "title": r.title if r.enableTitle else None,
+            }
+
+    return required_events
+
+
+def get_upcoming_events(user):
+    today = timezone.now()
+    return Event.objects.filter(
+        start_time__range=(today, today + timezone.timedelta(days=7)),
+        access_level__gte=get_access_level(user)
+    ).order_by("start_time")

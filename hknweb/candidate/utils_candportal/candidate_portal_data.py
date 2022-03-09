@@ -1,9 +1,7 @@
 from django.conf import settings
 from django.utils import timezone
 
-from hknweb.utils import get_access_level
-
-from hknweb.events.models import Event, Rsvp, EventType
+from hknweb.events.models import Rsvp, EventType
 
 from hknweb.candidate.constants import ATTR
 from hknweb.candidate.models import (
@@ -27,7 +25,11 @@ from hknweb.candidate.utils_candportal.count import (
     count_challenges,
     count_num_bitbytes,
 )
-from hknweb.candidate.utils_candportal.get_events import get_events
+from hknweb.candidate.utils_candportal.get_events import (
+    get_events,
+    get_required_events,
+    get_upcoming_events,
+)
 from hknweb.candidate.utils_candportal.process_misc_req import (
     CandidateFormProcessor,
     CommitteeProjectProcessor,
@@ -53,33 +55,6 @@ class CandidatePortalData:
 
     def __init__(self, user):
         self.user = user
-
-    def get_required_events(
-        self, candidate_semester, required_events_merger
-    ):
-        required_events = {}
-        if candidate_semester is None:
-            return required_events
-
-        merger_enabled = required_events_merger is not None
-        requirement_events = RequriementEvent.objects.filter(
-            candidateSemesterActive=candidate_semester.id
-        )
-        for r in requirement_events:
-            enabled = r.enable
-            event_type = r.eventType.type
-            merged = merger_enabled and (event_type in required_events_merger)
-            if enabled or merged:
-                required_events[event_type] = {
-                    "eventsDateStart": r.eventsDateStart,
-                    "eventsDateEnd": r.eventsDateEnd,
-                    "title": r.title if r.enableTitle else None,
-                }
-
-        return required_events
-
-    def get_event_types_map(self, candidate_semester):
-        return list(self.get_required_events(candidate_semester, None))
 
     def process_events(
         self,
@@ -198,9 +173,7 @@ class CandidatePortalData:
             for eventType in node.events():
                 required_events_merger.add(eventType)
 
-        required_events = self.get_required_events(
-            candidateSemester, required_events_merger
-        )
+        required_events = get_required_events(candidateSemester, required_events_merger)
 
         req_list = {}
         # Can't use "get", since no guarantee that the Mandatory object of a semester always exist
@@ -286,7 +259,8 @@ class CandidatePortalData:
             req_list,
         )
 
-        req_colors = get_requirement_colors(self.get_event_types_map(candidateSemester))
+        event_types = list(get_required_events(candidateSemester, None))
+        req_colors = get_requirement_colors(event_types)
 
         blank_dict = {}
         req_titles = {}
@@ -325,35 +299,15 @@ class CandidatePortalData:
                 merge_names,
             )
 
-        upcoming_events = (
-            Event.objects.filter(
-                start_time__range=(today, today + timezone.timedelta(days=7))
-            )
-            .order_by("start_time")
-            .filter(access_level__gte=get_access_level(self.user))
-        )
-
-        events = []
-        for req_event in self.get_event_types_map(candidateSemester):
-            events.append(
-                {
-                    ATTR.TITLE: req_titles[req_event],
-                    ATTR.STATUS: req_statuses[req_event],
-                    ATTR.COLOR: req_colors[req_event],
-                    ATTR.CONFIRMED: confirmed_events[req_event],
-                    ATTR.UNCONFIRMED: unconfirmed_events[req_event],
-                }
-            )
-        for req_event in merge_names:
-            events.append(
-                {
-                    ATTR.TITLE: req_titles[req_event],
-                    ATTR.STATUS: req_statuses[req_event],
-                    ATTR.COLOR: req_colors[req_event],
-                    ATTR.CONFIRMED: confirmed_events[req_event],
-                    ATTR.UNCONFIRMED: unconfirmed_events[req_event],
-                }
-            )
+        events = [
+            {
+                ATTR.TITLE: req_titles[t],
+                ATTR.STATUS: req_statuses[t],
+                ATTR.COLOR: req_colors[t],
+                ATTR.CONFIRMED: confirmed_events[t],
+                ATTR.UNCONFIRMED: unconfirmed_events[t]
+            }
+        for t in (event_types + merge_names)]
 
         interactivities = {
             ATTR.TITLE: req_titles[settings.HANGOUT_EVENT][
@@ -385,20 +339,15 @@ class CandidatePortalData:
         context = {
             "announcements": announcements,
             "confirmed_events": {
-                **{event_key: confirmed_events[event_key]
-                for event_key in self.get_event_types_map(candidateSemester)},
+                **{e: confirmed_events[e] for e in event_types},
                 "hangout": confirmed_events["Hangout"],
             },
             "unconfirmed_events": {
-                **{event_key: unconfirmed_events[event_key]
-                for event_key in self.get_event_types_map(candidateSemester)},
+                **{e: unconfirmed_events[e] for e in event_types},
                 "hangout": unconfirmed_events["Hangout"],
             },
-            "req_statuses": {
-                event_key: req_statuses[event_key]
-                for event_key in self.get_event_types_map(candidateSemester)
-            },
-            "upcoming_events": upcoming_events,
+            "req_statuses": {e: req_statuses[e] for e in event_types},
+            "upcoming_events": get_upcoming_events(self.user),
             "committee_project": CommitteeProjectProcessor.process_status(self.user, candidateSemester),
             "candidate_forms": CandidateFormProcessor.process_status(self.user, candidateSemester),
             "due_payments": DuePaymentProjectProcessor.process_status(self.user, candidateSemester),
