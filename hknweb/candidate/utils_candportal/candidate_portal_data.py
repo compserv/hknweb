@@ -2,22 +2,17 @@ from django.conf import settings
 from django.contrib.auth.models import User
 
 from hknweb.coursesemester.models import Semester
-from hknweb.events.models import Rsvp, EventType
+from hknweb.events.models import Rsvp
 
 from hknweb.candidate.constants import ATTR
 from hknweb.candidate.models import (
     Announcement,
     RequirementBitByteActivity,
-    RequriementEvent,
-    RequirementHangout,
     RequirementMandatory,
     RequirementMergeRequirement,
 )
 
 from hknweb.candidate.utils_candportal.utils import create_title
-from hknweb.candidate.utils_candportal.check_requirements import (
-    check_requirements,
-)
 from hknweb.candidate.utils_candportal.merged_events import MergedEvents
 from hknweb.candidate.utils_candportal.count import (
     count_challenges,
@@ -57,18 +52,19 @@ class CandidatePortalData:
     def process_events(
         self,
         rsvps,
-        required_events,
-        candidateSemester,
+        required_events: dict,
+        candidate_semester: Semester,
         requirement_mandatory,
-        num_challenges_confirmed,
-        num_bitbytes,
-        req_list,
+        num_challenges_confirmed: int,
+        num_bitbytes: int,
+        event_types: list,
+        merger_nodes,
     ) -> ReqInfo:
         def get_events_by_confirmed(confirmed):
             return get_events(
                 rsvps,
                 required_events,
-                candidateSemester,
+                candidate_semester,
                 requirement_mandatory,
                 confirmed=confirmed,
             )
@@ -76,21 +72,13 @@ class CandidatePortalData:
         confirmed_events = get_events_by_confirmed(True)
         unconfirmed_events = get_events_by_confirmed(False)
 
-        req_statuses, req_remaining = check_requirements(
-            confirmed_events,
-            unconfirmed_events,
-            num_challenges_confirmed,
-            num_bitbytes,
-            req_list,
-        )
+        req_info = ReqInfo(confirmed_events, unconfirmed_events)
+        req_info.set_list(candidate_semester, required_events)
+        req_info.set_statuses_and_remaining(num_challenges_confirmed, num_bitbytes)
+        req_info.set_titles(required_events)
+        req_info.set_colors(event_types, merger_nodes)
 
-        return ReqInfo(
-            req_list,
-            req_statuses,
-            req_remaining,
-            confirmed_events,
-            unconfirmed_events,
-        )
+        return req_info
 
     def process_merge_node(self, node, req_info) -> str:
         node_string = node.get_events_str()
@@ -168,7 +156,6 @@ class CandidatePortalData:
             **get_required_hangouts(candidate_semester),
         }
 
-        req_list = {}
         # Can't use "get", since no guarantee that the Mandatory object of a semester always exist
         requirement_mandatory = (
             candidate_semester
@@ -177,49 +164,17 @@ class CandidatePortalData:
             ).first()
         )
 
-        if candidate_semester is not None:
-            for requirementEvent in RequriementEvent.objects.filter(
-                candidateSemesterActive=candidate_semester.id
-            ):
-                if requirementEvent.enable or (
-                    requirementEvent.eventType.type in required_events
-                ):
-                    req_list[
-                        requirementEvent.eventType.type
-                    ] = requirementEvent.numberRequired
-
-        req_list[settings.HANGOUT_EVENT] = {
-            settings.HANGOUT_ATTRIBUTE_NAME: 0,
-            settings.CHALLENGE_ATTRIBUTE_NAME: 0,
-            settings.EITHER_ATTRIBUTE_NAME: 0,
-        }
-
-        num_required_hangouts = req_list[settings.HANGOUT_EVENT]
-        if candidate_semester is not None:
-            for requirementHangout in RequirementHangout.objects.filter(
-                candidateSemesterActive=candidate_semester.id
-            ):
-                if requirementHangout.enable:
-                    num_required_hangouts[
-                        requirementHangout.eventType
-                    ] = requirementHangout.numberRequired
-
-        ### Bit Byte
-        req_list[settings.BITBYTE_ACTIVITY] = 0
-        # Can't use "get", since no guarantee that the object of this semester always exist
         bitbyte_requirement = (
             candidate_semester
             and RequirementBitByteActivity.objects.filter(
                 candidateSemesterActive=candidate_semester
             ).first()
         )
-        if bitbyte_requirement is not None and bitbyte_requirement.enable:
-            req_list[settings.BITBYTE_ACTIVITY] = bitbyte_requirement.numberRequired
-
         num_bitbytes = count_num_bitbytes(self.user, bitbyte_requirement)
         ###
 
         # Process Events here
+        event_types = list(get_required_events(candidate_semester, None))
         req_info = self.process_events(
             Rsvp.objects.filter(user__exact=self.user),
             required_events,
@@ -227,12 +182,9 @@ class CandidatePortalData:
             requirement_mandatory,
             num_challenges_confirmed,
             num_bitbytes,
-            req_list,
+            event_types,
+            merger_nodes,
         )
-
-        req_info.set_titles(required_events)
-        event_types = list(get_required_events(candidate_semester, None))
-        req_info.set_colors(event_types, merger_nodes)
 
         # Process Merged Events here
         merge_names = [self.process_merge_node(node, req_info) for node in merger_nodes]
