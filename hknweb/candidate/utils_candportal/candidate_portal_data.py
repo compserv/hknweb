@@ -8,12 +8,6 @@ from hknweb.events.models import Event, Rsvp, EventType
 from hknweb.candidate.constants import ATTR
 from hknweb.candidate.models import (
     Announcement,
-    CandidateForm,
-    CandidateFormDoneEntry,
-    CommitteeProject,
-    CommitteeProjectDoneEntry,
-    DuePayment,
-    DuePaymentPaidEntry,
     RequirementBitByteActivity,
     RequriementEvent,
     RequirementHangout,
@@ -34,6 +28,11 @@ from hknweb.candidate.utils_candportal.count import (
     count_num_bitbytes,
 )
 from hknweb.candidate.utils_candportal.get_events import get_events
+from hknweb.candidate.utils_candportal.process_misc_req import (
+    CandidateFormProcessor,
+    CommitteeProjectProcessor,
+    DuePaymentProjectProcessor,
+)
 
 
 """ What the event types are called on admin site.
@@ -80,7 +79,7 @@ class CandidatePortalData:
         return required_events
 
     def get_event_types_map(self, candidate_semester):
-        return list(self.get_required_events(candidate_semester))
+        return list(self.get_required_events(candidate_semester, None))
 
     def process_events(
         self,
@@ -173,61 +172,7 @@ class CandidatePortalData:
         merge_names.append(node_string_key)
         # req_statuses, confirmed_events, unconfirmed_events
 
-    def process_status(
-        self,
-        title,
-        requirements,
-        completed_roster_model,
-        completed_process,
-        all_done_processor=lambda all_done, other_bool: all_done and other_bool,
-        all_done=True,
-    ):
-        """
-        requriements - the QuerySet of the requirements
-        completed_roster - the Model of the entire entires of those who completed requirements
-        user - the current User (as the User Model type)
-        completed_process - function or lambda function to check if the requirement is completed,
-                            with two parameters with the "requirement" and "completed_roster" of
-                            the current user
-        """
-        completed_roster = completed_roster_model.objects.all()
-        resulting_statuses = []
-        if requirements is not None:
-            for requirement in requirements:
-                is_completed = completed_process(requirement, completed_roster)
-                all_done = all_done_processor(all_done, is_completed)
-                resulting_statuses.append(
-                    {"requirement": requirement, "status": is_completed}
-                )
-        result = {
-            "title": title,
-            "resulting_statuses": resulting_statuses,
-            "all_done": all_done,
-        }
-        return result
-
-    def check_due(self, due_required, completed_roster):
-        entry = completed_roster.filter(duePayment=due_required.id).first()
-        if entry is None:
-            return False
-        return self.user in entry.users.all()
-
-    def check_form(self, form_required, completed_roster):
-        entry = completed_roster.filter(form=form_required.id).first()
-        if entry is None:
-            return False
-        return self.user in entry.users.all()
-
-    def check_committee_project(self, committee_project_required, completed_roster):
-        entry = completed_roster.filter(
-            committeeProject=committee_project_required.id
-        ).first()
-        if entry is None:
-            return False
-        return self.user in entry.users.all()
-
     def get_user_cand_data(self):
-
         candidateSemester = self.user.profile.candidate_semester
 
         (
@@ -319,55 +264,6 @@ class CandidatePortalData:
             "-release_date"
         )
         ###
-
-        ### Candidate Forms
-        candidate_forms = candidateSemester and CandidateForm.objects.filter(
-            visible=True, candidateSemesterActive=candidateSemester.id
-        ).order_by("duedate")
-
-        candidate_forms_with_completed = self.process_status(
-            "Complete all required forms",
-            candidate_forms,
-            CandidateFormDoneEntry,
-            lambda form_required, completed_roster: self.check_form(
-                form_required, completed_roster
-            ),
-        )
-        ###
-
-        ### Due Payments
-        due_payments = candidateSemester and DuePayment.objects.filter(
-            visible=True, candidateSemesterActive=candidateSemester.id
-        ).order_by("duedate")
-
-        due_payments_with_completed = self.process_status(
-            "Pay dues",
-            due_payments,
-            DuePaymentPaidEntry,
-            lambda due_required, completed_roster: self.check_due(
-                due_required, completed_roster
-            ),
-        )
-        ###
-
-        ### Committee Projects
-        committee_project = candidateSemester and CommitteeProject.objects.filter(
-            visible=True, candidateSemesterActive=candidateSemester.id
-        ).order_by("name")
-
-        committee_project_with_completed = self.process_status(
-            "Complete a Committee Project",
-            committee_project,
-            CommitteeProjectDoneEntry,
-            lambda committee_project_required, completed_roster: self.check_committee_project(
-                committee_project_required, completed_roster
-            ),
-            all_done_processor=lambda all_done, other_bool: all_done or other_bool,
-            all_done=False,
-        )
-        ###
-
-        # miscellaneous_requirements = [due_payments_with_completed, candidate_forms_with_completed]
 
         today = timezone.now()
         rsvps = Rsvp.objects.filter(user__exact=self.user)
@@ -503,9 +399,9 @@ class CandidatePortalData:
                 for event_key in self.get_event_types_map(candidateSemester)
             },
             "upcoming_events": upcoming_events,
-            "committee_project": committee_project_with_completed,
-            "candidate_forms": candidate_forms_with_completed,
-            "due_payments": due_payments_with_completed,
+            "committee_project": CommitteeProjectProcessor.process_status(self.user, candidateSemester),
+            "candidate_forms": CandidateFormProcessor.process_status(self.user, candidateSemester),
+            "due_payments": DuePaymentProjectProcessor.process_status(self.user, candidateSemester),
             "events": events,
             "interactivities": interactivities,
             "bitbyte": bitbyte,
