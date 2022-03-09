@@ -25,8 +25,9 @@ class ReqInfo:
         self.unconfirmed_events = unconfirmed_events
 
         self.lst: dict = None
-        self.statuses: dict = None
+        self.confirmed: dict = None
         self.remaining: dict = None
+        self.statuses: dict = None
         self.titles: dict = None
         self.colors: dict = None
 
@@ -67,8 +68,7 @@ class ReqInfo:
 
         self.lst = lst
 
-    def set_remaining(self, num_challenges: int, num_bitbytes: int):
-        """Checks which requirements have been fulfilled by a candidate."""
+    def set_confirmed_reqs(self, num_challenges: int, num_bitbytes: int):
         # TODO: Hardcoded-ish for now, allow for choice of Hangout events
         confirmed_hangouts = len(self.confirmed_events.get("Hangout", []))
         confirmed = {
@@ -80,6 +80,10 @@ class ReqInfo:
             settings.BITBYTE_ACTIVITY: num_bitbytes,
             **{r: len(self.confirmed_events[r]) for r in self.confirmed_events}
         }
+
+        self.confirmed = confirmed
+
+    def set_remaining(self):
         remaining = deepcopy(self.lst)
 
         def apply(d1: dict, d2: dict, output_d: dict):
@@ -89,7 +93,7 @@ class ReqInfo:
                 else:
                     output_d[r] = max(d1[r] - d2[r], 0)
 
-        apply(self.lst, confirmed, remaining)
+        apply(self.lst, self.confirmed, remaining)
 
         self.remaining = remaining
 
