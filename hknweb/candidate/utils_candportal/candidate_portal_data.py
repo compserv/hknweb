@@ -59,7 +59,6 @@ class CandidatePortalData:
     def process_events(
         self,
         rsvps,
-        today,
         required_events,
         candidateSemester,
         requirement_mandatory,
@@ -70,7 +69,7 @@ class CandidatePortalData:
         def get_events_by_confirmed(confirmed):
             return get_events(
                 rsvps,
-                today,
+                timezone.now(),
                 required_events,
                 candidateSemester,
                 requirement_mandatory,
@@ -148,45 +147,45 @@ class CandidatePortalData:
         # req_statuses, confirmed_events, unconfirmed_events
 
     def get_user_cand_data(self):
-        candidateSemester = self.user.profile.candidate_semester
+        candidate_semester = self.user.profile.candidate_semester
 
         (
             num_challenges_confirmed,
             num_challenges_rejected,
             num_pending,
-        ) = count_challenges(self.user, candidateSemester)
+        ) = count_challenges(self.user, candidate_semester)
 
         required_events_merger = set()
 
         seen_merger_nodes = set()
         merger_nodes = []
-        if candidateSemester is not None:
+        if candidate_semester is not None:
             for merger in RequirementMergeRequirement.objects.filter(
-                candidateSemesterActive=candidateSemester.id
+                candidateSemesterActive=candidate_semester.id
             ):
                 if merger.enable:
                     merger_nodes.append(
-                        MergedEvents(merger, candidateSemester, seen_merger_nodes)
+                        MergedEvents(merger, candidate_semester, seen_merger_nodes)
                     )
 
         for node in merger_nodes:
             for eventType in node.events():
                 required_events_merger.add(eventType)
 
-        required_events = get_required_events(candidateSemester, required_events_merger)
+        required_events = get_required_events(candidate_semester, required_events_merger)
 
         req_list = {}
         # Can't use "get", since no guarantee that the Mandatory object of a semester always exist
         requirement_mandatory = (
-            candidateSemester
+            candidate_semester
             and RequirementMandatory.objects.filter(
-                candidateSemesterActive=candidateSemester.id
+                candidateSemesterActive=candidate_semester.id
             ).first()
         )
 
-        if candidateSemester is not None:
+        if candidate_semester is not None:
             for requirementEvent in RequriementEvent.objects.filter(
-                candidateSemesterActive=candidateSemester.id
+                candidateSemesterActive=candidate_semester.id
             ):
                 if requirementEvent.enable or (
                     requirementEvent.eventType.type in required_events
@@ -202,9 +201,9 @@ class CandidatePortalData:
         }
 
         num_required_hangouts = req_list[settings.HANGOUT_EVENT]
-        if candidateSemester is not None:
+        if candidate_semester is not None:
             for requirementHangout in RequirementHangout.objects.filter(
-                candidateSemesterActive=candidateSemester.id
+                candidateSemesterActive=candidate_semester.id
             ):
                 if requirementHangout.enable:
                     num_required_hangouts[
@@ -223,24 +222,16 @@ class CandidatePortalData:
         req_list[settings.BITBYTE_ACTIVITY] = 0
         # Can't use "get", since no guarantee that the object of this semester always exist
         bitbyte_requirement = (
-            candidateSemester
+            candidate_semester
             and RequirementBitByteActivity.objects.filter(
-                candidateSemesterActive=candidateSemester
+                candidateSemesterActive=candidate_semester
             ).first()
         )
         if bitbyte_requirement is not None and bitbyte_requirement.enable:
             req_list[settings.BITBYTE_ACTIVITY] = bitbyte_requirement.numberRequired
 
         num_bitbytes = count_num_bitbytes(self.user, bitbyte_requirement)
-
-        announcements = Announcement.objects.filter(visible=True).order_by(
-            "-release_date"
-        )
         ###
-
-        today = timezone.now()
-        rsvps = Rsvp.objects.filter(user__exact=self.user)
-        # Both confirmed and unconfirmed rsvps have been sorted into event types
 
         # Process Events here
         (
@@ -249,17 +240,16 @@ class CandidatePortalData:
             req_statuses,
             req_remaining,
         ) = self.process_events(
-            rsvps,
-            today,
+            Rsvp.objects.filter(user__exact=self.user),
             required_events,
-            candidateSemester,
+            candidate_semester,
             requirement_mandatory,
             num_challenges_confirmed,
             num_bitbytes,
             req_list,
         )
 
-        event_types = list(get_required_events(candidateSemester, None))
+        event_types = list(get_required_events(candidate_semester, None))
         req_colors = get_requirement_colors(event_types)
 
         blank_dict = {}
@@ -337,26 +327,56 @@ class CandidatePortalData:
         }
 
         context = {
-            "announcements": announcements,
-            "confirmed_events": {
-                **{e: confirmed_events[e] for e in event_types},
-                "hangout": confirmed_events["Hangout"],
-            },
-            "unconfirmed_events": {
-                **{e: unconfirmed_events[e] for e in event_types},
-                "hangout": unconfirmed_events["Hangout"],
-            },
             "req_statuses": {e: req_statuses[e] for e in event_types},
-            "upcoming_events": get_upcoming_events(self.user),
-            "committee_project": CommitteeProjectProcessor.process_status(self.user, candidateSemester),
-            "candidate_forms": CandidateFormProcessor.process_status(self.user, candidateSemester),
-            "due_payments": DuePaymentProjectProcessor.process_status(self.user, candidateSemester),
             "events": events,
             "interactivities": interactivities,
             "bitbyte": bitbyte,
-            "candidate_semester": candidateSemester
-            or "Please set your candidate semester in your Account Settings",
-            "username": self.user.username,
-            "user_self": True,
         }
+        context.update(self._get_misc_context(self.user, candidate_semester))
+        context.update(self._get_event_related_context(
+            self.user,
+            confirmed_events,
+            unconfirmed_events,
+            event_types
+        ))
+        context.update(self._get_misc_req_related_context(
+            self.user, candidate_semester
+        ))
+
         return context
+
+    @staticmethod
+    def _get_misc_context(user, candidate_semester):
+        announcements = Announcement.objects \
+            .filter(visible=True) \
+            .order_by("-release_date")
+
+        return {
+            "announcements": announcements,
+            "username": user.username,
+            "user_self": True,
+            "candidate_semester": candidate_semester
+            or "Please set your candidate semester in your Account Settings",
+        }
+
+    @staticmethod
+    def _get_event_related_context(user, confirmed_events, unconfirmed_events, event_types):
+        def helper(events):
+            return {
+                **{e: events[e] for e in event_types},
+                "hangout": events["Hangout"],
+            }
+
+        return {
+            "confirmed_events": helper(confirmed_events),
+            "unconfirmed_events": helper(unconfirmed_events),
+            "upcoming_events": get_upcoming_events(user),
+        }
+
+    @staticmethod
+    def _get_misc_req_related_context(user, candidate_semester):
+        return {
+            "committee_project": CommitteeProjectProcessor.process_status(user, candidate_semester),
+            "candidate_forms": CandidateFormProcessor.process_status(user, candidate_semester),
+            "due_payments": DuePaymentProjectProcessor.process_status(user, candidate_semester),
+        }
