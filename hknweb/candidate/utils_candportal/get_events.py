@@ -1,5 +1,6 @@
 import itertools
 
+from django.conf import settings
 from django.db.models import Q, QuerySet
 from django.utils import timezone
 from django.contrib.auth.models import User
@@ -7,8 +8,8 @@ from django.contrib.auth.models import User
 from hknweb.coursesemester.models import Semester
 from hknweb.utils import get_semester_bounds, get_access_level
 
-from hknweb.events.models import Event
-from hknweb.candidate.models import RequriementEvent, RequirementMandatory
+from hknweb.events.models import Event, EventType
+from hknweb.candidate.models import RequriementEvent, RequirementHangout, RequirementMandatory
 
 
 MANDATORY = "Mandatory"
@@ -111,6 +112,28 @@ def get_required_events(candidate_semester: Semester, required_events_merger: se
             }
 
     return required_events
+
+
+def get_required_hangouts(candidate_semester: Semester) -> dict:
+    required_hangout_events = {}
+
+    requirement_hangout = RequirementHangout.objects.filter(
+        candidateSemesterActive=candidate_semester.id,
+        eventType=settings.HANGOUT_ATTRIBUTE_NAME,
+    ).first()
+    if (
+        requirement_hangout \
+        and requirement_hangout.enable \
+        and EventType.objects.filter(type="Hangout").count() > 0
+    ):
+        # TODO: Hardcoded-ish for now, allow for choice of Hangout events
+        required_hangout_events["Hangout"] = {
+            "eventsDateStart": requirement_hangout.hangoutsDateStart,
+            "eventsDateEnd": requirement_hangout.hangoutsDateEnd,
+            "title": "Hangout",
+        }
+
+    return required_hangout_events
 
 
 def get_upcoming_events(user: User) -> QuerySet:

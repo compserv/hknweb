@@ -25,6 +25,7 @@ from hknweb.candidate.utils_candportal.count import (
 )
 from hknweb.candidate.utils_candportal.get_events import (
     get_events,
+    get_required_hangouts,
     get_required_events,
     get_upcoming_events,
 )
@@ -162,7 +163,10 @@ class CandidatePortalData:
             for eventType in node.events():
                 required_events_merger.add(eventType)
 
-        required_events = get_required_events(candidate_semester, required_events_merger)
+        required_events = {
+            **get_required_events(candidate_semester, required_events_merger),
+            **get_required_hangouts(candidate_semester),
+        }
 
         req_list = {}
         # Can't use "get", since no guarantee that the Mandatory object of a semester always exist
@@ -199,14 +203,6 @@ class CandidatePortalData:
                     num_required_hangouts[
                         requirementHangout.eventType
                     ] = requirementHangout.numberRequired
-                    if requirementHangout.eventType == settings.HANGOUT_ATTRIBUTE_NAME:
-                        # TODO: Hardcoded-ish for now, allow for choice of Hangout events
-                        if EventType.objects.filter(type="Hangout").count() > 0:
-                            required_events["Hangout"] = {
-                                "eventsDateStart": requirementHangout.hangoutsDateStart,
-                                "eventsDateEnd": requirementHangout.hangoutsDateEnd,
-                                "title": "Hangout",
-                            }
 
         ### Bit Byte
         req_list[settings.BITBYTE_ACTIVITY] = 0
