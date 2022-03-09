@@ -11,9 +11,6 @@ from hknweb.candidate.constants import EVENT_NAMES
 from hknweb.candidate.models import RequriementEvent, RequirementHangout, RequirementMandatory
 
 
-MANDATORY = "Mandatory"
-
-
 def sort_rsvps_by_event_type(
     rsvps: QuerySet,
     required_events: dict,
@@ -46,7 +43,7 @@ def get_mandatory_events(candidate_semester: Semester, confirmed_rsvps: bool):
             start_time, end_time = r.eventsDateStart, r.eventsDateEnd
 
     mandatory_events |= Event.objects.filter(
-        event_type__type=MANDATORY,
+        event_type__type=EVENT_NAMES.MANDATORY,
         start_time__gt=start_time,
         end_time__lt=end_time,
     )

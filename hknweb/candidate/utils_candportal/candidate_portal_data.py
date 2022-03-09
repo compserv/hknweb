@@ -18,7 +18,6 @@ from hknweb.candidate.utils_candportal.count import (
     count_num_bitbytes,
 )
 from hknweb.candidate.utils_candportal.get_events import (
-    MANDATORY,
     get_required_events,
     get_upcoming_events,
 )
@@ -133,7 +132,7 @@ class CandidatePortalData:
         ) = count_challenges(self.user, candidate_semester)
         num_bitbytes = count_num_bitbytes(self.user, candidate_semester)
 
-        event_types = list(get_required_events(candidate_semester, set())) + [MANDATORY]
+        event_types = list(get_required_events(candidate_semester, set())) + [EVENT_NAMES.MANDATORY]
         req_info = self.process_events(
             Rsvp.objects.filter(user__exact=self.user),
             candidate_semester,

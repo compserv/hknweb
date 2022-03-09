@@ -15,7 +15,6 @@ from hknweb.candidate.utils_candportal.utils import (
     get_requirement_colors,
 )
 from hknweb.candidate.utils_candportal.get_events import (
-    MANDATORY,
     get_required_hangouts,
     get_required_events,
     get_mandatory_events,
@@ -65,7 +64,7 @@ class ReqInfo:
         confirmed_events = sort_rsvps_by_event_type(confirmed_rsvps, required_events)
         unconfirmed_events = sort_rsvps_by_event_type(unconfirmed_rsvps, required_events)
 
-        confirmed_events[MANDATORY], unconfirmed_events[MANDATORY] = \
+        confirmed_events[EVENT_NAMES.MANDATORY], unconfirmed_events[EVENT_NAMES.MANDATORY] = \
             get_mandatory_events(candidate_semester, confirmed_rsvps)
 
         self.required_events = required_events
@@ -100,9 +99,9 @@ class ReqInfo:
         if bitbyte_requirement:
             lst[EVENT_NAMES.BITBYTE] = bitbyte_requirement.numberRequired
 
-        lst[MANDATORY] =\
-            len(self.confirmed_events[MANDATORY]) \
-            + len(self.unconfirmed_events[MANDATORY])
+        lst[EVENT_NAMES.MANDATORY] =\
+            len(self.confirmed_events[EVENT_NAMES.MANDATORY]) \
+            + len(self.unconfirmed_events[EVENT_NAMES.MANDATORY])
 
         self.lst = lst
 
