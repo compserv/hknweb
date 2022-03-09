@@ -74,7 +74,8 @@ class CandidatePortalData:
 
         req_info = ReqInfo(confirmed_events, unconfirmed_events)
         req_info.set_list(candidate_semester, required_events)
-        req_info.set_statuses_and_remaining(num_challenges_confirmed, num_bitbytes)
+        req_info.set_remaining(num_challenges_confirmed, num_bitbytes)
+        req_info.set_statuses()
         req_info.set_titles(required_events)
         req_info.set_colors(event_types, merger_nodes)
 

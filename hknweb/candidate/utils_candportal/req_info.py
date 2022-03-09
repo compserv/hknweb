@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 from django.conf import settings
 from django.db.models import Q
 
@@ -11,9 +13,6 @@ from hknweb.candidate.models import (
 from hknweb.candidate.utils_candportal.utils import (
     create_title,
     get_requirement_colors,
-)
-from hknweb.candidate.utils_candportal.check_requirements import (
-    check_interactivity_requirements,
 )
 
 
@@ -55,6 +54,9 @@ class ReqInfo:
             enable=True,
         ):
             num_required_hangouts[r.eventType] = r.numberRequired
+        num_required_hangouts[settings.EITHER_ATTRIBUTE_NAME] =\
+            num_required_hangouts[settings.HANGOUT_ATTRIBUTE_NAME] \
+            + num_required_hangouts[settings.CHALLENGE_ATTRIBUTE_NAME]
 
         bitbyte_requirement = RequirementBitByteActivity.objects.filter(
             candidateSemesterActive=candidate_semester,
@@ -65,42 +67,42 @@ class ReqInfo:
 
         self.lst = lst
 
-    def set_statuses_and_remaining(self, num_challenges: int, num_bitbytes: int):
+    def set_remaining(self, num_challenges: int, num_bitbytes: int):
         """Checks which requirements have been fulfilled by a candidate."""
-        statuses = dict.fromkeys(self.lst.keys(), False)
-        remaining = {**self.lst}  # Makes deep copy of "req_list"
+        # TODO: Hardcoded-ish for now, allow for choice of Hangout events
+        confirmed_hangouts = len(self.confirmed_events.get("Hangout", []))
+        confirmed = {
+            settings.HANGOUT_EVENT: {
+                settings.HANGOUT_ATTRIBUTE_NAME: confirmed_hangouts,
+                settings.CHALLENGE_ATTRIBUTE_NAME: num_challenges,
+                settings.EITHER_ATTRIBUTE_NAME: confirmed_hangouts + num_challenges,
+            },
+            settings.BITBYTE_ACTIVITY: num_bitbytes,
+            **{r: len(self.confirmed_events[r]) for r in self.confirmed_events}
+        }
+        remaining = deepcopy(self.lst)
 
-        for req_type, minimum in self.lst.items():
-            num_confirmed = 0
-            if req_type == settings.BITBYTE_ACTIVITY:
-                num_confirmed = num_bitbytes
-            elif req_type in self.confirmed_events:
-                num_confirmed = len(self.confirmed_events[req_type])
-            # officer hangouts and mandatory events are special cases
-            if req_type == settings.HANGOUT_EVENT:
-                # TODO: Hardcoded-ish for now, allow for choice of Hangout events
-                if "Hangout" in self.confirmed_events:
-                    num_confirmed = len(self.confirmed_events["Hangout"])
-                interactivities = {
-                    settings.HANGOUT_ATTRIBUTE_NAME: num_confirmed,
-                    settings.CHALLENGE_ATTRIBUTE_NAME: num_challenges,
-                    settings.EITHER_ATTRIBUTE_NAME: num_confirmed + num_challenges,
-                }
-                (
-                    statuses[req_type],
-                    remaining[req_type],
-                ) = check_interactivity_requirements(
-                    interactivities, self.lst[settings.HANGOUT_EVENT]
-                )
-            elif (minimum < 0) or (minimum is None):
-                remaining[req_type] = len(self.unconfirmed_events[req_type])
-                statuses[req_type] = remaining[req_type] == 0
+        def apply(d1: dict, d2: dict, output_d: dict):
+            for r in d1:
+                if isinstance(d1[r], dict):
+                    apply(d1[r], d2[r], output_d[r])
+                else:
+                    output_d[r] = max(d1[r] - d2[r], 0)
+
+        apply(self.lst, confirmed, remaining)
+
+        self.remaining = remaining
+
+    def set_statuses(self):
+        statuses = dict()
+
+        for k, v in self.remaining.items():
+            if isinstance(v, int):
+                statuses[k] = v == 0
             else:
-                statuses[req_type] = num_confirmed >= minimum
-                remaining[req_type] = max(minimum - num_confirmed, 0)
+                statuses[k] = all(v.values())
 
         self.statuses = statuses
-        self.remaining = remaining
 
     def set_titles(self, required_events: dict):
         titles = {}
