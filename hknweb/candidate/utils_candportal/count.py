@@ -3,7 +3,9 @@ from typing import Tuple
 from django.conf import settings
 from django.db.models import Q
 from django.contrib.auth.models import User
+from django.utils import timezone
 
+from hknweb.utils import get_semester_bounds
 from hknweb.coursesemester.models import Semester
 
 from hknweb.candidate.models import (
@@ -19,35 +21,25 @@ def count_challenges(
     candidate_semester: Semester,
 ) -> Tuple[int, int, int]:
     challenges = OffChallenge.objects.filter(requester__exact=requested_user)
-    req_challenges_models = RequirementHangout.objects.filter(
-        eventType=settings.CHALLENGE_ATTRIBUTE_NAME,
-        candidateSemesterActive=candidate_semester,
-    ).first()
-    if req_challenges_models is not None:
-        if req_challenges_models.hangoutsDateStart is not None:
-            challenges = challenges.filter(
-                request_date__gt=req_challenges_models.hangoutsDateStart,
-            )
-        if req_challenges_models.hangoutsDateEnd is not None:
-            challenges = challenges.filter(
-                request_date__lt=req_challenges_models.hangoutsDateEnd,
-            )
-    # if either one is waiting, challenge is still being reviewed
+    r = candidate_semester \
+        and RequirementHangout.objects.filter(
+            eventType=settings.CHALLENGE_ATTRIBUTE_NAME,
+            candidateSemesterActive=candidate_semester,
+        ).first()
 
-    ## Count number of confirmed
-    challenges_confirmed = challenges.filter(
+    start_time, end_time = get_semester_bounds(timezone.now())
+    if r is not None:
+        challenges = challenges.filter(
+            request_date__gt=r.hangoutsDateStart or start_time,
+            request_date__lt=r.hangoutsDateEnd or end_time,
+        )
+
+    num_challenges_confirmed = challenges.filter(
         Q(officer_confirmed=True) & Q(csec_confirmed=True)
-    )
-    num_challenges_confirmed = challenges_confirmed.count()
-    ##
-
-    ## Count number of rejected
-    challenges_rejected = challenges.filter(
+    ).count()
+    num_challenges_rejected = challenges.filter(
         Q(officer_confirmed=False) | Q(csec_confirmed=False)
-    )
-    num_challenges_rejected = challenges_rejected.count()
-    ##
-
+    ).count()
     num_pending = (
         challenges.count() - num_challenges_confirmed - num_challenges_rejected
     )
@@ -57,19 +49,17 @@ def count_challenges(
 
 def count_num_bitbytes(
     requested_user: User,
-    bitbyte_requirement: RequirementBitByteActivity,
+    candidate_semester: Semester,
 ) -> int:
-    bitbyte_models = BitByteActivity.objects.filter(
-        participants__exact=requested_user, confirmed=True
-    )
-    if bitbyte_requirement is not None:
-        if bitbyte_requirement.bitByteDateStart is not None:
-            bitbyte_models = bitbyte_models.filter(
-                request_date__gt=bitbyte_requirement.bitByteDateStart,
-            )
-        if bitbyte_requirement.bitByteDateEnd is not None:
-            bitbyte_models = bitbyte_models.filter(
-                request_date__lt=bitbyte_requirement.bitByteDateEnd,
-            )
-    num_bitbytes = bitbyte_models.count()
-    return num_bitbytes
+    r = candidate_semester \
+        and RequirementBitByteActivity.objects.filter(
+            candidateSemesterActive=candidate_semester
+        ).first()
+
+    start_time, end_time = get_semester_bounds(timezone.now())
+    return BitByteActivity.objects.filter(
+        participants__exact=requested_user,
+        confirmed=True,
+        request_date__gt=(r and r.bitByteDateStart) or start_time,
+        request_date__lt=(r and r.bitByteDateEnd) or end_time,
+    ).count()

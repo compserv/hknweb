@@ -1,7 +1,7 @@
 from copy import deepcopy
 
 from django.conf import settings
-from django.db.models import Q
+from django.db.models import Q, QuerySet
 
 from hknweb.coursesemester.models import Semester
 
@@ -14,16 +14,33 @@ from hknweb.candidate.utils_candportal.utils import (
     create_title,
     get_requirement_colors,
 )
+from hknweb.candidate.utils_candportal.get_events import (
+    MANDATORY,
+    get_required_hangouts,
+    get_required_events,
+    get_mandatory_events,
+    sort_rsvps_by_event_type,
+)
 
 
 class ReqInfo:
-    def __init__(self,
-        confirmed_events: dict,
-        unconfirmed_events: dict,
-    ):
-        self.confirmed_events = confirmed_events
-        self.unconfirmed_events = unconfirmed_events
+    EMPTY_REQ_LIST = {
+        settings.HANGOUT_EVENT: {
+            settings.HANGOUT_ATTRIBUTE_NAME: 0,
+            settings.CHALLENGE_ATTRIBUTE_NAME: 0,
+            settings.EITHER_ATTRIBUTE_NAME: 0,
+        },
+        settings.BITBYTE_ACTIVITY: 0,
+    }
 
+    TYPE_TO_TITLE_MAPPING = {
+        settings.BITBYTE_ACTIVITY: "Bit-Byte",
+    }
+
+    def __init__(self):
+        self.required_events: dict = None
+        self.confirmed_events: dict = None
+        self.unconfirmed_events: dict = None
         self.lst: dict = None
         self.confirmed: dict = None
         self.remaining: dict = None
@@ -31,20 +48,37 @@ class ReqInfo:
         self.titles: dict = None
         self.colors: dict = None
 
-    def set_list(self, candidate_semester: Semester, required_events: dict):
-        lst = {
-            settings.HANGOUT_EVENT: {
-                settings.HANGOUT_ATTRIBUTE_NAME: 0,
-                settings.CHALLENGE_ATTRIBUTE_NAME: 0,
-                settings.EITHER_ATTRIBUTE_NAME: 0,
-            },
-            settings.BITBYTE_ACTIVITY: 0,
+    def set_confirmed_unconfirmed_events(
+        self,
+        rsvps: QuerySet,
+        candidate_semester: Semester,
+        required_events_merger: set,
+    ):
+        required_events = {
+            **get_required_events(candidate_semester, required_events_merger),
+            **get_required_hangouts(candidate_semester),
         }
+
+        confirmed_rsvps = rsvps.filter(confirmed=True)
+        unconfirmed_rsvps = rsvps.filter(confirmed=False)
+
+        confirmed_events = sort_rsvps_by_event_type(confirmed_rsvps, required_events)
+        unconfirmed_events = sort_rsvps_by_event_type(unconfirmed_rsvps, required_events)
+
+        confirmed_events[MANDATORY], unconfirmed_events[MANDATORY] = \
+            get_mandatory_events(candidate_semester, confirmed_rsvps)
+
+        self.required_events = required_events
+        self.confirmed_events = confirmed_events
+        self.unconfirmed_events = unconfirmed_events
+
+    def set_list(self, candidate_semester: Semester):
+        lst = deepcopy(self.EMPTY_REQ_LIST)
         if not candidate_semester:
             return lst
 
         for r in RequriementEvent.objects.filter(
-            Q(enable=True) | Q(eventType__type__in=required_events),
+            Q(enable=True) | Q(eventType__type__in=self.required_events),
             candidateSemesterActive=candidate_semester.id,
         ):
             lst[r.eventType.type] = r.numberRequired
@@ -66,6 +100,10 @@ class ReqInfo:
         if bitbyte_requirement:
             lst[settings.BITBYTE_ACTIVITY] = bitbyte_requirement.numberRequired
 
+        lst[MANDATORY] =\
+            len(self.confirmed_events[MANDATORY]) \
+            + len(self.unconfirmed_events[MANDATORY])
+
         self.lst = lst
 
     def set_confirmed_reqs(self, num_challenges: int, num_bitbytes: int):
@@ -78,7 +116,7 @@ class ReqInfo:
                 settings.EITHER_ATTRIBUTE_NAME: confirmed_hangouts + num_challenges,
             },
             settings.BITBYTE_ACTIVITY: num_bitbytes,
-            **{r: len(self.confirmed_events[r]) for r in self.confirmed_events}
+            **{r: len(self.confirmed_events[r]) for r in self.confirmed_events},
         }
 
         self.confirmed = confirmed
@@ -108,12 +146,12 @@ class ReqInfo:
 
         self.statuses = statuses
 
-    def set_titles(self, required_events: dict):
+    def set_titles(self):
         titles = {}
         for req_type in self.statuses:
-            name = required_events.get(req_type, {}).get("title", req_type)
+            name = self.required_events.get(req_type, {}).get("title", None)
             if not name:
-                name = req_type
+                name = self.TYPE_TO_TITLE_MAPPING.get(req_type, req_type)
 
             titles[req_type] = create_title(
                 req_type,

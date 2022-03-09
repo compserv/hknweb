@@ -4,10 +4,7 @@ from django.conf import settings
 
 from hknweb.events.models import EventType
 
-from hknweb.candidate.constants import (
-    REQUIREMENT_TITLES_ALL,
-    REQUIREMENT_TITLES_TEMPLATE,
-)
+from hknweb.candidate.constants import REQUIREMENT_TITLES_TEMPLATE
 
 
 INTERACTIVITY_NAMES = {
@@ -24,11 +21,7 @@ def create_title(
     num_required: int,
     num_required_hangouts: dict,
 ) -> str:
-    if type(num_required) == int and (
-        num_required < 0 or (num_required is None)
-    ):  # settings.MANDATORY_EVENT:
-        return REQUIREMENT_TITLES_ALL.format(name=name)
-    elif req_type == settings.HANGOUT_EVENT:
+    if req_type == settings.HANGOUT_EVENT:
         return {
             name: create_title(
                 name,
