@@ -4,16 +4,13 @@ from django.db.models import Q, QuerySet
 
 from hknweb.coursesemester.models import Semester
 
-from hknweb.candidate.constants import EVENT_NAMES
+from hknweb.candidate.constants import EVENT_NAMES, REQUIREMENT_TITLES_TEMPLATE
 from hknweb.candidate.models import (
     RequirementBitByteActivity,
     RequriementEvent,
     RequirementHangout,
 )
-from hknweb.candidate.utils_candportal.utils import (
-    create_title,
-    get_requirement_colors,
-)
+from hknweb.candidate.utils_candportal.utils import get_requirement_colors
 from hknweb.candidate.utils_candportal.get_events import (
     get_required_hangouts,
     get_required_events,
@@ -34,6 +31,12 @@ class ReqInfo:
 
     TYPE_TO_TITLE_MAPPING = {
         EVENT_NAMES.BITBYTE: "Bit-Byte",
+        EVENT_NAMES.INTERACTIVITIES: {
+            EVENT_NAMES.EITHER: "Interactivities",
+            EVENT_NAMES.HANGOUT: "Officer Hangouts",
+            EVENT_NAMES.CHALLENGE: "Officer Challenges",
+        },
+        EVENT_NAMES.MANDATORY: "Mandatory",
     }
 
     def __init__(self):
@@ -146,19 +149,24 @@ class ReqInfo:
         self.statuses = statuses
 
     def set_titles(self):
-        titles = {}
-        for req_type in self.statuses:
-            name = self.required_events.get(req_type, {}).get("title", None)
-            if not name:
-                name = self.TYPE_TO_TITLE_MAPPING.get(req_type, req_type)
+        names = {
+            **{r: r for r in self.lst},
+            **self.TYPE_TO_TITLE_MAPPING,
+        }
+        titles = deepcopy(names)
 
-            titles[req_type] = create_title(
-                req_type,
-                self.remaining[req_type],
-                name,
-                self.lst[req_type],
-                self.lst.get(EVENT_NAMES.INTERACTIVITIES, {}),
-            )
+        def apply(d1: dict, d2: dict, d3: dict, d4: dict):
+            for k, v in d1.items():
+                if isinstance(v, dict):
+                    apply(d1[k], d2[k], d3[k], d4[k])
+                else:
+                    d2[k] = REQUIREMENT_TITLES_TEMPLATE.format(
+                        name=d1[k],
+                        num_required=d3[k],
+                        num_remaining=d4[k],
+                    )
+
+        apply(names, titles, self.lst, self.remaining)
 
         self.titles = titles
 

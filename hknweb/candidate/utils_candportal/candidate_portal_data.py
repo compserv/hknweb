@@ -5,13 +5,12 @@ from django.contrib.auth.models import User
 from hknweb.coursesemester.models import Semester
 from hknweb.events.models import Rsvp
 
-from hknweb.candidate.constants import ATTR, EVENT_NAMES
+from hknweb.candidate.constants import ATTR, EVENT_NAMES, REQUIREMENT_TITLES_TEMPLATE
 from hknweb.candidate.models import (
     Announcement,
     RequirementMergeRequirement,
 )
 
-from hknweb.candidate.utils_candportal.utils import create_title
 from hknweb.candidate.utils_candportal.merged_events import MergedEvents
 from hknweb.candidate.utils_candportal.count import (
     count_challenges,
@@ -108,8 +107,10 @@ class CandidatePortalData:
                 + " - Looped Merged Requirements for all required currently unsupported"
             )
         else:
-            req_info.titles[node_string_key] = create_title(
-                "", remaining_count, node_string, grand_total, None
+            req_info.titles[node_string_key] = REQUIREMENT_TITLES_TEMPLATE.format(
+                name=node_string,
+                num_required=grand_total,
+                num_remaining=remaining_count,
             )
 
         req_info.confirmed_events[node_string_key] = []

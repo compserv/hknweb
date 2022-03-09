@@ -1,43 +1,6 @@
-from typing import Callable, Union
-
-from django.conf import settings
+from typing import Callable
 
 from hknweb.events.models import EventType
-
-from hknweb.candidate.constants import REQUIREMENT_TITLES_TEMPLATE, EVENT_NAMES
-
-
-INTERACTIVITY_NAMES = {
-    EVENT_NAMES.EITHER: "Interactivities",
-    EVENT_NAMES.HANGOUT: "Officer Hangouts",
-    EVENT_NAMES.CHALLENGE: "Officer Challenges",
-}
-
-
-def create_title(
-    req_type: str,
-    req_remaining: Union[dict, int],
-    name: str,
-    num_required: int,
-    num_required_hangouts: dict,
-) -> str:
-    if req_type == EVENT_NAMES.INTERACTIVITIES:
-        return {
-            name: create_title(
-                name,
-                req_remaining[name],
-                INTERACTIVITY_NAMES[name],
-                num_required_hangouts[name],
-                None,
-            )
-            for name in num_required_hangouts
-        }
-    else:
-        return REQUIREMENT_TITLES_TEMPLATE.format(
-            name=name,
-            num_required=num_required,
-            num_remaining=req_remaining,
-        )
 
 
 def get_requirement_colors(
