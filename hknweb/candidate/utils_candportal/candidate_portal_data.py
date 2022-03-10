@@ -212,31 +212,15 @@ class CandidatePortalData:
         }
 
     @staticmethod
-    def _get_event_related_context(
-        user: User,
-        req_info: ReqInfo,
-        event_types: list,
-    ) -> dict:
-        events = [
-            {
-                ATTR.TITLE: req_info.titles[t],
-                ATTR.STATUS: req_info.statuses[t],
-                ATTR.COLOR: req_info.colors[t],
-                ATTR.CONFIRMED: req_info.confirmed_events[t],
-                ATTR.UNCONFIRMED: req_info.unconfirmed_events[t]
-            }
-        for t in event_types]
-
-        def helper(events):
-            return {
-                **{e: events[e] for e in event_types},
-                "hangout": events.get("Hangout", []),
-            }
+    def _get_event_related_context(user: User, r: ReqInfo, event_types: list) -> dict:
+        info = (r.titles, r.statuses, r.colors, r.confirmed_events, r.unconfirmed_events)
+        attrs = (ATTR.TITLE, ATTR.STATUS, ATTR.COLOR, ATTR.CONFIRMED, ATTR.UNCONFIRMED)
+        events = [dict(zip(attrs, (i[t] for i in info))) for t in event_types]
 
         return {
             "events": events,
-            "confirmed_events": helper(req_info.confirmed_events),
-            "unconfirmed_events": helper(req_info.unconfirmed_events),
+            "confirmed_events": r.confirmed_events,
+            "unconfirmed_events": r.unconfirmed_events,
             "upcoming_events": get_upcoming_events(user),
         }
 

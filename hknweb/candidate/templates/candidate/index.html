@@ -143,12 +143,12 @@
                     {{ interactivities.officer_hangout.title }}
                 </li>
                 <ul class="conf-events">
-                    {% for event in confirmed_events.hangout %}
+                    {% for event in confirmed_events.Hangout %}
                         <li><a href="{% url 'events:detail' event.id %}">{{ event.name }}</a><br/></li>
                     {% endfor %}
                 </ul>
                 <ul class="unconf-events">
-                    {% for event in unconfirmed_events.hangout %}
+                    {% for event in unconfirmed_events.Hangout %}
                         <li><a href="{% url 'events:detail' event.id %}">{{ event.name }}</a><br/></li>
                     {% endfor %}
                 </ul>

@@ -40,17 +40,6 @@ class ReqInfo:
         EVENT_NAMES.MANDATORY: "Mandatory",
     }
 
-    def __init__(self):
-        self.required_events: dict = None
-        self.confirmed_events: dict = None
-        self.unconfirmed_events: dict = None
-        self.lst: dict = None
-        self.confirmed: dict = None
-        self.remaining: dict = None
-        self.statuses: dict = None
-        self.titles: dict = None
-        self.colors: dict = None
-
     def set_confirmed_unconfirmed_events(
         self,
         rsvps: QuerySet,
@@ -70,6 +59,8 @@ class ReqInfo:
 
         confirmed_events[EVENT_NAMES.MANDATORY], unconfirmed_events[EVENT_NAMES.MANDATORY] = \
             get_mandatory_events(candidate_semester, confirmed_rsvps)
+        confirmed_events.setdefault("Hangout", [])
+        unconfirmed_events.setdefault("Hangout", [])
 
         self.confirmed_events = confirmed_events
         self.unconfirmed_events = unconfirmed_events
@@ -108,7 +99,7 @@ class ReqInfo:
 
     def set_confirmed_reqs(self, num_challenges: int, num_bitbytes: int):
         # TODO: Hardcoded-ish for now, allow for choice of Hangout events
-        confirmed_hangouts = len(self.confirmed_events.get("Hangout", []))
+        confirmed_hangouts = len(self.confirmed_events["Hangout"])
         self.confirmed = {
             EVENT_NAMES.INTERACTIVITIES: {
                 EVENT_NAMES.HANGOUT: confirmed_hangouts,
