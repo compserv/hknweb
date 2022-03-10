@@ -49,49 +49,34 @@ class CandidatePortalData:
         required_events_merger = reduce(set.__or__, (n.events() for n in merger_nodes))
         return required_events_merger, merger_nodes
 
-    def process_merge_node(self, node, req_info) -> str:
+    def process_merge_node(self, node, req_info: ReqInfo) -> str:
         node_string = node.get_events_str()
-        remaining_count, grand_total = 0, 0
 
-        node_string_key = node_string
-        count = 2
-        if node_string_key in req_info.titles:
-            while node_string_key in req_info.titles:
-                node_string_key = "{} {}".format(node_string, count)
-                count += 1
-            req_info.colors[node_string_key] = req_info.colors[node_string]
+        key = node_string
+        if key in req_info.titles:
+            key = f"{key} {sum(s.startswith(key) for s in req_info.titles) + 1}"
+            req_info.colors[key] = req_info.colors[node_string]
 
-        req_info.statuses[node_string_key] = True
-        if node.all_required:
-            grand_total = -1
-            for event in node.events():
-                req_info.statuses[node_string_key] = (
-                    req_info.statuses[node_string_key] and req_info.statuses[event]
-                )
-                if not req_info.statuses[node_string_key]:
-                    break
-        else:
-            remaining_count, grand_total = node.get_counts(req_info.remaining, req_info.lst)
-            req_info.statuses[node_string_key] = round(remaining_count, 2) < 0.05
+        remaining_count, grand_total = node.get_counts(req_info.remaining, req_info.lst)
+        req_info.statuses[key] = round(remaining_count, 2) < 0.05
 
         # num_required_hangouts is None, since Merger nodes should not use it
         if node.all_required:
             # TODO Support for All Required for Merged Requirement (probably not a huge priority)
-            req_info.titles[node_string_key] = (
+            req_info.titles[key] = (
                 node_string
                 + " - Looped Merged Requirements for all required currently unsupported"
             )
         else:
-            req_info.titles[node_string_key] = \
+            req_info.titles[key] = \
                 REQUIREMENT_TITLES_TEMPLATE.format(node_string, grand_total, remaining_count)
 
-        req_info.confirmed_events[node_string_key] = []
-        req_info.unconfirmed_events[node_string_key] = []
-        for event in node.events():
-            req_info.confirmed_events[node_string_key].extend(req_info.confirmed_events[event])
-            req_info.unconfirmed_events[node_string_key].extend(req_info.unconfirmed_events[event])
+        events = node.events()
+        confirmed, unconfirmed = req_info.confirmed_events, req_info.unconfirmed_events
+        confirmed[key] = reduce(list.__add__, (confirmed[e] for e in events))
+        unconfirmed[key] = reduce(list.__add__, (unconfirmed[e] for e in events))
 
-        return node_string_key
+        return key
 
     def get_user_cand_data(self) -> dict:
         candidate_semester = self.user.profile.candidate_semester

@@ -79,8 +79,8 @@ class MergedEvents:
             grand_total = self.grand_total
         return remaining_count, grand_total
 
-    def events(self) -> Iterable:
-        return self.multiplier_event.keys()
+    def events(self) -> list:
+        return list(self.multiplier_event.keys())
 
     def multiplier(self) -> Iterable:
         return self.multiplier_event.values()
