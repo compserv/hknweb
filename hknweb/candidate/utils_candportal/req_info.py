@@ -56,7 +56,7 @@ class ReqInfo:
         candidate_semester: Semester,
         required_events_merger: set,
     ):
-        required_events = {
+        self.required_events = {
             **get_required_events(candidate_semester, required_events_merger),
             **get_required_hangouts(candidate_semester),
         }
@@ -64,13 +64,12 @@ class ReqInfo:
         confirmed_rsvps = rsvps.filter(confirmed=True)
         unconfirmed_rsvps = rsvps.filter(confirmed=False)
 
-        confirmed_events = sort_rsvps_by_event_type(confirmed_rsvps, required_events)
-        unconfirmed_events = sort_rsvps_by_event_type(unconfirmed_rsvps, required_events)
+        confirmed_events = sort_rsvps_by_event_type(confirmed_rsvps, self.required_events)
+        unconfirmed_events = sort_rsvps_by_event_type(unconfirmed_rsvps, self.required_events)
 
         confirmed_events[EVENT_NAMES.MANDATORY], unconfirmed_events[EVENT_NAMES.MANDATORY] = \
             get_mandatory_events(candidate_semester, confirmed_rsvps)
 
-        self.required_events = required_events
         self.confirmed_events = confirmed_events
         self.unconfirmed_events = unconfirmed_events
 
@@ -84,21 +83,21 @@ class ReqInfo:
             (RequirementHangout, Q()),
             (RequirementBitByteActivity, Q()),
         ]
-        res = [
+        events, hangouts, bitbyte = [
             c.objects.filter(
                 Q(enable=True) | q,
                 candidateSemesterActive=candidate_semester.id)
             for c, q in data
         ]
 
-        lst.update({r.eventType.type: r.numberRequired for r in res[0]})
+        lst.update({r.eventType.type: r.numberRequired for r in events})
 
         d = lst[EVENT_NAMES.INTERACTIVITIES]
-        d.update({r.eventType: r.numberRequired for r in res[1]})
+        d.update({r.eventType: r.numberRequired for r in hangouts})
         d[EVENT_NAMES.EITHER] = d[EVENT_NAMES.HANGOUT] + d[EVENT_NAMES.CHALLENGE]
 
-        if res[2].exists():
-            lst[EVENT_NAMES.BITBYTE] = res[2].first().numberRequired
+        if bitbyte.exists():
+            lst[EVENT_NAMES.BITBYTE] = bitbyte.first().numberRequired
 
         lst[EVENT_NAMES.MANDATORY] =\
             len(self.confirmed_events[EVENT_NAMES.MANDATORY]) \
@@ -109,7 +108,7 @@ class ReqInfo:
     def set_confirmed_reqs(self, num_challenges: int, num_bitbytes: int):
         # TODO: Hardcoded-ish for now, allow for choice of Hangout events
         confirmed_hangouts = len(self.confirmed_events.get("Hangout", []))
-        confirmed = {
+        self.confirmed = {
             EVENT_NAMES.INTERACTIVITIES: {
                 EVENT_NAMES.HANGOUT: confirmed_hangouts,
                 EVENT_NAMES.CHALLENGE: num_challenges,
@@ -118,8 +117,6 @@ class ReqInfo:
             EVENT_NAMES.BITBYTE: num_bitbytes,
             **{r: len(self.confirmed_events[r]) for r in self.confirmed_events},
         }
-
-        self.confirmed = confirmed
 
     def set_remaining(self):
         def fn(k, v, d1, d2, d3):
