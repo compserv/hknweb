@@ -3,6 +3,7 @@ from copy import deepcopy
 from django.db.models import Q, QuerySet
 
 from hknweb.coursesemester.models import Semester
+from hknweb.events.models import EventType
 
 from hknweb.candidate.constants import EVENT_NAMES, REQUIREMENT_TITLES_TEMPLATE
 from hknweb.candidate.models import (
@@ -10,7 +11,7 @@ from hknweb.candidate.models import (
     RequriementEvent,
     RequirementHangout,
 )
-from hknweb.candidate.utils_candportal.utils import get_requirement_colors, apply_to_dicts
+from hknweb.candidate.utils_candportal.utils import apply_to_dicts
 from hknweb.candidate.utils_candportal.get_events import (
     get_required_hangouts,
     get_required_events,
@@ -142,13 +143,8 @@ class ReqInfo:
         self.titles = apply_to_dicts(fn, deepcopy(names), names, self.lst, self.remaining)
 
     def set_colors(self, event_types: list, merger_nodes):
-        colors = get_requirement_colors(event_types)
-        colors.update(
-            get_requirement_colors(
-                merger_nodes,
-                lambda view_key: view_key,
-                lambda get_key: get_key.get_events_str(),
-            )
-        )
-
-        self.colors = colors
+        self.colors = {
+            **dict.fromkeys(event_types, "grey"),
+            **{e.type: e.color for e in EventType.objects.filter(type__in=event_types)},
+            **{e.get_events_str(): e.color for e in merger_nodes}
+        }
