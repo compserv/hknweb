@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.http import HttpResponse
 from django.utils.decorators import method_decorator
 from django.contrib.staticfiles.finders import find
+
 from functools import wraps
 from random import randint
 from datetime import datetime
@@ -86,9 +87,9 @@ def get_semester_bounds(date):
     """Returns the two dates that bound the current candidate semester.
     Assumes that there are only spring and fall semesters, separated at 07/01."""
     if date.month < 7:
-        return datetime(date.year, 1, 1), datetime(date.year, 7, 1)
+        return datetime(date.year, 1, 1, tzinfo=PACIFIC_TIMEZONE), datetime(date.year, 7, 1, tzinfo=PACIFIC_TIMEZONE)
     else:
-        return datetime(date.year, 7, 1), datetime(date.year + 1, 1, 1)
+        return datetime(date.year, 7, 1, tzinfo=PACIFIC_TIMEZONE), datetime(date.year + 1, 1, 1, tzinfo=PACIFIC_TIMEZONE)
 
 
 # Helper. @source: http://books.agiliq.com/projects/django-admin-cookbook/en/latest/export.html

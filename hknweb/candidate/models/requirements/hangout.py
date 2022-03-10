@@ -1,15 +1,17 @@
-from django.conf import settings
 from django.db import models
+
 from hknweb.coursesemester.models import Semester
+
+from hknweb.candidate.constants import EVENT_NAMES
 
 
 class RequirementHangout(models.Model):
     eventType = models.CharField(
         max_length=255,
         choices=[
-            (settings.HANGOUT_ATTRIBUTE_NAME, "Officer Hangouts"),
-            (settings.CHALLENGE_ATTRIBUTE_NAME, "Officer Challenges"),
-            (settings.EITHER_ATTRIBUTE_NAME, "Either"),
+            (EVENT_NAMES.HANGOUT, "Officer Hangouts"),
+            (EVENT_NAMES.CHALLENGE, "Officer Challenges"),
+            (EVENT_NAMES.EITHER, "Either"),
         ],
     )
     numberRequired = models.IntegerField(default=0)

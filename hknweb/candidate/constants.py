@@ -1,20 +1,3 @@
-# from django.conf import settings
-
-
-REQUIREMENT_TITLES_TEMPLATE = (
-    "{name} ({num_required} required, {num_remaining} remaining)"
-)
-REQUIREMENT_TITLES_ALL = "{name} (ALL required)"
-
-# REQUIREMENT_EVENTS = [
-#     settings.MANDATORY_EVENT,
-#     settings.FUN_EVENT,
-#     settings.BIG_FUN_EVENT,
-#     settings.SERV_EVENT,
-#     settings.PRODEV_EVENT,
-# ]
-
-
 class ATTR:
     CAND_CSV = "cand_csv"
     CANDIDATE = "candidate"
@@ -65,3 +48,17 @@ class CandidateDTO:
 
 
 DEFAULT_RANDOM_PASSWORD_LENGTH = 20
+
+
+# Default hard-coded event types for candidate semester
+# NOTE: these strings are also hard-coded in candidate/index.html
+class EVENT_NAMES:
+    MANDATORY = "Mandatory"
+    BITBYTE = "bitbyte"
+    HANGOUT = "officer_hangout"
+    CHALLENGE = "officer_challenge"
+    EITHER = "either"
+    INTERACTIVITIES = "interactivities"
+
+
+REQUIREMENT_TITLES_TEMPLATE = "{} ({} required, {} remaining)"
