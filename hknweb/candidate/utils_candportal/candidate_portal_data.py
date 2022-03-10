@@ -37,11 +37,14 @@ class CandidatePortalData:
         if not candidate_semester:
             return set(), []
 
-        seen_merger_nodes = set()
         merger_reqs = RequirementMergeRequirement.objects.filter(
             candidateSemesterActive=candidate_semester.id,
             enable=True,
         )
+        if not merger_reqs:
+            return set(), []
+
+        seen_merger_nodes = set()
         merger_nodes = [
             MergedEvents(m, candidate_semester, seen_merger_nodes) for m in merger_reqs
         ]
