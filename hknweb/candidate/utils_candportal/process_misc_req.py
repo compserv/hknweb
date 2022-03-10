@@ -26,7 +26,9 @@ class MiscReqProcessorBase:
     filter_model_by: str = None
 
     @classmethod
-    def completed_process(cls, user: User, required: Model, completed: QuerySet) -> bool:
+    def completed_process(
+        cls, user: User, required: Model, completed: QuerySet
+    ) -> bool:
         entry = completed.filter(**{cls.filter_model_by: required.id}).first()
         if entry is None:
             return False
@@ -44,12 +46,16 @@ class MiscReqProcessorBase:
 
         if requirements is not None:
             for requirement in requirements:
-                is_completed = cls.completed_process(user, requirement, completed_roster)
+                is_completed = cls.completed_process(
+                    user, requirement, completed_roster
+                )
                 all_done = cls.all_done_processor(all_done, is_completed)
-                resulting_statuses.append({
-                    "requirement": requirement,
-                    "status": is_completed,
-                })
+                resulting_statuses.append(
+                    {
+                        "requirement": requirement,
+                        "status": is_completed,
+                    }
+                )
 
         return {
             "title": cls.title,

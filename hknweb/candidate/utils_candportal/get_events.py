@@ -8,7 +8,11 @@ from hknweb.utils import get_semester_bounds, get_access_level
 from hknweb.events.models import Event, EventType
 
 from hknweb.candidate.constants import EVENT_NAMES
-from hknweb.candidate.models import RequriementEvent, RequirementHangout, RequirementMandatory
+from hknweb.candidate.models import (
+    RequriementEvent,
+    RequirementHangout,
+    RequirementMandatory,
+)
 
 
 def sort_rsvps_by_event_type(
@@ -31,10 +35,12 @@ def sort_rsvps_by_event_type(
 def get_mandatory_events(candidate_semester: Semester, confirmed_rsvps: bool):
     # We want to show all mandatory events, not just the events the candidate has RSVP'd to
 
-    r = candidate_semester \
+    r = (
+        candidate_semester
         and RequirementMandatory.objects.filter(
             candidateSemesterActive=candidate_semester.id
         ).first()
+    )
     mandatory_events = QuerySet()
     start_time, end_time = get_semester_bounds(timezone.now())
     if r:
@@ -56,7 +62,9 @@ def get_mandatory_events(candidate_semester: Semester, confirmed_rsvps: bool):
     return confirmed, unconfirmed
 
 
-def get_required_events(candidate_semester: Semester, required_events_merger: set) -> dict:
+def get_required_events(
+    candidate_semester: Semester, required_events_merger: set
+) -> dict:
     required_events = {}
     if candidate_semester is None:
         return required_events
@@ -104,5 +112,5 @@ def get_upcoming_events(user: User) -> QuerySet:
     today = timezone.now()
     return Event.objects.filter(
         start_time__range=(today, today + timezone.timedelta(days=7)),
-        access_level__gte=get_access_level(user)
+        access_level__gte=get_access_level(user),
     ).order_by("start_time")

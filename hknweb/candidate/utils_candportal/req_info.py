@@ -54,11 +54,17 @@ class ReqInfo:
         confirmed_rsvps = rsvps.filter(confirmed=True)
         unconfirmed_rsvps = rsvps.filter(confirmed=False)
 
-        confirmed_events = sort_rsvps_by_event_type(confirmed_rsvps, self.required_events)
-        unconfirmed_events = sort_rsvps_by_event_type(unconfirmed_rsvps, self.required_events)
+        confirmed_events = sort_rsvps_by_event_type(
+            confirmed_rsvps, self.required_events
+        )
+        unconfirmed_events = sort_rsvps_by_event_type(
+            unconfirmed_rsvps, self.required_events
+        )
 
-        confirmed_events[EVENT_NAMES.MANDATORY], unconfirmed_events[EVENT_NAMES.MANDATORY] = \
-            get_mandatory_events(candidate_semester, confirmed_rsvps)
+        (
+            confirmed_events[EVENT_NAMES.MANDATORY],
+            unconfirmed_events[EVENT_NAMES.MANDATORY],
+        ) = get_mandatory_events(candidate_semester, confirmed_rsvps)
         confirmed_events.setdefault("Hangout", [])
         unconfirmed_events.setdefault("Hangout", [])
 
@@ -77,8 +83,8 @@ class ReqInfo:
         ]
         events, hangouts, bitbyte = [
             c.objects.filter(
-                Q(enable=True) | q,
-                candidateSemesterActive=candidate_semester.id)
+                Q(enable=True) | q, candidateSemesterActive=candidate_semester.id
+            )
             for c, q in data
         ]
 
@@ -91,9 +97,9 @@ class ReqInfo:
         if bitbyte.exists():
             lst[EVENT_NAMES.BITBYTE] = bitbyte.first().numberRequired
 
-        lst[EVENT_NAMES.MANDATORY] =\
-            len(self.confirmed_events[EVENT_NAMES.MANDATORY]) \
-            + len(self.unconfirmed_events[EVENT_NAMES.MANDATORY])
+        lst[EVENT_NAMES.MANDATORY] = len(
+            self.confirmed_events[EVENT_NAMES.MANDATORY]
+        ) + len(self.unconfirmed_events[EVENT_NAMES.MANDATORY])
 
         self.lst = lst
 
@@ -114,7 +120,9 @@ class ReqInfo:
         def fn(k, v, d1, d2, d3):
             d1[k] = max(d2[k] - d3[k], 0)
 
-        self.remaining = apply_to_dicts(fn, deepcopy(self.lst), self.lst, self.confirmed)
+        self.remaining = apply_to_dicts(
+            fn, deepcopy(self.lst), self.lst, self.confirmed
+        )
 
     def set_statuses(self):
         self.statuses = {
@@ -131,11 +139,13 @@ class ReqInfo:
         def fn(k, v, d1, d2, d3, d4):
             d1[k] = REQUIREMENT_TITLES_TEMPLATE.format(d2[k], d3[k], d4[k])
 
-        self.titles = apply_to_dicts(fn, deepcopy(names), names, self.lst, self.remaining)
+        self.titles = apply_to_dicts(
+            fn, deepcopy(names), names, self.lst, self.remaining
+        )
 
     def set_colors(self, event_types: list, merger_nodes):
         self.colors = {
             **dict.fromkeys(event_types, "grey"),
             **{e.type: e.color for e in EventType.objects.filter(type__in=event_types)},
-            **{e.get_events_str(): e.color for e in merger_nodes}
+            **{e.get_events_str(): e.color for e in merger_nodes},
         }

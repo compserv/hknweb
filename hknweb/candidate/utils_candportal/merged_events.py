@@ -10,7 +10,7 @@ class MergedEvents:
         self,
         merger_node: RequirementMergeRequirement,
         candidateSemester: Semester,
-        seen_merger_nodes: set=set(),
+        seen_merger_nodes: set = set(),
     ):
         assert merger_node.enable, "The first Merger Node must be enabled"
 

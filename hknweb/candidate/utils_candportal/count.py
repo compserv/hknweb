@@ -16,11 +16,13 @@ from hknweb.candidate.models import (
 
 def count_challenges(requested_user: User, candidate_semester: Semester) -> dict:
     challenges = OffChallenge.objects.filter(requester__exact=requested_user)
-    r = candidate_semester \
+    r = (
+        candidate_semester
         and RequirementHangout.objects.filter(
             eventType=EVENT_NAMES.CHALLENGE,
             candidateSemesterActive=candidate_semester,
         ).first()
+    )
 
     start_time, end_time = get_semester_bounds(timezone.now())
     if r is not None:
@@ -48,10 +50,12 @@ def count_num_bitbytes(
     requested_user: User,
     candidate_semester: Semester,
 ) -> int:
-    r = candidate_semester \
+    r = (
+        candidate_semester
         and RequirementBitByteActivity.objects.filter(
             candidateSemesterActive=candidate_semester
         ).first()
+    )
 
     start_time, end_time = get_semester_bounds(timezone.now())
     return BitByteActivity.objects.filter(
