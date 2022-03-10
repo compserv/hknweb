@@ -126,7 +126,7 @@ class ReqInfo:
 
     def set_statuses(self):
         self.statuses = {
-            k: v == 0 if isinstance(v, int) else all(v.values())
+            k: v == 0 if isinstance(v, int) else not any(v.values())
             for k, v in self.remaining.items()
         }
 
