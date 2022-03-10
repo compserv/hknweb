@@ -61,6 +61,4 @@ class EVENT_NAMES:
     INTERACTIVITIES = "interactivities"
 
 
-REQUIREMENT_TITLES_TEMPLATE = (
-    "{name} ({num_required} required, {num_remaining} remaining)"
-)
+REQUIREMENT_TITLES_TEMPLATE = "{} ({} required, {} remaining)"

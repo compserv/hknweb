@@ -107,11 +107,8 @@ class CandidatePortalData:
                 + " - Looped Merged Requirements for all required currently unsupported"
             )
         else:
-            req_info.titles[node_string_key] = REQUIREMENT_TITLES_TEMPLATE.format(
-                name=node_string,
-                num_required=grand_total,
-                num_remaining=remaining_count,
-            )
+            req_info.titles[node_string_key] = \
+                REQUIREMENT_TITLES_TEMPLATE.format(node_string, grand_total, remaining_count)
 
         req_info.confirmed_events[node_string_key] = []
         req_info.unconfirmed_events[node_string_key] = []

@@ -10,7 +10,7 @@ from hknweb.candidate.models import (
     RequriementEvent,
     RequirementHangout,
 )
-from hknweb.candidate.utils_candportal.utils import get_requirement_colors
+from hknweb.candidate.utils_candportal.utils import get_requirement_colors, apply_to_dicts
 from hknweb.candidate.utils_candportal.get_events import (
     get_required_hangouts,
     get_required_events,
@@ -79,28 +79,26 @@ class ReqInfo:
         if not candidate_semester:
             return lst
 
-        for r in RequriementEvent.objects.filter(
-            Q(enable=True) | Q(eventType__type__in=self.required_events),
-            candidateSemesterActive=candidate_semester.id,
-        ):
-            lst[r.eventType.type] = r.numberRequired
+        data = [
+            (RequriementEvent, Q(eventType__type__in=self.required_events)),
+            (RequirementHangout, Q()),
+            (RequirementBitByteActivity, Q()),
+        ]
+        res = [
+            c.objects.filter(
+                Q(enable=True) | q,
+                candidateSemesterActive=candidate_semester.id)
+            for c, q in data
+        ]
 
-        num_required_hangouts = lst[EVENT_NAMES.INTERACTIVITIES]
-        for r in RequirementHangout.objects.filter(
-            candidateSemesterActive=candidate_semester.id,
-            enable=True,
-        ):
-            num_required_hangouts[r.eventType] = r.numberRequired
-        num_required_hangouts[EVENT_NAMES.EITHER] =\
-            num_required_hangouts[EVENT_NAMES.HANGOUT] \
-            + num_required_hangouts[EVENT_NAMES.CHALLENGE]
+        lst.update({r.eventType.type: r.numberRequired for r in res[0]})
 
-        bitbyte_requirement = RequirementBitByteActivity.objects.filter(
-            candidateSemesterActive=candidate_semester,
-            enable=True,
-        ).first()
-        if bitbyte_requirement:
-            lst[EVENT_NAMES.BITBYTE] = bitbyte_requirement.numberRequired
+        d = lst[EVENT_NAMES.INTERACTIVITIES]
+        d.update({r.eventType: r.numberRequired for r in res[1]})
+        d[EVENT_NAMES.EITHER] = d[EVENT_NAMES.HANGOUT] + d[EVENT_NAMES.CHALLENGE]
+
+        if res[2].exists():
+            lst[EVENT_NAMES.BITBYTE] = res[2].first().numberRequired
 
         lst[EVENT_NAMES.MANDATORY] =\
             len(self.confirmed_events[EVENT_NAMES.MANDATORY]) \
@@ -124,51 +122,27 @@ class ReqInfo:
         self.confirmed = confirmed
 
     def set_remaining(self):
-        remaining = deepcopy(self.lst)
+        def fn(k, v, d1, d2, d3):
+            d1[k] = max(d2[k] - d3[k], 0)
 
-        def apply(d1: dict, d2: dict, output_d: dict):
-            for r in d1:
-                if isinstance(d1[r], dict):
-                    apply(d1[r], d2[r], output_d[r])
-                else:
-                    output_d[r] = max(d1[r] - d2[r], 0)
-
-        apply(self.lst, self.confirmed, remaining)
-
-        self.remaining = remaining
+        self.remaining = apply_to_dicts(fn, deepcopy(self.lst), self.lst, self.confirmed)
 
     def set_statuses(self):
-        statuses = dict()
-
-        for k, v in self.remaining.items():
-            if isinstance(v, int):
-                statuses[k] = v == 0
-            else:
-                statuses[k] = all(v.values())
-
-        self.statuses = statuses
+        self.statuses = {
+            k: v == 0 if isinstance(v, int) else all(v.values())
+            for k, v in self.remaining.items()
+        }
 
     def set_titles(self):
         names = {
             **{r: r for r in self.lst},
             **self.TYPE_TO_TITLE_MAPPING,
         }
-        titles = deepcopy(names)
 
-        def apply(d1: dict, d2: dict, d3: dict, d4: dict):
-            for k, v in d1.items():
-                if isinstance(v, dict):
-                    apply(d1[k], d2[k], d3[k], d4[k])
-                else:
-                    d2[k] = REQUIREMENT_TITLES_TEMPLATE.format(
-                        name=d1[k],
-                        num_required=d3[k],
-                        num_remaining=d4[k],
-                    )
+        def fn(k, v, d1, d2, d3, d4):
+            d1[k] = REQUIREMENT_TITLES_TEMPLATE.format(d2[k], d3[k], d4[k])
 
-        apply(names, titles, self.lst, self.remaining)
-
-        self.titles = titles
+        self.titles = apply_to_dicts(fn, deepcopy(names), names, self.lst, self.remaining)
 
     def set_colors(self, event_types: list, merger_nodes):
         colors = get_requirement_colors(event_types)
