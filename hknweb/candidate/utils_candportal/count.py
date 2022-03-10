@@ -1,5 +1,3 @@
-from typing import Tuple
-
 from django.db.models import Q
 from django.contrib.auth.models import User
 from django.utils import timezone
@@ -7,7 +5,7 @@ from django.utils import timezone
 from hknweb.utils import get_semester_bounds
 from hknweb.coursesemester.models import Semester
 
-from hknweb.candidate.constants import EVENT_NAMES
+from hknweb.candidate.constants import ATTR, EVENT_NAMES
 from hknweb.candidate.models import (
     BitByteActivity,
     OffChallenge,
@@ -16,10 +14,7 @@ from hknweb.candidate.models import (
 )
 
 
-def count_challenges(
-    requested_user: User,
-    candidate_semester: Semester,
-) -> Tuple[int, int, int]:
+def count_challenges(requested_user: User, candidate_semester: Semester) -> dict:
     challenges = OffChallenge.objects.filter(requester__exact=requested_user)
     r = candidate_semester \
         and RequirementHangout.objects.filter(
@@ -34,17 +29,19 @@ def count_challenges(
             request_date__lt=r.hangoutsDateEnd or end_time,
         )
 
-    num_challenges_confirmed = challenges.filter(
+    confirmed = challenges.filter(
         Q(officer_confirmed=True) & Q(csec_confirmed=True)
     ).count()
-    num_challenges_rejected = challenges.filter(
+    rejected = challenges.filter(
         Q(officer_confirmed=False) | Q(csec_confirmed=False)
     ).count()
-    num_pending = (
-        challenges.count() - num_challenges_confirmed - num_challenges_rejected
-    )
+    pending = challenges.count() - confirmed - rejected
 
-    return num_challenges_confirmed, num_challenges_rejected, num_pending
+    return {
+        ATTR.NUM_PENDING: pending,
+        ATTR.NUM_REJECTED: rejected,
+        ATTR.NUM_CONFIRMED: confirmed,
+    }
 
 
 def count_num_bitbytes(

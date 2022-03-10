@@ -32,28 +32,6 @@ class CandidatePortalData:
     def __init__(self, user: User):
         self.user = user
 
-    def process_events(
-        self,
-        rsvps,
-        candidate_semester: Semester,
-        num_challenges_confirmed: int,
-        num_bitbytes: int,
-        event_types: list,
-        merger_nodes,
-        required_events_merger,
-    ) -> ReqInfo:
-        req_info = ReqInfo()
-
-        req_info.set_confirmed_unconfirmed_events(rsvps, candidate_semester, required_events_merger)
-        req_info.set_list(candidate_semester)
-        req_info.set_confirmed_reqs(num_challenges_confirmed, num_bitbytes)
-        req_info.set_remaining()
-        req_info.set_statuses()
-        req_info.set_titles()
-        req_info.set_colors(event_types, merger_nodes)
-
-        return req_info
-
     def get_merge_info(self, candidate_semester: Semester) -> Tuple[set, list]:
         required_events_merger = set()
 
@@ -61,12 +39,12 @@ class CandidatePortalData:
         merger_nodes = []
         if candidate_semester is not None:
             for merger in RequirementMergeRequirement.objects.filter(
-                candidateSemesterActive=candidate_semester.id
+                candidateSemesterActive=candidate_semester.id,
+                enable=True,
             ):
-                if merger.enable:
-                    merger_nodes.append(
-                        MergedEvents(merger, candidate_semester, seen_merger_nodes)
-                    )
+                merger_nodes.append(
+                    MergedEvents(merger, candidate_semester, seen_merger_nodes)
+                )
 
         for node in merger_nodes:
             for eventType in node.events():
@@ -123,34 +101,26 @@ class CandidatePortalData:
 
         required_events_merger, merger_nodes = self.get_merge_info(candidate_semester)
 
-        (
-            num_challenges_confirmed,
-            num_challenges_rejected,
-            num_challenges_pending,
-        ) = count_challenges(self.user, candidate_semester)
+        challenges = count_challenges(self.user, candidate_semester)
         num_bitbytes = count_num_bitbytes(self.user, candidate_semester)
 
         event_types = list(get_required_events(candidate_semester, set())) + [EVENT_NAMES.MANDATORY]
-        req_info = self.process_events(
-            Rsvp.objects.filter(user__exact=self.user),
-            candidate_semester,
-            num_challenges_confirmed,
-            num_bitbytes,
-            event_types,
-            merger_nodes,
-            required_events_merger,
-        )
+        rsvps = Rsvp.objects.filter(user__exact=self.user)
+
+        req_info = ReqInfo()
+        req_info.set_confirmed_unconfirmed_events(rsvps, candidate_semester, required_events_merger)
+        req_info.set_list(candidate_semester)
+        req_info.set_confirmed_reqs(challenges[ATTR.NUM_CONFIRMED], num_bitbytes)
+        req_info.set_remaining()
+        req_info.set_statuses()
+        req_info.set_titles()
+        req_info.set_colors(event_types, merger_nodes)
 
         merge_names = [self.process_merge_node(node, req_info) for node in merger_nodes]
 
         return {
             "req_statuses": {e: req_info.statuses[e] for e in event_types},
-            **self._get_interactivities_context(
-                req_info,
-                num_challenges_confirmed,
-                num_challenges_rejected,
-                num_challenges_pending,
-            ),
+            **self._get_interactivities_context(req_info, challenges),
             **self._get_bitbyte_context(req_info, num_bitbytes),
             **self._get_misc_context(self.user, candidate_semester),
             **self._get_event_related_context(self.user, req_info, event_types + merge_names),
@@ -158,32 +128,12 @@ class CandidatePortalData:
         }
 
     @staticmethod
-    def _get_interactivities_context(
-        req_info: ReqInfo,
-        num_challenges_confirmed: int,
-        num_challenges_rejected: int,
-        num_challenges_pending: int,
-    ) -> dict:
+    def _get_interactivities_context(req_info: ReqInfo, challenges: dict) -> dict:
         return {
             EVENT_NAMES.INTERACTIVITIES: {
-                ATTR.TITLE: req_info.titles[EVENT_NAMES.INTERACTIVITIES][
-                    EVENT_NAMES.EITHER
-                ],
+                **req_info.titles[EVENT_NAMES.INTERACTIVITIES],
+                **challenges,
                 ATTR.STATUS: req_info.statuses[EVENT_NAMES.INTERACTIVITIES],
-                EVENT_NAMES.CHALLENGE: {
-                    ATTR.TITLE: req_info.titles[EVENT_NAMES.INTERACTIVITIES][
-                        EVENT_NAMES.CHALLENGE
-                    ],
-                    ATTR.NUM_PENDING: num_challenges_pending,
-                    ATTR.NUM_REJECTED: num_challenges_rejected,
-                    # anything not pending or rejected is confirmed
-                    ATTR.NUM_CONFIRMED: num_challenges_confirmed,
-                },
-                EVENT_NAMES.HANGOUT: {
-                    ATTR.TITLE: req_info.titles[EVENT_NAMES.INTERACTIVITIES][
-                        EVENT_NAMES.HANGOUT
-                    ],
-                },
             }
         }
 
