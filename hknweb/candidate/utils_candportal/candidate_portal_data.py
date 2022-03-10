@@ -1,4 +1,5 @@
 from typing import Tuple
+from functools import reduce
 
 from django.contrib.auth.models import User
 
@@ -33,23 +34,19 @@ class CandidatePortalData:
         self.user = user
 
     def get_merge_info(self, candidate_semester: Semester) -> Tuple[set, list]:
-        required_events_merger = set()
+        if not candidate_semester:
+            return set(), []
 
         seen_merger_nodes = set()
-        merger_nodes = []
-        if candidate_semester is not None:
-            for merger in RequirementMergeRequirement.objects.filter(
-                candidateSemesterActive=candidate_semester.id,
-                enable=True,
-            ):
-                merger_nodes.append(
-                    MergedEvents(merger, candidate_semester, seen_merger_nodes)
-                )
-
-        for node in merger_nodes:
-            for eventType in node.events():
-                required_events_merger.add(eventType)
-
+        merger_reqs = RequirementMergeRequirement.objects.filter(
+            candidateSemesterActive=candidate_semester.id,
+            enable=True,
+        )
+        merger_nodes = [
+            MergedEvents(m, candidate_semester, seen_merger_nodes)
+            for m in merger_reqs
+        ]
+        required_events_merger = reduce(set.__or__, (n.events() for n in merger_nodes))
         return required_events_merger, merger_nodes
 
     def process_merge_node(self, node, req_info) -> str:
