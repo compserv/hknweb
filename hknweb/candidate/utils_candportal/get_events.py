@@ -41,7 +41,7 @@ def get_mandatory_events(candidate_semester: Semester, confirmed_rsvps: bool):
             candidateSemesterActive=candidate_semester.id
         ).first()
     )
-    mandatory_events = QuerySet()
+    mandatory_events = r.events.none()
     start_time, end_time = get_semester_bounds(timezone.now())
     if r:
         mandatory_events = r.events.all()
