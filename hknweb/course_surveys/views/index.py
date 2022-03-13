@@ -302,18 +302,19 @@ class IndexView(TemplateView):
 
         ratings = []
         for rating in survey.rating_survey.all():
-            percent = rating.rating_value / rating.range_max
-            color = COLORS.FIRE_BRICK
+            # generate color from rating
+            # perfect score (1) is COLORS.GREEN, terrible score (0) is COLORS.RED,
+            # MID_SCORE is COLORS.YELLOW, and other scores get interpolated in HSL.
+            score = rating.rating_value / rating.range_max
             if rating.inverted:
-                if percent < 0.2:
-                    color = COLORS.FOREST_GREEN
-                elif percent < 0.4:
-                    color = COLORS.GOLDEN_ROD
+                score = 1 - score
+            if score < COLORS.MID_SCORE:
+                hsl = IndexView._interpolate(COLORS.RED, COLORS.YELLOW,
+                        score / COLORS.MID_SCORE)
             else:
-                if percent > 0.8:
-                    color = COLORS.FOREST_GREEN
-                elif percent > 0.6:
-                    color = COLORS.GOLDEN_ROD
+                hsl = IndexView._interpolate(COLORS.YELLOW, COLORS.GREEN, 
+                        (score-COLORS.MID_SCORE)/(1-COLORS.MID_SCORE))
+            color = f"hsl({hsl[0]}, {hsl[1]}%, {hsl[2]}%)"
 
             ratings.append(
                 {
@@ -330,3 +331,10 @@ class IndexView(TemplateView):
             Attr.RESPONSE_COUNT: survey.response_count,
             Attr.RATINGS: ratings,
         }
+    
+    # helper method for color mixing in _get_survey
+    # returns a list whose components are interpolated between the corresponding
+    # components in tuples t1 and t2, 'fraction' of the way from t1 to t2
+    @staticmethod
+    def _interpolate(t1, t2, fraction):
+        return [t1[i] * (1-fraction) + t2[i] * fraction for i in range(len(t1))]
