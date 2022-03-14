@@ -5,6 +5,7 @@ VENV := .venv
 BIN := $(VENV)/bin
 PYTHON := $(BIN)/python
 MANAGE := HKNWEB_MODE='dev' $(PYTHON) ./manage.py
+BREW_DIR := $(shell brew --prefix)
 
 IP ?= 127.0.0.1
 PORT ?= 3000
@@ -21,6 +22,21 @@ livereload:
 venv:
 	python3 -m venv $(VENV)
 	@echo "When developing, activate the virtualenv with 'source .venv/bin/activate' so Python can access the installed dependencies."
+
+.PHONY: dependencies-macbook
+dependencies-macbook:
+	# Requirements: Homebrew (https://brew.sh/)
+	brew install mysql
+
+.PHONY: install-macbook
+install-macbook:
+	# Run dependencies-macbook first if you haven't already
+	
+	# https://stackoverflow.com/questions/67767255/error-when-install-mysqlclient-using-pip-to-macos-bigsur
+	export LDFLAGS='-L${BREW_DIR}/lib -L${BREW_DIR}/opt/openssl/lib'
+	export CPPFLAGS='-I${BREW_DIR}/include -I${BREW_DIR}/opt/openssl/include'
+
+	make install
 
 .PHONY: install-prod
 install-prod:
