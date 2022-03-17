@@ -1,11 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponseRedirect
-from hknweb.utils import markdownify
+from hknweb.utils import markdownify, login_and_permission
 
 from .models import MarkdownPage
 from .forms import EditPageForm
 
 
+@login_and_permission("markdown_pages.add_markdownpage")
 def editor(request):
     if request.method == "POST":
         form = EditPageForm(request.POST)

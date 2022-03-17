@@ -2,6 +2,7 @@ from hknweb.candidate.models import Announcement, OffChallenge, BitByteActivity
 from hknweb.events.models import Event, Rsvp, AttendanceForm
 from hknweb.academics.models import AcademicEntity
 from hknweb.alumni.models import Alumnus
+from hknweb.markdown_pages.models import MarkdownPage
 
 from django.contrib.auth.models import User, Group, Permission
 from django.contrib.contenttypes.models import ContentType
@@ -34,6 +35,7 @@ off_permission_names = [
     ("change_academicentity", AcademicEntity),
     ("view_alumnus", Alumnus),
     ("add_attendanceform", AttendanceForm),
+    ("add_markdownpage", MarkdownPage),
 ]
 
 # SETTING PERMISSIONS TO GROUPS
