@@ -5,6 +5,7 @@ from django.db.models import Q
 
 from hknweb.markdown_pages.models import MarkdownPage
 from hknweb.academics.models import Course, Instructor
+from hknweb.utils import method_login_and_permission
 
 from hknweb.course_surveys.constants import (
     Attr,
@@ -16,6 +17,7 @@ from hknweb.course_surveys.constants import (
 )
 
 
+@method_login_and_permission("academics.change_academicentity")
 class IndexView(TemplateView):
     template_name = "course_surveys/index.html"
 
