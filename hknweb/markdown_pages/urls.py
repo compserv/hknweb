@@ -6,6 +6,7 @@ from . import views
 
 app_name = "pages"
 urlpatterns = [
-    path("", views.editor),
-    re_path(r"^(?P<path>[\w\d\.\-_]+)/", views.display),
+    # @nocommit: why is this even a thing?
+    # path("", views.editor),
+    # re_path(r"^(?P<path>[\w\d\.\-_]+)/", views.display),
 ]

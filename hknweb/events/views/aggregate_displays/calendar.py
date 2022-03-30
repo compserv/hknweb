@@ -3,13 +3,12 @@ from django.shortcuts import render
 from hknweb.models import Profile
 from hknweb.events.models import Event, EventType, GCalAccessLevelMapping
 from hknweb.events.models.constants import ACCESS_LEVELS
-from hknweb.utils import get_access_level
+from hknweb.utils import allow_public_access, get_access_level
 from hknweb.events.google_calendar_utils import get_calendar_link
 
 
+@allow_public_access
 def index(request):
-    context = dict()
-
     user_access_level = get_access_level(request.user)
     events = Event.objects.order_by("-start_time").filter(
         access_level__gte=user_access_level

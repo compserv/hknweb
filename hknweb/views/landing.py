@@ -4,8 +4,10 @@ from hknweb.models import Announcement
 
 from hknweb.events.models import Event
 from hknweb.studentservices.models import ReviewSession
+from hknweb.utils import allow_public_access
 
 
+@allow_public_access
 def home(request):
     # TODO: determine earliest weekday for which tutoring still has yet to complete, and query those tutors
     num_events = 4
@@ -25,5 +27,6 @@ def home(request):
     return render(request, "landing/home.html", context)
 
 
+@allow_public_access
 def about(request):
     return render(request, "about/abouthkn.html")

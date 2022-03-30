@@ -1,5 +1,3 @@
-import markdownx.views as markdownx_views
-
 from django.contrib import admin
 from django.urls import include, path
 from django.conf.urls import url
@@ -8,12 +6,14 @@ from django.conf.urls.static import static
 
 from .shortlinks import views as viewsShortlink
 from hknweb.views import landing, users, indrel, serv
-from hknweb.utils import method_login_and_permission
-
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("accounts/", include("django.contrib.auth.urls")),
+    path("auth/", include("social_django.urls", namespace="social")),
+]
+
+hkn_urlpatterns = [
     path("accounts/create/", users.account_create, name="account-create"),
     path("accounts/settings/", users.account_settings, name="account-settings"),
     path("accounts/activate/", users.activate),
@@ -26,23 +26,8 @@ urlpatterns = [
     path("cand/", include("hknweb.candidate.urls")),
     path("pages/", include("hknweb.markdown_pages.urls")),
     path("course_surveys/", include("hknweb.course_surveys.urls")),
-    path("auth/", include("social_django.urls", namespace="social")),
     path("", landing.home, name="home"),
     path("<slug:temp>/", viewsShortlink.openLink),
-]
-
-
-markdownx_urlpatterns = [
-    url(
-        r'^markdownx/upload/$',
-        method_login_and_permission("markdown_pages.add_markdownpage")(markdownx_views.ImageUploadView).as_view(),
-        name='markdownx_upload',
-    ),
-    url(
-        r'^markdownx/markdownify/$',
-        method_login_and_permission("markdown_pages.add_markdownpage")(markdownx_views.MarkdownifyView).as_view(),
-        name='markdownx_markdownify',
-    ),
 ]
 
 indrel_urlpatterns = [
@@ -64,7 +49,6 @@ serv_urlpatterns = [
 
 urlpatterns.extend(indrel_urlpatterns)
 urlpatterns.extend(serv_urlpatterns)
-urlpatterns.extend(markdownx_urlpatterns)
 
 
 if settings.DEBUG:

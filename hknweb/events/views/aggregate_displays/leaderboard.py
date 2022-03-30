@@ -2,11 +2,12 @@ from django.core.paginator import Paginator
 from django.shortcuts import render
 
 from hknweb.events.models import Rsvp
-
+from hknweb.utils import allow_all_logged_in_users
 
 PAGE_SIZE = 20
 
 
+@allow_all_logged_in_users
 def get_leaderboard(request):
     confirmed_rsvps = Rsvp.objects.all()
     user_to_events = {}
