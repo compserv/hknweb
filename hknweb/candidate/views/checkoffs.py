@@ -3,8 +3,10 @@ from django.contrib.auth.models import User
 from django.http import Http404
 from django.shortcuts import redirect
 from django.views import generic
+from django.utils.safestring import mark_safe
 
 import csv
+import bleach
 
 from hknweb.events.models import Event, Rsvp
 
@@ -20,6 +22,7 @@ from hknweb.candidate.models import (
 
 from hknweb.utils import method_login_and_permission, login_and_permission
 
+NO_CHECKOFF_ACTION_TAKEN = "No checkoff action has been taken, so re-upload the entire file after fixing the errors."
 
 @method_login_and_permission("candidate.change_offchallenge")
 class MemberCheckoffView(generic.TemplateView):
@@ -37,6 +40,40 @@ class MemberCheckoffView(generic.TemplateView):
         context = {"projects": projects, "dues": dues, "forms": forms}
         return context
 
+class InvalidEntryErrorInfo:
+    def __init__(self, error_msg, index, row_content):
+        self.error_msg = error_msg
+        self.index = index
+        self.row_content = row_content
+    
+    @staticmethod
+    def error_header():
+        error_msg = "Invalid CSV format."
+        error_msg += " "
+        error_msg += "Check that your columns are correctly labeled, there are NO blank rows, and filled out for each row."
+        return error_msg
+
+    def __str__(self):
+        error_msg = "Candidate error message: {}.".format(self.error_msg)
+        error_msg += " --- "
+        error_msg += "Error Row Information at row {}: {}".format(self.index, self.row_content)
+        return error_msg
+
+class UserErrorInfo:
+    def __init__(self, memberdto):
+        self.first_name = memberdto.first_name
+        self.last_name = memberdto.last_name
+        self.email = memberdto.email
+    
+    @staticmethod
+    def error_header():
+        error_msg = "Could not find users listed."
+        error_msg += " "
+        error_msg += "Please check that their 1) information is correct and 2) they have an account."
+        return error_msg
+
+    def __str__(self):
+        return "{} {} --- with email {}.".format(self.first_name, self.last_name, self.email)
 
 @login_and_permission("candidate.change_offchallenge")
 def checkoff_csv(request):
@@ -108,37 +145,46 @@ def checkoff_csv(request):
 
     # Pre-screen and validate data
     users = []
+    invalid_csv_format_errors = []
+    could_not_find_user_errors = []
     for i, row in enumerate(mem_csv):
         try:
             memberdto = CandidateDTO(row)
         except AssertionError as e:
-            error_msg = "Invalid CSV format. Check that your columns are correctly labeled, there are NO blank rows, and filled out for each row."
-            error_msg += " "
-            error_msg += "No checkoff actions have been taken, so re-upload the entire file after fixing the errors."
-            error_msg += " "
-            error_msg += "Candidate error message: {}.".format(e)
-            error_msg += " "
-            error_msg += "Error Row Information at row {}: {}".format(i + 1, row)
-            messages.error(request, error_msg)
-            return redirect(next_page)
+            invalid_csv_format_errors.append(InvalidEntryErrorInfo(str(e), i + 1, row))
+            continue
         user = User.objects.filter(
             first_name=memberdto.first_name,
             last_name=memberdto.last_name,
             email=memberdto.email,
         )
         if not user:
-            messages.error(
-                request,
-                "Could not find user "
-                + memberdto.first_name
-                + " "
-                + memberdto.last_name
-                + " with email "
-                + memberdto.email
-                + ". Please check these parameters again. No checkoff action has been taken, so re-upload the entire file after fixing the errors.",
-            )
-            return redirect(next_page)
+            could_not_find_user_errors.append(UserErrorInfo(memberdto))
+            continue
         users.append(user[0])
+
+    if invalid_csv_format_errors or could_not_find_user_errors:
+        final_error_html = NO_CHECKOFF_ACTION_TAKEN + "\n<ul>\n"
+        for errors in (invalid_csv_format_errors, could_not_find_user_errors):
+            if errors:
+                # The "if" says at least one, and only need the staticmethod
+                error_html = "<li>" + errors[0].error_header() + "</li>" + "\n"
+                error_html_elements = []
+                for error in errors:
+                    bleached_error = bleach.clean(str(error), tags=[])
+                    error_html_elements.append(bleached_error)
+                error_html += "<ul>\n"
+
+                error_html += "<li>\n"
+                error_html += "</li>\n<li>".join(error_html_elements)
+                error_html += "</li>\n"
+
+                error_html += "</ul>\n"
+
+                final_error_html += error_html
+        final_error_html += "</ul>\n"
+        messages.error(request, mark_safe(final_error_html))
+        return redirect(next_page)
 
     # Checkoff all
     for user in users:
