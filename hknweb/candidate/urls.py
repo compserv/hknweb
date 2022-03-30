@@ -41,7 +41,7 @@ urlpatterns = [
         name="bitbyte/autocomplete",
     ),
     path("add_cands", views.add_cands, name="add_cands"),
-    # path("checkoff", views.MemberCheckoffView.as_view(), name="checkoff"), # @nocommit(rahularya50)
+    path("checkoff", views.MemberCheckoffView.as_view(), name="checkoff"),
     path("checkoff_csv", views.checkoff_csv, name="checkoff_csv"),
     path("summary", views.summary, name="summary"),
 ]
