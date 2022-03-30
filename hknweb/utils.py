@@ -55,25 +55,30 @@ def allow_public_access(func):
 allow_all_logged_in_users = _record_permission(None)
 
 
-def login_and_permission(permission_name):
-    """First requires log in, but if you're already logged in but don't have permission,
-    displays more info."""
-
+def _wrap_with_access_check(identifier, check):
     def decorator(func):
         return wraps(func)(  # preserves function attributes to the decorated function
-            _record_permission(permission_name)(
+            _record_permission(identifier)(
                 login_required(login_url="/accounts/login/")(
                     # raises 403 error which invokes our custom 403.html
-                    permission_required(
-                        permission_name, login_url="/accounts/login/", raise_exception=True
-                    )(
-                        func  # decorates function with both login_required and permission_required
-                    )
+                    check(func)
                 )
             )
         )
 
     return decorator
+
+
+def login_and_permission(permission_name):
+    """First requires log in, but if you're already logged in but don't have permission,
+    displays more info."""
+
+    return _wrap_with_access_check(
+        permission_name,
+        permission_required(
+            permission_name, login_url="/accounts/login/", raise_exception=True
+        ),
+    )
 
 
 def access_level_required(access_level):
@@ -83,21 +88,11 @@ def access_level_required(access_level):
     return user_passes_test(test_user)
 
 
-# TODO(rahularya50): unify common logic with above decorator
 def login_and_access_level(access_level):
-    def decorator(func):
-        return wraps(func)(  # preserves function attributes to the decorated function
-            _record_permission(access_level)(
-                login_required(login_url="/accounts/login/")(
-                    # raises 403 error which invokes our custom 403.html
-                    access_level_required(access_level)(
-                        func  # decorates function with both login_required and permission_required
-                    )
-                )
-            )
-        )
-
-    return decorator
+    return _wrap_with_access_check(
+        f"Access level <= {access_level}",
+        access_level_required(access_level),
+    )
 
 
 def method_login_and_permission(permission_name):
