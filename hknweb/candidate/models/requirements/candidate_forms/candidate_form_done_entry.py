@@ -8,7 +8,7 @@ from hknweb.candidate.models.requirements.candidate_forms.candidate_form import 
 
 class CandidateFormDoneEntry(models.Model):
     users = models.ManyToManyField(User, blank=True)
-    form = models.OneToOneField(CandidateForm, models.CASCADE)
+    form = models.OneToOneField(CandidateForm, on_delete=models.CASCADE)
     notes = models.TextField(blank=True, default="")
 
     class Meta:
