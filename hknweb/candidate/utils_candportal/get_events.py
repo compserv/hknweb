@@ -89,19 +89,21 @@ def get_required_hangouts(candidate_semester: Semester) -> dict:
     if EventType.objects.filter(type="Hangout").count() == 0:
         return required_hangout_events
 
-    semester_start, semester_end = get_semester_bounds(timezone.now())
-    requirement_hangout = RequirementHangout.objects.filter(
-        candidateSemesterActive=candidate_semester.id,
-        eventType=EVENT_NAMES.HANGOUT,
-        enable=True,
-    ).first()
-    if not requirement_hangout:
-        return required_hangout_events
+    time_start, time_end = get_semester_bounds(timezone.now())
+    if candidate_semester is not None:
+        requirement_hangout = RequirementHangout.objects.filter(
+            candidateSemesterActive=candidate_semester.id,
+            eventType=EVENT_NAMES.HANGOUT,
+            enable=True,
+        ).first()
+        if requirement_hangout:
+            time_start = requirement_hangout.hangoutsDateStart or time_start
+            time_end = requirement_hangout.hangoutsDateEnd or time_end
 
     # TODO: Hardcoded-ish for now, allow for choice of Hangout events
     required_hangout_events["Hangout"] = {
-        "eventsDateStart": requirement_hangout.hangoutsDateStart or semester_start,
-        "eventsDateEnd": requirement_hangout.hangoutsDateEnd or semester_end,
+        "eventsDateStart": time_start,
+        "eventsDateEnd": time_end,
         "title": "Hangout",
     }
 
