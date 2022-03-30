@@ -6,7 +6,7 @@ from django.views import generic
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 
-from hknweb.utils import login_and_permission, method_login_and_permission
+from hknweb.utils import allow_public_access, login_and_permission, method_login_and_permission
 
 from hknweb.studentservices.models import (
     DepTour,
@@ -28,6 +28,7 @@ SUBMIT_TEMPLATE = "studentservices/resume_critique_submit.html"
 UPLOADED_TEMPLATE = "studentservices/resume_critique_uploaded.html"
 
 
+@allow_public_access
 def resume_critique_submit(request):
     if request.method == "POST":
         form = DocumentForm(request.POST, request.FILES)
@@ -56,11 +57,13 @@ def resume_critique_submit(request):
     )
 
 
+@allow_public_access
 def resume_critique_uploaded(request):
     form = DocumentForm()
     return render(request, SUBMIT_TEMPLATE, {"form": form})
 
 
+@allow_public_access
 def reviewsessions(request):
     reviewsessions = ReviewSession.objects.order_by("-start_time")
 
@@ -112,6 +115,7 @@ class ReviewSessionUpdateView(generic.edit.UpdateView):
     template_name_suffix = "_edit"
 
 
+@allow_public_access
 def tours(request):
     tour = DepTour.objects
 
@@ -143,6 +147,7 @@ def send_request_email(request, form):
     msg.send()
 
 
+@allow_public_access
 def tour(request):
     form = TourRequest(request.POST or None)
     if request.method == "POST":
@@ -161,6 +166,7 @@ def tour(request):
     return render(request, "studentservices/tours.html", {"form": form})
 
 
+@allow_public_access
 def course_guide(request):
     context = dict()
 
@@ -172,6 +178,7 @@ def course_guide(request):
     return render(request, "studentservices/course_guide.html", context=context)
 
 
+@allow_public_access
 def course_guide_data(request):
     group_names = request.GET.get("groups", None)
     group_names = group_names.split(",") if group_names else []

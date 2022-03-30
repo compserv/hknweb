@@ -1,6 +1,7 @@
 import csv
 
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import login_required, permission_required, user_passes_test
+from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
 from django.utils.decorators import method_decorator
 from django.contrib.staticfiles.finders import find
@@ -13,7 +14,6 @@ from pytz import timezone
 
 ### For Markdownx Security Patch
 from functools import partial
-
 
 from django.conf import settings
 from django.utils.safestring import mark_safe
@@ -29,26 +29,70 @@ import bleach
 DATETIME_12_HOUR_FORMAT = "%m/%d/%Y %I:%M %p"
 PACIFIC_TIMEZONE = timezone("US/Pacific")
 
+
 # decorators
+def _record_permission(permission):
+    permissions_attr = "_permissions"
+
+    def decorator(func):
+        perms = list(getattr(func, permissions_attr, []))
+        perms.append(permission)
+
+        @wraps(func)
+        def wrapped(*args, **kwargs):
+            return func(*args, **kwargs)
+
+        setattr(wrapped, permissions_attr, perms)
+        return wrapped
+
+    return decorator
+
+
+def allow_public_access(func):
+    return _record_permission(None)(login_required(func))
+
+
+allow_all_logged_in_users = _record_permission(None)
+
+
+def _wrap_with_access_check(identifier, check):
+    def decorator(func):
+        return wraps(func)(  # preserves function attributes to the decorated function
+            _record_permission(identifier)(
+                login_required(login_url="/accounts/login/")(
+                    # raises 403 error which invokes our custom 403.html
+                    check(func)
+                )
+            )
+        )
+
+    return decorator
 
 
 def login_and_permission(permission_name):
     """First requires log in, but if you're already logged in but don't have permission,
     displays more info."""
 
-    def decorator(func):
-        return wraps(func)(  # preserves function attributes to the decorated function
-            login_required(login_url="/accounts/login/")(
-                # raises 403 error which invokes our custom 403.html
-                permission_required(
-                    permission_name, login_url="/accounts/login/", raise_exception=True
-                )(
-                    func  # decorates function with both login_required and permission_required
-                )
-            )
-        )
+    return _wrap_with_access_check(
+        permission_name,
+        permission_required(
+            permission_name, login_url="/accounts/login/", raise_exception=True
+        ),
+    )
 
-    return decorator
+
+def access_level_required(access_level):
+    def test_user(user):
+        if get_access_level(user) > access_level:
+            raise PermissionDenied
+    return user_passes_test(test_user)
+
+
+def login_and_access_level(access_level):
+    return _wrap_with_access_check(
+        f"Access level <= {access_level}",
+        access_level_required(access_level),
+    )
 
 
 def method_login_and_permission(permission_name):
@@ -109,7 +153,6 @@ def export_model_as_csv(model, queryset):
 
 
 def markdownify(text):
-
     # Bleach settings
     whitelist_tags = getattr(
         settings, "MARKDOWNIFY_WHITELIST_TAGS", bleach.sanitizer.ALLOWED_TAGS
@@ -173,6 +216,7 @@ GROUP_TO_ACCESSLEVEL = {
     "member": 0,
     "candidate": 1,
 }
+
 
 def get_access_level(user):
     access_level = 2  # See constants.py

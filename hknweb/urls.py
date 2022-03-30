@@ -1,5 +1,4 @@
 import markdownx.views as markdownx_views
-
 from django.contrib import admin
 from django.urls import include, path
 from django.conf.urls import url
@@ -8,12 +7,18 @@ from django.conf.urls.static import static
 
 from .shortlinks import views as viewsShortlink
 from hknweb.views import landing, users, indrel, serv
-from hknweb.utils import method_login_and_permission
+from .utils import method_login_and_permission
 
+__all__ = ["urlpatterns", "safe_urlpatterns"]
 
-urlpatterns = [
+# DO NOT add urls here unless you know what you are doing
+unsafe_urlpatterns = [
     path("admin/", admin.site.urls),
     path("accounts/", include("django.contrib.auth.urls")),
+    path("auth/", include("social_django.urls", namespace="social")),
+]
+
+app_urlpatterns = [
     path("accounts/create/", users.account_create, name="account-create"),
     path("accounts/settings/", users.account_settings, name="account-settings"),
     path("accounts/activate/", users.activate),
@@ -26,11 +31,9 @@ urlpatterns = [
     path("cand/", include("hknweb.candidate.urls")),
     path("pages/", include("hknweb.markdown_pages.urls")),
     path("course_surveys/", include("hknweb.course_surveys.urls")),
-    path("auth/", include("social_django.urls", namespace="social")),
     path("", landing.home, name="home"),
     path("<slug:temp>/", viewsShortlink.openLink),
 ]
-
 
 markdownx_urlpatterns = [
     url(
@@ -62,10 +65,17 @@ serv_urlpatterns = [
     path("serv/calday", serv.calday, name="calday"),
 ]
 
-urlpatterns.extend(indrel_urlpatterns)
-urlpatterns.extend(serv_urlpatterns)
-urlpatterns.extend(markdownx_urlpatterns)
+safe_urlpatterns = [
+    *app_urlpatterns,
+    *markdownx_urlpatterns,
+    *indrel_urlpatterns,
+    *serv_urlpatterns,
+]
 
+urlpatterns = [
+    *unsafe_urlpatterns,
+    *safe_urlpatterns,
+]
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

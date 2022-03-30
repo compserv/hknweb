@@ -1,24 +1,18 @@
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
-from django.shortcuts import render, reverse
+from django.shortcuts import render
 from django.urls import reverse
 
 from hknweb.utils import (
-    get_access_level,
-    GROUP_TO_ACCESSLEVEL,
+    GROUP_TO_ACCESSLEVEL, login_and_access_level,
 )
 
 from hknweb.candidate.utils_candportal import CandidatePortalData
 
 
-@login_required
+@login_and_access_level(GROUP_TO_ACCESSLEVEL["member"])
 def candidate_portal_view_by_username(request, username):
-    if GROUP_TO_ACCESSLEVEL["member"] < get_access_level(request.user):
-        messages.warning(request, "Insufficent permission to access a user.")
-        return HttpResponseRedirect("/")
-
     user = User.objects.filter(username=username).first()
     if user is None:
         messages.warning(request, "User {} does not exist.".format(username))
