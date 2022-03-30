@@ -1,10 +1,12 @@
 import sys
 from typing import List, Union
-
+import django
 from django.urls import URLPattern, URLResolver
 
 sys.path.append(".")
+django.setup() # ?
 import hknweb.urls as urls
+
 
 
 def gen_url_patterns(src: List[Union[URLPattern, URLResolver]], path=()):
