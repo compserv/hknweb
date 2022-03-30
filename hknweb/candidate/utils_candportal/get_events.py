@@ -38,10 +38,11 @@ def get_mandatory_events(candidate_semester: Semester, confirmed_rsvps: bool):
     r = (
         candidate_semester
         and RequirementMandatory.objects.filter(
-            candidateSemesterActive=candidate_semester.id
+            candidateSemesterActive=candidate_semester.id,
+            enable=True
         ).first()
     )
-    mandatory_events = r.events.none()
+    mandatory_events = Event.objects.none()
     start_time, end_time = get_semester_bounds(timezone.now())
     if r:
         mandatory_events = r.events.all()
