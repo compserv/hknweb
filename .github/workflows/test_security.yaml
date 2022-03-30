@@ -27,4 +27,4 @@ jobs:
           pip install -r requirements.txt
       - name: Handler privacy check
         run: |
-          HKNWEB_MODE='DEV' pytest tests/test_handler_privacy.py
+          HKNWEB_MODE='DEV' DJANGO_SETTINGS_MODULE=hknweb.settings pytest tests/test_handler_privacy.py
