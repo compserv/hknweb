@@ -1,3 +1,4 @@
+import markdownx.views as markdownx_views
 from django.contrib import admin
 from django.urls import include, path
 from django.conf.urls import url
@@ -6,6 +7,7 @@ from django.conf.urls.static import static
 
 from .shortlinks import views as viewsShortlink
 from hknweb.views import landing, users, indrel, serv
+from .utils import method_login_and_permission
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -30,6 +32,19 @@ hkn_urlpatterns = [
     path("<slug:temp>/", viewsShortlink.openLink),
 ]
 
+markdownx_urlpatterns = [
+    url(
+        r'^markdownx/upload/$',
+        method_login_and_permission("markdown_pages.add_markdownpage")(markdownx_views.ImageUploadView).as_view(),
+        name='markdownx_upload',
+    ),
+    url(
+        r'^markdownx/markdownify/$',
+        method_login_and_permission("markdown_pages.add_markdownpage")(markdownx_views.MarkdownifyView).as_view(),
+        name='markdownx_markdownify',
+    ),
+]
+
 indrel_urlpatterns = [
     path("indrel", indrel.index, name="indrel"),
     path("indrel/resume_book", indrel.resume_book, name="resume_book"),
@@ -49,6 +64,7 @@ serv_urlpatterns = [
 
 urlpatterns.extend(indrel_urlpatterns)
 urlpatterns.extend(serv_urlpatterns)
+urlpatterns.extend(markdownx_urlpatterns)
 
 
 if settings.DEBUG:
