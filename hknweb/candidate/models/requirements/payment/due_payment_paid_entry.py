@@ -5,8 +5,8 @@ from hknweb.candidate.models.requirements.payment.due_payment import DuePayment
 
 
 class DuePaymentPaidEntry(models.Model):
-    users = models.ManyToManyField(User)
-    duePayment = models.OneToOneField(DuePayment, models.CASCADE)
+    users = models.ManyToManyField(User, blank=True)
+    duePayment = models.OneToOneField(DuePayment, on_delete=models.CASCADE, unique=True)
     notes = models.TextField(blank=True, default="")
 
     class Meta:
