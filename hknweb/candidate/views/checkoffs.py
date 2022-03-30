@@ -104,41 +104,21 @@ def checkoff_csv(request):
             messages.error(request, "Please select a valid committee project!")
             return redirect(next_page)
         project = CommitteeProject.objects.get(id=project_id)
-        projectDoneEntry = CommitteeProjectDoneEntry.objects.filter(
-            committeeProject=project
-        ).first()
-        if projectDoneEntry is None:
-            messages.error(
-                request,
-                "Could not find a corresponding CommiteeProjectDoneEntry. Please make sure one is created for the project.",
-            )
-            return redirect(next_page)
+        projectDoneEntry, _ = CommitteeProjectDoneEntry.objects.get_or_create(committeeProject=project)
     elif checkoff_type == "dues":
         dues_id = request.POST.get("dues_selection", None)
         if dues_id is None:
             messages.error(request, "Please input a valid Dues entry!")
             return redirect(next_page)
         due = DuePayment.objects.get(id=dues_id)
-        duesDoneEntry = DuePaymentPaidEntry.objects.filter(duePayment=due).first()
-        if duesDoneEntry is None:
-            messages.error(
-                request,
-                "Could not find a corresponding DuePaymentPaidEntry. Please make sure one is created for the due.",
-            )
-            return redirect(next_page)
+        duesDoneEntry, _ = DuePaymentPaidEntry.objects.get_or_create(duePayment=due)
     elif checkoff_type == "forms":
         forms_id = request.POST.get("forms_selection", None)
         if forms_id is None:
             messages.error(request, "Please input a valid Forms entry!")
             return redirect(next_page)
         form = CandidateForm.objects.get(id=forms_id)
-        formsDoneEntry = CandidateFormDoneEntry.objects.filter(form=form).first()
-        if formsDoneEntry is None:
-            messages.error(
-                request,
-                "Could not find a corresponding CandidateFormDoneEntry. Please make sure one is created for the form.",
-            )
-            return redirect(next_page)
+        formsDoneEntry, _ = CandidateFormDoneEntry.objects.get_or_create(form=form)
     else:
         messages.error(request, "Invalid checkoff type")
         return redirect(next_page)
