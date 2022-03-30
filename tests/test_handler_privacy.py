@@ -1,7 +1,9 @@
+import sys
 from typing import List, Union
 
 from django.urls import URLPattern, URLResolver
 
+sys.path.append(".")
 import hknweb.urls as urls
 
 
