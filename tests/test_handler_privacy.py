@@ -33,6 +33,6 @@ def check_handler_privacy(handler, name):
 
 
 def test_handler_privacy():
-    for pattern, path in gen_url_patterns(urls.hkn_urlpatterns):
+    for pattern, path in gen_url_patterns(urls.safe_urlpatterns):
         check_handler_privacy(pattern, ",".join(map(str, path)))
 
