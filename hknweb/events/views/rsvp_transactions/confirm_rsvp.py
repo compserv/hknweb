@@ -1,6 +1,6 @@
-from django.http import Http404, HttpResponseForbidden, HttpResponse
+from django.http import Http404, HttpResponse
 from hknweb.events.models import Rsvp
-from hknweb.utils import get_access_level, login_and_access_level
+from hknweb.utils import login_and_access_level
 
 
 @login_and_access_level(0)
