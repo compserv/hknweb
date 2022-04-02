@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     "hknweb.markdown_pages",
     "hknweb.shortlinks",
     "hknweb.alumni",
+    "hknweb.polls",
     "hknweb.candidate",
     "hknweb.coursesemester",
     "hknweb.course_surveys",
