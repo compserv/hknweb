@@ -27,7 +27,7 @@ class ConfirmRsvpViewTests(TestCase):
         }
         response = self.client.get(reverse("events:confirm_rsvp", kwargs=kwargs))
 
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 403)
 
     def test_access_level_gt_0_returns_403(self):
         kwargs = {
