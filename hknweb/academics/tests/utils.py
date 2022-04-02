@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 
 from hknweb.academics.models import (
     Course,
@@ -153,5 +153,10 @@ def login_user(test_cls):
     password = "custom password"
     user.set_password(password)
     user.save()
+
+    group = Group(name="officer")
+    group.save()
+    group.user_set.add(user)
+    group.save()
 
     test_cls.client.login(username=user.username, password=password)
