@@ -49,7 +49,7 @@ def _record_permission(permission):
 
 
 def allow_public_access(func):
-    return _record_permission(None)(login_required(func))
+    return _record_permission(None)(func)
 
 
 allow_all_logged_in_users = _record_permission(None)
