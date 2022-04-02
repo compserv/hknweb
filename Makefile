@@ -75,7 +75,8 @@ shell:
 
 .PHONY: test
 test: venv
-	$(MANAGE) test $(test_app)
+	HKNWEB_MODE='dev' coverage run --source='.' ./manage.py test --pattern="test_*.py"
+	coverage report
 
 .PHONY: clean
 clean:
