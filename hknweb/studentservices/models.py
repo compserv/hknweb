@@ -11,10 +11,10 @@ MAX_TXTLEN = 10000
 
 
 class Resume(models.Model):
-    name = models.CharField(max_length=MAX_STRLEN, blank=False)
-    email = models.CharField(max_length=MAX_STRLEN, blank=False)
-    notes = models.TextField(max_length=MAX_TXTLEN, blank=True)
-    document = models.FileField(upload_to="resume/", blank=False)
+    name = models.CharField(max_length=MAX_STRLEN)
+    email = models.EmailField()
+    notes = models.TextField(max_length=MAX_TXTLEN)
+    document = models.FileField(upload_to="resume/")
     uploaded_at = models.DateTimeField(auto_now_add=True)
     critiques = models.TextField(max_length=MAX_TXTLEN, blank=True)
 

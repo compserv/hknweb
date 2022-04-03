@@ -6,9 +6,16 @@ from hknweb.studentservices.models import DepTour, Resume, ReviewSession
 
 
 class DocumentForm(forms.ModelForm):
+    required_css_class = "required"
+
     class Meta:
         model = Resume
         fields = ("name", "document", "notes", "email")
+
+        labels = {
+            "document": "Resume (please submit a PDF)",
+            "notes": "What type of feedback/help are you looking for? What types of companies/schools etc are you applying for and what fields are you interested in?",
+        }
 
 
 class ReviewSessionForm(forms.ModelForm):
