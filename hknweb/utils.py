@@ -85,6 +85,7 @@ def access_level_required(access_level):
     def test_user(user):
         if get_access_level(user) > access_level:
             raise PermissionDenied
+        return True
     return user_passes_test(test_user)
 
 

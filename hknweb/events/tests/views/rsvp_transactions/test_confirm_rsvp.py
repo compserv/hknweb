@@ -50,7 +50,7 @@ class ConfirmRsvpViewTests(TestCase):
         }
         response = self.client.post(reverse("events:confirm_rsvp", kwargs=kwargs))
 
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 200)
         self.assertTrue(Rsvp.objects.first().confirmed)
 
     def test_unconfirm_sets_unconfirmed(self):
@@ -65,5 +65,5 @@ class ConfirmRsvpViewTests(TestCase):
         }
         response = self.client.post(reverse("events:confirm_rsvp", kwargs=kwargs))
 
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 200)
         self.assertFalse(Rsvp.objects.first().confirmed)
