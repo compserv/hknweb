@@ -14,7 +14,7 @@ urlpatterns = [
         views.ReviewSessionUpdateView.as_view(),
         name="reviewsession_edit",
     ),
-    path("tours", views.tour, name="tours"),
+    path("tours", views.tours, name="tours"),
     path("course_guide", views.course_guide, name="course_guide"),
     path("course_guide_data", views.course_guide_data, name="course_guide_data"),
 ]

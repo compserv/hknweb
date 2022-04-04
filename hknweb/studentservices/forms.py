@@ -1,8 +1,9 @@
-import datetime
-
 from django import forms
+from django.utils import timezone
 
 from hknweb.studentservices.models import DepTour, Resume, ReviewSession
+from hknweb.utils import DATETIME_12_HOUR_FORMAT
+from hknweb.events.utils import DATETIME_WIDGET_NO_AUTOCOMPLETE
 
 
 class DocumentForm(forms.ModelForm):
@@ -56,33 +57,20 @@ class ReviewSessionUpdateForm(forms.ModelForm):
 
 class TourRequest(forms.ModelForm):
     datetime = forms.DateTimeField(
-        help_text="MM/DD/YYYY hh:mm AM/PM",
-        input_formats=("%m/%d/%Y %I:%M %p",),
+        input_formats=(DATETIME_12_HOUR_FORMAT,),
+        widget=DATETIME_WIDGET_NO_AUTOCOMPLETE,
         label="Desired Date and Time",
     )
-    confirm_email = forms.EmailField(max_length=100)
 
     class Meta:
         model = DepTour
-        fields = ["name", "datetime", "email", "confirm_email", "phone", "comments"]
+        fields = ["name", "datetime", "email", "phone", "comments"]
 
-    def clean_date(self):
-        date = self.cleaned_data["date"]
-        if date < datetime.date.today():
-            raise forms.ValidationError("The date cannot be in the past!")
-        return date
 
-    def clean_desired_time(self):
-        date = self.cleaned_data.get("date", 0)
-        time = self.cleaned_data["desired_time"]
-        if date == datetime.date.today() and time < datetime.datetime.now().time():
-            raise forms.ValidationError("Time cannot be in the past!")
-        return time
+    def clean(self):
+        super().clean()
+        datetime = self.cleaned_data.get("datetime")
+        if datetime and datetime < timezone.now():
+            self.add_error("datetime", "Desired date and time is in the past")
 
-    def clean_confirm_email(self):
-        email = self.cleaned_data["email"]
-        confirm_email = self.cleaned_data["confirm_email"]
-        if email and confirm_email:
-            if email != confirm_email:
-                raise forms.ValidationError("Emails do not match.")
-        return confirm_email
+        return self.cleaned_data

@@ -90,16 +90,6 @@ class ReviewSessionUpdateView(generic.edit.UpdateView):
     template_name_suffix = "_edit"
 
 
-@allow_public_access
-def tours(request):
-    tour = DepTour.objects
-
-    context = {
-        "tour": tour,
-    }
-    return render(request, "studentservices/tours.html", context)
-
-
 def send_request_email(request, form):
     subject = "Department Tour Request"
     officer_email = "deprel@hkn.eecs.berkeley.edu"
@@ -123,13 +113,12 @@ def send_request_email(request, form):
 
 
 @allow_public_access
-def tour(request):
+def tours(request):
     form = TourRequest(request.POST or None)
     if request.method == "POST":
 
         if form.is_valid():
-            tour = form.save(commit=False)
-            tour.save()
+            form.save()
 
             # send_request_email(request, form)
 
