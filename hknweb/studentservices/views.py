@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.http import JsonResponse
+from django.conf import settings
 from django.contrib import messages
 from django.views import generic
 from django.core.mail import EmailMessage
@@ -9,7 +10,6 @@ from django.template.loader import render_to_string
 from hknweb.utils import allow_public_access, login_and_permission, method_login_and_permission
 
 from hknweb.studentservices.models import (
-    DepTour,
     ReviewSession,
     CourseGuideNode,
     CourseGuideAdjacencyList,
@@ -90,43 +90,39 @@ class ReviewSessionUpdateView(generic.edit.UpdateView):
     template_name_suffix = "_edit"
 
 
-def send_request_email(request, form):
-    subject = "Department Tour Request"
-    officer_email = "deprel@hkn.eecs.berkeley.edu"
-
-    html_content = render_to_string(
-        "studentservices/tour_request_email.html",
-        {
-            "name": form.instance.name,
-            "time": form.instance.desired_time,
-            "date": form.instance.date,
-            "email": form.instance.email,
-            "phone": form.instance.phone,
-            "comments": form.instance.comments,
-        },
-    )
-    msg = EmailMessage(
-        subject, html_content, "no-reply@hkn.eecs.berkeley.edu", [officer_email]
-    )
-    msg.content_subtype = "html"
-    msg.send()
-
-
 @allow_public_access
 def tours(request):
     form = TourRequest(request.POST or None)
     if request.method == "POST":
-
         if form.is_valid():
             form.save()
 
-            # send_request_email(request, form)
+            # Send deprel an email
+            subject = "Department Tour Request"
+            officer_email = "deprel@hkn.eecs.berkeley.edu"
+
+            html_content = render_to_string(
+                "studentservices/tour_request_email.html",
+                {
+                    "name": form.instance.name,
+                    "datetime": form.instance.datetime,
+                    "email": form.instance.email,
+                    "phone": form.instance.phone,
+                    "comments": form.instance.comments,
+                },
+            )
+            msg = EmailMessage(
+                subject, html_content, settings.NO_REPLY_EMAIL, [officer_email]
+            )
+            msg.content_subtype = "html"
+            msg.send()
 
             messages.success(request, "Your request has been sent!")
             return redirect("studentservices:tours")
         else:
             msg = "Something went wrong! Your request did not send. Try again, or email deprel@hkn.mu."
             messages.error(request, msg)
+
     return render(request, "studentservices/tours.html", {"form": form})
 
 
