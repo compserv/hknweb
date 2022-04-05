@@ -25,20 +25,29 @@ def create_event(data, start_time, end_time, user):
 
 
 def generate_recurrence_times(
-    start_time: datetime, end_time: datetime, num_times: int, period: int
+    start_time: datetime, end_time: datetime, num_repeats: int, period: int
 ) -> list:
     """
     Parameters
     ----------
+    start_time: datetime
+        The datetime of the starting time (day and clock time)
+    end_time: datetime
+        The datetime of the ending time (day and clock time)
+    num_repeats: int
+        The number of times to repeat the event
     period: int
         The number of weeks between each occurrence, in weeks.
 
+    Returns
+    ----------
+    List of (start_time, end_time) for each event occurance (including first occurance)
     """
     times = [(start_time, end_time)]
-    if num_times <= 0 or period <= 0:
+    if num_repeats <= 0 or period <= 0:
         return times
     time_diff = timedelta(period * 7)
-    for _ in range(num_times - 1):
+    for _ in range(num_repeats):
         start_time, end_time = start_time + time_diff, end_time + time_diff
         times.append((start_time, end_time))
     return times
