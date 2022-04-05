@@ -69,7 +69,7 @@ Finally, we need to install all of our dependencies:
 $ make install
 ```
 
-In summary, the setup looks like:
+In summary, for x86_64 computers, the setup looks like:
 ```sh
 $ vagrant up                    # boot up the vm
 $ vagrant ssh                   # enter into our vm
@@ -83,6 +83,21 @@ $ make dev                      # start local web server
 $ logout                        # exit the virtual machine
 $ vagrant halt                  # after developing, shut down our virtual machine
 ```
+
+In summary, for M1 MacBooks computers, the setup looks like:
+```sh
+# For M1 MacBooks, we skip Vagrant
+$ cd hknweb                     # enter our main directory
+$ make venv                     # create our virtual environment
+$ source .venv/bin/activate     # enter our virtual environment
+$ make install-macbook          # install our dependencies (for MacBooks via Homebrew)
+$ make migrate                  # apply all database changes
+$ make permissions              # initialize our database
+$ make dev                      # start local web server
+$ deactivate                    # exit / deactivate the virtual environment
+```
+
+ARM computers can follow the same instructions as M1 MacBooks, but will have to skim the dependencies installed in `make install-macbook` and the `Vagrantfile`, install them for yourself.
 
 Without sudo privileges, you will need to add the binary location to your `PATH` variable.
 On Linux, this is `~/.local/bin`, and on Windows, this is `AppData\Roaming\Python\bin`.
