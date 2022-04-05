@@ -19,9 +19,10 @@ class ATTR:
     UTF8 = "utf-8"
     UTF8SIG = "utf-8-sig"
 
-
-BERKELEY_EMAIL_DOMAIN = "@berkeley.edu"
-HKN_EMAIL_DOMAIN = "@hkn.eecs.berkeley.edu"
+DOMAINS = [
+    "@berkeley.edu",
+    "@hkn.eecs.berkeley.edu",
+]
 
 
 class CandidateDTO:
@@ -31,17 +32,16 @@ class CandidateDTO:
         self.last_name = candidate_attributes.get(ATTR.LAST_NAME, None)
         self.username = self.email
         if self.email is not None:
-            if self.email.endswith(BERKELEY_EMAIL_DOMAIN):
-                self.username = self.email.replace(BERKELEY_EMAIL_DOMAIN, "")
-            elif self.email.endswith(HKN_EMAIL_DOMAIN):
-                self.username = self.email.replace(HKN_EMAIL_DOMAIN, "")
+            for d in DOMAINS:
+                if self.email.endswith(d):
+                    self.username = self.email.replace(d, "")
+                    break
         self.validate()
 
     def validate(self):
         assert self.email, "Candidate email must not be empty"
-        assert self.email.endswith(BERKELEY_EMAIL_DOMAIN) or self.email.endswith(
-            HKN_EMAIL_DOMAIN
-        ), "Candidate email must be an @berkeley.edu or @hkn.eecs.berkeley.edu email"
+        assert any(self.email.endswith(d) for d in DOMAINS), \
+            "Candidate email must be an @berkeley.edu or @hkn.eecs.berkeley.edu email"
         assert self.first_name, "Candidate first name must not be empty"
         assert self.last_name, "Candidate last name must not be empty"
         assert self.username, "Candidate username must not be empty"
