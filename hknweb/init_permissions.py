@@ -38,6 +38,7 @@ def provision():
         ("view_alumnus", Alumnus),
         ("add_attendanceform", AttendanceForm),
         ("add_markdownpage", MarkdownPage),
+        ("add_user", User),
     ]
 
     # SETTING PERMISSIONS TO GROUPS
