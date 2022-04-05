@@ -72,9 +72,9 @@ class ReqInfo:
         self.unconfirmed_events = unconfirmed_events
 
     def set_list(self, candidate_semester: Semester):
-        lst = deepcopy(self.EMPTY_REQ_LIST)
+        self.lst = deepcopy(self.EMPTY_REQ_LIST)
         if not candidate_semester:
-            return lst
+            return self.lst
 
         data = [
             (RequriementEvent, Q(eventType__type__in=self.required_events)),
@@ -88,20 +88,18 @@ class ReqInfo:
             for c, q in data
         ]
 
-        lst.update({r.eventType.type: r.numberRequired for r in events})
+        self.lst.update({r.eventType.type: r.numberRequired for r in events})
 
-        d = lst[EVENT_NAMES.INTERACTIVITIES]
+        d = self.lst[EVENT_NAMES.INTERACTIVITIES]
         d.update({r.eventType: r.numberRequired for r in hangouts})
         d[EVENT_NAMES.EITHER] = d[EVENT_NAMES.HANGOUT] + d[EVENT_NAMES.CHALLENGE]
 
         if bitbyte.exists():
-            lst[EVENT_NAMES.BITBYTE] = bitbyte.first().numberRequired
+            self.lst[EVENT_NAMES.BITBYTE] = bitbyte.first().numberRequired
 
-        lst[EVENT_NAMES.MANDATORY] = len(
+        self.lst[EVENT_NAMES.MANDATORY] = len(
             self.confirmed_events[EVENT_NAMES.MANDATORY]
         ) + len(self.unconfirmed_events[EVENT_NAMES.MANDATORY])
-
-        self.lst = lst
 
     def set_confirmed_reqs(self, num_challenges: int, num_bitbytes: int):
         # TODO: Hardcoded-ish for now, allow for choice of Hangout events
