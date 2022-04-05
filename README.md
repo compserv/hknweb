@@ -97,7 +97,7 @@ $ make dev                      # start local web server
 $ deactivate                    # exit / deactivate the virtual environment
 ```
 
-ARM computers can follow the same instructions as M1 MacBooks, but will have to skim the dependencies installed in `make install-macbook` and the `Vagrantfile`, install them for yourself.
+ARM computers can follow the same instructions as M1 MacBooks, but will have to skim and install the dependencies listed in the `Makefile` for the `make install-macbook` command and the `Vagrantfile`
 
 Without sudo privileges, you will need to add the binary location to your `PATH` variable.
 On Linux, this is `~/.local/bin`, and on Windows, this is `AppData\Roaming\Python\bin`.
