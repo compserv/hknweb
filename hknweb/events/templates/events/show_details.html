@@ -82,7 +82,7 @@
         </p>
     {% endif %}
 
-    <p><a href="{% url 'events:index' %}">
+    <p><a href="{{ back_link }}">
         Go Back to Calendar
     </a></p>
   </div>
@@ -96,24 +96,26 @@
     {% endif %}
 
     <!-- RSVP/un-RSVP button -->
-    {% if rsvp %}
-        <button onclick="RSVP(this, '{% url 'events:unrsvp' event.id %}')">un-RSVP</button>
-    {% else %}
-        <button onclick="RSVP(this, '{% url 'events:rsvp' event.id %}')">RSVP</button>
-    {% endif %}
+    {% if request.user.is_authenticated %}
+        {% if rsvp %}
+            <button onclick="RSVP(this, '{% url 'events:unrsvp' event.id %}')">un-RSVP</button>
+        {% else %}
+            <button onclick="RSVP(this, '{% url 'events:rsvp' event.id %}')">RSVP</button>
+        {% endif %}
 
-    {% if waitlisted %}
-      <p class="rsvp-list">You are at position {{waitlist_position}} on the waitlist. <img src="{% static 'candidate/maybe.png'%}" alt="waitlisted" class="table-icon"></p>
-    {% elif rsvp %}
-      <p class="rsvp-list">You have rsvp'd <img src="{% static 'candidate/yes.png'%}" alt="rsvp'd" class="table-icon"></p>
-    {% else %}
-      <p class="rsvp-list">You have not rsvp'd </p>
-    {% endif %}
+        {% if waitlisted %}
+        <p class="rsvp-list">You are at position {{waitlist_position}} on the waitlist. <img src="{% static 'candidate/maybe.png'%}" alt="waitlisted" class="table-icon"></p>
+        {% elif rsvp %}
+        <p class="rsvp-list">You have rsvp'd <img src="{% static 'candidate/yes.png'%}" alt="rsvp'd" class="table-icon"></p>
+        {% else %}
+        <p class="rsvp-list">You have not rsvp'd </p>
+        {% endif %}
 
-    {% if rsvp and not rsvp.confirmed and attendance_form %}
-        <a href="{% url 'events:submit_attendance' event.id attendance_form.id rsvp.id %}">
-            Attendance sign-in
-        </a>
+        {% if rsvp and not rsvp.confirmed and attendance_form %}
+            <a href="{% url 'events:submit_attendance' event.id attendance_form.id rsvp.id %}">
+                Attendance sign-in
+            </a>
+        {% endif %}
     {% endif %}
 
     <table style="margin: auto;">

@@ -49,7 +49,7 @@
                     title: "{{ event.name | event_name | safe }}",
                     start: '{{ event.start_time|date:"c" }}',
                     end: '{{ event.end_time|date:"c" }}',
-                    url: '{{ event.id }}',
+                    url: {% if request.path|slice:"-1:" == "/" %} '{{ request.path }}{{ event.id }}' {% else %} '{{ request.path }}/{{ event.id }}' {% endif %},
                     color: '{{ event.event_type.color }}'
                 },
             {% endfor %}]
@@ -80,12 +80,14 @@ Upcoming Events
         {% endfor %}
     {% endif %}
 
-    <p>
-        Add HKN's calendars to your own Google Calendar! 
-        {% for calendar in calendars %}
-            <a href="{{ calendar.link }}">{{ calendar.name }}</a> {{ calendar.separator }}
-        {% endfor %}
-    </p>
+    {% if calendars %}
+        <p>
+            Add HKN's calendars to your own Google Calendar! 
+            {% for calendar in calendars %}
+                <a href="{{ calendar.link }}">{{ calendar.name }}</a> {{ calendar.separator }}
+            {% endfor %}
+        </p>
+    {% endif %}
 
     <!-- Event type legend -->
     <ul class="list w-100 flex flex-wrap justify-end">

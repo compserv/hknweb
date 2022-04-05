@@ -1,27 +1,22 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.http import JsonResponse
 from django.conf import settings
 from django.contrib import messages
-from django.views import generic
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 
-from hknweb.utils import allow_public_access, login_and_permission, method_login_and_permission
+from hknweb.events.views.aggregate_displays.calendar import calendar_helper
+from hknweb.events.views.event_transactions.show_event import show_details_helper
+from hknweb.utils import allow_public_access
 
 from hknweb.studentservices.models import (
-    ReviewSession,
     CourseGuideNode,
     CourseGuideAdjacencyList,
     CourseGuideGroup,
     CourseGuideParam,
 )
-from hknweb.studentservices.forms import (
-    DocumentForm,
-    ReviewSessionForm,
-    ReviewSessionUpdateForm,
-    TourRequest,
-)
+from hknweb.studentservices.forms import DocumentForm, TourRequest
 
 
 @allow_public_access
@@ -40,54 +35,12 @@ def resume_critique_submit(request):
 
 @allow_public_access
 def reviewsessions(request):
-    reviewsessions = ReviewSession.objects.order_by("-start_time")
-
-    context = {
-        "reviewsessions": reviewsessions,
-    }
-    return render(request, "studentservices/reviewsessions.html", context)
+    return calendar_helper(request, event_type="Review Session")
 
 
-@login_and_permission("studentservices.view_reviewsession")
-def reviewsession_details(request, id):
-    reviewsession = get_object_or_404(ReviewSession, pk=id)
-
-    context = {
-        "reviewsession": reviewsession,
-        "can_edit": request.user.has_perm("studentservices.change_review_session"),
-    }
-    return render(request, "studentservices/reviewsession_details.html", context)
-
-
-@login_and_permission("studentservices.add_reviewsession")
-def add_reviewsession(request):
-    form = ReviewSessionForm(request.POST or None)
-    if request.method == "POST":
-        if form.is_valid():
-            reviewsession = form.save(commit=False)
-            reviewsession.created_by = request.user
-            reviewsession.save()
-            messages.success(request, "Review session has been added!")
-            return redirect("studentservices:reviewsessions")
-        else:
-            messages.error(request, "Something went wrong oops")
-            return render(
-                request,
-                "studentservices/reviewsession_add.html",
-                {"form": ReviewSessionForm(None)},
-            )
-    return render(
-        request,
-        "studentservices/reviewsession_add.html",
-        {"form": ReviewSessionForm(None)},
-    )
-
-
-@method_login_and_permission("reviewsession_add.change_review_session")
-class ReviewSessionUpdateView(generic.edit.UpdateView):
-    model = ReviewSession
-    form_class = ReviewSessionUpdateForm
-    template_name_suffix = "_edit"
+@allow_public_access
+def show_reviewsession_details(request, id):
+    return show_details_helper(request, id, reverse("studentservices:reviewsessions"), False)
 
 
 @allow_public_access

@@ -1,7 +1,6 @@
 import datetime
 
 from django.db import models
-from django.contrib.auth.models import User
 from django.utils import timezone
 from django.core.validators import RegexValidator
 
@@ -19,32 +18,7 @@ class Resume(models.Model):
     critiques = models.TextField(max_length=MAX_TXTLEN, blank=True)
 
 
-class ReviewSession(models.Model):
-    name = models.CharField(max_length=MAX_STRLEN)
-    slug = models.CharField(max_length=MAX_STRLEN)
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
-    location = models.CharField(max_length=MAX_STRLEN)
-    description = models.TextField()
-
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def get_absolute_url(self):
-        return "/studentservices/reviewsessions/{}".format(self.id)
-
-    def __repr__(self):
-        return "Event(name={}, location={})".format(self.name, self.location)
-
-    def __str__(self):
-        return self.name
-
-
 class DepTour(models.Model):
-    """
-    Model for a department tour
-    """
-
     class Meta:
         verbose_name = "Department Tour"
 
