@@ -1,5 +1,3 @@
-import datetime
-
 from django.db import models
 from django.utils import timezone
 from django.core.validators import RegexValidator
@@ -25,7 +23,7 @@ class DepTour(models.Model):
     name = models.CharField(max_length=MAX_STRLEN, default="")
     email = models.EmailField(max_length=MAX_STRLEN, default="")
     datetime = models.DateTimeField(
-        default=datetime.date.today, verbose_name="Desired Date and Time"
+        default=timezone.now, verbose_name="Desired Date and Time"
     )
     phone_regex = RegexValidator(
         regex=r"^\+?1?\d{10}$",
@@ -38,7 +36,7 @@ class DepTour(models.Model):
         default="",
         verbose_name="Additional comments",
     )
-    date_submitted = models.DateTimeField(default=timezone.datetime.now)
+    date_submitted = models.DateTimeField(default=timezone.now)
     confirmed = models.BooleanField(default=False)
     deprel_comments = models.TextField(max_length=MAX_TXTLEN, blank=True, default="")
 
