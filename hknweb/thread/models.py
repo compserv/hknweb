@@ -1,3 +1,5 @@
+from django.conf import settings
+
 from django.db import models
 
 # Create your models here.
@@ -25,5 +27,9 @@ class ThreadTask(models.Model):
         Main requirement is the "setDaemon" to be true
         alongside the "start" (of course)
         """
+        if getattr(settings, "NO_THREADING", False):  # pragma: no cover
+            thread._target(*thread._args)
+            return
+
         thread.setDaemon(True)
         thread.start()
