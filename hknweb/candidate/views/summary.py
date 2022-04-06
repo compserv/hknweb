@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 
 from hknweb.utils import login_and_permission
 from hknweb.candidate.utils_candportal import CandidatePortalData
+from hknweb.candidate.constants import ATTR, EVENT_NAMES
 
 
 @login_and_permission("candidate.change_offchallenge")
@@ -19,7 +20,7 @@ def summary(request):
                 "Payments",
                 "Project",
                 "BitByte",
-                "Hangouts",
+                "Hangouts and Challenges",
             ]
             for event in data["events"]:
                 event_title = event["title"]
@@ -32,9 +33,9 @@ def summary(request):
             data["candidate_forms"]["all_done"],
             data["due_payments"]["all_done"],
             data["committee_project"]["all_done"],
-            data["bitbyte"]["status"],
-            data["interactivities"]["status"],
-            *(e["status"] for e in data["events"]),
+            data[EVENT_NAMES.BITBYTE][ATTR.STATUS],
+            all(interactiv[ATTR.STATUS] for key, interactiv in data[EVENT_NAMES.INTERACTIVITIES].items()),
+            *(e[ATTR.STATUS] for e in data["events"]),
         ]
         status.append(all(status))
 

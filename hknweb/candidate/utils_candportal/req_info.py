@@ -37,7 +37,6 @@ class ReqInfo:
             EVENT_NAMES.HANGOUT: "Officer Hangouts",
             EVENT_NAMES.CHALLENGE: "Officer Challenges",
         },
-        EVENT_NAMES.MANDATORY: "Mandatory",
     }
 
     def set_confirmed_unconfirmed_events(
@@ -92,7 +91,7 @@ class ReqInfo:
 
         d = self.lst[EVENT_NAMES.INTERACTIVITIES]
         d.update({r.eventType: r.numberRequired for r in hangouts})
-        d[EVENT_NAMES.EITHER] = d[EVENT_NAMES.HANGOUT] + d[EVENT_NAMES.CHALLENGE]
+        d[EVENT_NAMES.EITHER] += d[EVENT_NAMES.HANGOUT] + d[EVENT_NAMES.CHALLENGE]
 
         if bitbyte.exists():
             self.lst[EVENT_NAMES.BITBYTE] = bitbyte.first().numberRequired
@@ -123,10 +122,15 @@ class ReqInfo:
         )
 
     def set_statuses(self):
-        self.statuses = {
-            k: v == 0 if isinstance(v, int) else not any(v.values())
-            for k, v in self.remaining.items()
-        }
+        self.statuses = {}
+        for k, v in self.remaining.items():
+            if isinstance(v, int):
+                self.statuses[k] = (v == 0)
+            elif k == EVENT_NAMES.INTERACTIVITIES:
+                for k_interactivities, v_interactivities in v.items():
+                    self.statuses[k_interactivities] = (v_interactivities == 0)
+            else:
+                self.statuses[k] = not any(v.values())
 
     def set_titles(self):
         names = {
