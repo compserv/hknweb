@@ -74,7 +74,7 @@ class IndexView(TemplateView):
             Attr.SEARCH_VALUE: search_value,
         }
 
-    def _validate_cas(self, service: str) -> bool:
+    def _validate_cas(self, service: str) -> bool:  # pragma: no cover
         """
         See https://apereo.github.io/cas/6.4.x/protocol/CAS-Protocol.html
         """
