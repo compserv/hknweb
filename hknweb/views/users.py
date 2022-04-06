@@ -167,18 +167,3 @@ def account_settings(request):
             "verify_form": verify_form,
         }
         return render(request, "account/settings.html", context=context)
-
-
-@allow_all_logged_in_users
-def activate(request):
-    model = User
-    field_names = ["username", "email"]
-    data = [
-        [getattr(ins, name) for name in field_names]
-        for ins in model.objects.prefetch_related().all()
-    ]
-    print(field_names)
-    print(data)
-    return render(
-        request, "account/activate.html", {"field_names": field_names, "data": data}
-    )
