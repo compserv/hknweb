@@ -18,6 +18,7 @@ from hknweb.coursesemester.models import Semester
 from hknweb.utils import allow_all_logged_in_users, allow_public_access
 import datetime
 
+
 # context processor for base to know whether a user is in the officer group
 def add_officer_context(request):
     return {
@@ -35,7 +36,7 @@ def add_exec_context(request):
     }
 
 
-def get_current_cand_semester():
+def get_current_cand_semester():  # pragma: no cover
     # The "first" function will put a "None" for me if semester not created yet
     now = datetime.datetime.now()
     sem = ""
@@ -58,7 +59,7 @@ def account_create(request):
         if form.is_valid():
             if confirm_recaptcha(request):
                 form.save()
-            else:
+            else:  # pragma: no cover
                 messages.warning(request, "Invalid reCAPTCHA. Please try again.")
                 return render(request, "account/signup.html", {"form": form})
             username = form.cleaned_data.get("username")
@@ -76,7 +77,7 @@ def account_create(request):
     return render(request, "account/signup.html", {"form": form})
 
 
-def confirm_recaptcha(request):
+def confirm_recaptcha(request):  # pragma: no cover
     if settings.DEBUG:
         return True
     recaptcha_response = request.POST.get("g-recaptcha-response")
