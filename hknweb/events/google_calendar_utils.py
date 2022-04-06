@@ -12,7 +12,7 @@ TIMEZONE = "America/Los_Angeles"
 SHARE_LINK_TEMPLATE = "https://calendar.google.com/calendar?cid={cid}"
 
 
-def get_credentials():
+def get_credentials():  # pragma: no cover
     # Get the most recent GoogleCalendarCredentials
     django_creds = GoogleCalendarCredentials.objects.last()
 
@@ -33,7 +33,7 @@ def check_credentials_wrapper(fn):
     return new_fn
 
 
-def get_service():
+def get_service():  # pragma: no cover
     creds = get_credentials()
     service = build("calendar", "v3", credentials=creds)
 
@@ -81,7 +81,7 @@ def create_event(
     start: str,
     end: str,
     calendar_id: str = CALENDAR_ID,
-) -> str:
+) -> str:  # pragma: no cover
     if not calendar_id:
         return
 
@@ -107,7 +107,7 @@ def create_event(
 
 
 @check_credentials_wrapper
-def update_event(event_id: str, calendar_id: str = CALENDAR_ID, **kwargs) -> None:
+def update_event(event_id: str, calendar_id: str = CALENDAR_ID, **kwargs) -> None:  # pragma: no cover
     if not calendar_id:
         return
 
@@ -125,7 +125,7 @@ def update_event(event_id: str, calendar_id: str = CALENDAR_ID, **kwargs) -> Non
 
 
 @check_credentials_wrapper
-def delete_event(event_id: str, calendar_id: str = CALENDAR_ID) -> None:
+def delete_event(event_id: str, calendar_id: str = CALENDAR_ID) -> None:  # pragma: no cover
     if not calendar_id:
         return
 
@@ -140,7 +140,7 @@ def delete_event(event_id: str, calendar_id: str = CALENDAR_ID) -> None:
 
 
 @check_credentials_wrapper
-def clear_calendar(calendar_id: str = CALENDAR_ID) -> None:
+def clear_calendar(calendar_id: str = CALENDAR_ID) -> None:  # pragma: no cover
     if not calendar_id:
         return
 
@@ -173,7 +173,7 @@ def get_calendar_link(calendar_id: str = CALENDAR_ID) -> str:
 
 
 @check_credentials_wrapper
-def create_personal_calendar() -> str:
+def create_personal_calendar() -> str:  # pragma: no cover
     calendar = {
         "summary": "HKN RSVPs",
         "timeZone": TIMEZONE,
