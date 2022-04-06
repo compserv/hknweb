@@ -90,3 +90,7 @@ mysql:
 .PHONY: permissions
 permissions:
 	$(MANAGE) shell < hknweb/init_permissions.py
+
+.PHONY: format
+format:
+	python -m black . --exclude "/(.*migrations|\.venv)/"
