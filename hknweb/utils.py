@@ -1,6 +1,10 @@
 import csv
 
-from django.contrib.auth.decorators import login_required, permission_required, user_passes_test
+from django.contrib.auth.decorators import (
+    login_required,
+    permission_required,
+    user_passes_test,
+)
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
 from django.utils.decorators import method_decorator
@@ -49,7 +53,7 @@ def _record_permission(permission):
 
 
 def allow_public_access(func):
-    return _record_permission(None)(login_required(func))
+    return _record_permission(None)(func)
 
 
 allow_all_logged_in_users = _record_permission(None)
@@ -85,6 +89,8 @@ def access_level_required(access_level):
     def test_user(user):
         if get_access_level(user) > access_level:
             raise PermissionDenied
+        return True
+
     return user_passes_test(test_user)
 
 
@@ -131,9 +137,13 @@ def get_semester_bounds(date):
     """Returns the two dates that bound the current candidate semester.
     Assumes that there are only spring and fall semesters, separated at 07/01."""
     if date.month < 7:
-        return datetime(date.year, 1, 1, tzinfo=PACIFIC_TIMEZONE), datetime(date.year, 7, 1, tzinfo=PACIFIC_TIMEZONE)
+        return datetime(date.year, 1, 1, tzinfo=PACIFIC_TIMEZONE), datetime(
+            date.year, 7, 1, tzinfo=PACIFIC_TIMEZONE
+        )
     else:
-        return datetime(date.year, 7, 1, tzinfo=PACIFIC_TIMEZONE), datetime(date.year + 1, 1, 1, tzinfo=PACIFIC_TIMEZONE)
+        return datetime(date.year, 7, 1, tzinfo=PACIFIC_TIMEZONE), datetime(
+            date.year + 1, 1, 1, tzinfo=PACIFIC_TIMEZONE
+        )
 
 
 # Helper. @source: http://books.agiliq.com/projects/django-admin-cookbook/en/latest/export.html
@@ -210,6 +220,7 @@ def markdownify(text):
         html = cleaner.clean(html)
 
     return mark_safe(html)
+
 
 GROUP_TO_ACCESSLEVEL = {
     "officer": 0,

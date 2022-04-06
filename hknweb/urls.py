@@ -21,7 +21,6 @@ unsafe_urlpatterns = [
 app_urlpatterns = [
     path("accounts/create/", users.account_create, name="account-create"),
     path("accounts/settings/", users.account_settings, name="account-settings"),
-    path("accounts/activate/", users.activate),
     path("about/", landing.about, name="about"),
     path("academics/", include("hknweb.academics.urls")),
     path("events/", include("hknweb.events.urls")),
@@ -37,14 +36,18 @@ app_urlpatterns = [
 
 markdownx_urlpatterns = [
     url(
-        r'^markdownx/upload/$',
-        method_login_and_permission("markdown_pages.add_markdownpage")(markdownx_views.ImageUploadView).as_view(),
-        name='markdownx_upload',
+        r"^markdownx/upload/$",
+        method_login_and_permission("markdown_pages.add_markdownpage")(
+            markdownx_views.ImageUploadView
+        ).as_view(),
+        name="markdownx_upload",
     ),
     url(
-        r'^markdownx/markdownify/$',
-        method_login_and_permission("markdown_pages.add_markdownpage")(markdownx_views.MarkdownifyView).as_view(),
-        name='markdownx_markdownify',
+        r"^markdownx/markdownify/$",
+        method_login_and_permission("markdown_pages.add_markdownpage")(
+            markdownx_views.MarkdownifyView
+        ).as_view(),
+        name="markdownx_markdownify",
     ),
 ]
 
@@ -77,5 +80,5 @@ urlpatterns = [
     *safe_urlpatterns,
 ]
 
-if settings.DEBUG:
+if settings.DEBUG:  # pragma: no cover
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

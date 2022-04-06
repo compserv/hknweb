@@ -5,7 +5,7 @@
     }
 </style>
 
-<form style="text-align: center;" method="POST" onsubmit="submit_button.disabled = true; return true;">
+<form style="text-align: center;" method="POST" onsubmit="submit_button.disabled = true; return true;" enctype="multipart/form-data">
     {% csrf_token %}
 
     <table style="margin: auto; text-align: left;">

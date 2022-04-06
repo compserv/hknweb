@@ -3,20 +3,23 @@ from django.utils import timezone
 from hknweb.models import Announcement
 
 from hknweb.events.models import Event
-from hknweb.studentservices.models import ReviewSession
 from hknweb.utils import allow_public_access
+
+
+NUM_EVENTS = 4
 
 
 @allow_public_access
 def home(request):
     # TODO: determine earliest weekday for which tutoring still has yet to complete, and query those tutors
-    num_events = 4
     upcoming_events = Event.objects.filter(end_time__gte=timezone.now()).order_by(
         "start_time"
-    )[:num_events]
-    upcoming_review_sessions = ReviewSession.objects.filter(
-        end_time__gte=timezone.now()
-    ).order_by("start_time")[:num_events]
+    )
+    upcoming_review_sessions = upcoming_events.filter(event_type__type="Review Session")
+
+    upcoming_events = upcoming_events[:NUM_EVENTS]
+    upcoming_review_sessions = upcoming_review_sessions[:NUM_EVENTS]
+
     announcements = Announcement.objects.filter(visible=True).order_by("-release_date")
 
     context = {

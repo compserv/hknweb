@@ -34,7 +34,9 @@ class SignupForm(UserCreationForm):
 
     def clean_email(self):
         email = self.cleaned_data.get("email")
-        if (email is None) or not email.endswith("berkeley.edu"):
+        if (email is None) or not email.endswith(
+            "berkeley.edu"
+        ):  # lgtm [py/incomplete-url-substring-sanitization]
             raise forms.ValidationError(
                 "Please a berkeley.edu email to register!", code="invalid"
             )

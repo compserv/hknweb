@@ -9,4 +9,4 @@ class BaseDTO:
         self.id = json_data[self.Attr.ID]
 
     def __repr__(self):
-        return "BaseDTO(id={id})".format(self.id)
+        return "BaseDTO(id={id})".format(id=self.id)

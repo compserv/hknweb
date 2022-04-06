@@ -4,9 +4,8 @@ import django
 from django.urls import URLPattern, URLResolver
 
 sys.path.append(".")
-django.setup() # ?
+django.setup()  # ?
 import hknweb.urls as urls
-
 
 
 def gen_url_patterns(src: List[Union[URLPattern, URLResolver]], path=()):
@@ -31,7 +30,9 @@ def check_handler_privacy(handler, name):
         return check_handler_privacy(handler.view_class, name)
     elif hasattr(handler, "get_permissions"):
         # handler is from django-rest-framework
-        assert handler.get_permissions(handler), f"REST ViewSet {name} ({handler}) has insufficient permission classes: {handler.get_permissions(handler)}"
+        assert handler.get_permissions(
+            handler
+        ), f"REST ViewSet {name} ({handler}) has insufficient permission classes: {handler.get_permissions(handler)}"
     else:
         raise Exception(f"{name} ({handler}) does not check permissions")
 
@@ -39,4 +40,3 @@ def check_handler_privacy(handler, name):
 def test_handler_privacy():
     for pattern, path in gen_url_patterns(urls.safe_urlpatterns):
         check_handler_privacy(pattern, ",".join(map(str, path)))
-

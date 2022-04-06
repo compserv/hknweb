@@ -19,14 +19,14 @@ def upload_csv(request):
 
     try:
         decoded_cs_csv = cs_csv.read().decode("utf-8").splitlines()
-        cs_csv = csv.DictReader(decoded_cs_csv)
+        csv.DictReader(decoded_cs_csv)
     except Exception as e:
         messages.error(request, "Something went wrong with decoding the csv: " + str(e))
-        return redirect(next_page)
+        return redirect(next_page)  # lgtm [py/url-redirection]
 
     # blah blah blah csv stuff
 
     messages.success(
         request, "Successfully uploaded CSV! Currently this doesn't do anything..."
     )
-    return redirect(next_page)
+    return redirect(next_page)  # lgtm [py/url-redirection]

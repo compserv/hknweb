@@ -34,7 +34,7 @@ class RsvpViewTests(TestCase):
         }
         response = self.client.post(reverse("events:rsvp", kwargs=kwargs))
 
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 200)
         self.assertTrue(Rsvp.objects.all())
 
     def test_already_rsvpd_returns_error_message(self):
@@ -44,7 +44,7 @@ class RsvpViewTests(TestCase):
         self.client.post(reverse("events:rsvp", kwargs=kwargs))
         response = self.client.post(reverse("events:rsvp", kwargs=kwargs))
 
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 200)
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(len(messages), 1)
         self.assertEqual(str(messages[0]), "You have already RSVP'd.")
