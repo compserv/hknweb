@@ -1,6 +1,4 @@
 from django import forms
-from hknweb.models import User
-from hknweb.models import Profile
 from .models import Alumnus
 
 

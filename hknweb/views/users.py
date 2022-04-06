@@ -155,7 +155,7 @@ def account_settings(request):
                     )
                 ),
             )
-        return HttpResponseRedirect(request.path_info)
+        return HttpResponseRedirect(request.path_info)  # lgtm [py/url-redirection]
     else:
         # user_form = SettingsForm(instance = current_user)
         password_form = UpdatePasswordForm(current_user)

@@ -85,12 +85,12 @@ def checkoff_csv(request):
     mem_csv = get_mem_csv(request)
     if not mem_csv:
         messages.error(request, "Please input a csv file!")
-        return redirect(next_page)
+        return redirect(next_page)  # lgtm [py/url-redirection]
 
     users, error_html = get_users(mem_csv)
     if error_html:
         messages.error(request, error_html)
-        return redirect(next_page)
+        return redirect(next_page)  # lgtm [py/url-redirection]
 
     checkoff_type = request.POST.get("checkoff_type", "")
     error = ""
@@ -106,7 +106,7 @@ def checkoff_csv(request):
     else:
         messages.success(request, "Successfully checked everyone off!")
 
-    return redirect(next_page)
+    return redirect(next_page)  # lgtm [py/url-redirection]
 
 
 def get_mem_csv(request) -> csv.DictReader:

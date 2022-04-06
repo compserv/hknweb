@@ -1,10 +1,10 @@
-from .common import *
+from .common import *  # lgtm [py/polluting-import]
 
 # In dev mode, attempt to use real secrets, but if unavailiable, fall back to dummy secrets
 try:
     from .secrets import *
 except ImportError:
-    from .dummy_secrets import *
+    from .dummy_secrets import *  # lgtm [py/polluting-import]
 import os
 
 # SECURITY WARNING: don't run with debug turned on in production!
