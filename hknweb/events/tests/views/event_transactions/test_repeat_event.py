@@ -7,31 +7,33 @@ from hknweb.events.tests.views.event_transactions.utils import setUp
 from hknweb.events.utils import generate_recurrence_times
 
 class RepeatIntervalsUtilsTests(TestCase):
+
+    def test_repeat_time_intervals_base_case(self):
+        start_time = datetime(2022, 3, 15, 11, 30)
+        end_time = datetime(2022, 3, 15, 3, 30)
+
+        num_repeats = 0
+        period = 0
+        answer = [(datetime(2022, 3, 15, 11, 30), datetime(2022, 3, 15, 3, 30))]
+        result = generate_recurrence_times(start_time, end_time, num_repeats, period)
+        self.assertListEqual(result, answer, msg="No repeat and No period")
+
+        num_repeats = 1
+        period = 0
+        answer = [(datetime(2022, 3, 15, 11, 30), datetime(2022, 3, 15, 3, 30))]
+        result = generate_recurrence_times(start_time, end_time, num_repeats, period)
+        self.assertListEqual(result, answer, msg="1 repeat and No period")
+
+        num_repeats = 0
+        period = 1
+        answer = [(datetime(2022, 3, 15, 11, 30), datetime(2022, 3, 15, 3, 30))]
+        result = generate_recurrence_times(start_time, end_time, num_repeats, period)
+        self.assertListEqual(result, answer, msg="No repeat and 1 week period")
+
     def test_repeat_time_intervals(self):
         start_time = datetime(2022, 3, 15, 11, 30)
         end_time = datetime(2022, 3, 15, 3, 30)
 
-        def base_tests():
-            num_repeats = 0
-            period = 0
-            answer = [(datetime(2022, 3, 15, 11, 30), datetime(2022, 3, 15, 3, 30))]
-            result = generate_recurrence_times(start_time, end_time, num_repeats, period)
-            self.assertListEqual(result, answer, msg="No repeat and No period")
-
-            num_repeats = 1
-            period = 0
-            answer = [(datetime(2022, 3, 15, 11, 30), datetime(2022, 3, 15, 3, 30))]
-            result = generate_recurrence_times(start_time, end_time, num_repeats, period)
-            self.assertListEqual(result, answer, msg="1 repeat and No period")
-
-            num_repeats = 0
-            period = 1
-            answer = [(datetime(2022, 3, 15, 11, 30), datetime(2022, 3, 15, 3, 30))]
-            result = generate_recurrence_times(start_time, end_time, num_repeats, period)
-            self.assertListEqual(result, answer, msg="No repeat and 1 week period")
-
-        base_tests()
-        
         num_repeats = 1
         period = 1
         answer = [
