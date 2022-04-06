@@ -12,12 +12,12 @@ def index(request):
     return calendar_helper(request)
 
 
-def calendar_helper(request, event_type: str=None):
+def calendar_helper(request, event_type: str = None):
     user_access_level = get_access_level(request.user)
 
-    events = Event.objects \
-        .order_by("-start_time") \
-        .filter(access_level__gte=user_access_level)
+    events = Event.objects.order_by("-start_time").filter(
+        access_level__gte=user_access_level
+    )
     event_types = EventType.objects.order_by("type")
     if event_type is not None:
         events = events.filter(event_type__type=event_type)

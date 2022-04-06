@@ -29,7 +29,9 @@ class CheckoffViewTests(CandidateViewTestsBase):
     def test_checkoff_invalid_email_returns_302(self):
         self.client.login(username=self.officer.username, password=self.password)
 
-        csv_file = SimpleUploadedFile("csv_file.csv", b"Email,First Name,Last Name\nbob,bob,joe\n")
+        csv_file = SimpleUploadedFile(
+            "csv_file.csv", b"Email,First Name,Last Name\nbob,bob,joe\n"
+        )
         data = {"csv_file": csv_file}
         response = self.client.post(reverse("candidate:checkoff_csv"), data=data)
 
@@ -42,11 +44,13 @@ class CheckoffViewTests(CandidateViewTestsBase):
 
         csv_file = SimpleUploadedFile(
             "csv_file.csv",
-            str.encode("Email,First Name,Last Name\n{},{},{}\n".format(
-                "incorrect_user_email@berkeley.edu",
-                "incorrect_user_first_name",
-                "incorrect_user_last_name",
-            ))
+            str.encode(
+                "Email,First Name,Last Name\n{},{},{}\n".format(
+                    "incorrect_user_email@berkeley.edu",
+                    "incorrect_user_first_name",
+                    "incorrect_user_last_name",
+                )
+            ),
         )
         data = {"csv_file": csv_file}
         response = self.client.post(reverse("candidate:checkoff_csv"), data=data)
@@ -60,11 +64,13 @@ class CheckoffViewTests(CandidateViewTestsBase):
 
         csv_file = SimpleUploadedFile(
             "csv_file.csv",
-            str.encode("Email,First Name,Last Name\n{},{},{}\n".format(
-                self.officer.email,
-                self.officer.first_name,
-                self.officer.last_name,
-            ))
+            str.encode(
+                "Email,First Name,Last Name\n{},{},{}\n".format(
+                    self.officer.email,
+                    self.officer.first_name,
+                    self.officer.last_name,
+                )
+            ),
         )
         data = {"csv_file": csv_file, "checkoff_type": ""}
         response = self.client.post(reverse("candidate:checkoff_csv"), data=data)
@@ -78,11 +84,13 @@ class CheckoffViewTests(CandidateViewTestsBase):
 
         csv_file = SimpleUploadedFile(
             "csv_file.csv",
-            str.encode("Email,First Name,Last Name\n{},{},{}\n".format(
-                self.officer.email,
-                self.officer.first_name,
-                self.officer.last_name,
-            ))
+            str.encode(
+                "Email,First Name,Last Name\n{},{},{}\n".format(
+                    self.officer.email,
+                    self.officer.first_name,
+                    self.officer.last_name,
+                )
+            ),
         )
         data = {"csv_file": csv_file, "checkoff_type": "event", "event_id": -1}
         response = self.client.post(reverse("candidate:checkoff_csv"), data=data)
@@ -93,16 +101,20 @@ class CheckoffViewTests(CandidateViewTestsBase):
 
     def test_checkoff_event_returns_302(self):
         event_type = ModelFactory.create_event_type(type="test_event_type")
-        event = ModelFactory.create_event("test_event_name", event_type, created_by=self.officer)
+        event = ModelFactory.create_event(
+            "test_event_name", event_type, created_by=self.officer
+        )
         self.client.login(username=self.officer.username, password=self.password)
 
         csv_file = SimpleUploadedFile(
             "csv_file.csv",
-            str.encode("Email,First Name,Last Name\n{},{},{}\n".format(
-                self.officer.email,
-                self.officer.first_name,
-                self.officer.last_name,
-            ))
+            str.encode(
+                "Email,First Name,Last Name\n{},{},{}\n".format(
+                    self.officer.email,
+                    self.officer.first_name,
+                    self.officer.last_name,
+                )
+            ),
         )
         data = {"csv_file": csv_file, "checkoff_type": "event", "event_id": event.id}
         response = self.client.post(reverse("candidate:checkoff_csv"), data=data)
@@ -117,11 +129,13 @@ class CheckoffViewTests(CandidateViewTestsBase):
 
         csv_file = SimpleUploadedFile(
             "csv_file.csv",
-            str.encode("Email,First Name,Last Name\n{},{},{}\n".format(
-                self.officer.email,
-                self.officer.first_name,
-                self.officer.last_name,
-            ))
+            str.encode(
+                "Email,First Name,Last Name\n{},{},{}\n".format(
+                    self.officer.email,
+                    self.officer.first_name,
+                    self.officer.last_name,
+                )
+            ),
         )
         data = {"csv_file": csv_file, "checkoff_type": "dues"}
         response = self.client.post(reverse("candidate:checkoff_csv"), data=data)
@@ -136,11 +150,13 @@ class CheckoffViewTests(CandidateViewTestsBase):
 
         csv_file = SimpleUploadedFile(
             "csv_file.csv",
-            str.encode("Email,First Name,Last Name\n{},{},{}\n".format(
-                self.officer.email,
-                self.officer.first_name,
-                self.officer.last_name,
-            ))
+            str.encode(
+                "Email,First Name,Last Name\n{},{},{}\n".format(
+                    self.officer.email,
+                    self.officer.first_name,
+                    self.officer.last_name,
+                )
+            ),
         )
         data = {"csv_file": csv_file, "checkoff_type": "dues", "dues_selection": dp.id}
         response = self.client.post(reverse("candidate:checkoff_csv"), data=data)

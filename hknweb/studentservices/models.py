@@ -55,8 +55,12 @@ class CourseGuideNode(models.Model):
 
 
 class CourseGuideAdjacencyList(models.Model):
-    source = models.ForeignKey(CourseGuideNode, models.CASCADE, related_name="adjacency_list_source")
-    targets = models.ManyToManyField(CourseGuideNode, related_name="adjacency_list_target")
+    source = models.ForeignKey(
+        CourseGuideNode, models.CASCADE, related_name="adjacency_list_source"
+    )
+    targets = models.ManyToManyField(
+        CourseGuideNode, related_name="adjacency_list_target"
+    )
 
     def __str__(self):
         source = str(self.source)

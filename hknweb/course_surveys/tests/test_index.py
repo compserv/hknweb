@@ -3,7 +3,8 @@ from django.test import TestCase
 from django.urls import reverse
 
 from hknweb.course_surveys.tests.utils import (
-    create_user_with_course_surveys_edit_permission, ModelFactory
+    create_user_with_course_surveys_edit_permission,
+    ModelFactory,
 )
 from hknweb.markdown_pages.models import MarkdownPage
 
@@ -35,7 +36,9 @@ class IndexViewTests(TestCase):
 
         ModelFactory.create_default_rating()
 
-        response = self.client.get(reverse("course_surveys:index") + "?search_by=instructors")
+        response = self.client.get(
+            reverse("course_surveys:index") + "?search_by=instructors"
+        )
 
         self.assertEqual(response.status_code, 200)
 
@@ -47,7 +50,7 @@ class IndexViewTests(TestCase):
         rating = ModelFactory.create_default_rating()
 
         response = self.client.get(
-            reverse("course_surveys:index") \
+            reverse("course_surveys:index")
             + f"?course={rating.rating_survey.survey_icsr.icsr_course.id}"
         )
 
@@ -63,7 +66,7 @@ class IndexViewTests(TestCase):
         rating.rating_survey.survey_icsr.save()
 
         response = self.client.get(
-            reverse("course_surveys:index") \
+            reverse("course_surveys:index")
             + f"?instructor={rating.rating_survey.survey_icsr.icsr_instructor.instructor_id}"
         )
 

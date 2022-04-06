@@ -12,9 +12,9 @@ NUM_EVENTS = 4
 @allow_public_access
 def home(request):
     # TODO: determine earliest weekday for which tutoring still has yet to complete, and query those tutors
-    upcoming_events = Event.objects \
-        .filter(end_time__gte=timezone.now()) \
-        .order_by("start_time")
+    upcoming_events = Event.objects.filter(end_time__gte=timezone.now()).order_by(
+        "start_time"
+    )
     upcoming_review_sessions = upcoming_events.filter(event_type__type="Review Session")
 
     upcoming_events = upcoming_events[:NUM_EVENTS]

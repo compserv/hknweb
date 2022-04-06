@@ -54,8 +54,9 @@ CHECKOFF_TYPE_INFO = {
         "model_cls": CandidateForm,
         "model_done_cls": CandidateFormDoneEntry,
         "model_attr_name": "form",
-    }
+    },
 }
+
 
 @method_login_and_permission("candidate.change_offchallenge")
 class MemberCheckoffView(generic.TemplateView):
@@ -126,34 +127,42 @@ def get_users(mem_csv: csv.DictReader) -> Tuple[list, str]:
         try:
             m = CandidateDTO(row)
         except AssertionError as e:
-            errors.append((INVALID_ENTRY_HEADER, INVALID_ENTRY_CONTENT.format(str(e), i + 1, row)))
+            errors.append(
+                (INVALID_ENTRY_HEADER, INVALID_ENTRY_CONTENT.format(str(e), i + 1, row))
+            )
             continue
 
-        user = User.objects \
-            .filter(first_name=m.first_name, last_name=m.last_name, email=m.email) \
-            .first()
+        user = User.objects.filter(
+            first_name=m.first_name, last_name=m.last_name, email=m.email
+        ).first()
         if not user:
-            errors.append((USER_ERROR_HEADER,
-                USER_ERROR_CONTENT.format(m.first_name, m.last_name, m.email)))
+            errors.append(
+                (
+                    USER_ERROR_HEADER,
+                    USER_ERROR_CONTENT.format(m.first_name, m.last_name, m.email),
+                )
+            )
             continue
 
         users.append(user)
 
     error_html = None
     if errors:
-        error_html_elements = [f"<li>{e[0]}-{bleach.clean(e[1], tags=[])}</li>" for e in errors]
-        error_html = f"{NO_CHECKOFF_ACTION_TAKEN}\n<ul>" \
-            + "".join(error_html_elements) \
+        error_html_elements = [
+            f"<li>{e[0]}-{bleach.clean(e[1], tags=[])}</li>" for e in errors
+        ]
+        error_html = (
+            f"{NO_CHECKOFF_ACTION_TAKEN}\n<ul>"
+            + "".join(error_html_elements)
             + "</ul>\n"
+        )
         error_html = mark_safe(error_html)
 
     return users, error_html
 
 
 def checkoff_events(request, users: list) -> str:
-    event = Event.objects \
-        .filter(pk=request.POST.get("event_id")) \
-        .first()
+    event = Event.objects.filter(pk=request.POST.get("event_id")).first()
     if not event:
         return "Please input a valid event ID!"
 
@@ -170,8 +179,9 @@ def checkoff_requirement(request, info: dict, users: list) -> str:
     if id is None:
         return info["missing_arg_message"]
 
-    modelDoneEntry, _ = info["model_done_cls"].objects \
-        .get_or_create(**{info["model_attr_name"]: info["model_cls"].objects.get(id=id)})
+    modelDoneEntry, _ = info["model_done_cls"].objects.get_or_create(
+        **{info["model_attr_name"]: info["model_cls"].objects.get(id=id)}
+    )
 
     for user in users:
         modelDoneEntry.users.add(user)

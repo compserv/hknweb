@@ -4,6 +4,7 @@ from django.db import models
 
 # Create your models here.
 
+
 class ThreadTask(models.Model):
     name = models.CharField(max_length=30, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -15,12 +16,12 @@ class ThreadTask(models.Model):
     def complete(self):
         self.is_successful = True
         self.is_done = True
-    
+
     def failure(self, error_text=""):
         self.error_text = error_text
         self.is_successful = False
         self.is_done = True
-    
+
     def startThread(self, thread):
         """
         Abstraction of starting a thread

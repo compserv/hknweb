@@ -38,8 +38,7 @@ def get_mandatory_events(candidate_semester: Semester, confirmed_rsvps: bool):
     r = (
         candidate_semester
         and RequirementMandatory.objects.filter(
-            candidateSemesterActive=candidate_semester.id,
-            enable=True
+            candidateSemesterActive=candidate_semester.id, enable=True
         ).first()
     )
     mandatory_events = Event.objects.none()

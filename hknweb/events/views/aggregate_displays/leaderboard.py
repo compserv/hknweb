@@ -9,9 +9,9 @@ PAGE_SIZE = 20
 
 @allow_all_logged_in_users
 def get_leaderboard(request):
-    res = User.objects\
-        .annotate(num_rsvps=Count("rsvp", filter=Q(rsvp__confirmed=True))) \
-        .order_by("-num_rsvps")
+    res = User.objects.annotate(
+        num_rsvps=Count("rsvp", filter=Q(rsvp__confirmed=True))
+    ).order_by("-num_rsvps")
 
     paginator = Paginator(res, PAGE_SIZE)
 

@@ -30,7 +30,6 @@ class TourRequest(forms.ModelForm):
         model = DepTour
         fields = ["name", "datetime", "email", "phone", "comments"]
 
-
     def clean(self):
         super().clean()
         datetime = self.cleaned_data.get("datetime")

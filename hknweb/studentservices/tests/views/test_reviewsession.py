@@ -23,6 +23,8 @@ class ReviewSessionViewTests(TestCase):
         )
 
         kwargs = {"id": rs.id}
-        response = self.client.get(reverse("studentservices:show_reviewsession_details", kwargs=kwargs))
+        response = self.client.get(
+            reverse("studentservices:show_reviewsession_details", kwargs=kwargs)
+        )
 
         self.assertEqual(response.status_code, 200)

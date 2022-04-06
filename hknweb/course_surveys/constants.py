@@ -74,7 +74,7 @@ class CAS:
 
 # HSL tuples for interpolation for rating colors
 # e.g. 7/7 maps to green = hsl(120, 61%, 34%)
-# the red hue must be less than the yellow hue so that the color 
+# the red hue must be less than the yellow hue so that the color
 # interpolated between red and yellow is orange instead of blue,
 # so just use 0 instead of 360. negative hues work fine.
 class COLORS:

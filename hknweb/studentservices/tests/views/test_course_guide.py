@@ -43,6 +43,9 @@ class CourseGuideViewTests(TestCase):
         al.save()
         al = CourseGuideAdjacencyList.objects.create(source=node4)
 
-        response = self.client.get(reverse("studentservices:course_guide_data") + "?groups=bob,test_group_name_1")
+        response = self.client.get(
+            reverse("studentservices:course_guide_data")
+            + "?groups=bob,test_group_name_1"
+        )
 
         self.assertEqual(response.status_code, 200)

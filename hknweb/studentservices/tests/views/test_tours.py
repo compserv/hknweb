@@ -39,7 +39,9 @@ class ToursViewTests(TestCase):
     def test_tours_form_datetime_invalid_returns_form(self):
         data = {
             "name": "test_name",
-            "datetime": (timezone.now() - timezone.timedelta(days=20)).strftime(DATETIME_12_HOUR_FORMAT),
+            "datetime": (timezone.now() - timezone.timedelta(days=20)).strftime(
+                DATETIME_12_HOUR_FORMAT
+            ),
             "email": "test_email@email.com",
             "phone": "9876543210",
             "comments": "test_comments",

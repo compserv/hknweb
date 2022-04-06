@@ -19,6 +19,7 @@ class ATTR:
     UTF8 = "utf-8"
     UTF8SIG = "utf-8-sig"
 
+
 DOMAINS = [
     "@berkeley.edu",
     "@hkn.eecs.berkeley.edu",
@@ -40,8 +41,9 @@ class CandidateDTO:
 
     def validate(self):
         assert self.email, "Candidate email must not be empty"
-        assert any(self.email.endswith(d) for d in DOMAINS), \
-            "Candidate email must be an @berkeley.edu or @hkn.eecs.berkeley.edu email"
+        assert any(
+            self.email.endswith(d) for d in DOMAINS
+        ), "Candidate email must be an @berkeley.edu or @hkn.eecs.berkeley.edu email"
         assert self.first_name, "Candidate first name must not be empty"
         assert self.last_name, "Candidate last name must not be empty"
         assert self.username, "Candidate username must not be empty"

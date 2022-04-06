@@ -49,7 +49,9 @@ class Alumnus(models.Model):
     grad_school = models.CharField(max_length=max_strlen, blank=True, default="")
     company = models.CharField(max_length=max_strlen, blank=True, default="")
     job_title = models.CharField(max_length=max_strlen, blank=True, default="")
-    salary = models.IntegerField(default=0, validators=[MinValueValidator(0)], blank=True)
+    salary = models.IntegerField(
+        default=0, validators=[MinValueValidator(0)], blank=True
+    )
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(default=timezone.now)
     city = models.CharField(max_length=max_strlen, default="")

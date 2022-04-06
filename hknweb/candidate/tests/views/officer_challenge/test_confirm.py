@@ -31,7 +31,9 @@ class ChallengeConfirmViewTests(CandidateViewTestsBase):
 
         kwargs = {"pk": oc.id}
         data = {"officer_confirmed": True}
-        response = self.client.post(reverse("candidate:challengeconfirm", kwargs=kwargs), data=data)
+        response = self.client.post(
+            reverse("candidate:challengeconfirm", kwargs=kwargs), data=data
+        )
 
         self.client.logout()
 
@@ -47,7 +49,9 @@ class ChallengeConfirmViewTests(CandidateViewTestsBase):
 
         kwargs = {"pk": oc.id}
         data = {"officer_confirmed": True}
-        response = self.client.post(reverse("candidate:challengeconfirm", kwargs=kwargs), data=data)
+        response = self.client.post(
+            reverse("candidate:challengeconfirm", kwargs=kwargs), data=data
+        )
 
         self.client.logout()
 
@@ -65,7 +69,9 @@ class ChallengeConfirmViewTests(CandidateViewTestsBase):
 
         kwargs = {"pk": oc.id}
         data = {"officer_confirmed": True}
-        response = self.client.post(reverse("candidate:challengeconfirm", kwargs=kwargs), data=data)
+        response = self.client.post(
+            reverse("candidate:challengeconfirm", kwargs=kwargs), data=data
+        )
 
         self.client.logout()
 
@@ -83,7 +89,9 @@ class ChallengeConfirmViewTests(CandidateViewTestsBase):
 
         kwargs = {"pk": oc.id}
         data = {"officer_confirmed": False}
-        response = self.client.post(reverse("candidate:challengeconfirm", kwargs=kwargs), data=data)
+        response = self.client.post(
+            reverse("candidate:challengeconfirm", kwargs=kwargs), data=data
+        )
 
         self.client.logout()
 

@@ -36,14 +36,18 @@ app_urlpatterns = [
 
 markdownx_urlpatterns = [
     url(
-        r'^markdownx/upload/$',
-        method_login_and_permission("markdown_pages.add_markdownpage")(markdownx_views.ImageUploadView).as_view(),
-        name='markdownx_upload',
+        r"^markdownx/upload/$",
+        method_login_and_permission("markdown_pages.add_markdownpage")(
+            markdownx_views.ImageUploadView
+        ).as_view(),
+        name="markdownx_upload",
     ),
     url(
-        r'^markdownx/markdownify/$',
-        method_login_and_permission("markdown_pages.add_markdownpage")(markdownx_views.MarkdownifyView).as_view(),
-        name='markdownx_markdownify',
+        r"^markdownx/markdownify/$",
+        method_login_and_permission("markdown_pages.add_markdownpage")(
+            markdownx_views.MarkdownifyView
+        ).as_view(),
+        name="markdownx_markdownify",
     ),
 ]
 

@@ -45,11 +45,13 @@ class MassAddCandidatesViewTests(CandidateViewTestsBase):
 
         cand_csv = SimpleUploadedFile(
             "csv_file.txt",
-            str.encode("Email,First Name,Last Name\n{},{},{}\n".format(
-                "incorrect_user_email@berkeley.edu",
-                "incorrect_user_first_name",
-                "incorrect_user_last_name",
-            ))
+            str.encode(
+                "Email,First Name,Last Name\n{},{},{}\n".format(
+                    "incorrect_user_email@berkeley.edu",
+                    "incorrect_user_first_name",
+                    "incorrect_user_last_name",
+                )
+            ),
         )
         data = {"cand_csv": cand_csv}
         response = self.client.post(reverse("candidate:add_cands"), data=data)
@@ -76,11 +78,13 @@ class MassAddCandidatesViewTests(CandidateViewTestsBase):
 
         cand_csv = SimpleUploadedFile(
             "csv_file.csv",
-            str.encode("Email,First Name,Last Name\n{},{},{}\n".format(
-                "test_user_email@berkeley.edu",
-                "test_user_first_name",
-                "test_user_last_name",
-            ))
+            str.encode(
+                "Email,First Name,Last Name\n{},{},{}\n".format(
+                    "test_user_email@berkeley.edu",
+                    "test_user_first_name",
+                    "test_user_last_name",
+                )
+            ),
         )
         data = {"cand_csv": cand_csv}
         response = self.client.post(reverse("candidate:add_cands"), data=data)
@@ -91,7 +95,9 @@ class MassAddCandidatesViewTests(CandidateViewTestsBase):
         kwargs = {"id": json.loads(response.content)["id"]}
         response = None
         while not response or not json.loads(response.content)["is_done"]:
-            response = self.client.post(reverse("candidate:check_create_cand_status", kwargs=kwargs))
+            response = self.client.post(
+                reverse("candidate:check_create_cand_status", kwargs=kwargs)
+            )
 
         self.client.logout()
 

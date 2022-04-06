@@ -29,7 +29,9 @@ def resume_critique_submit(request):
         messages.success(request, "Thank you for submitting your resume!")
 
     return render(
-        request, "studentservices/resume_critique.html", {"form": form, "success": success},
+        request,
+        "studentservices/resume_critique.html",
+        {"form": form, "success": success},
     )
 
 
@@ -40,7 +42,9 @@ def reviewsessions(request):
 
 @allow_public_access
 def show_reviewsession_details(request, id):
-    return show_details_helper(request, id, reverse("studentservices:reviewsessions"), False)
+    return show_details_helper(
+        request, id, reverse("studentservices:reviewsessions"), False
+    )
 
 
 @allow_public_access
@@ -86,7 +90,9 @@ def course_guide(request):
     if CourseGuideParam.objects.exists():
         context["params"] = CourseGuideParam.objects.first().to_dict()
 
-    context["groups"] = [g.name for g in CourseGuideGroup.objects.all() if g.name != "Core"]
+    context["groups"] = [
+        g.name for g in CourseGuideGroup.objects.all() if g.name != "Core"
+    ]
 
     return render(request, "studentservices/course_guide.html", context=context)
 
@@ -116,7 +122,9 @@ def course_guide_data(request):
             continue
 
         graph[adjacency_list.source.name] = [
-            node.name for node in adjacency_list.targets.all() if node.name in node_groups
+            node.name
+            for node in adjacency_list.targets.all()
+            if node.name in node_groups
         ]
 
     course_surveys_link = reverse("course_surveys:index")
@@ -126,24 +134,28 @@ def course_guide_data(request):
         if n.name not in node_groups:
             continue
 
-        nodes.append({
-            "id": n.name,
-            "link": link_template + n.name,
-            "title": n.is_title,
-            "group": node_groups[n.name],
-            "fx": n.x_0,
-            "fy": n.y_0,
-        })
+        nodes.append(
+            {
+                "id": n.name,
+                "link": link_template + n.name,
+                "title": n.is_title,
+                "group": node_groups[n.name],
+                "fx": n.x_0,
+                "fy": n.y_0,
+            }
+        )
 
     links = []
     for s, es in graph.items():
         for e in es:
-            links.append({
-                "source": s,
-                "target": e,
-                "source_group": node_groups[s],
-                "target_group": node_groups[e],
-            })
+            links.append(
+                {
+                    "source": s,
+                    "target": e,
+                    "source_group": node_groups[s],
+                    "target_group": node_groups[e],
+                }
+            )
 
     data = {
         "nodes": nodes,

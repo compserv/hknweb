@@ -107,7 +107,9 @@ def create_event(
 
 
 @check_credentials_wrapper
-def update_event(event_id: str, calendar_id: str = CALENDAR_ID, **kwargs) -> None:  # pragma: no cover
+def update_event(
+    event_id: str, calendar_id: str = CALENDAR_ID, **kwargs
+) -> None:  # pragma: no cover
     if not calendar_id:
         return
 
@@ -125,7 +127,9 @@ def update_event(event_id: str, calendar_id: str = CALENDAR_ID, **kwargs) -> Non
 
 
 @check_credentials_wrapper
-def delete_event(event_id: str, calendar_id: str = CALENDAR_ID) -> None:  # pragma: no cover
+def delete_event(
+    event_id: str, calendar_id: str = CALENDAR_ID
+) -> None:  # pragma: no cover
     if not calendar_id:
         return
 
