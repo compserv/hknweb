@@ -13,7 +13,10 @@ from hknweb.candidate.models import (
     RequirementMandatory,
     RequirementMergeRequirement,
 )
-from hknweb.candidate.admin.requirements.mixins import SetSemesterMixin, SetVisibleAndSemesterMixin
+from hknweb.candidate.admin.requirements.mixins import (
+    SetSemesterMixin,
+    SetVisibleAndSemesterMixin,
+)
 
 
 @admin.register(RequriementEvent)

@@ -1,5 +1,4 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import permission_required
 from django.http import JsonResponse
 from hknweb.coursesemester.models import Course
 from .models import (
@@ -19,6 +18,8 @@ from .forms import (
 )
 import json
 
+from ..utils import allow_public_access, login_and_permission
+
 
 def initialize_tutoring():
     if Room.objects.all().count() == 0:
@@ -29,6 +30,7 @@ def initialize_tutoring():
         generate_all_courses()
 
 
+@allow_public_access
 def index(request):
     initialize_tutoring()
     days = [name for _, name in TimeSlot.DAY_CHOICES]
@@ -56,7 +58,7 @@ def index(request):
     return render(request, "tutoring/index.html", context)
 
 
-@permission_required("tutoring.add_timeslotpreference", login_url="/accounts/login/")
+@login_and_permission("tutoring.add_timeslotpreference")
 def tutor_course_preference(request):
     if Tutor.objects.filter(user=request.user).exists():
         tutor = Tutor.objects.get(user=request.user)
@@ -74,7 +76,7 @@ def tutor_course_preference(request):
     return render(request, "tutoring/coursepref.html", context)
 
 
-@permission_required("tutoring.add_timeslotpreference", login_url="/accounts/login/")
+@login_and_permission("tutoring.add_timeslotpreference")
 def tutor_slot_preference(request):
     if Tutor.objects.filter(user=request.user).exists():
         tutor = Tutor.objects.get(user=request.user)
@@ -168,7 +170,7 @@ def get_office_course_preferences(office):
 
 
 # Generates file that will be fed into algorithm
-@permission_required("tutoring.add_slot", login_url="/accounts/login/")
+@login_and_permission("tutoring.add_slot")
 def prepare_algorithm_input(request):
     input_data = {}
     courses = []
@@ -188,9 +190,14 @@ def prepare_algorithm_input(request):
                 slot_time_prefs.append(timeslot_pref.preference)
 
         for room_pref in tutor.get_room_preferences():
-            if Slot.objects.filter(timeslot=room_pref.timeslot, room=room_pref.room).count() > 0:
+            if (
+                Slot.objects.filter(
+                    timeslot=room_pref.timeslot, room=room_pref.room
+                ).count()
+                > 0
+            ):
                 slot_office_prefs.append(room_pref.preference)
-        
+
         tutor_dict["timeSlots"] = slot_time_prefs
         tutor_dict["officePrefs"] = slot_office_prefs
         course_prefs = []
@@ -220,6 +227,7 @@ def prepare_algorithm_input(request):
     input_data["slots"] = slots
     return JsonResponse(input_data)
 
+
 def get_adjacent_slot_ids(slot):
     slots_to_check = [
         slot.get_previous_hour_slot(),
@@ -229,7 +237,7 @@ def get_adjacent_slot_ids(slot):
     return [s.slot_id for s in slots_to_check if s]
 
 
-@permission_required("tutoring.add_slot", login_url="/accounts/login/")
+@login_and_permission("tutoring.add_slot")
 def generate_schedule(request):
     if request.method == "POST":
         form = TutoringAlgorithmOutputForm(request.POST, request.FILES)

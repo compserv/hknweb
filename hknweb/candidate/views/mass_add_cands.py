@@ -154,7 +154,7 @@ def check_duplicates(
 
 def add_cands_and_email(cand_csv, num_rows, website_login_link, task=None):
     candidate_group = Group.objects.get(name=ATTR.CANDIDATE)
-    progress_float = 0.0
+    progress_float = 0.0  # lgtm [py/multiple-definition]
     CAND_ACC_WEIGHT = 0.75
     EMAIL_WEIGHT = 0.25
 

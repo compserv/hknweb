@@ -25,6 +25,8 @@ class TabularViewTests(TestCase):
 
         self.client.login(username=user.username, password=password)
 
+        ModelFactory.create_event_type()
+
         response = self.client.get(reverse("events:rsvps"))
 
         self.assertEqual(response.status_code, 200)

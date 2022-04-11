@@ -1,7 +1,4 @@
-import datetime
-
 from django.db import models
-from django.contrib.auth.models import User
 from django.utils import timezone
 from django.core.validators import RegexValidator
 
@@ -11,47 +8,22 @@ MAX_TXTLEN = 10000
 
 
 class Resume(models.Model):
-    name = models.CharField(max_length=MAX_STRLEN, blank=False)
-    email = models.CharField(max_length=MAX_STRLEN, blank=False)
-    notes = models.TextField(max_length=MAX_TXTLEN, blank=True)
-    document = models.FileField(upload_to="resume/", blank=False)
+    name = models.CharField(max_length=MAX_STRLEN)
+    email = models.EmailField()
+    notes = models.TextField(max_length=MAX_TXTLEN)
+    document = models.FileField(upload_to="resume/")
     uploaded_at = models.DateTimeField(auto_now_add=True)
     critiques = models.TextField(max_length=MAX_TXTLEN, blank=True)
 
 
-class ReviewSession(models.Model):
-    name = models.CharField(max_length=MAX_STRLEN)
-    slug = models.CharField(max_length=MAX_STRLEN)
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
-    location = models.CharField(max_length=MAX_STRLEN)
-    description = models.TextField()
-
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def get_absolute_url(self):
-        return "/studentservices/reviewsessions/{}".format(self.id)
-
-    def __repr__(self):
-        return "Event(name={}, location={})".format(self.name, self.location)
-
-    def __str__(self):
-        return self.name
-
-
 class DepTour(models.Model):
-    """
-    Model for a department tour
-    """
-
     class Meta:
         verbose_name = "Department Tour"
 
     name = models.CharField(max_length=MAX_STRLEN, default="")
     email = models.EmailField(max_length=MAX_STRLEN, default="")
     datetime = models.DateTimeField(
-        default=datetime.date.today, verbose_name="Desired Date and Time"
+        default=timezone.now, verbose_name="Desired Date and Time"
     )
     phone_regex = RegexValidator(
         regex=r"^\+?1?\d{10}$",
@@ -64,7 +36,7 @@ class DepTour(models.Model):
         default="",
         verbose_name="Additional comments",
     )
-    date_submitted = models.DateTimeField(default=timezone.datetime.now)
+    date_submitted = models.DateTimeField(default=timezone.now)
     confirmed = models.BooleanField(default=False)
     deprel_comments = models.TextField(max_length=MAX_TXTLEN, blank=True, default="")
 
@@ -83,8 +55,12 @@ class CourseGuideNode(models.Model):
 
 
 class CourseGuideAdjacencyList(models.Model):
-    source = models.ForeignKey(CourseGuideNode, models.CASCADE, related_name="adjacency_list_source")
-    targets = models.ManyToManyField(CourseGuideNode, related_name="adjacency_list_target")
+    source = models.ForeignKey(
+        CourseGuideNode, models.CASCADE, related_name="adjacency_list_source"
+    )
+    targets = models.ManyToManyField(
+        CourseGuideNode, related_name="adjacency_list_target"
+    )
 
     def __str__(self):
         source = str(self.source)

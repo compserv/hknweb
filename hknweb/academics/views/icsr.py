@@ -6,5 +6,5 @@ from hknweb.academics.serializers import ICSRSerializer
 
 
 class ICSRViewSet(AcademicEntityViewSet):
-    queryset = ICSR.objects.all()
+    queryset = ICSR.objects.order_by("-id")
     serializer_class = ICSRSerializer

@@ -89,9 +89,7 @@ class CandidatePortalData:
         challenges = count_challenges(self.user, candidate_semester)
         num_bitbytes = count_num_bitbytes(self.user, candidate_semester)
 
-        event_types = list(get_required_events(candidate_semester, set())) + [
-            EVENT_NAMES.MANDATORY
-        ]
+        event_types = list(get_required_events(candidate_semester, set()))
         rsvps = Rsvp.objects.filter(user__exact=self.user)
 
         req_info = ReqInfo()

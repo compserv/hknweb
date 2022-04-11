@@ -39,7 +39,9 @@ def officer_confirm_view(request, pk):
             send_challenge_confirm_email(request, form.instance, False)
         # if neither is true, either need to wait for csec to review,
         # or csec has already rejected
-        return redirect("/cand/reviewconfirm/{}".format(pk))
+        return redirect(
+            "/cand/reviewconfirm/{}".format(pk)
+        )  # lgtm [py/url-redirection]
     return render(request, "candidate/challenge_confirm.html", context=context)
 
 
@@ -53,7 +55,7 @@ def confirm_challenge(request, id):
     offchallenge.save()
 
     next_page = request.POST.get("next", "/")
-    return redirect(next_page)
+    return redirect(next_page)  # lgtm [py/url-redirection]
 
 
 @login_and_permission("candidate.view_offchallenge")

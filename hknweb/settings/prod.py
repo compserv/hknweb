@@ -1,4 +1,4 @@
-from .common import *
+from .common import *  # lgtm [py/polluting-import]
 from .secrets import *
 
 # In prod mode, rigidly enforce using real secrets and fail if unavailiable
@@ -20,8 +20,3 @@ ALLOWED_HOSTS = [
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 STATIC_URL = "https://www.ocf.berkeley.edu/~hkn/hknweb/static/"
 STATIC_ROOT = "/home/h/hk/hkn/public_html/hknweb/static/"
-
-# Media files (user-uploaded files)
-# https://docs.djangoproject.com/en/2.1/topics/files/
-MEDIA_URL = "https://www.ocf.berkeley.edu/~hkn/hknweb/media/"
-MEDIA_ROOT = "/home/h/hk/hkn/public_html/hknweb/media/"
