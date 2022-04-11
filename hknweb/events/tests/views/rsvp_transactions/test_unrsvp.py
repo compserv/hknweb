@@ -52,7 +52,7 @@ class UnrsvpViewTests(TestCase):
             "id": self.event.id,
         }
         response = self.client.post(reverse("events:unrsvp", kwargs=kwargs))
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 200)
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(len(messages), 1)
         self.assertEqual(
@@ -66,5 +66,5 @@ class UnrsvpViewTests(TestCase):
         self.client.post(reverse("events:rsvp", kwargs=kwargs))
         response = self.client.post(reverse("events:unrsvp", kwargs=kwargs))
 
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 200)
         self.assertQuerysetEqual(Rsvp.objects.all(), [])

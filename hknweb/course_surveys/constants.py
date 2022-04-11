@@ -72,10 +72,19 @@ class CAS:
     SERVICE_VALIDATE_URL = "https://auth.berkeley.edu/cas/serviceValidate"
 
 
+# HSL tuples for interpolation for rating colors
+# e.g. 7/7 maps to green = hsl(120, 61%, 34%)
+# the red hue must be less than the yellow hue so that the color
+# interpolated between red and yellow is orange instead of blue,
+# so just use 0 instead of 360. negative hues work fine.
 class COLORS:
-    FIRE_BRICK = "FireBrick"
-    FOREST_GREEN = "ForestGreen"
-    GOLDEN_ROD = "GoldenRod"
+    RED = (0, 68, 42)
+    YELLOW = (43, 75, 49)
+    GREEN = (120, 61, 34)
+    # the score at which the exact yellow above is used
+    # 4.2/7 non-inverted rating = 0.6 score = yellow color
+    # scores below this threshold blend with red; above with green
+    MID_SCORE = 0.6
 
 
 class UploadStages:

@@ -57,7 +57,7 @@ def format_url(s: str, max_width: int = None) -> str:
             )
         )
         return mark_safe(link_with_tag)
-    except:
+    except:  # lgtm [py/catch-base-exception]
         return s
 
 

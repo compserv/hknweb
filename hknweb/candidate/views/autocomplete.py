@@ -18,7 +18,7 @@ class OfficerAutocomplete(autocomplete.Select2QuerySetView):
                 | Q(first_name__icontains=self.q)
                 | Q(last_name__icontains=self.q)
             )
-        return qs
+        return qs.order_by("username")
 
 
 # this is needed otherwise anyone can see the users in the database
@@ -32,4 +32,4 @@ class UserAutocomplete(autocomplete.Select2QuerySetView):
                 | Q(first_name__icontains=self.q)
                 | Q(last_name__icontains=self.q)
             )
-        return qs
+        return qs.order_by("username")

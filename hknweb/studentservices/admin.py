@@ -7,7 +7,6 @@ from hknweb.studentservices.models import (
     CourseGuideParam,
     DepTour,
     Resume,
-    ReviewSession,
 )
 
 
@@ -17,32 +16,6 @@ class ResumeAdmin(admin.ModelAdmin):
     readonly_fields = ["uploaded_at", "email", "name", "document"]
     list_display = ("name", "notes", "document", "uploaded_at")
     list_filter = ("name", "notes", "document", "uploaded_at")
-
-
-@admin.register(ReviewSession)
-class ReviewSessionAdmin(admin.ModelAdmin):
-    fields = [
-        "name",
-        "slug",
-        "start_time",
-        "end_time",
-        "location",
-        "description",
-        "created_by",
-        "created_at",
-    ]
-    # NOTE: created_by should be read only, but I don't know how to set it to default to current user
-    readonly_fields = ["created_at"]
-    list_display = ("name", "start_time", "location", "created_by", "created_at")
-    list_filter = ["start_time", "created_at", "location", "created_by"]
-    search_fields = [
-        "name",
-        "created_by__username",
-        "created_by__first_name",
-        "created_by__last_name",
-    ]
-    ordering = ["-created_at"]
-    autocomplete_fields = ["created_by"]
 
 
 @admin.register(DepTour)

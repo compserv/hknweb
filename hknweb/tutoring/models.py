@@ -86,7 +86,7 @@ class TimeSlot(models.Model):
             return "12pm"
         else:
             return "{}pm".format(hour - 12)
-    
+
     @staticmethod
     def time_nexthour(hour):
         return TimeSlot.time((hour + 1) % 24)

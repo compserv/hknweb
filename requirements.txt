@@ -1,5 +1,5 @@
 django==2.2.8
-mysqlclient==1.4.5
+mysqlclient==2.1.0
 whitenoise==4.1.1
 pillow==8.4.0
 django-markdownx==2.0.27

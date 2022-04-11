@@ -6,5 +6,5 @@ from hknweb.academics.serializers import SurveySerializer
 
 
 class SurveyViewSet(AcademicEntityViewSet):
-    queryset = Survey.objects.all()
+    queryset = Survey.objects.order_by("-id")
     serializer_class = SurveySerializer
