@@ -1,86 +1,42 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block header %}
-<!-- jQuery -->
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-
-<!-- XDSoft DateTimePicker -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" integrity="sha256-DOS9W6NR+NFe1fUhEE0PGKY/fubbUCnOfTje2JMDw3Y=" crossorigin="anonymous" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js" integrity="sha256-FEqEelWI3WouFOo2VWP/uJfs1y8KJ++FLh2Lbqc8SJk=" crossorigin="anonymous"></script>
-
-<link rel="stylesheet" href="{% static 'candidate/style.css' %}">
-{% endblock %}
-
 {% block title %}Department Tours{% endblock %}
+{% block heading %}Department Tours{% endblock %}
 
+{% block header %}
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 
-{% block heading %}
-Sign up for a department tour!
+    <!-- XDSoft DateTimePicker -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" integrity="sha256-DOS9W6NR+NFe1fUhEE0PGKY/fubbUCnOfTje2JMDw3Y=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js" integrity="sha256-FEqEelWI3WouFOo2VWP/uJfs1y8KJ++FLh2Lbqc8SJk=" crossorigin="anonymous"></script>
 {% endblock %}
 
 {% block content %}
-<p style="font-size:110%;" align='center'>
-
-    {% for message in messages %}
-        {% if message.tags == 'success' %} 
-            <span style='color: green;'> {{ message }} </span>
-        {% else %}
-            <span style='color: red;'> {{ message }} </span>
+    <div style="width: 50%; text-align: center; margin: auto;">
+        {% if messages %}
+            {% for message in messages %}
+                <h3  {% if messages.tags %} class="{{ message.tags }}" {% endif %} style="color: #0000A0;">{{ message }}</h3>
+            {% endfor %}
         {% endif %}
-    {% endfor %}
-</p>
 
+        Welcome! If you are interested in taking a tour of the Berkeley EECS department, you are in the right place! Sign up here for a tour hosted by HKN, and your request will be sent to the HKN officer corps. If you have any special requests, list them in the comments section below. Tours are offered during our open hours (MTWTF, 11am-5pm). Please allow three days for confirmation.
+        <br><br>
 
-<div class="parent">
-  <div class="description">
-    <body>
-      <p style = "margin: 0px 10%;" align='center'>Welcome! If you are interested in taking a tour of
-      the Berkeley EECS department, you are in the right place!
-      Sign up here for a tour hosted by HKN, and your request
-      will be sent to the HKN officer corps. If you have any
-      special requests, list them in the comments section below.
-      Tours are offered during our open hours (MTWTF, 11am-5pm).
-      Please allow three days for confirmation.</p>
+        Note: Tour requests made less than 48 hours in advance from the request time cannot be guaranteed.
+        <br><br>
 
-      <h4 align='center'>Note: Tour requests made less than 48 hours in advance from
-      the request time cannot be guaranteed.</h4>
+        {% include 'events/form.html' %}
 
-    </body>
-    
-    <div class="centered">
-      <form method="POST">{% csrf_token %}
-          {% for field in form %}
-              <br/>
-              <span style="float: left;" >{{ field.label }}: {% if field.field.required %}
-                  <span style="color: red;">* </span>{% endif %}
-              </span>&nbsp
-              {% if field.label == 'Additional comments' %}
-                <br/>
-              {% endif %}
-              {% if field.help_text %}
-                  <i>({{ field.help_text }})</i>
-              {% endif %}
-              {{ field }}
-              <br/>
-              {{ field.errors }}
-              <br/>
-          {% endfor %}
-          <div id="submit">
-              <input type="submit" value="Submit"/>
-          </div>
-          <br/>
-      </form>
-      <script>
-        $(function () {
-            $("#id_datetime").datetimepicker({
-                format: 'm/d/Y g:i A',
-                formatTime: 'g:i A',
-                validateOnBlur: false,
+        <script>
+            $(function () {
+                $("#id_datetime").datetimepicker({
+                    format: 'm/d/Y g:i A',
+                    formatTime: 'g:i A',
+                    validateOnBlur: false,
+                });
             });
-        });
-    </script>
+        </script>
     </div>
-  </div>
-</div>
 {% endblock %}

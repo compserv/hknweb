@@ -1,4 +1,4 @@
-from .common import *
+from .common import *  # lgtm [py/polluting-import]
 from .secrets import *
 
 # In prod mode, rigidly enforce using real secrets and fail if unavailiable

@@ -28,6 +28,7 @@ class ReqInfo:
             EVENT_NAMES.EITHER: 0,
         },
         EVENT_NAMES.BITBYTE: 0,
+        EVENT_NAMES.MANDATORY: 0,
     }
 
     TYPE_TO_TITLE_MAPPING = {
@@ -73,7 +74,7 @@ class ReqInfo:
     def set_list(self, candidate_semester: Semester):
         self.lst = deepcopy(self.EMPTY_REQ_LIST)
         if not candidate_semester:
-            return self.lst
+            return
 
         data = [
             (RequriementEvent, Q(eventType__type__in=self.required_events)),

@@ -190,7 +190,12 @@ def prepare_algorithm_input(request):
                 slot_time_prefs.append(timeslot_pref.preference)
 
         for room_pref in tutor.get_room_preferences():
-            if Slot.objects.filter(timeslot=room_pref.timeslot, room=room_pref.room).count() > 0:
+            if (
+                Slot.objects.filter(
+                    timeslot=room_pref.timeslot, room=room_pref.room
+                ).count()
+                > 0
+            ):
                 slot_office_prefs.append(room_pref.preference)
 
         tutor_dict["timeSlots"] = slot_time_prefs
@@ -221,6 +226,7 @@ def prepare_algorithm_input(request):
         slots.append(slot_dict)
     input_data["slots"] = slots
     return JsonResponse(input_data)
+
 
 def get_adjacent_slot_ids(slot):
     slots_to_check = [

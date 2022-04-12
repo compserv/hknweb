@@ -11,7 +11,7 @@ from dto import DJANGO, DJANGO_DTOS, RAILS_DTOS
 
 FNAME = "course_surveys_data.json"
 WEBSITE_BASE_URL = "http://localhost:3000/academics/api/"
-AUTHENTICATION = HTTPBasicAuth()
+AUTHENTICATION = HTTPBasicAuth()  # lgtm [py/call/wrong-number-class-arguments]
 
 
 def main():
@@ -285,15 +285,15 @@ def upload_rails_data():
 
 
 def clear_course_surveys_db():
-    for d in DJANGO_DTOS:
-        print("Clearing {model_type} models...".format(model_type=d.__name__))
+    for django_dto in DJANGO_DTOS:
+        print("Clearing {model_type} models...".format(model_type=django_dto.__name__))
 
-        url = WEBSITE_BASE_URL + d.api_url
+        url = WEBSITE_BASE_URL + django_dto.api_url
         response = requests.get(url, auth=AUTHENTICATION)
 
         data = json.loads(response.content)
-        for d in data:
-            response = requests.delete(d["url"], auth=AUTHENTICATION)
+        for datum in data:
+            response = requests.delete(datum["url"], auth=AUTHENTICATION)
             assert response.ok
 
 

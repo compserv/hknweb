@@ -5,7 +5,8 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from hknweb.utils import (
-    GROUP_TO_ACCESSLEVEL, login_and_access_level,
+    GROUP_TO_ACCESSLEVEL,
+    login_and_access_level,
 )
 
 from hknweb.candidate.utils_candportal import CandidatePortalData

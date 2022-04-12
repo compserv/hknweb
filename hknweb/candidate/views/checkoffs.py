@@ -1,12 +1,13 @@
+from typing import Tuple
+import csv
+import bleach
+
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.http import Http404
 from django.shortcuts import redirect
 from django.views import generic
 from django.utils.safestring import mark_safe
-
-import csv
-import bleach
 
 from hknweb.events.models import Event, Rsvp
 
@@ -22,7 +23,40 @@ from hknweb.candidate.models import (
 
 from hknweb.utils import method_login_and_permission, login_and_permission
 
-NO_CHECKOFF_ACTION_TAKEN = "No checkoff action has been taken, so re-upload the entire file after fixing the errors."
+
+NO_CHECKOFF_ACTION_TAKEN = """No checkoff action has been taken, so re-upload the entire file 
+    after fixing the errors."""
+INVALID_ENTRY_HEADER = """Invalid CSV format. Check that your columns are correctly labeled, there are 
+            NO blank rows, and filled out for each row."""
+INVALID_ENTRY_CONTENT = """Candidate error message: {}. --- Error Row Information 
+    at row {}: {}"""
+USER_ERROR_HEADER = """Could not find users listed. Please check that their 1) information is 
+    correct and 2) they have an account."""
+USER_ERROR_CONTENT = "{} {} --- with email {}."
+CHECKOFF_TYPE_INFO = {
+    "project": {
+        "arg_name": "project_selection",
+        "missing_arg_message": "Please select a valid committee project!",
+        "model_cls": CommitteeProject,
+        "model_done_cls": CommitteeProjectDoneEntry,
+        "model_attr_name": "committeeProject",
+    },
+    "dues": {
+        "arg_name": "dues_selection",
+        "missing_arg_message": "Please input a valid Dues entry!",
+        "model_cls": DuePayment,
+        "model_done_cls": DuePaymentPaidEntry,
+        "model_attr_name": "duePayment",
+    },
+    "forms": {
+        "arg_name": "forms_selection",
+        "missing_arg_message": "Please input a valid Forms entry!",
+        "model_cls": CandidateForm,
+        "model_done_cls": CandidateFormDoneEntry,
+        "model_attr_name": "form",
+    },
+}
+
 
 @method_login_and_permission("candidate.change_offchallenge")
 class MemberCheckoffView(generic.TemplateView):
@@ -40,149 +74,116 @@ class MemberCheckoffView(generic.TemplateView):
         context = {"projects": projects, "dues": dues, "forms": forms}
         return context
 
-class InvalidEntryErrorInfo:
-    def __init__(self, error_msg, index, row_content):
-        self.error_msg = error_msg
-        self.index = index
-        self.row_content = row_content
-    
-    @staticmethod
-    def error_header():
-        error_msg = "Invalid CSV format."
-        error_msg += " "
-        error_msg += "Check that your columns are correctly labeled, there are NO blank rows, and filled out for each row."
-        return error_msg
-
-    def __str__(self):
-        error_msg = "Candidate error message: {}.".format(self.error_msg)
-        error_msg += " --- "
-        error_msg += "Error Row Information at row {}: {}".format(self.index, self.row_content)
-        return error_msg
-
-class UserErrorInfo:
-    def __init__(self, memberdto):
-        self.first_name = memberdto.first_name
-        self.last_name = memberdto.last_name
-        self.email = memberdto.email
-    
-    @staticmethod
-    def error_header():
-        error_msg = "Could not find users listed."
-        error_msg += " "
-        error_msg += "Please check that their 1) information is correct and 2) they have an account."
-        return error_msg
-
-    def __str__(self):
-        return "{} {} --- with email {}.".format(self.first_name, self.last_name, self.email)
 
 @login_and_permission("candidate.change_offchallenge")
 def checkoff_csv(request):
-    if request.method != ATTR.POST:
+    if request.method != "POST":
         raise Http404()
+
     next_page = request.POST.get("next", "/")
+
+    mem_csv = get_mem_csv(request)
+    if not mem_csv:
+        messages.error(request, "Please input a csv file!")
+        return redirect(next_page)  # lgtm [py/url-redirection]
+
+    users, error_html = get_users(mem_csv)
+    if error_html:
+        messages.error(request, error_html)
+        return redirect(next_page)  # lgtm [py/url-redirection]
+
+    checkoff_type = request.POST.get("checkoff_type", "")
+    error = ""
+    if checkoff_type == "event":
+        error = checkoff_events(request, users)
+    elif checkoff_type in CHECKOFF_TYPE_INFO:
+        error = checkoff_requirement(request, CHECKOFF_TYPE_INFO[checkoff_type], users)
+    else:
+        error = "Invalid checkoff type"
+
+    if error:
+        messages.error(request, error)
+    else:
+        messages.success(request, "Successfully checked everyone off!")
+
+    return redirect(next_page)  # lgtm [py/url-redirection]
+
+
+def get_mem_csv(request) -> csv.DictReader:
     csv_file = request.FILES.get("csv_file", None)
     if not csv_file or not csv_file.name.endswith(ATTR.CSV_ENDING):
-        messages.error(request, "Please input a csv file!")
-        return redirect(next_page)
+        return None
+
     decoded_csv_file = csv_file.read().decode(ATTR.UTF8SIG).splitlines()
     mem_csv = csv.DictReader(decoded_csv_file)
 
-    checkoff_type = request.POST.get("checkoff_type", "")
-    if checkoff_type == "event":
-        event_id = request.POST.get("event_id", None)
-        if event_id is None:
-            messages.error(request, "Please input an event ID!")
-            return redirect(next_page)
-        event = Event.objects.filter(pk=event_id)
-        if not event:
-            messages.error(request, "Please input a valid event ID!")
-            return redirect(next_page)
-        event = event.first()
-    elif checkoff_type == "project":
-        project_id = request.POST.get("project_selection", None)
-        if project_id is None:
-            messages.error(request, "Please select a valid committee project!")
-            return redirect(next_page)
-        project = CommitteeProject.objects.get(id=project_id)
-        projectDoneEntry, _ = CommitteeProjectDoneEntry.objects.get_or_create(committeeProject=project)
-    elif checkoff_type == "dues":
-        dues_id = request.POST.get("dues_selection", None)
-        if dues_id is None:
-            messages.error(request, "Please input a valid Dues entry!")
-            return redirect(next_page)
-        due = DuePayment.objects.get(id=dues_id)
-        duesDoneEntry, _ = DuePaymentPaidEntry.objects.get_or_create(duePayment=due)
-    elif checkoff_type == "forms":
-        forms_id = request.POST.get("forms_selection", None)
-        if forms_id is None:
-            messages.error(request, "Please input a valid Forms entry!")
-            return redirect(next_page)
-        form = CandidateForm.objects.get(id=forms_id)
-        formsDoneEntry, _ = CandidateFormDoneEntry.objects.get_or_create(form=form)
-    else:
-        messages.error(request, "Invalid checkoff type")
-        return redirect(next_page)
+    return mem_csv
 
+
+def get_users(mem_csv: csv.DictReader) -> Tuple[list, str]:
     # Pre-screen and validate data
-    users = []
-    invalid_csv_format_errors = []
-    could_not_find_user_errors = []
+    users, errors = [], []
     for i, row in enumerate(mem_csv):
         try:
-            memberdto = CandidateDTO(row)
+            m = CandidateDTO(row)
         except AssertionError as e:
-            invalid_csv_format_errors.append(InvalidEntryErrorInfo(str(e), i + 1, row))
+            errors.append(
+                (INVALID_ENTRY_HEADER, INVALID_ENTRY_CONTENT.format(str(e), i + 1, row))
+            )
             continue
+
         user = User.objects.filter(
-            first_name=memberdto.first_name,
-            last_name=memberdto.last_name,
-            email=memberdto.email,
-        )
+            first_name=m.first_name, last_name=m.last_name, email=m.email
+        ).first()
         if not user:
-            could_not_find_user_errors.append(UserErrorInfo(memberdto))
+            errors.append(
+                (
+                    USER_ERROR_HEADER,
+                    USER_ERROR_CONTENT.format(m.first_name, m.last_name, m.email),
+                )
+            )
             continue
-        users.append(user[0])
 
-    if invalid_csv_format_errors or could_not_find_user_errors:
-        final_error_html = NO_CHECKOFF_ACTION_TAKEN + "\n<ul>\n"
-        for errors in (invalid_csv_format_errors, could_not_find_user_errors):
-            if errors:
-                # The "if" says at least one, and only need the staticmethod
-                error_html = "<li>" + errors[0].error_header() + "</li>" + "\n"
-                error_html_elements = []
-                for error in errors:
-                    bleached_error = bleach.clean(str(error), tags=[])
-                    error_html_elements.append(bleached_error)
-                error_html += "<ul>\n"
+        users.append(user)
 
-                error_html += "<li>\n"
-                error_html += "</li>\n<li>".join(error_html_elements)
-                error_html += "</li>\n"
+    error_html = None
+    if errors:
+        error_html_elements = [
+            f"<li>{e[0]}-{bleach.clean(e[1], tags=[])}</li>" for e in errors
+        ]
+        error_html = (
+            f"{NO_CHECKOFF_ACTION_TAKEN}\n<ul>"
+            + "".join(error_html_elements)
+            + "</ul>\n"
+        )
+        error_html = mark_safe(error_html)
 
-                error_html += "</ul>\n"
+    return users, error_html
 
-                final_error_html += error_html
-        final_error_html += "</ul>\n"
-        messages.error(request, mark_safe(final_error_html))
-        return redirect(next_page)
 
-    # Checkoff all
+def checkoff_events(request, users: list) -> str:
+    event = Event.objects.filter(pk=request.POST.get("event_id")).first()
+    if not event:
+        return "Please input a valid event ID!"
+
     for user in users:
-        if checkoff_type == "event":
-            rsvp = Rsvp.objects.filter(event=event, user=user)
-            if rsvp.count() != 0:
-                rsvp = rsvp[0]
-                rsvp.confirmed = True
-            else:
-                rsvp = Rsvp.objects.create(user=user, event=event, confirmed=True)
-            rsvp.save()
-        elif checkoff_type == "project":
-            projectDoneEntry.users.add(user)
-        elif checkoff_type == "dues":
-            duesDoneEntry.users.add(user)
-        elif checkoff_type == "forms":
-            formsDoneEntry.users.add(user)
+        rsvp, _ = Rsvp.objects.get_or_create(event=event, user=user)
+        rsvp.confirmed = True
+        rsvp.save()
 
-    messages.success(request, "Successfully checked everyone off!")
+    return ""
 
-    return redirect(next_page)
+
+def checkoff_requirement(request, info: dict, users: list) -> str:
+    id = request.POST.get(info["arg_name"], None)
+    if id is None:
+        return info["missing_arg_message"]
+
+    modelDoneEntry, _ = info["model_done_cls"].objects.get_or_create(
+        **{info["model_attr_name"]: info["model_cls"].objects.get(id=id)}
+    )
+
+    for user in users:
+        modelDoneEntry.users.add(user)
+
+    return ""
