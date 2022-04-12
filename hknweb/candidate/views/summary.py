@@ -34,7 +34,10 @@ def summary(request):
             data["due_payments"]["all_done"],
             data["committee_project"]["all_done"],
             data[EVENT_NAMES.BITBYTE][ATTR.STATUS],
-            all(interactiv[ATTR.STATUS] for key, interactiv in data[EVENT_NAMES.INTERACTIVITIES].items()),
+            all(
+                interactiv[ATTR.STATUS]
+                for key, interactiv in data[EVENT_NAMES.INTERACTIVITIES].items()
+            ),
             *(e[ATTR.STATUS] for e in data["events"]),
         ]
         status.append(all(status))

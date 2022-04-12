@@ -123,20 +123,20 @@ class CandidatePortalData:
         req_info_statuses = req_info.statuses
         return {
             EVENT_NAMES.INTERACTIVITIES: {
-                    EVENT_NAMES.CHALLENGE: {
-                        ATTR.TITLE: interactivities_req_info_titles[EVENT_NAMES.CHALLENGE],
-                        **challenges,
-                        ATTR.STATUS: req_info_statuses[EVENT_NAMES.CHALLENGE],
-                    },
-                    EVENT_NAMES.HANGOUT: {
-                        ATTR.TITLE: interactivities_req_info_titles[EVENT_NAMES.HANGOUT],
-                        ATTR.STATUS: req_info_statuses[EVENT_NAMES.HANGOUT],
-                    },
-                    EVENT_NAMES.EITHER: {
-                        ATTR.TITLE: interactivities_req_info_titles[EVENT_NAMES.EITHER],
-                        ATTR.STATUS: req_info_statuses[EVENT_NAMES.EITHER],
-                    }
-                }
+                EVENT_NAMES.CHALLENGE: {
+                    ATTR.TITLE: interactivities_req_info_titles[EVENT_NAMES.CHALLENGE],
+                    **challenges,
+                    ATTR.STATUS: req_info_statuses[EVENT_NAMES.CHALLENGE],
+                },
+                EVENT_NAMES.HANGOUT: {
+                    ATTR.TITLE: interactivities_req_info_titles[EVENT_NAMES.HANGOUT],
+                    ATTR.STATUS: req_info_statuses[EVENT_NAMES.HANGOUT],
+                },
+                EVENT_NAMES.EITHER: {
+                    ATTR.TITLE: interactivities_req_info_titles[EVENT_NAMES.EITHER],
+                    ATTR.STATUS: req_info_statuses[EVENT_NAMES.EITHER],
+                },
+            }
         }
 
     @staticmethod

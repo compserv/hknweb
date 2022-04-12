@@ -126,10 +126,10 @@ class ReqInfo:
         self.statuses = {}
         for k, v in self.remaining.items():
             if isinstance(v, int):
-                self.statuses[k] = (v == 0)
+                self.statuses[k] = v == 0
             elif k == EVENT_NAMES.INTERACTIVITIES:
                 for k_interactivities, v_interactivities in v.items():
-                    self.statuses[k_interactivities] = (v_interactivities == 0)
+                    self.statuses[k_interactivities] = v_interactivities == 0
             else:
                 self.statuses[k] = not any(v.values())
 

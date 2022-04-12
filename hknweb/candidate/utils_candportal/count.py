@@ -21,7 +21,7 @@ def count_challenges(requested_user: User, candidate_semester: Semester) -> dict
         and RequirementHangout.objects.filter(
             eventType=EVENT_NAMES.CHALLENGE,
             candidateSemesterActive=candidate_semester,
-            enable=True
+            enable=True,
         ).first()
     )
 
@@ -54,8 +54,7 @@ def count_num_bitbytes(
     r = (
         candidate_semester
         and RequirementBitByteActivity.objects.filter(
-            candidateSemesterActive=candidate_semester,
-            enable=True
+            candidateSemesterActive=candidate_semester, enable=True
         ).first()
     )
 
