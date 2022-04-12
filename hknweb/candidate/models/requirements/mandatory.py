@@ -4,7 +4,7 @@ from hknweb.coursesemester.models import Semester
 
 class RequirementMandatory(models.Model):
     enable = models.BooleanField(default=False)
-    events = models.ManyToManyField("events.Event")
+    events = models.ManyToManyField("events.Event", blank=True)
     candidateSemesterActive = models.OneToOneField(
         Semester, on_delete=models.SET_NULL, null=True
     )
