@@ -1,4 +1,4 @@
-django==2.2.8
+django==2.2.27
 mysqlclient==2.1.0
 whitenoise==4.1.1
 pillow==8.4.0

@@ -116,31 +116,38 @@
             </ul>
         </div>
         <div class="checklist-right-col">
-            <h4>{{ interactivities.either }}</h4>
+            <h4>
+                {% if interactivities.either.status %}
+                    <span class="req done"></span>
+                {% else %}
+                    <span class="req not-done"></span>
+                {% endif %}
+                {{ interactivities.either.title }}
+            </h4>
             <ul class="checkboxes">
                 <li>
                     <!-- challenges and hangouts have the same done status-->
-                    {% if interactivities.status %}
+                    {% if interactivities.officer_challenge.status %}
                         <span class="req done"></span>
                     {% else %}
                         <span class="req not-done"></span>
                     {% endif %}
-                    {{ interactivities.officer_challenge }}
+                    {{ interactivities.officer_challenge.title }}
                 </li>
                 <a href="{% url 'candidate:candrequests' %}">
                     (View/Request Officer Challenge Confirmations)</a>
                 <ul>
-                    <li>{{ interactivities.num_pending }} pending</li>
-                    <li>{{ interactivities.num_rejected }} rejected</li>
-                    <li>{{ interactivities.num_confirmed }} confirmed</li>
+                    <li>{{ interactivities.officer_challenge.num_pending }} pending</li>
+                    <li>{{ interactivities.officer_challenge.num_rejected }} rejected</li>
+                    <li>{{ interactivities.officer_challenge.num_confirmed }} confirmed</li>
                 </ul>
                 <li>
-                    {% if interactivities.status %}
+                    {% if interactivities.officer_hangout.status %}
                         <span class="req done"></span>
                     {% else %}
                         <span class="req not-done"></span>
                     {% endif %}
-                    {{ interactivities.officer_hangout }}
+                    {{ interactivities.officer_hangout.title }}
                 </li>
                 <ul class="conf-events">
                     {% for event in confirmed_events.Hangout %}
