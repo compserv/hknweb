@@ -16,4 +16,4 @@ from hknweb.candidate.models.requirements.bit_byte_activity import (
 )
 from hknweb.candidate.models.requirements.hangout import RequirementHangout
 from hknweb.candidate.models.requirements.mandatory import RequirementMandatory
-from hknweb.candidate.models.requirements.merge import RequirementMergeRequirement
+from hknweb.candidate.models.requirements.merge import MergeEventsEntry, RequirementMergeRequirement

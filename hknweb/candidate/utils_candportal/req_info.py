@@ -146,9 +146,9 @@ class ReqInfo:
             fn, deepcopy(names), names, self.lst, self.remaining
         )
 
-    def set_colors(self, event_types: list, merger_nodes):
+    def set_colors(self, event_types: list, merged_events):
         self.colors = {
             **dict.fromkeys(event_types, "grey"),
             **{e.type: e.color for e in EventType.objects.filter(type__in=event_types)},
-            **{e.get_events_str(): e.color for e in merger_nodes},
+            **{e.get_events_str(): e.color for e in merged_events},
         }

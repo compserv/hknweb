@@ -44,14 +44,11 @@ class CandidatePortalData:
         if not merger_reqs:
             return set(), []
 
-        seen_merger_nodes = set()
-        merger_nodes = [
-            MergedEvents(m, candidate_semester, seen_merger_nodes) for m in merger_reqs
-        ]
-        required_events_merger = reduce(set.__or__, (n.events() for n in merger_nodes))
-        return required_events_merger, merger_nodes
+        merged_events = [MergedEvents(m, candidate_semester) for m in merger_reqs]
+        required_events_merger = reduce(set.__or__, (n.events() for n in merged_events))
+        return required_events_merger, merged_events
 
-    def process_merge_node(self, node, req_info: ReqInfo) -> str:
+    def process_merged_events(self, node, req_info: ReqInfo) -> str:
         node_string = node.get_events_str()
 
         key = node_string
@@ -62,29 +59,22 @@ class CandidatePortalData:
         remaining_count, grand_total = node.get_counts(req_info.remaining, req_info.lst)
         req_info.statuses[key] = round(remaining_count, 2) < 0.05
 
-        # num_required_hangouts is None, since Merger nodes should not use it
-        if node.all_required:
-            # TODO Support for All Required for Merged Requirement (probably not a huge priority)
-            req_info.titles[key] = (
-                node_string
-                + " - Looped Merged Requirements for all required currently unsupported"
-            )
-        else:
-            req_info.titles[key] = REQUIREMENT_TITLES_TEMPLATE.format(
-                node_string, grand_total, remaining_count
-            )
+        req_info.titles[key] = REQUIREMENT_TITLES_TEMPLATE.format(
+            node_string, grand_total, remaining_count
+        )
 
         events = node.events()
         confirmed, unconfirmed = req_info.confirmed_events, req_info.unconfirmed_events
-        confirmed[key] = reduce(list.__add__, (confirmed[e] for e in events))
-        unconfirmed[key] = reduce(list.__add__, (unconfirmed[e] for e in events))
+        EMPTY_LIST = []
+        confirmed[key] = reduce(list.__add__, (confirmed.get(e, EMPTY_LIST) for e in events), EMPTY_LIST)
+        unconfirmed[key] = reduce(list.__add__, (unconfirmed.get(e, EMPTY_LIST) for e in events), EMPTY_LIST)
 
         return key
 
     def get_user_cand_data(self) -> dict:
         candidate_semester = self.user.profile.candidate_semester
 
-        required_events_merger, merger_nodes = self.get_merge_info(candidate_semester)
+        required_events_merger, merged_events = self.get_merge_info(candidate_semester)
 
         challenges = count_challenges(self.user, candidate_semester)
         num_bitbytes = count_num_bitbytes(self.user, candidate_semester)
@@ -101,9 +91,9 @@ class CandidatePortalData:
         req_info.set_remaining()
         req_info.set_statuses()
         req_info.set_titles()
-        req_info.set_colors(event_types, merger_nodes)
+        req_info.set_colors(event_types, merged_events)
 
-        merge_names = [self.process_merge_node(node, req_info) for node in merger_nodes]
+        merge_names = [self.process_merged_events(merged_e, req_info) for merged_e in merged_events]
 
         return {
             "req_statuses": {e: req_info.statuses[e] for e in event_types},
