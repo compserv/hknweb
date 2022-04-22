@@ -35,6 +35,8 @@ class RequirementMergeRequirement(models.Model):
         eventEntriesText = " + ".join(
             str(entry) for entry in self.mergeeventsmultiplierentry_set.all()
         )
+
+        # Display Title and if on
         titleText = ""
         if self.title:
             titleText = " - " + self.title
@@ -42,11 +44,18 @@ class RequirementMergeRequirement(models.Model):
                 titleText += " (Title not used)"
         elif self.enableTitle:
             titleText = " - (Title is blank)"
-        return "{}: {}{} - {}{}".format(
+
+        # Display Grand Total if on
+        grandTotalText = ""
+        if self.enableGrandTotal:
+            grandTotalText = " - Grand Total: {}".format(self.grandTotal)
+
+        return "{}: {}{} - {}{}{}".format(
             self.id,
             self.candidateSemesterActive,
             titleText,
             eventEntriesText,
+            grandTotalText,
             "" if self.enable else " [Off]",
         )
 
