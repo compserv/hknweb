@@ -7,7 +7,7 @@ from hknweb.candidate.models import (
     CommitteeProjectDoneEntry,
     DuePayment,
     DuePaymentPaidEntry,
-    MergeEventsEntry,
+    MergeEventsMultiplierEntry,
     RequirementBitByteActivity,
     RequriementEvent,
     RequirementHangout,
@@ -70,18 +70,18 @@ class MiscRequirementAdmin(admin.ModelAdmin, SetVisibleAndSemesterMixin):
 class RequirementMandatoryAdmin(RequirementAdminGeneral):
     filter_horizontal = ("events",)
 
-class MergeEventsEntryInline(admin.TabularInline):
-    model = MergeEventsEntry
+class MergeEventsMultiplierEntryInline(admin.TabularInline):
+    model = MergeEventsMultiplierEntry
     extra = 1
 
 @admin.register(RequirementMergeRequirement)
 class RequirementMergeAdmin(RequirementAdminGeneral):
     actions = RequirementAdminGeneral.actions + ["clear_merge_entries"]
-    inlines = [MergeEventsEntryInline]
+    inlines = [MergeEventsMultiplierEntryInline]
 
     def clear_merge_entries(self, request, queryset):
         for merge in queryset:
-            merge.MergeEventsEntry_set.all().delete()
+            merge.mergeeventsmultiplierentry_set.all().delete()
 
     clear_merge_entries.short_description = "Clear Merges entries"
 

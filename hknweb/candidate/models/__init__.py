@@ -11,7 +11,7 @@ from hknweb.candidate.models.requirements import (
     CommitteeProjectDoneEntry,
     DuePayment,
     DuePaymentPaidEntry,
-    MergeEventsEntry,
+    MergeEventsMultiplierEntry,
     RequirementBitByteActivity,
     RequriementEvent,
     RequirementHangout,

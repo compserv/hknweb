@@ -45,25 +45,28 @@ class CandidatePortalData:
             return set(), []
 
         merged_events = [MergedEvents(m, candidate_semester) for m in merger_reqs]
-        required_events_merger = reduce(set.__or__, (n.events() for n in merged_events))
+        required_events_merger = reduce(set.__or__, (set(n.events()) for n in merged_events))
         return required_events_merger, merged_events
 
-    def process_merged_events(self, node, req_info: ReqInfo) -> str:
-        node_string = node.get_events_str()
+    def process_merged_events(self, merge_event, req_info: ReqInfo) -> str:
+        merge_event_string = merge_event.get_events_str()
 
-        key = node_string
+        key = merge_event_string
         if key in req_info.titles:
             key = f"{key} {sum(s.startswith(key) for s in req_info.titles) + 1}"
-            req_info.colors[key] = req_info.colors[node_string]
+            req_info.colors[key] = req_info.colors[merge_event_string]
 
-        remaining_count, grand_total = node.get_counts(req_info.remaining, req_info.lst)
+        remaining_count, grand_total, missing_event_reqs_text = merge_event.get_counts(req_info)
         req_info.statuses[key] = round(remaining_count, 2) < 0.05
 
         req_info.titles[key] = REQUIREMENT_TITLES_TEMPLATE.format(
-            node_string, grand_total, remaining_count
+            merge_event_string, grand_total, remaining_count
         )
+        
+        if missing_event_reqs_text:
+            req_info.titles[key] += " - " + missing_event_reqs_text
 
-        events = node.events()
+        events = merge_event.events()
         confirmed, unconfirmed = req_info.confirmed_events, req_info.unconfirmed_events
         EMPTY_LIST = []
         confirmed[key] = reduce(list.__add__, (confirmed.get(e, EMPTY_LIST) for e in events), EMPTY_LIST)

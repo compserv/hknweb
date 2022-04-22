@@ -65,6 +65,6 @@ class MergeEventsMultiplierEntry(models.Model):
         if self.multiplier.is_integer():
             multiplier = int(self.multiplier)
         entry_string = "{} x {}".format(multiplier, self.eventType)
-        if self.enable:
+        if not self.enable:
             entry_string = f"({entry_string} - Disabled)"
         return entry_string
