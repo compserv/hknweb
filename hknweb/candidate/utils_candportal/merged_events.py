@@ -67,7 +67,7 @@ class MergedEvents:
             if self.check_all_missing():
                 remaining_count = grand_total
         if remaining_count is None:
-            remaining_count = max(grand_total - credit_count, 0)
+            remaining_count = max(grand_total - credit_count, 0.0)
         if remaining_count.is_integer() and grand_total.is_integer():
             remaining_count = int(remaining_count)
             grand_total = int(grand_total)
