@@ -23,11 +23,12 @@ class MergedEvents:
         if merge_requirement.enableGrandTotal:
             self.grand_total = merge_requirement.grandTotal
 
-        for entry in merge_requirement.mergeeventsmultiplierentry_set.filter(enable=True):
+        for entry in merge_requirement.mergeeventsmultiplierentry_set.filter(
+            enable=True
+        ):
             eventTypeKey = entry.eventType.type
             self.multiplier_event[eventTypeKey] = (
-                self.multiplier_event.get(eventTypeKey, 0)
-                + entry.multiplier
+                self.multiplier_event.get(eventTypeKey, 0) + entry.multiplier
             )
 
     def __str__(self) -> str:
@@ -72,9 +73,11 @@ class MergedEvents:
             grand_total = int(grand_total)
         missing_event_reqs_text = None
         if self.missing_event_reqs:
-            missing_event_reqs_text = "Missing RequiredEvents: {}".format(self.missing_event_reqs)
+            missing_event_reqs_text = "Missing RequiredEvents: {}".format(
+                self.missing_event_reqs
+            )
         return remaining_count, grand_total, missing_event_reqs_text
-    
+
     def check_all_missing(self) -> bool:
         return len(self.missing_event_reqs) == len(self.multiplier_event)
 

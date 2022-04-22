@@ -45,7 +45,9 @@ class CandidatePortalData:
             return set(), []
 
         merged_events = [MergedEvents(m, candidate_semester) for m in merger_reqs]
-        required_events_merger = reduce(set.__or__, (set(n.events()) for n in merged_events))
+        required_events_merger = reduce(
+            set.__or__, (set(n.events()) for n in merged_events)
+        )
         return required_events_merger, merged_events
 
     def process_merged_events(self, merge_event, req_info: ReqInfo) -> str:
@@ -56,21 +58,27 @@ class CandidatePortalData:
             key = f"{key} {sum(s.startswith(key) for s in req_info.titles) + 1}"
             req_info.colors[key] = req_info.colors[merge_event_string]
 
-        remaining_count, grand_total, missing_event_reqs_text = merge_event.get_counts(req_info)
+        remaining_count, grand_total, missing_event_reqs_text = merge_event.get_counts(
+            req_info
+        )
         req_info.statuses[key] = round(remaining_count, 2) < 0.05
 
         req_info.titles[key] = REQUIREMENT_TITLES_TEMPLATE.format(
             merge_event_string, grand_total, remaining_count
         )
-        
+
         if missing_event_reqs_text:
             req_info.titles[key] += " - " + missing_event_reqs_text
 
         events = merge_event.events()
         confirmed, unconfirmed = req_info.confirmed_events, req_info.unconfirmed_events
         EMPTY_LIST = []
-        confirmed[key] = reduce(list.__add__, (confirmed.get(e, EMPTY_LIST) for e in events), EMPTY_LIST)
-        unconfirmed[key] = reduce(list.__add__, (unconfirmed.get(e, EMPTY_LIST) for e in events), EMPTY_LIST)
+        confirmed[key] = reduce(
+            list.__add__, (confirmed.get(e, EMPTY_LIST) for e in events), EMPTY_LIST
+        )
+        unconfirmed[key] = reduce(
+            list.__add__, (unconfirmed.get(e, EMPTY_LIST) for e in events), EMPTY_LIST
+        )
 
         return key
 
@@ -96,7 +104,9 @@ class CandidatePortalData:
         req_info.set_titles()
         req_info.set_colors(event_types, merged_events)
 
-        merge_names = [self.process_merged_events(merged_e, req_info) for merged_e in merged_events]
+        merge_names = [
+            self.process_merged_events(merged_e, req_info) for merged_e in merged_events
+        ]
 
         return {
             "req_statuses": {e: req_info.statuses[e] for e in event_types},

@@ -70,9 +70,11 @@ class MiscRequirementAdmin(admin.ModelAdmin, SetVisibleAndSemesterMixin):
 class RequirementMandatoryAdmin(RequirementAdminGeneral):
     filter_horizontal = ("events",)
 
+
 class MergeEventsMultiplierEntryInline(admin.TabularInline):
     model = MergeEventsMultiplierEntry
     extra = 1
+
 
 @admin.register(RequirementMergeRequirement)
 class RequirementMergeAdmin(RequirementAdminGeneral):

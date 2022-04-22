@@ -32,7 +32,9 @@ class RequirementMergeRequirement(models.Model):
     color = models.CharField(max_length=7, default="#0072c1")
 
     def __str__(self):
-        eventEntriesText = " + ".join(str(entry) for entry in self.mergeeventsmultiplierentry_set.all())
+        eventEntriesText = " + ".join(
+            str(entry) for entry in self.mergeeventsmultiplierentry_set.all()
+        )
         titleText = ""
         if self.title:
             titleText = " - " + self.title
@@ -48,16 +50,16 @@ class RequirementMergeRequirement(models.Model):
             "" if self.enable else " [Off]",
         )
 
+
 class MergeEventsMultiplierEntry(models.Model):
-    requirementMergeRequirement = models.ForeignKey(RequirementMergeRequirement, on_delete=models.CASCADE)
+    requirementMergeRequirement = models.ForeignKey(
+        RequirementMergeRequirement, on_delete=models.CASCADE
+    )
     enable = models.BooleanField(
         default=False,
         help_text="Toggle this entry",
     )
-    eventType = models.ForeignKey(
-        "events.EventType",
-        on_delete=models.CASCADE
-    )
+    eventType = models.ForeignKey("events.EventType", on_delete=models.CASCADE)
     multiplier = models.FloatField(default=1)
 
     def __str__(self):
