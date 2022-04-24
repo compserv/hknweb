@@ -1,0 +1,32 @@
+li a {
+    color: #353535;
+}
+
+ul {
+    width: 60vw;
+    margin-left: 20vw;
+}
+
+form {
+    width: 100vw;
+    text-align: center;
+}
+
+input {
+    display: inline-block;
+    padding: 9px;
+    background-color: #eeeeee;
+    border: solid 1px #aaaaaa;
+    border-radius: 4px;
+    color: #353535;
+}
+
+p {
+    text-align: center;
+}
+
+.vote-button {
+    width: 100vw;
+    text-align: center;
+    color: #353535;
+}
