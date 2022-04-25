@@ -94,6 +94,27 @@ def course_guide(request):
         g.name for g in CourseGuideGroup.objects.all() if g.name != "Core"
     ]
 
+    # grouplist = request.GET.get('groups').split(",")
+    # x_total = 0
+    # x_count = 0
+    # y_total = 0
+    # y_count = 0
+    # for group in grouplist:
+    #     if group == "Core":
+    #         continue
+    #     node = CourseGuideNode.objects.get(name=group)
+    #     if (node.x_0 is not None):
+    #         x_total += node.x_0
+    #         x_count += 1
+    #     if (node.y_0 is not None):
+    #         y_total += node.y_0
+    #         y_count += 1
+
+    # if x_count != 0 and y_count != 0:
+    #     context["center"] = f"{x_total / x_count}, 400 + (height - 400) / 2"
+    # else:
+    #     context["center"] = "width / 2, 400 + (height - 400) / 2"
+
     return render(request, "studentservices/course_guide.html", context=context)
 
 

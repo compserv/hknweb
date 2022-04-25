@@ -69,7 +69,7 @@
     </div>
 
     <div style="width: 100%; overflow: scroll;">
-        <svg class="graph" width="1600" height="800"></svg>
+        <svg class="graph" width="1600" height="1600"></svg>
     </div>
 
     <!-- From https://bl.ocks.org/heybignick/3faf257bbbbc7743bb72310d03b86ee8 -->
@@ -78,7 +78,7 @@
             width = +svg.attr("width"),
             height = +svg.attr("height"),
             circle_radius = {{ params.circle_radius }},
-            title_circle_radius = circle_radius * 2,
+            title_circle_radius = circle_radius * 1.5,
             node_stroke_width = 1,
             node_stroke = "gray";
 
@@ -87,117 +87,20 @@
         var simulation = d3.forceSimulation()
             .force("link", d3.forceLink().id(function(d) { return d.id; }).distance({{ params.link_distance }}))
             .force("charge", d3.forceManyBody().strength({{ params.force_strength }}))
-            .force("center", d3.forceCenter(width / 2, height / 2))
             .force("collision", d3.forceCollide().radius(function(d) { 
                 if (d.title) return title_circle_radius;
                 else return circle_radius;
-            }));
-
-        d3.json("{% url 'studentservices:course_guide_data' %}?groups={{ request.GET.groups }}", function(error, graph) {
-            if (error) throw error;
-
-            var link = svg
-                .append("g")
-                    .attr("class", "links")
-                .selectAll("line")
-                    .data(graph.links)
-                    .enter().append("line")
-                        .attr("stroke-width", 2)
-                        .attr("marker-end", "url(#end)");
-
-            var node = svg
-                .append("g")
-                    .attr("class", "nodes")
-                .selectAll("g")
-                    .data(graph.nodes)
-                    .enter().append("g")
-
-            var circles = node
-                .append("circle")
-                    .attr("r", circle_radius)
-                    .attr("fill", function(d) { return color(d.group); })
-                    .attr("stroke", node_stroke)
-                    .attr("stroke-width", node_stroke_width);
-            circles
-                .filter(function(d) { return d.title })
-                .attr("r", title_circle_radius);
-
-            // Create a drag handler and append it to the node object instead
-            var drag_handler = d3.drag()
-                .on("start", dragstarted)
-                .on("drag", dragged)
-                .on("end", dragended);
-
-            drag_handler(node);
-
-            var labels = node
-                .append("a")
-                    .attr("xlink:href", function (d) { return d.link; })
-                    .attr("target", "_blank")
-                .append("text")
-                    .text(function(d) { return d.id; })
-                    .attr("text-anchor", "middle")
-                    .attr("x", 0)
-                    .attr("y", 5);
-
-            node.append("title")
-                .text(function(d) { return d.id; });
-
-            node.on("mouseover", function(d) {
-                circles
-                    .filter(function(d2) { return d.group != d2.group; })
-                    .attr("opacity", 0.6);
-                link
-                    .filter(function(l) {
-                        return (l.source_group != d.group) && (l.target_group != d.group);
-                    })
-                    .attr("opacity", 0.1);
-                labels
-                    .filter(function(d2) { return d.group != d2.group; })
-                    .attr("opacity", 0.5);
-            });
-
-            // Set the stroke width back to normal when mouse leaves the node.
-            node.on("mouseout", function() {
-                circles.attr("opacity", 1.0);
-                link.attr("opacity", 1.0);
-                labels.attr("opacity", 1.0);
-            });
-
-            svg.append("svg:defs").selectAll("marker")
-                .data(["end"])
-                .enter().append("svg:marker")
-                    .attr("id", String)
-                    .attr("viewBox", "0 -5 10 10")
-                    .attr("refX", 40)
-                    .attr("refY", 0)
-                    .attr("markerWidth", {{ params.marker_width }})
-                    .attr("markerHeight", {{ params.marker_height }})
-                    .attr("orient", "auto")
-                .append("svg:path")
-                    .attr("d", "M0,-5L10,0L0,5");
-
-            simulation
-                .nodes(graph.nodes)
-                .on("tick", ticked);
-
-            simulation.force("link")
-                .links(graph.links);
-
-          function ticked() {
-            link
-                .attr("x1", function(d) { return d.source.x; })
-                .attr("y1", function(d) { return d.source.y; })
-                .attr("x2", function(d) { return d.target.x; })
-                .attr("y2", function(d) { return d.target.y; });
-
-            node
-                .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
-          }
-        });
-
+            }))
+        simulation.force("center", d3.forceCenter(width / 2, 400 + (height - 400) / 2))
+        
         function dragstarted(d) {
             if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+            if (d.fx) {
+                d.old_fx = d.x;
+            }
+            if (d.fy) {
+                d.old_fy = d.y;
+            }
             d.fx = d.x;
             d.fy = d.y;
         }
@@ -211,6 +114,131 @@
             if (!d3.event.active) simulation.alphaTarget(0);
             d.fx = null;
             d.fy = null;
+            if (d.old_fx) {
+                d.fx = d.old_fx;
+            }
+            if (d.old_fy) {
+                d.fy = d.old_fy;
+            }
         }
+
+        function renderd3(groups) {
+            d3.json("{% url 'studentservices:course_guide_data' %}?groups=" + groups, function(error, graph) {
+                if (error) throw error;
+
+                var link = svg
+                    .append("g")
+                        .attr("class", "links")
+                    .selectAll("line")
+                        .data(graph.links)
+                        .enter().append("line")
+                            .attr("stroke-width", 2)
+                            .attr("marker-end", "url(#end)");
+
+                var node = svg
+                    .append("g")
+                        .attr("class", "nodes")
+                    .selectAll("g")
+                        .data(graph.nodes)
+                        .enter().append("g")
+
+                var circles = node
+                    .append("circle")
+                        .attr("r", circle_radius)
+                        .attr("fill", function(d) { return color(d.group); })
+                        .attr("stroke", node_stroke)
+                        .attr("stroke-width", node_stroke_width);
+                circles
+                    .filter(function(d) { return d.title })
+                    .attr("r", title_circle_radius);
+
+                // Create a drag handler and append it to the node object instead
+                var drag_handler = d3.drag()
+                    .on("start", dragstarted)
+                    .on("drag", dragged)
+                    .on("end", dragended);
+
+                drag_handler(node);
+
+                var labels = node
+                    .append("a")
+                        .attr("xlink:href", function (d) { return d.link; })
+                        .attr("target", "_blank")
+                    .append("text")
+                        .text(function(d) { return d.id; })
+                        .attr("text-anchor", "middle")
+                        .attr("x", 0)
+                        .attr("y", 5);
+
+                node.append("title")
+                    .text(function(d) { return d.id; });
+
+                node.on("mouseover", function(d) {
+                    circles
+                        .filter(function(d2) { return d.group != d2.group; })
+                        .attr("opacity", 0.6);
+                    link
+                        .filter(function(l) {
+                            return (l.source_group != d.group) && (l.target_group != d.group);
+                        })
+                        .attr("opacity", 0.1);
+                    labels
+                        .filter(function(d2) { return d.group != d2.group; })
+                        .attr("opacity", 0.5);
+                });
+
+                // Set the stroke width back to normal when mouse leaves the node.
+                node.on("mouseout", function() {
+                    circles.attr("opacity", 1.0);
+                    link.attr("opacity", 1.0);
+                    labels.attr("opacity", 1.0);
+                });
+
+                svg.append("svg:defs").selectAll("marker")
+                    .data(["end"])
+                    .enter().append("svg:marker")
+                        .attr("id", String)
+                        .attr("viewBox", "0 -5 10 10")
+                        .attr("refX", 40)
+                        .attr("refY", 0)
+                        .attr("markerWidth", {{ params.marker_width }})
+                        .attr("markerHeight", {{ params.marker_height }})
+                        .attr("orient", "auto")
+                    .append("svg:path")
+                        .attr("d", "M0,-5L10,0L0,5");
+
+                simulation
+                    .nodes(graph.nodes)
+                    .on("tick", ticked);
+
+                simulation.force("link")
+                    .links(graph.links);
+                
+                function inside_border(d, dim_size, d_coord) {
+                    let radius = (d.title) ? title_circle_radius : circle_radius;
+                    return Math.max(radius, Math.min(dim_size - radius, d_coord));
+                };
+
+                function ticked() {
+                    node
+                        .attr("cx", function(d) { return d.x = inside_border(d, width,  d.x); })
+                        .attr("cy", function(d) {
+                            d.y = inside_border(d, height, d.y);
+                            if (d.group != 1) {
+                                d.y = Math.max(d.y, 400);
+                            }
+                            return d.y;
+                        })
+                        .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+                    link
+                        .attr("x1", function(d) { return d.source.x; })
+                        .attr("y1", function(d) { return d.source.y; })
+                        .attr("x2", function(d) { return d.target.x; })
+                        .attr("y2", function(d) { return d.target.y; });
+                }
+                });
+        };
+
+        renderd3("{{ request.GET.groups }}");
     </script>
 {% endblock %}
