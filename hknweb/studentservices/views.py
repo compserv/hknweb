@@ -112,11 +112,15 @@ def course_guide_data(request):
         group_names.append(group.name)
         groups.append([node.name for node in group.nodes.all()])
 
+    group_name_id = {
+        g.name: (i + 1) for i, g in enumerate(CourseGuideGroup.objects.all())
+    }
+
     node_groups = dict()
     for i, g in enumerate(groups):
-        i += 1  # Start at group 1
+        group_num = group_name_id.get(group_names[i], -1)
         for n in g:
-            node_groups[n] = i
+            node_groups[n] = group_num
 
     graph = dict()
     for adjacency_list in CourseGuideAdjacencyList.objects.all():
@@ -145,18 +149,6 @@ def course_guide_data(request):
             "fy": n.y_0,
             "fixed": ((n.x_0 is not None) and (n.y_0 is not None)),
         }
-
-        # If not fixed, via x_0 and y_0
-        if (n.x_0 is None) and (n.y_0 is None):
-            group_node = CourseGuideNode.objects.filter(
-                name=group_names[node_groups[n.name] - 1]
-            ).first()
-            if group_node is None:
-                continue
-            node_attrs["fx"] = group_node.x_0
-            node_attrs["fy"] = group_node.y_0 + 100
-            node_attrs["x"] = group_node.x_0
-            node_attrs["y"] = group_node.y_0 + 100
 
         nodes.append(node_attrs)
 
