@@ -29,6 +29,7 @@ app_urlpatterns = [
     path("tutoring/", include("hknweb.tutoring.urls")),
     path("cand/", include("hknweb.candidate.urls")),
     path("pages/", include("hknweb.markdown_pages.urls")),
+    path("polls/", include("hknweb.polls.urls")),
     path("course_surveys/", include("hknweb.course_surveys.urls")),
     path("", landing.home, name="home"),
     path("<slug:temp>/", viewsShortlink.openLink),
