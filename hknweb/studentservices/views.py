@@ -108,7 +108,7 @@ def course_guide_data(request):
     for group in CourseGuideGroup.objects.all():
         if group_names_get and group.name not in group_names_get:
             continue
-        
+
         group_names.append(group.name)
         groups.append([node.name for node in group.nodes.all()])
 
@@ -137,18 +137,22 @@ def course_guide_data(request):
             continue
 
         node_attrs = {
-                    "id": n.name,
-                    "link": link_template + n.name,
-                    "title": n.is_title,
-                    "group": node_groups[n.name],
-                    "fx": n.x_0,
-                    "fy": n.y_0,
-                    "fixed": ((n.x_0 is not None) and (n.y_0 is not None))
-                }
+            "id": n.name,
+            "link": link_template + n.name,
+            "title": n.is_title,
+            "group": node_groups[n.name],
+            "fx": n.x_0,
+            "fy": n.y_0,
+            "fixed": ((n.x_0 is not None) and (n.y_0 is not None)),
+        }
 
         # If not fixed, via x_0 and y_0
-        if ((n.x_0 is None) and (n.y_0 is None)):
-            group_node = CourseGuideNode.objects.get(name=group_names[node_groups[n.name] - 1])
+        if (n.x_0 is None) and (n.y_0 is None):
+            group_node = CourseGuideNode.objects.filter(
+                name=group_names[node_groups[n.name] - 1]
+            ).first()
+            if group_node is None:
+                continue
             node_attrs["fx"] = group_node.x_0
             node_attrs["fy"] = group_node.y_0 + 100
             node_attrs["x"] = group_node.x_0
