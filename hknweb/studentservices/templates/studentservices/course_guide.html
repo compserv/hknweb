@@ -91,6 +91,9 @@
             node_stroke = "gray";
 
         var color = d3.scaleOrdinal(d3.schemeSet2);
+        for (let i = 1; i < ({{ groups|length }} + 1) + 1; i++) {
+            color(i);
+        }
 
         function renderd3(groups) {
             d3.json("{% url 'studentservices:course_guide_data' %}?groups=" + groups, function(error, graph) {
