@@ -99,15 +99,17 @@ def course_guide(request):
 
 @allow_public_access
 def course_guide_data(request):
-    group_names = request.GET.get("groups", None)
-    group_names = group_names.split(",") if group_names else []
-    group_names.append("Core")
+    group_names_get = request.GET.get("groups", None)
+    group_names_get = group_names_get.split(",") if group_names_get else []
+    group_names_get.append("Core")
 
     groups = []
+    group_names = []
     for group in CourseGuideGroup.objects.all():
-        if group_names and group.name not in group_names:
+        if group_names_get and group.name not in group_names_get:
             continue
 
+        group_names.append(group.name)
         groups.append([node.name for node in group.nodes.all()])
 
     node_groups = dict()
@@ -134,16 +136,29 @@ def course_guide_data(request):
         if n.name not in node_groups:
             continue
 
-        nodes.append(
-            {
-                "id": n.name,
-                "link": link_template + n.name,
-                "title": n.is_title,
-                "group": node_groups[n.name],
-                "fx": n.x_0,
-                "fy": n.y_0,
-            }
-        )
+        node_attrs = {
+            "id": n.name,
+            "link": link_template + n.name,
+            "title": n.is_title,
+            "group": node_groups[n.name],
+            "fx": n.x_0,
+            "fy": n.y_0,
+            "fixed": ((n.x_0 is not None) and (n.y_0 is not None)),
+        }
+
+        # If not fixed, via x_0 and y_0
+        if (n.x_0 is None) and (n.y_0 is None):
+            group_node = CourseGuideNode.objects.filter(
+                name=group_names[node_groups[n.name] - 1]
+            ).first()
+            if group_node is None:
+                continue
+            node_attrs["fx"] = group_node.x_0
+            node_attrs["fy"] = group_node.y_0 + 100
+            node_attrs["x"] = group_node.x_0
+            node_attrs["y"] = group_node.y_0 + 100
+
+        nodes.append(node_attrs)
 
     links = []
     for s, es in graph.items():
