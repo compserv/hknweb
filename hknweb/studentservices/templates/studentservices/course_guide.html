@@ -132,8 +132,15 @@
                     .force("link", d3.forceLink().id(function(d) { return d.id; })
                                                 .distance({{ params.link_distance }})
                                                 .strength(function (l) {
-                                                    let found_node = node.filter((n) => (n.id == l.source.id && n.title));
-                                                    if (found_node._groups[0].length > 0) {
+                                                    let found_node = graph.nodes.filter((n) => (n.id == l.source.id && n.title));
+                                                    let found_links = graph.links.filter(function(l2) {
+                                                            if (l2.target.id == l.target.id) {
+                                                                let found_node = graph.nodes.filter((n) => (n.id == l2.source.id && n.title));
+                                                                return found_node.length == 1;
+                                                            }
+                                                            return false;
+                                                    });
+                                                    if (found_node.length == 1 && found_links.length == 1) {
                                                         return 7;
                                                     }
                                                     return 2;
@@ -242,18 +249,12 @@
                     node
                         .attr("cx", function(d) {
                             d.x = inside_border(d, width, d.x);
-                            if (!d.fixed) {
-                                d.fx = null;
-                            }
                             return d.x;
                         })
                         .attr("cy", function(d) {
                             d.y = inside_border(d, height, d.y);
                             if (d.group != 1) {
                                 d.y = Math.max(d.y, 400);
-                            }
-                            if (!d.fixed) {
-                                d.fy = null;
                             }
                             return d.y;
                         })
