@@ -111,9 +111,9 @@ def course_guide_data(request):
 
         group_names.append(group.name)
         groups.append([node.name for node in group.nodes.all()])
-    
+
     group_name_id = {
-        g.name : (i + 1) for i, g in enumerate(CourseGuideGroup.objects.all())
+        g.name: (i + 1) for i, g in enumerate(CourseGuideGroup.objects.all())
     }
 
     node_groups = dict()
