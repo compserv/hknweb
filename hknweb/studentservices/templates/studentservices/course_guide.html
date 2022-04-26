@@ -68,8 +68,16 @@
         {% endfor %}
     </div>
 
+    <h2 style="text-align: center;">
+        Get a description of each EECS Academic Area here: <a href="https://www2.eecs.berkeley.edu/Research/Areas/">EECS Research Areas</a>
+    </h2>
+
+    <h2 style="text-align: center;">
+        <a href="/static/img/course-map-2019.png">Image version of the Course Guide</a>
+    </h2>
+
     <div style="width: 100%; overflow: scroll;">
-        <svg class="graph" width="1600" height="1600"></svg>
+        <svg class="graph" width="2000" height="1200"></svg>
     </div>
 
     <!-- From https://bl.ocks.org/heybignick/3faf257bbbbc7743bb72310d03b86ee8 -->
@@ -84,44 +92,6 @@
 
         var color = d3.scaleOrdinal(d3.schemeSet2);
 
-        var simulation = d3.forceSimulation()
-            .force("link", d3.forceLink().id(function(d) { return d.id; }).distance({{ params.link_distance }}))
-            .force("charge", d3.forceManyBody().strength({{ params.force_strength }}))
-            .force("collision", d3.forceCollide().radius(function(d) { 
-                if (d.title) return title_circle_radius;
-                else return circle_radius;
-            }))
-        simulation.force("center", d3.forceCenter(width / 2, 400 + (height - 400) / 2))
-        
-        function dragstarted(d) {
-            if (!d3.event.active) simulation.alphaTarget(0.3).restart();
-            if (d.fx) {
-                d.old_fx = d.x;
-            }
-            if (d.fy) {
-                d.old_fy = d.y;
-            }
-            d.fx = d.x;
-            d.fy = d.y;
-        }
-
-        function dragged(d) {
-            d.fx = d3.event.x;
-            d.fy = d3.event.y;
-        }
-
-        function dragended(d) {
-            if (!d3.event.active) simulation.alphaTarget(0);
-            d.fx = null;
-            d.fy = null;
-            if (d.old_fx) {
-                d.fx = d.old_fx;
-            }
-            if (d.old_fy) {
-                d.fy = d.old_fy;
-            }
-        }
-
         function renderd3(groups) {
             d3.json("{% url 'studentservices:course_guide_data' %}?groups=" + groups, function(error, graph) {
                 if (error) throw error;
@@ -132,25 +102,72 @@
                     .selectAll("line")
                         .data(graph.links)
                         .enter().append("line")
-                            .attr("stroke-width", 2)
-                            .attr("marker-end", "url(#end)");
+                            .attr("stroke-width", 2);
 
                 var node = svg
                     .append("g")
                         .attr("class", "nodes")
                     .selectAll("g")
                         .data(graph.nodes)
-                        .enter().append("g")
+                        .enter().append("g");
+
+                // Create the line after the nodes are rendered, dynamic to Node size
+                svg.selectAll("line")
+                    .attr("marker-end", function (l) {
+                            let found_node = node.filter((n) => (n.id == l.target && n.title));
+                            if (found_node._groups[0].length > 0) {
+                                return "url(#end_title)"
+                            }
+                            return "url(#end)";
+                        });
 
                 var circles = node
                     .append("circle")
-                        .attr("r", circle_radius)
+                        .attr("r", function(d) { return (d.title) ? title_circle_radius : circle_radius; })
                         .attr("fill", function(d) { return color(d.group); })
                         .attr("stroke", node_stroke)
                         .attr("stroke-width", node_stroke_width);
-                circles
-                    .filter(function(d) { return d.title })
-                    .attr("r", title_circle_radius);
+                
+                var simulation = d3.forceSimulation()
+                    .force("link", d3.forceLink().id(function(d) { return d.id; })
+                                                .distance({{ params.link_distance }})
+                                                .strength(function (l) {
+                                                    let found_node = node.filter((n) => (n.id == l.source.id && n.title));
+                                                    if (found_node._groups[0].length > 0) {
+                                                        return 7;
+                                                    }
+                                                    return 2;
+                                                }))
+                    .force("charge", d3.forceManyBody().strength({{ params.force_strength }}))
+                    .force("collision", d3.forceCollide().radius(function(d) { 
+                        return (d.title) ? title_circle_radius : circle_radius;
+                    }))
+                    .force("center", d3.forceY(height));
+                
+                function dragstarted(d) {
+                    if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+
+                    d.old_fx = d.x;
+                    d.old_fy = d.y;
+
+                    d.fx = d.x;
+                    d.fy = d.y;
+                }
+
+                function dragged(d) {
+                    d.fx = d3.event.x;
+                    d.fy = d3.event.y;
+                }
+
+                function dragended(d) {
+                    if (!d3.event.active) simulation.alphaTarget(0);
+                    d.fx = null;
+                    d.fy = null;
+                    if (d.fixed) {
+                        d.fx = d.old_fx;
+                        d.fy = d.old_fy;
+                    }
+                }
 
                 // Create a drag handler and append it to the node object instead
                 var drag_handler = d3.drag()
@@ -195,17 +212,19 @@
                 });
 
                 svg.append("svg:defs").selectAll("marker")
-                    .data(["end"])
+                    .data(["end", "end_title"])
                     .enter().append("svg:marker")
                         .attr("id", String)
                         .attr("viewBox", "0 -5 10 10")
-                        .attr("refX", 40)
+                        .attr("refX", circle_radius + 10)
                         .attr("refY", 0)
                         .attr("markerWidth", {{ params.marker_width }})
                         .attr("markerHeight", {{ params.marker_height }})
                         .attr("orient", "auto")
                     .append("svg:path")
                         .attr("d", "M0,-5L10,0L0,5");
+                svg.select("marker#end_title")
+                    .attr("refX", title_circle_radius + 10)
 
                 simulation
                     .nodes(graph.nodes)
@@ -221,11 +240,20 @@
 
                 function ticked() {
                     node
-                        .attr("cx", function(d) { return d.x = inside_border(d, width,  d.x); })
+                        .attr("cx", function(d) {
+                            d.x = inside_border(d, width, d.x);
+                            if (!d.fixed) {
+                                d.fx = null;
+                            }
+                            return d.x;
+                        })
                         .attr("cy", function(d) {
                             d.y = inside_border(d, height, d.y);
                             if (d.group != 1) {
                                 d.y = Math.max(d.y, 400);
+                            }
+                            if (!d.fixed) {
+                                d.fy = null;
                             }
                             return d.y;
                         })
@@ -236,7 +264,7 @@
                         .attr("x2", function(d) { return d.target.x; })
                         .attr("y2", function(d) { return d.target.y; });
                 }
-                });
+            });
         };
 
         renderd3("{{ request.GET.groups }}");
