@@ -1,11 +1,11 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, reverse
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator
 
 from hknweb.utils import markdownify
 
-from hknweb.utils import login_and_permission
+from hknweb.utils import allow_public_access
 from hknweb.events.constants import (
     ACCESSLEVEL_TO_DESCRIPTION,
     ATTR,
@@ -16,12 +16,30 @@ from hknweb.events.utils import format_url
 from hknweb.utils import get_access_level
 
 
-@login_and_permission("events.view_event")
+@allow_public_access
 def show_details(request, id):
+    return show_details_helper(request, id, reverse("events:index"), True)
+
+
+def show_details_helper(request, id, back_link: str, can_edit: bool):
     event = get_object_or_404(Event, pk=id)
     if event.access_level < get_access_level(request.user):
         messages.warning(request, "Insufficent permission to access event.")
-        return redirect("/events")
+        return redirect(back_link)
+
+    context = {
+        "event": event,
+        "event_description": markdownify(event.description),
+        "event_location": format_url(event.location),
+        "user_access_level": ACCESSLEVEL_TO_DESCRIPTION[get_access_level(request.user)],
+        "event_access_level": ACCESSLEVEL_TO_DESCRIPTION[event.access_level],
+        "back_link": back_link,
+        "can_edit": can_edit and request.user.has_perm("events.change_event"),
+    }
+
+    if not request.user.is_authenticated:
+        return render(request, "events/show_details.html", context)
+
     rsvps = Rsvp.objects.filter(event=event)
     waitlisted = False
     waitlist_position = 0
@@ -45,17 +63,12 @@ def show_details(request, id):
     waitlists = event.waitlist_set()
     limit = event.rsvp_limit
 
-    event_location = format_url(event.location)
-
     rsvps_page = Paginator(rsvps, RSVPS_PER_PAGE).get_page(
         request.GET.get("rsvps_page")
     )
     waitlists_page = Paginator(waitlists, RSVPS_PER_PAGE).get_page(
         request.GET.get("waitlists_page")
     )
-
-    user_access_level = ACCESSLEVEL_TO_DESCRIPTION[get_access_level(request.user)]
-    event_access_level = ACCESSLEVEL_TO_DESCRIPTION[event.access_level]
 
     data = [
         {
@@ -76,16 +89,11 @@ def show_details(request, id):
         )
 
     context = {
+        **context,
         ATTR.DATA: data,
-        "event": event,
-        "event_description": markdownify(event.description),
-        "event_location": event_location,
-        "user_access_level": user_access_level,
-        "event_access_level": event_access_level,
         "rsvp": rsvp,
         "attendance_form": AttendanceForm.objects.filter(event=event).first(),
         "waitlisted": waitlisted,
         "waitlist_position": waitlist_position,
-        "can_edit": request.user.has_perm("events.change_event"),
     }
     return render(request, "events/show_details.html", context)

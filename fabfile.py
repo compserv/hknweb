@@ -83,6 +83,7 @@ def symlink_shared(c: Connection):
     print("-- Symlinking shared files")
     with c.cd(c.release_path):
         c.run("ln -s {}/venv ./.venv".format(c.shared_path), echo=True)
+        c.run("ln -s {}/media ./media".format(c.shared_path), echo=True)
 
 
 def decrypt_secrets(c):

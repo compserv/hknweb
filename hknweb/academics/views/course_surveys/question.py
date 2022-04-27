@@ -6,5 +6,5 @@ from hknweb.academics.serializers import QuestionSerializer
 
 
 class QuestionViewSet(AcademicEntityViewSet):
-    queryset = Question.objects.all()
+    queryset = Question.objects.order_by("-id")
     serializer_class = QuestionSerializer

@@ -5,6 +5,7 @@ from django.db.models import Q
 
 from hknweb.markdown_pages.models import MarkdownPage
 from hknweb.academics.models import Course, Instructor
+from hknweb.utils import method_login_and_permission
 
 from hknweb.course_surveys.constants import (
     Attr,
@@ -16,6 +17,7 @@ from hknweb.course_surveys.constants import (
 )
 
 
+@method_login_and_permission("academics.change_academicentity")
 class IndexView(TemplateView):
     template_name = "course_surveys/index.html"
 
@@ -36,7 +38,9 @@ class IndexView(TemplateView):
         # Retrieve courses and instructors for search panel
         search_by = self.request.GET.get(Attr.SEARCH_BY, Attr.COURSES)
         search_value = self.request.GET.get(Attr.SEARCH_VALUE, "").lower()
-        courses, _context = self._get_courses(cas_signed_in, search_by, page_number, search_value)
+        courses, _context = self._get_courses(
+            cas_signed_in, search_by, page_number, search_value
+        )
         context = {**context, **_context}
         instructors, _context = self._get_instructors(
             cas_signed_in, search_by, page_number, search_value
@@ -72,7 +76,7 @@ class IndexView(TemplateView):
             Attr.SEARCH_VALUE: search_value,
         }
 
-    def _validate_cas(self, service: str) -> bool:
+    def _validate_cas(self, service: str) -> bool:  # pragma: no cover
         """
         See https://apereo.github.io/cas/6.4.x/protocol/CAS-Protocol.html
         """
@@ -99,13 +103,15 @@ class IndexView(TemplateView):
         return self.request.session[CAS.SIGNED_IN]
 
     @staticmethod
-    def _get_courses(cas_signed_in: bool, search_by: str, page_number: int, search_value: str):
+    def _get_courses(
+        cas_signed_in: bool, search_by: str, page_number: int, search_value: str
+    ):
         if not cas_signed_in or search_by != Attr.COURSES:
             return None, {}
 
         courses = []
         courses_to_search = Course.objects.filter(
-            Q(icsr_course__course_number__icontains=search_value) \
+            Q(icsr_course__course_number__icontains=search_value)
             | Q(icsr_course__icsr_department__abbr__icontains=search_value)
             | Q(icsr_course__icsr_department__name__icontains=search_value)
             | Q(icsr_course__course_name__icontains=search_value)
@@ -139,13 +145,15 @@ class IndexView(TemplateView):
         )
 
     @staticmethod
-    def _get_instructors(cas_signed_in: bool, search_by: str, page_number: int, search_value: str):
+    def _get_instructors(
+        cas_signed_in: bool, search_by: str, page_number: int, search_value: str
+    ):
         if not cas_signed_in or search_by != Attr.INSTRUCTORS:
             return None, {}
 
         instructors = []
         instructors_to_search = Instructor.objects.filter(
-            Q(icsr_instructor__first_name__icontains=search_value) \
+            Q(icsr_instructor__first_name__icontains=search_value)
             | Q(icsr_instructor__last_name__icontains=search_value)
         ).distinct()
         i_start, i_end = IndexView._get_start_end_indices(page_number)
@@ -302,18 +310,23 @@ class IndexView(TemplateView):
 
         ratings = []
         for rating in survey.rating_survey.all():
-            percent = rating.rating_value / rating.range_max
-            color = COLORS.FIRE_BRICK
+            # generate color from rating
+            # perfect score (1) is COLORS.GREEN, terrible score (0) is COLORS.RED,
+            # MID_SCORE is COLORS.YELLOW, and other scores get interpolated in HSL.
+            score = rating.rating_value / rating.range_max
             if rating.inverted:
-                if percent < 0.2:
-                    color = COLORS.FOREST_GREEN
-                elif percent < 0.4:
-                    color = COLORS.GOLDEN_ROD
+                score = 1 - score
+            if score < COLORS.MID_SCORE:
+                hsl = IndexView._interpolate(
+                    COLORS.RED, COLORS.YELLOW, score / COLORS.MID_SCORE
+                )
             else:
-                if percent > 0.8:
-                    color = COLORS.FOREST_GREEN
-                elif percent > 0.6:
-                    color = COLORS.GOLDEN_ROD
+                hsl = IndexView._interpolate(
+                    COLORS.YELLOW,
+                    COLORS.GREEN,
+                    (score - COLORS.MID_SCORE) / (1 - COLORS.MID_SCORE),
+                )
+            color = f"hsl({hsl[0]}, {hsl[1]}%, {hsl[2]}%)"
 
             ratings.append(
                 {
@@ -330,3 +343,10 @@ class IndexView(TemplateView):
             Attr.RESPONSE_COUNT: survey.response_count,
             Attr.RATINGS: ratings,
         }
+
+    # helper method for color mixing in _get_survey
+    # returns a list whose components are interpolated between the corresponding
+    # components in tuples t1 and t2, 'fraction' of the way from t1 to t2
+    @staticmethod
+    def _interpolate(t1, t2, fraction):
+        return [t1[i] * (1 - fraction) + t2[i] * fraction for i in range(len(t1))]

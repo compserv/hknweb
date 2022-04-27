@@ -6,5 +6,5 @@ from hknweb.academics.serializers import DepartmentSerializer
 
 
 class DepartmentViewSet(AcademicEntityViewSet):
-    queryset = Department.objects.all()
+    queryset = Department.objects.order_by("-id")
     serializer_class = DepartmentSerializer

@@ -8,15 +8,16 @@ from hknweb.forms import (
     ValidPasswordForm,
     UpdatePasswordForm,
 )
-from django.shortcuts import render, render_to_response, redirect
-from django.contrib.auth import authenticate, login, update_session_auth_hash
+from django.shortcuts import render, redirect
+from django.contrib.auth import login, update_session_auth_hash
 from django.contrib.auth import authenticate
-from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.conf import settings
 from hknweb.models import Profile
 from hknweb.coursesemester.models import Semester
+from hknweb.utils import allow_all_logged_in_users, allow_public_access
 import datetime
+
 
 # context processor for base to know whether a user is in the officer group
 def add_officer_context(request):
@@ -35,7 +36,7 @@ def add_exec_context(request):
     }
 
 
-def get_current_cand_semester():
+def get_current_cand_semester():  # pragma: no cover
     # The "first" function will put a "None" for me if semester not created yet
     now = datetime.datetime.now()
     sem = ""
@@ -49,14 +50,16 @@ def get_current_cand_semester():
     # The "first" function will put a "None" for me if semester not created yet
     return Semester.objects.filter(semester=sem, year=now.year).first()
 
+
 # views
+@allow_public_access
 def account_create(request):
     if request.method == "POST":
         form = SignupForm(request.POST)
         if form.is_valid():
             if confirm_recaptcha(request):
                 form.save()
-            else:
+            else:  # pragma: no cover
                 messages.warning(request, "Invalid reCAPTCHA. Please try again.")
                 return render(request, "account/signup.html", {"form": form})
             username = form.cleaned_data.get("username")
@@ -74,7 +77,7 @@ def account_create(request):
     return render(request, "account/signup.html", {"form": form})
 
 
-def confirm_recaptcha(request):
+def confirm_recaptcha(request):  # pragma: no cover
     if settings.DEBUG:
         return True
     recaptcha_response = request.POST.get("g-recaptcha-response")
@@ -87,7 +90,7 @@ def confirm_recaptcha(request):
     return result["success"]
 
 
-@login_required
+@allow_all_logged_in_users
 def account_settings(request):
     current_user = request.user
     if request.method == "POST":
@@ -152,7 +155,7 @@ def account_settings(request):
                     )
                 ),
             )
-        return HttpResponseRedirect(request.path_info)
+        return HttpResponseRedirect(request.path_info)  # lgtm [py/url-redirection]
     else:
         # user_form = SettingsForm(instance = current_user)
         password_form = UpdatePasswordForm(current_user)
@@ -165,18 +168,3 @@ def account_settings(request):
             "verify_form": verify_form,
         }
         return render(request, "account/settings.html", context=context)
-
-
-@login_required
-def activate(request):
-    model = User
-    field_names = ["username", "email"]
-    data = [
-        [getattr(ins, name) for name in field_names]
-        for ins in model.objects.prefetch_related().all()
-    ]
-    print(field_names)
-    print(data)
-    return render(
-        request, "account/activate.html", {"field_names": field_names, "data": data}
-    )

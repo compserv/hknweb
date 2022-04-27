@@ -4,9 +4,9 @@ import sys
 try:
     HKNWEB_MODE = os.environ["HKNWEB_MODE"].lower()
     if HKNWEB_MODE == "dev":
-        from .dev import *
+        from .dev import *  # lgtm [py/polluting-import]
     elif HKNWEB_MODE == "prod":
-        from .prod import *
+        from .prod import *  # lgtm [py/polluting-import]
     else:
         print("HKNWEB_MODE is not a valid value")
         sys.exit()

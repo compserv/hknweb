@@ -171,7 +171,7 @@ EMAIL_USE_TLS = True
 NO_REPLY_EMAIL = "no-reply@hkn.eecs.berkeley.edu"
 
 # Set admins and managers
-ADMINS = [('HKN', "website-errors@hkn.eecs.berkeley.edu")]
+ADMINS = [("HKN", "website-errors@hkn.eecs.berkeley.edu")]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/

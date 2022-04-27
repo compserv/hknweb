@@ -1,177 +1,103 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.http import JsonResponse
+from django.conf import settings
 from django.contrib import messages
-from django.views import generic
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 
-from hknweb.utils import login_and_permission, method_login_and_permission
+from hknweb.events.views.aggregate_displays.calendar import calendar_helper
+from hknweb.events.views.event_transactions.show_event import show_details_helper
+from hknweb.utils import allow_public_access
 
 from hknweb.studentservices.models import (
-    DepTour,
-    ReviewSession,
     CourseGuideNode,
     CourseGuideAdjacencyList,
     CourseGuideGroup,
     CourseGuideParam,
 )
-from hknweb.studentservices.forms import (
-    DocumentForm,
-    ReviewSessionForm,
-    ReviewSessionUpdateForm,
-    TourRequest,
-)
+from hknweb.studentservices.forms import DocumentForm, TourRequest
 
 
-SUBMIT_TEMPLATE = "studentservices/resume_critique_submit.html"
-UPLOADED_TEMPLATE = "studentservices/resume_critique_uploaded.html"
-
-
+@allow_public_access
 def resume_critique_submit(request):
-    if request.method == "POST":
-        form = DocumentForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return render(request, UPLOADED_TEMPLATE)
-        else:
-            form = DocumentForm()
-            return render(
-                request,
-                SUBMIT_TEMPLATE,
-                {
-                    "form": form,
-                    "err": True,
-                },
-            )
+    form = DocumentForm(request.POST or None, request.FILES or None)
+    success = request.method == "POST" and form.is_valid()
 
-    form = DocumentForm()
+    if success:
+        form.save()
+        messages.success(request, "Thank you for submitting your resume!")
+
     return render(
         request,
-        SUBMIT_TEMPLATE,
-        {
-            "form": form,
-            "err": False,
-        },
+        "studentservices/resume_critique.html",
+        {"form": form, "success": success},
     )
 
 
-def resume_critique_uploaded(request):
-    form = DocumentForm()
-    return render(request, SUBMIT_TEMPLATE, {"form": form})
-
-
+@allow_public_access
 def reviewsessions(request):
-    reviewsessions = ReviewSession.objects.order_by("-start_time")
-
-    context = {
-        "reviewsessions": reviewsessions,
-    }
-    return render(request, "studentservices/reviewsessions.html", context)
+    return calendar_helper(request, event_type="Review Session")
 
 
-@login_and_permission("studentservices.view_reviewsession")
-def reviewsession_details(request, id):
-    reviewsession = get_object_or_404(ReviewSession, pk=id)
-
-    context = {
-        "reviewsession": reviewsession,
-        "can_edit": request.user.has_perm("studentservices.change_review_session"),
-    }
-    return render(request, "studentservices/reviewsession_details.html", context)
-
-
-@login_and_permission("studentservices.add_reviewsession")
-def add_reviewsession(request):
-    form = ReviewSessionForm(request.POST or None)
-    if request.method == "POST":
-        if form.is_valid():
-            reviewsession = form.save(commit=False)
-            reviewsession.created_by = request.user
-            reviewsession.save()
-            messages.success(request, "Review session has been added!")
-            return redirect("studentservices:reviewsessions")
-        else:
-            messages.error(request, "Something went wrong oops")
-            return render(
-                request,
-                "studentservices/reviewsession_add.html",
-                {"form": ReviewSessionForm(None)},
-            )
-    return render(
-        request,
-        "studentservices/reviewsession_add.html",
-        {"form": ReviewSessionForm(None)},
+@allow_public_access
+def show_reviewsession_details(request, id):
+    return show_details_helper(
+        request, id, reverse("studentservices:reviewsessions"), False
     )
 
 
-@method_login_and_permission("reviewsession_add.change_review_session")
-class ReviewSessionUpdateView(generic.edit.UpdateView):
-    model = ReviewSession
-    form_class = ReviewSessionUpdateForm
-    template_name_suffix = "_edit"
-
-
+@allow_public_access
 def tours(request):
-    tour = DepTour.objects
-
-    context = {
-        "tour": tour,
-    }
-    return render(request, "studentservices/tours.html", context)
-
-
-def send_request_email(request, form):
-    subject = "Department Tour Request"
-    officer_email = "deprel@hkn.eecs.berkeley.edu"
-
-    html_content = render_to_string(
-        "studentservices/tour_request_email.html",
-        {
-            "name": form.instance.name,
-            "time": form.instance.desired_time,
-            "date": form.instance.date,
-            "email": form.instance.email,
-            "phone": form.instance.phone,
-            "comments": form.instance.comments,
-        },
-    )
-    msg = EmailMessage(
-        subject, html_content, "no-reply@hkn.eecs.berkeley.edu", [officer_email]
-    )
-    msg.content_subtype = "html"
-    msg.send()
-
-
-def tour(request):
     form = TourRequest(request.POST or None)
     if request.method == "POST":
-
         if form.is_valid():
-            tour = form.save(commit=False)
-            tour.save()
+            form.save()
 
-            # send_request_email(request, form)
+            # Send deprel an email
+            subject = "Department Tour Request"
+            officer_email = "deprel@hkn.eecs.berkeley.edu"
+
+            html_content = render_to_string(
+                "studentservices/tour_request_email.html",
+                {
+                    "name": form.instance.name,
+                    "datetime": form.instance.datetime,
+                    "email": form.instance.email,
+                    "phone": form.instance.phone,
+                    "comments": form.instance.comments,
+                },
+            )
+            msg = EmailMessage(
+                subject, html_content, settings.NO_REPLY_EMAIL, [officer_email]
+            )
+            msg.content_subtype = "html"
+            msg.send()
 
             messages.success(request, "Your request has been sent!")
             return redirect("studentservices:tours")
         else:
             msg = "Something went wrong! Your request did not send. Try again, or email deprel@hkn.mu."
             messages.error(request, msg)
+
     return render(request, "studentservices/tours.html", {"form": form})
 
 
+@allow_public_access
 def course_guide(request):
     context = dict()
 
     if CourseGuideParam.objects.exists():
         context["params"] = CourseGuideParam.objects.first().to_dict()
 
-    context["groups"] = [g.name for g in CourseGuideGroup.objects.all() if g.name != "Core"]
+    context["groups"] = [
+        g.name for g in CourseGuideGroup.objects.all() if g.name != "Core"
+    ]
 
     return render(request, "studentservices/course_guide.html", context=context)
 
 
+@allow_public_access
 def course_guide_data(request):
     group_names = request.GET.get("groups", None)
     group_names = group_names.split(",") if group_names else []
@@ -196,7 +122,9 @@ def course_guide_data(request):
             continue
 
         graph[adjacency_list.source.name] = [
-            node.name for node in adjacency_list.targets.all() if node.name in node_groups
+            node.name
+            for node in adjacency_list.targets.all()
+            if node.name in node_groups
         ]
 
     course_surveys_link = reverse("course_surveys:index")
@@ -206,24 +134,28 @@ def course_guide_data(request):
         if n.name not in node_groups:
             continue
 
-        nodes.append({
-            "id": n.name,
-            "link": link_template + n.name,
-            "title": n.is_title,
-            "group": node_groups[n.name],
-            "fx": n.x_0,
-            "fy": n.y_0,
-        })
+        nodes.append(
+            {
+                "id": n.name,
+                "link": link_template + n.name,
+                "title": n.is_title,
+                "group": node_groups[n.name],
+                "fx": n.x_0,
+                "fy": n.y_0,
+            }
+        )
 
     links = []
     for s, es in graph.items():
         for e in es:
-            links.append({
-                "source": s,
-                "target": e,
-                "source_group": node_groups[s],
-                "target_group": node_groups[e],
-            })
+            links.append(
+                {
+                    "source": s,
+                    "target": e,
+                    "source_group": node_groups[s],
+                    "target_group": node_groups[e],
+                }
+            )
 
     data = {
         "nodes": nodes,
