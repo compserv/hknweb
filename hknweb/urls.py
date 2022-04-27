@@ -25,6 +25,7 @@ urlpatterns = [
     path("markdownx/", include("markdownx.urls")),
     path("course_surveys/", include("hknweb.course_surveys.urls")),
     path("auth/", include("social_django.urls", namespace="social")),
+    path('polls/', include('hknweb.polls.urls')),
     path("", landing.home, name="home"),
     path("<slug:temp>/", viewsShortlink.openLink),
 ]
