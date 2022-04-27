@@ -7,6 +7,7 @@ from hknweb.candidate.models import (
     CommitteeProjectDoneEntry,
     DuePayment,
     DuePaymentPaidEntry,
+    MergeEventsMultiplierEntry,
     RequirementBitByteActivity,
     RequriementEvent,
     RequirementHangout,
@@ -70,25 +71,21 @@ class RequirementMandatoryAdmin(RequirementAdminGeneral):
     filter_horizontal = ("events",)
 
 
+class MergeEventsMultiplierEntryInline(admin.TabularInline):
+    model = MergeEventsMultiplierEntry
+    extra = 1
+
+
 @admin.register(RequirementMergeRequirement)
 class RequirementMergeAdmin(RequirementAdminGeneral):
-    actions = RequirementAdminGeneral.actions + ["link", "clear_links"]
+    actions = RequirementAdminGeneral.actions + ["clear_merge_entries"]
+    inlines = [MergeEventsMultiplierEntryInline]
 
-    def link(self, request, queryset):
-        queryset = list(queryset)
-        for i, node in enumerate(queryset):
-            print(i, node)
-            node.linkedRequirement = (
-                queryset[i + 1] if (i + 1 < len(queryset)) else None
-            )
-            node.save()
+    def clear_merge_entries(self, request, queryset):
+        for merge in queryset:
+            merge.mergeeventsmultiplierentry_set.all().delete()
 
-    link.short_description = "Link together selected (overwrites current links)"
-
-    def clear_links(self, request, queryset):
-        queryset.update(linkedRequirement=None)
-
-    clear_links.short_description = "Clear links of Merges"
+    clear_merge_entries.short_description = "Clear Merges entries"
 
 
 @admin.register(DuePaymentPaidEntry)

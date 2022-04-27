@@ -99,22 +99,28 @@ def course_guide(request):
 
 @allow_public_access
 def course_guide_data(request):
-    group_names = request.GET.get("groups", None)
-    group_names = group_names.split(",") if group_names else []
-    group_names.append("Core")
+    group_names_get = request.GET.get("groups", None)
+    group_names_get = group_names_get.split(",") if group_names_get else []
+    group_names_get.append("Core")
 
     groups = []
+    group_names = []
     for group in CourseGuideGroup.objects.all():
-        if group_names and group.name not in group_names:
+        if group_names_get and group.name not in group_names_get:
             continue
 
+        group_names.append(group.name)
         groups.append([node.name for node in group.nodes.all()])
+
+    group_name_id = {
+        g.name: (i + 1) for i, g in enumerate(CourseGuideGroup.objects.all())
+    }
 
     node_groups = dict()
     for i, g in enumerate(groups):
-        i += 1  # Start at group 1
+        group_num = group_name_id.get(group_names[i], -1)
         for n in g:
-            node_groups[n] = i
+            node_groups[n] = group_num
 
     graph = dict()
     for adjacency_list in CourseGuideAdjacencyList.objects.all():
@@ -134,16 +140,17 @@ def course_guide_data(request):
         if n.name not in node_groups:
             continue
 
-        nodes.append(
-            {
-                "id": n.name,
-                "link": link_template + n.name,
-                "title": n.is_title,
-                "group": node_groups[n.name],
-                "fx": n.x_0,
-                "fy": n.y_0,
-            }
-        )
+        node_attrs = {
+            "id": n.name,
+            "link": link_template + n.name,
+            "title": n.is_title,
+            "group": node_groups[n.name],
+            "fx": n.x_0,
+            "fy": n.y_0,
+            "fixed": ((n.x_0 is not None) and (n.y_0 is not None)),
+        }
+
+        nodes.append(node_attrs)
 
     links = []
     for s, es in graph.items():

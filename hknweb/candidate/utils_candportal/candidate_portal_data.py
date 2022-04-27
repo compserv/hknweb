@@ -44,47 +44,48 @@ class CandidatePortalData:
         if not merger_reqs:
             return set(), []
 
-        seen_merger_nodes = set()
-        merger_nodes = [
-            MergedEvents(m, candidate_semester, seen_merger_nodes) for m in merger_reqs
-        ]
-        required_events_merger = reduce(set.__or__, (n.events() for n in merger_nodes))
-        return required_events_merger, merger_nodes
+        merged_events = [MergedEvents(m, candidate_semester) for m in merger_reqs]
+        required_events_merger = reduce(
+            set.__or__, (set(n.events()) for n in merged_events)
+        )
+        return required_events_merger, merged_events
 
-    def process_merge_node(self, node, req_info: ReqInfo) -> str:
-        node_string = node.get_events_str()
+    def process_merged_events(self, merge_event, req_info: ReqInfo) -> str:
+        merge_event_string = merge_event.get_events_str()
 
-        key = node_string
+        key = merge_event_string
         if key in req_info.titles:
             key = f"{key} {sum(s.startswith(key) for s in req_info.titles) + 1}"
-            req_info.colors[key] = req_info.colors[node_string]
+            req_info.colors[key] = req_info.colors[merge_event_string]
 
-        remaining_count, grand_total = node.get_counts(req_info.remaining, req_info.lst)
+        remaining_count, grand_total, missing_event_reqs_text = merge_event.get_counts(
+            req_info
+        )
         req_info.statuses[key] = round(remaining_count, 2) < 0.05
 
-        # num_required_hangouts is None, since Merger nodes should not use it
-        if node.all_required:
-            # TODO Support for All Required for Merged Requirement (probably not a huge priority)
-            req_info.titles[key] = (
-                node_string
-                + " - Looped Merged Requirements for all required currently unsupported"
-            )
-        else:
-            req_info.titles[key] = REQUIREMENT_TITLES_TEMPLATE.format(
-                node_string, grand_total, remaining_count
-            )
+        req_info.titles[key] = REQUIREMENT_TITLES_TEMPLATE.format(
+            merge_event_string, grand_total, remaining_count
+        )
 
-        events = node.events()
+        if missing_event_reqs_text:
+            req_info.titles[key] += " - " + missing_event_reqs_text
+
+        events = merge_event.events()
         confirmed, unconfirmed = req_info.confirmed_events, req_info.unconfirmed_events
-        confirmed[key] = reduce(list.__add__, (confirmed[e] for e in events))
-        unconfirmed[key] = reduce(list.__add__, (unconfirmed[e] for e in events))
+        EMPTY_LIST = []
+        confirmed[key] = reduce(
+            list.__add__, (confirmed.get(e, EMPTY_LIST) for e in events), EMPTY_LIST
+        )
+        unconfirmed[key] = reduce(
+            list.__add__, (unconfirmed.get(e, EMPTY_LIST) for e in events), EMPTY_LIST
+        )
 
         return key
 
     def get_user_cand_data(self) -> dict:
         candidate_semester = self.user.profile.candidate_semester
 
-        required_events_merger, merger_nodes = self.get_merge_info(candidate_semester)
+        required_events_merger, merged_events = self.get_merge_info(candidate_semester)
 
         challenges = count_challenges(self.user, candidate_semester)
         num_bitbytes = count_num_bitbytes(self.user, candidate_semester)
@@ -101,9 +102,11 @@ class CandidatePortalData:
         req_info.set_remaining()
         req_info.set_statuses()
         req_info.set_titles()
-        req_info.set_colors(event_types, merger_nodes)
+        req_info.set_colors(event_types, merged_events)
 
-        merge_names = [self.process_merge_node(node, req_info) for node in merger_nodes]
+        merge_names = [
+            self.process_merged_events(merged_e, req_info) for merged_e in merged_events
+        ]
 
         return {
             "req_statuses": {e: req_info.statuses[e] for e in event_types},
@@ -118,11 +121,24 @@ class CandidatePortalData:
 
     @staticmethod
     def _get_interactivities_context(req_info: ReqInfo, challenges: dict) -> dict:
+        req_info_titles = req_info.titles
+        interactivities_req_info_titles = req_info_titles[EVENT_NAMES.INTERACTIVITIES]
+        req_info_statuses = req_info.statuses
         return {
             EVENT_NAMES.INTERACTIVITIES: {
-                **req_info.titles[EVENT_NAMES.INTERACTIVITIES],
-                **challenges,
-                ATTR.STATUS: req_info.statuses[EVENT_NAMES.INTERACTIVITIES],
+                EVENT_NAMES.CHALLENGE: {
+                    ATTR.TITLE: interactivities_req_info_titles[EVENT_NAMES.CHALLENGE],
+                    **challenges,
+                    ATTR.STATUS: req_info_statuses[EVENT_NAMES.CHALLENGE],
+                },
+                EVENT_NAMES.HANGOUT: {
+                    ATTR.TITLE: interactivities_req_info_titles[EVENT_NAMES.HANGOUT],
+                    ATTR.STATUS: req_info_statuses[EVENT_NAMES.HANGOUT],
+                },
+                EVENT_NAMES.EITHER: {
+                    ATTR.TITLE: interactivities_req_info_titles[EVENT_NAMES.EITHER],
+                    ATTR.STATUS: req_info_statuses[EVENT_NAMES.EITHER],
+                },
             }
         }
 

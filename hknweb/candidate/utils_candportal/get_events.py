@@ -59,6 +59,9 @@ def get_mandatory_events(candidate_semester: Semester, confirmed_rsvps: bool):
     confirmed = mandatory_events.filter(id__in=confirmed_events)
     unconfirmed = mandatory_events.exclude(id__in=confirmed_events)
 
+    confirmed = list(confirmed)
+    unconfirmed = list(unconfirmed)
+
     return confirmed, unconfirmed
 
 

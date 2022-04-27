@@ -38,7 +38,6 @@ class ReqInfo:
             EVENT_NAMES.HANGOUT: "Officer Hangouts",
             EVENT_NAMES.CHALLENGE: "Officer Challenges",
         },
-        EVENT_NAMES.MANDATORY: "Mandatory",
     }
 
     def set_confirmed_unconfirmed_events(
@@ -73,9 +72,8 @@ class ReqInfo:
         self.unconfirmed_events = unconfirmed_events
 
     def set_list(self, candidate_semester: Semester):
-        lst = deepcopy(self.EMPTY_REQ_LIST)
+        self.lst = deepcopy(self.EMPTY_REQ_LIST)
         if not candidate_semester:
-            self.lst = lst
             return
 
         data = [
@@ -90,20 +88,18 @@ class ReqInfo:
             for c, q in data
         ]
 
-        lst.update({r.eventType.type: r.numberRequired for r in events})
+        self.lst.update({r.eventType.type: r.numberRequired for r in events})
 
-        d = lst[EVENT_NAMES.INTERACTIVITIES]
+        d = self.lst[EVENT_NAMES.INTERACTIVITIES]
         d.update({r.eventType: r.numberRequired for r in hangouts})
-        d[EVENT_NAMES.EITHER] = d[EVENT_NAMES.HANGOUT] + d[EVENT_NAMES.CHALLENGE]
+        d[EVENT_NAMES.EITHER] += d[EVENT_NAMES.HANGOUT] + d[EVENT_NAMES.CHALLENGE]
 
         if bitbyte.exists():
-            lst[EVENT_NAMES.BITBYTE] = bitbyte.first().numberRequired
+            self.lst[EVENT_NAMES.BITBYTE] = bitbyte.first().numberRequired
 
-        lst[EVENT_NAMES.MANDATORY] = len(
+        self.lst[EVENT_NAMES.MANDATORY] = len(
             self.confirmed_events[EVENT_NAMES.MANDATORY]
         ) + len(self.unconfirmed_events[EVENT_NAMES.MANDATORY])
-
-        self.lst = lst
 
     def set_confirmed_reqs(self, num_challenges: int, num_bitbytes: int):
         # TODO: Hardcoded-ish for now, allow for choice of Hangout events
@@ -127,10 +123,15 @@ class ReqInfo:
         )
 
     def set_statuses(self):
-        self.statuses = {
-            k: v == 0 if isinstance(v, int) else not any(v.values())
-            for k, v in self.remaining.items()
-        }
+        self.statuses = {}
+        for k, v in self.remaining.items():
+            if isinstance(v, int):
+                self.statuses[k] = v == 0
+            elif k == EVENT_NAMES.INTERACTIVITIES:
+                for k_interactivities, v_interactivities in v.items():
+                    self.statuses[k_interactivities] = v_interactivities == 0
+            else:
+                self.statuses[k] = not any(v.values())
 
     def set_titles(self):
         names = {
@@ -145,9 +146,9 @@ class ReqInfo:
             fn, deepcopy(names), names, self.lst, self.remaining
         )
 
-    def set_colors(self, event_types: list, merger_nodes):
+    def set_colors(self, event_types: list, merged_events):
         self.colors = {
             **dict.fromkeys(event_types, "grey"),
             **{e.type: e.color for e in EventType.objects.filter(type__in=event_types)},
-            **{e.get_events_str(): e.color for e in merger_nodes},
+            **{e.get_events_str(): e.color for e in merged_events},
         }

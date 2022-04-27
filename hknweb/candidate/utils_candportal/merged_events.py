@@ -4,58 +4,37 @@ from hknweb.coursesemester.models import Semester
 
 from hknweb.candidate.models import RequirementMergeRequirement
 
+from hknweb.candidate.utils_candportal.req_info import ReqInfo
+
 
 class MergedEvents:
     def __init__(
         self,
-        merger_node: RequirementMergeRequirement,
+        merge_requirement: RequirementMergeRequirement,
         candidateSemester: Semester,
-        seen_merger_nodes: set = set(),
     ):
-        assert merger_node.enable, "The first Merger Node must be enabled"
-
-        seen_merger_nodes.clear()
-        current_merger_node = merger_node
-
         self.multiplier_event = {}
-        self.all_required = False
-        self.color = merger_node.color
+        self.color = merge_requirement.color
         self.title = ""
-        if merger_node.enableTitle:
-            self.title = merger_node.title
+        self.missing_event_reqs = []
+        if merge_requirement.enableTitle:
+            self.title = merge_requirement.title
         self.grand_total = None
-        if merger_node.enableGrandTotal:
-            self.grand_total = merger_node.grandTotal
+        if merge_requirement.enableGrandTotal:
+            self.grand_total = merge_requirement.grandTotal
 
-        while current_merger_node is not None:
-            if current_merger_node.id in seen_merger_nodes:
-                self.all_required = True
-                break
-            seen_merger_nodes.add(current_merger_node.id)
-            eventTypeKey = current_merger_node.event1.type
+        for entry in merge_requirement.mergeeventsmultiplierentry_set.filter(
+            enable=True
+        ):
+            eventTypeKey = entry.eventType.type
             self.multiplier_event[eventTypeKey] = (
-                self.multiplier_event.get(eventTypeKey, 0)
-                + current_merger_node.multiplier1
+                self.multiplier_event.get(eventTypeKey, 0) + entry.multiplier
             )
-            if current_merger_node.event2 is not None:
-                eventTypeKey2 = current_merger_node.event2.type
-                self.multiplier_event[eventTypeKey2] = (
-                    self.multiplier_event.get(eventTypeKey2, 0)
-                    + current_merger_node.multiplier2
-                )
-            if current_merger_node.linkedRequirement:
-                current_merger_node = RequirementMergeRequirement.objects.filter(
-                    candidateSemesterActive=candidateSemester.id,
-                    id=current_merger_node.linkedRequirement.id,
-                ).first()
-            else:
-                current_merger_node = None
 
     def __str__(self) -> str:
         text = self.get_events_str()
-        all_required_text = "self.all_required = {}".format(self.all_required)
         all_color_text = "self.color = {}".format(self.color)
-        return "{}, {}, {}".format(text, all_required_text, all_color_text)
+        return "{}, {}".format(text, all_color_text)
 
     def get_events_str(self) -> str:
         if self.title:
@@ -63,24 +42,47 @@ class MergedEvents:
         text = []
         for event, multiplier in zip(self.events(), self.multiplier()):
             if multiplier != 1.0:
+                if multiplier.is_integer():
+                    multiplier = int(multiplier)
                 text.append(str(multiplier) + " x " + event)
             else:
                 text.append(event)
         self.title = " + ".join(text)
         return self.title
 
-    def get_counts(self, req_remaining: dict, req_list: dict) -> Tuple[int, int]:
-        remaining_count = 0
-        grand_total = 0
+    def get_counts(self, req_info: ReqInfo) -> Tuple[float, float]:
+        remaining_count = None
+        credit_count = 0.0
+        grand_total = 0.0
+        req_list = req_info.lst
+        req_remaining = req_info.remaining
         for event, multiplier in zip(self.events(), self.multiplier()):
-            remaining_count += multiplier * req_remaining.get(event, 0)
-            grand_total += multiplier * req_list.get(event, 0)
+            if (event not in req_remaining) or (event not in req_list):
+                self.missing_event_reqs.append(event)
+            else:
+                credit_count += multiplier * req_info.confirmed[event]
+                grand_total += multiplier * req_list[event]
         if self.grand_total is not None:
             grand_total = self.grand_total
-        return remaining_count, grand_total
+            if self.check_all_missing():
+                remaining_count = grand_total
+        if remaining_count is None:
+            remaining_count = max(grand_total - credit_count, 0.0)
+        if remaining_count.is_integer() and grand_total.is_integer():
+            remaining_count = int(remaining_count)
+            grand_total = int(grand_total)
+        missing_event_reqs_text = None
+        if self.missing_event_reqs:
+            missing_event_reqs_text = "Missing RequiredEvents: {}".format(
+                self.missing_event_reqs
+            )
+        return remaining_count, grand_total, missing_event_reqs_text
 
-    def events(self) -> list:
-        return list(self.multiplier_event.keys())
+    def check_all_missing(self) -> bool:
+        return len(self.missing_event_reqs) == len(self.multiplier_event)
+
+    def events(self) -> Iterable:
+        return self.multiplier_event.keys()
 
     def multiplier(self) -> Iterable:
         return self.multiplier_event.values()

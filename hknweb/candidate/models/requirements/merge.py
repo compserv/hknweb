@@ -19,50 +19,24 @@ class RequirementMergeRequirement(models.Model):
         help_text="Candidate semester this Merged Requirement will take place (ignored if it is a connected node)",
     )
 
-    event1 = models.ForeignKey(
-        "events.EventType", on_delete=models.SET_NULL, null=True, related_name="event1"
-    )
-    multiplier1 = models.FloatField(default=1)
-
-    event2 = models.ForeignKey(
-        "events.EventType",
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name="event2",
-        blank=True,
-    )
-    multiplier2 = models.FloatField(default=1)
-
     enableGrandTotal = models.BooleanField(
         default=False,
         help_text='Toggle the "Grant Total" field, which will take over the weighted sum total (otherwise, will use weighted sum total) (only needed for the first node)',
     )
     grandTotal = models.FloatField(
-        default=None,
-        null=True,
+        default=0.0,
         help_text="The grand total points needed from the weighted sum of connected events (only needed for the first node)",
     )
 
     # Default color: CS61A blue
     color = models.CharField(max_length=7, default="#0072c1")
 
-    linkedRequirement = models.ForeignKey(
-        "self",
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        help_text="Connect to another Merged Requirement node here (Candidate Semester, Grand Total, and all Enable fields for all subsequent connected nodes will be ignored) (A Cycle will make the Grand Total equal Infinite (higher precidence to Grand Total and weighted total sum))",
-    )
-
     def __str__(self):
-        event2Text = ""
-        if self.event2 is not None:
-            event2Text = " + {} x {}".format(self.multiplier2, self.event2)
-        linkedRequirementText = ""
-        if self.linkedRequirement is not None:
-            linkedRequirementText = " - Linked with: {}".format(
-                self.linkedRequirement.id
-            )
+        eventEntriesText = " + ".join(
+            str(entry) for entry in self.mergeeventsmultiplierentry_set.all()
+        )
+
+        # Display Title and if on
         titleText = ""
         if self.title:
             titleText = " - " + self.title
@@ -70,13 +44,38 @@ class RequirementMergeRequirement(models.Model):
                 titleText += " (Title not used)"
         elif self.enableTitle:
             titleText = " - (Title is blank)"
-        return "{}: {}{} - {} x {}{}{}{}".format(
+
+        # Display Grand Total if on
+        grandTotalText = ""
+        if self.enableGrandTotal:
+            grandTotalText = " - Grand Total: {}".format(self.grandTotal)
+
+        return "{}: {}{} - {}{}{}".format(
             self.id,
             self.candidateSemesterActive,
             titleText,
-            self.multiplier1,
-            self.event1,
-            event2Text,
-            linkedRequirementText,
+            eventEntriesText,
+            grandTotalText,
             "" if self.enable else " [Off]",
         )
+
+
+class MergeEventsMultiplierEntry(models.Model):
+    requirementMergeRequirement = models.ForeignKey(
+        RequirementMergeRequirement, on_delete=models.CASCADE
+    )
+    enable = models.BooleanField(
+        default=False,
+        help_text="Toggle this entry",
+    )
+    eventType = models.ForeignKey("events.EventType", on_delete=models.CASCADE)
+    multiplier = models.FloatField(default=1)
+
+    def __str__(self):
+        multiplier = self.multiplier
+        if self.multiplier.is_integer():
+            multiplier = int(self.multiplier)
+        entry_string = "{} x {}".format(multiplier, self.eventType)
+        if not self.enable:
+            entry_string = f"({entry_string} - Disabled)"
+        return entry_string
