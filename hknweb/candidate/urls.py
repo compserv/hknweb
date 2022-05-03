@@ -1,10 +1,10 @@
 from django.urls import path
 
-from . import views
+import hknweb.candidate.views as views
 
 app_name = "candidate"
 urlpatterns = [
-    path("", views.IndexView.as_view(), name="index"),
+    path("", views.candidate_portal, name="candidate_portal"),
     path("portal/<username>", views.candidate_portal_view_by_username, name="viewcand"),
     # candidate end of officer challenge requests
     path("candreq", views.CandRequestView.as_view(), name="candrequests"),

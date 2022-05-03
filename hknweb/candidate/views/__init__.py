@@ -1,5 +1,5 @@
 from hknweb.candidate.views.autocomplete import OfficerAutocomplete, UserAutocomplete
-from hknweb.candidate.views.index import IndexView
+from hknweb.candidate.views.candidate_portal import candidate_portal
 from hknweb.candidate.views.officer_challenge import (
     officer_confirm_view,
     confirm_challenge,

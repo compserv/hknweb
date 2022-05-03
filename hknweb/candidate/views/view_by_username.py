@@ -15,8 +15,8 @@ def candidate_portal_view_by_username(request, username):
     user = User.objects.filter(username=username).first()
     if user is None:
         messages.warning(request, "User {} does not exist.".format(username))
-        return HttpResponseRedirect(reverse("candidate:index"))
+        return HttpResponseRedirect(reverse("candidate:candidate_portal"))
 
     user_cand_data = {}
     user_cand_data["user_self"] = False
-    return render(request, "candidate/index.html", context=user_cand_data)
+    return render(request, "candidate/candidate_portal.html", context=user_cand_data)
