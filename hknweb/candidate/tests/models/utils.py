@@ -6,16 +6,6 @@ from hknweb.events.models import EventType
 from hknweb.candidate.models import (
     Announcement,
     BitByteActivity,
-    CandidateForm,
-    CandidateFormDoneEntry,
-    CommitteeProject,
-    CommitteeProjectDoneEntry,
-    DuePayment,
-    DuePaymentPaidEntry,
-    RequirementBitByteActivity,
-    RequriementEvent,
-    RequirementHangout,
-    RequirementMandatory,
     OffChallenge,
 )
 
@@ -87,108 +77,6 @@ class ModelFactory:
             **kwargs,
         }
         return OffChallenge.objects.create(**kwargs)
-
-    @staticmethod
-    def create_candidateform_requirement(**kwargs):
-        default_kwargs = {
-            "name": "default name",
-        }
-        kwargs = {
-            **default_kwargs,
-            **kwargs,
-        }
-        return CandidateForm.objects.create(**kwargs)
-
-    @staticmethod
-    def create_candidateformdoneentry_requirement(form, **kwargs):
-        required_kwargs = {
-            "form": form,
-        }
-        default_kwargs = {
-            "notes": "default notes",
-        }
-        kwargs = {**required_kwargs, **default_kwargs, **kwargs}
-        return CandidateFormDoneEntry.objects.create(**kwargs)
-
-    @staticmethod
-    def create_committeeproject_requirement(**kwargs):
-        default_kwargs = {
-            "name": "default name",
-            "instructions": "default instructions",
-        }
-        kwargs = {
-            **default_kwargs,
-            **kwargs,
-        }
-        return CommitteeProject.objects.create(**kwargs)
-
-    @staticmethod
-    def create_committeeprojectdoneentry_requirement(committeeProject, **kwargs):
-        required_kwargs = {
-            "committeeProject": committeeProject,
-        }
-        default_kwargs = {
-            "notes": "default notes",
-        }
-        kwargs = {**required_kwargs, **default_kwargs, **kwargs}
-        return CommitteeProjectDoneEntry.objects.create(**kwargs)
-
-    @staticmethod
-    def create_duepayment_requirement(**kwargs):
-        default_kwargs = {
-            "name": "default name",
-            "instructions": "default instructions",
-        }
-        kwargs = {
-            **default_kwargs,
-            **kwargs,
-        }
-        return DuePayment.objects.create(**kwargs)
-
-    @staticmethod
-    def create_duepaymentpaidentry_requirement(duePayment, **kwargs):
-        required_kwargs = {
-            "duePayment": duePayment,
-        }
-        default_kwargs = {
-            "notes": "default notes",
-        }
-        kwargs = {**required_kwargs, **default_kwargs, **kwargs}
-        return DuePaymentPaidEntry.objects.create(**kwargs)
-
-    @staticmethod
-    def create_bitbyteactivity_requirement(**kwargs):
-        return RequirementBitByteActivity.objects.create(**kwargs)
-
-    @staticmethod
-    def create_event_requirement(eventType, **kwargs):
-        required_kwargs = {
-            "eventType": eventType,
-        }
-        default_kwargs = {
-            "title": "default title",
-        }
-        kwargs = {
-            **required_kwargs,
-            **default_kwargs,
-            **kwargs,
-        }
-        return RequriementEvent.objects.create(**kwargs)
-
-    @staticmethod
-    def create_hangout_requirement(**kwargs):
-        default_kwargs = {
-            "eventType": "officer_hangout",
-        }
-        kwargs = {
-            **default_kwargs,
-            **kwargs,
-        }
-        return RequirementHangout.objects.create(**kwargs)
-
-    @staticmethod
-    def create_mandatory_requirement(**kwargs):
-        return RequirementMandatory.objects.create(**kwargs)
 
     @staticmethod
     def create_announcement(**kwargs):

@@ -6,13 +6,6 @@ app_name = "candidate"
 urlpatterns = [
     path("", views.IndexView.as_view(), name="index"),
     path("portal/<username>", views.candidate_portal_view_by_username, name="viewcand"),
-    # Admins and Execs access to Mass Provisioning of Candidate Accounts
-    path("create_candidates", views.create_candidates_view, name="create_candidates"),
-    path(
-        "check_create_cand_status/<id>",
-        views.check_mass_candidate_status,
-        name="check_create_cand_status",
-    ),
     # candidate end of officer challenge requests
     path("candreq", views.CandRequestView.as_view(), name="candrequests"),
     # officer end of officer challenge requests
@@ -40,8 +33,4 @@ urlpatterns = [
         views.UserAutocomplete.as_view(),
         name="bitbyte/autocomplete",
     ),
-    path("add_cands", views.add_cands, name="add_cands"),
-    path("checkoff", views.MemberCheckoffView.as_view(), name="checkoff"),
-    path("checkoff_csv", views.checkoff_csv, name="checkoff_csv"),
-    path("summary", views.summary, name="summary"),
 ]
