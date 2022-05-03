@@ -1,0 +1,69 @@
+<style>
+.officer_card {
+    border-color: #DDDDDD;
+    border-width: 0.1px;
+    border-style: solid; 
+    border-radius: 2px;
+    display:inline-block;
+    padding: 5px;
+    margin: 3px;
+}
+
+.div_row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.classes {
+    display: flex;
+    flex-wrap: wrap;
+    font-size: 14px;
+}
+
+hr.solid {
+    border: 0;
+    border-top: 1px solid #bbb;
+}
+
+.office_image {
+    border-radius: 2px;
+}
+
+.class.on ~ .class.on::before {
+  content: ', '; 
+}
+
+</style>
+
+<div class="officer_card"> 
+    <div style="font-weight:600;"> {{ officer.name }} </div>
+    <div class="div_row">
+        <img class="office_image" width="110" src="https://t3.ftcdn.net/jpg/02/85/98/32/360_F_285983211_MgoZj1sj9Rfou8GRHtCvHtdgyEMxGEFS.jpg">
+        <div>
+            <div style="font-size:14px; font-weight:600; padding-left: 5px;">Tutoring Office Hours:</div>
+            {% for office_hour in officer.office_hours %}
+                <div style="font-size:14px; padding-left:15px; font-style:italic;"> {{ office_hour.day }}, {{ office_hour.start_time}} - {{ office_hour.end_time}} @ {{ office_hour.location }} </div>
+            {% endfor %}
+        </div>
+    </div>
+    <hr class="solid">
+    <div class="classes">
+        <div style="font-style:italic;">Preferred</div>: &nbsp
+        {% for class in officer.classes.preferred %}
+            <div class="class on"> {{ class }}</div>
+        {% endfor %}
+    </div>
+    <div class="classes">
+        <div style="font-style:italic;">Completed</div>: &nbsp
+        {% for class in officer.classes.completed %}
+            <div class="class on"> {{ class }}</div>
+        {% endfor %}
+    </div>
+    <div class="classes">
+        <div style="font-style:italic;">Current</div>: &nbsp
+        {% for class in officer.classes.current %}
+            <div class="class on"> {{ class }}</div>
+        {% endfor %}
+    </div>
+
+</div>

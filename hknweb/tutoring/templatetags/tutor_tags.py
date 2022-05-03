@@ -1,6 +1,7 @@
 from django import template
 from django.apps import apps
 from hknweb.tutoring.models import Room
+import ast
 
 register = template.Library()
 TimeSlot = apps.get_model("tutoring", "TimeSlot")
@@ -39,3 +40,7 @@ def access_slotfields_at_hour(form, hour):
         slotfields.append(pref_fields)
 
     return slotfields
+
+@register.inclusion_tag('tutoring/officer_card.html')
+def officer_card(officer_str):
+    return {'officer':  ast.literal_eval(officer_str)}

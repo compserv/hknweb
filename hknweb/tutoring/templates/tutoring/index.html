@@ -58,7 +58,9 @@ li {
     <!-- TODO: REMOVE THIS LINE WHEN THE ROOMS ARE LISTED CORRECTLY -->
     <p>No schedule yet!</p>
 
-    <!-- 
+    <!--
+    {% officer_card "{'name': 'Some Dude', 'classes': {'preferred': ['CS61A', 'CS61B', 'CS70'], 'completed': ['EECS16A', 'EECS16B'], 'current': ['EECS16C', 'CS186']}, 'office_hours': [{'day': 'Tuesday', 'start_time': '1pm', 'end_time': '2pm', 'location': 'Cory Hall'}, {'day': 'Monday', 'start_time': '8pm', 'end_time': '9pm', 'location': 'Online'}]}" %}
+
     {% for office in offices %}
     <h2 class="font-title f4 f3-ns tc pb2 bb b--light-gray">{{office.room}}</h2>
     <table class="center font-body overflow-auto">
