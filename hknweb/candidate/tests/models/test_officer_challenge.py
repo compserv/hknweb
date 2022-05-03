@@ -2,7 +2,7 @@ from django.test import TestCase
 
 from django.contrib.auth.models import Group
 
-from hknweb.candidate.models.activities import OffChallenge
+from hknweb.candidate.models import OffChallenge
 
 from hknweb.candidate.tests.models.utils import ModelFactory
 
