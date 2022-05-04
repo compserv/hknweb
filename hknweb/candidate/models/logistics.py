@@ -1,5 +1,8 @@
+from datetime import datetime
+
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 from hknweb.events.models import EventType, Rsvp
 from hknweb.coursesemester.models import Semester
@@ -59,8 +62,11 @@ class Logistics(models.Model):
     form_reqs = models.ManyToManyField(FormReq, blank=True)
 
     def populate(self, user: User):
+        date_start = timezone.make_aware(datetime.combine(self.date_start, datetime.min.time()))
+        date_end = timezone.make_aware(datetime.combine(self.date_end, datetime.min.time()))
+
         rsvps = Rsvp.objects \
-            .filter(user=user, event__start_time__range=[self.date_start, self.date_end])
+            .filter(user=user, event__start_time__range=[date_start, date_end])
 
         self.event_req_objs = self.event_reqs.all()
         for event_req in self.event_req_objs:
@@ -76,7 +82,7 @@ class Logistics(models.Model):
         self.misc_unconfirmed = self.misc_reqs.exclude(completed__in=[user])
 
         challenges = OffChallenge.objects \
-            .filter(requester=user, request_date__range=[self.date_start, self.date_end])
+            .filter(requester=user, request_date__range=[date_start, date_end])
         self.n_challenges_confirmed = sum(c.confirmed for c in challenges)
         self.n_challenges_rejected = sum(c.rejected for c in challenges)
         self.n_challenges_pending = \
@@ -91,7 +97,7 @@ class Logistics(models.Model):
         self.bitbytes = BitByteActivity.objects \
             .filter(
                 participants__exact=user,
-                request_date__range=[self.date_start, self.date_end],
+                request_date__range=[date_start, date_end],
             ) \
             .order_by("-request_date")
         self.n_bitbyte = self.bitbytes.filter(confirmed=True).count()
