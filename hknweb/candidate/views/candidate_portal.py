@@ -7,6 +7,8 @@ from hknweb.candidate.models import Announcement, Logistics
 from hknweb.events.models import Event
 from hknweb.coursesemester.models import Semester
 
+from hknweb.candidate.forms import BitByteRequestForm
+
 from hknweb.utils import get_access_level
 
 from hknweb.utils import (
@@ -17,7 +19,7 @@ from hknweb.utils import (
 
 def user_candidate_portal(user: User) -> dict:    
     semester = Semester.objects.order_by("year", "-semester").last()
-    logistics = Logistics.objects.filter(semester=semester).first()
+    logistics: Logistics = Logistics.objects.filter(semester=semester).first()
     logistics.populate(user)
 
     return {
@@ -54,5 +56,6 @@ def candidate_portal(request):
         "announcements": Announcement.objects.filter(visible=True).order_by("-release_date"),
         "upcoming_events": upcoming_events,
         **user_candidate_portal(request.user),
+        "form": BitByteRequestForm(),
     }
     return render(request, "candidate/candidate_portal.html", context=context)

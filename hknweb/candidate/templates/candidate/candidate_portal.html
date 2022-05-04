@@ -3,20 +3,6 @@
 
 {% block header %}
 <link rel="stylesheet" href="{% static "candidate/style.css" %}">
-{% endblock %}
-
-
-{% block title %}
-    {% if not user_self %}{{ username }}'s{% endif %}
-    Candidate portal
-{% endblock %}
-
-{% block heading %}
-    {% if not user_self %}{{ username }}'s{% endif %}
-    Candidate Portal
-{% endblock %}
-
-{% block content %}
 <style>
     .conf-events a {
         text-decoration: none;
@@ -33,6 +19,20 @@
         text-decoration: underline;
     }
 </style>
+{% endblock %}
+
+
+{% block title %}
+    {% if not user_self %}{{ username }}'s{% endif %}
+    Candidate portal
+{% endblock %}
+
+{% block heading %}
+    {% if not user_self %}{{ username }}'s{% endif %}
+    Candidate Portal
+{% endblock %}
+
+{% block content %}
 <div class="parent centered">
     {% if messages %}
         {% for message in messages %}
@@ -176,18 +176,6 @@
             </ul>
 
             <h4>
-                {% if logistics.n_bitbyte >= logistics.num_bitbyte %}
-                    <span class="req done"></span>
-                {% else %}
-                    <span class="req not-done"></span>
-                {% endif %}
-                Bit-Byte ({{ logistics.num_bitbyte }} required, {{ logistics.n_bitbyte }} finished)
-            </h4>
-            <ul class="checkboxes">
-                <a href="{% url 'candidate:bitbyte' %}">View/Request Bit-Byte Confirmations</a>
-            </ul>
-
-            <h4>
                 {% if logistics.forms_unconfirmed|length == 0 %}
                     <span class="req done"></span>
                 {% else %}
@@ -243,6 +231,80 @@
                         {{ m.title }} - {{ m.description }}
                     </li>
                 {% endfor %}
+            </ul>
+        </div>
+
+        <h4>
+            {% if logistics.n_bitbyte >= logistics.num_bitbyte %}
+                <span class="req done"></span>
+            {% else %}
+                <span class="req not-done"></span>
+            {% endif %}
+            Bit-Byte ({{ logistics.num_bitbyte }} required, {{ logistics.n_bitbyte }} finished)
+        </h4>
+        <div class="checklist-left-col" style="width: 25%;">
+            <h4 style="text-align: center; margin-bottom: 0;">Submit Bit-Byte Activity</h4>
+
+            <form method="POST" action="{% url 'candidate:bitbyte' %}" onsubmit="submit_button.disabled = true; return true;">
+                {% csrf_token %}
+                {% for field in form %}
+                    <br>
+                    <span class="left">{{ field.label }}
+                        {% if field.field.required %}<span class="red">* </span>{% endif %}
+                    </span>&nbsp
+                    {% if field.label == 'Proof' %}
+                        <span class="tooltip">
+                            <img src="{% static 'candidate/more_info.png' %}" alt="more info" class="inline-icon">
+                            <span class="tooltiptext">
+                                Please send a photo to #bitbyte on Slack and paste the link here, along
+                                with any comments. You can obtain the link by clicking "More actions->Copy link"
+                                on Slack. The link should start with "https://hkn.slack.com/archives/"
+                            </span>
+                        </span>
+                    {% endif %}
+                    {{ field }}
+                {% endfor %}
+                <input type="submit" name="submit_button" value="Submit" />
+            </form>
+        </div>
+        <div class="checklist-right-col" style="width: 70%;">
+            <h4 style="text-align: center;">Past bitbyte activities</h4>
+            <ul class="checkboxes">
+                {% if logistics.bitbytes %}
+                    <table class="full-table">
+                        <thead>
+                            <th>Participants</th>
+                            <th>Confirmed</th>
+                            <th>Request Date</th>
+                            <th>Proof</th>
+                            <th>Notes</th>
+                        </thead>
+
+                        <tbody>
+                        {% for bitbyte in logistics.bitbytes %}
+                            <tr>
+                                <td align="center">{% for participant in bitbyte.participants.all %}
+                                    {{ participant.first_name }} {{ participant.last_name }} ({{ participant.username }}) <br>
+                                {% endfor %}</td>
+                                <td align="center">
+                                    {% if bitbyte.is_confirmed %}
+                                        <img src="{% static 'candidate/yes.png'%}" alt="confirmed" class="table-icon">
+                                    {% elif bitbyte.is_rejected %}
+                                        <img src="{% static 'candidate/no.png'%}" alt="rejected" class="table-icon">
+                                    {% else %}
+                                        <img src="{% static 'candidate/maybe.png'%}" alt="in progress" class="table-icon">
+                                    {% endif %}
+                                </td>
+                                <td align="center">{{ bitbyte.request_date|date }}</td>
+                                <td class="table-column-max" align="center">{{ bitbyte.proof }}</td>
+                                <td class="table-column-max" align="center">{{ bitbyte.notes }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p>No activities to show.</p>
+                {% endif %}
             </ul>
         </div>
     </section>

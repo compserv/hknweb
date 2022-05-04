@@ -8,4 +8,4 @@ from hknweb.candidate.views.officer_challenge import (
     challenge_detail_view,
 )
 from hknweb.candidate.views.officer_portal import officer_portal
-from hknweb.candidate.views.bitbyte import BitByteView
+from hknweb.candidate.views.bitbyte import bitbyte

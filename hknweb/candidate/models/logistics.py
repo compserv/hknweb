@@ -88,9 +88,10 @@ class Logistics(models.Model):
 
         self.n_interactivities = len(self.hangouts_confirmed) + self.n_challenges_confirmed
 
-        self.n_bitbyte = BitByteActivity.objects \
+        self.bitbytes = BitByteActivity.objects \
             .filter(
-                participants__in=[user],
-                confirmed=True,
+                participants__exact=user,
                 request_date__range=[self.date_start, self.date_end],
-            ).count()
+            ) \
+            .order_by("-request_date")
+        self.n_bitbyte = self.bitbytes.filter(confirmed=True).count()
