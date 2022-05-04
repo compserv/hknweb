@@ -6,13 +6,36 @@
 <style>
     .table {
         text-align: center;
-        margin: auto;
-        font-size: 110%;
     }
+
     .header {
         text-align: center;
-        margin: auto;
+        position: relative;
         padding: 1em;
+    }
+
+    .sticky-col {
+        position: -webkit-sticky;
+        position: sticky;
+        background-color: white;
+        z-index: 10;
+    }
+
+    .first-col {
+        width: 15em;
+        min-width: 15em;
+        max-width: 15em;
+        left: 0;
+        padding: 0;
+    }
+
+    .second-col {
+        width: 5em;
+        min-width: 5em;
+        max-width: 5em;
+        left: 15em;
+        padding: 0;
+        border-right: 0.1em solid gray;
     }
 </style>
 {% endblock %}
@@ -24,12 +47,13 @@ Officer Portal
 {% endblock %}
 
 {% block content %}
-    <div class="parent">
+    <div style="margin: auto; width: 60%; text-align: center;">
         <!-- list of requested challenges -->
-        <div id='agenda' class="table-div">
-            <h3>Past Officer Challenges</h3>
+        <div class="table">
+            <h3>Officer Challenges</h3>
+            Note: Both you and csec need to confirm a challenge for it to be valid.
 
-            {% if challenge_list %}
+            {% if challenges %}
                 <table class="full-table">
                     <thead>
                         <th>Title</th>
@@ -40,7 +64,7 @@ Officer Portal
                     </thead>
 
                     <tbody>
-                    {% for challenge in challenge_list %}
+                    {% for challenge in challenges %}
                         <tr>
                             <td align="center">
                                 <a href="{% url 'candidate:detail' challenge.id%}">
@@ -79,44 +103,50 @@ Officer Portal
                     {% endfor %}
                     </tbody>
                 </table>
-
             {% else %}
                 <p>No requests to show.</p>
             {% endif %}
-
-            <!-- Legend for status of challenge request -->
-            <p>
-            Confirmed <img src="{% static 'candidate/yes.png'%}" alt="confirmed" class="inline-icon">
-            Declined <img src="{% static 'candidate/no.png'%}" alt="declined" class="inline-icon">
-            Waiting for response <img src="{% static 'candidate/maybe.png'%}" alt="in progress" class="inline-icon">
-            </p>
-
-            <p>
-                Note: Both you and csec need to confirm a challenge for it to be valid.
-            </p>
-
         </div>
     </div>
 
     <br><br>
 
-    <h1 class="header">Candidate Summary</h1>
+    <div class="heading">Candidate Summary</div>
 
-    <table class="table">
-        <thead>
-            {% for header in headers %}
-                <th class="header">{{ header }}</th>
-            {% endfor %}
-        </thead>
-        <tbody>
-            {% for row in rows %}
-                <tr>
-                    <td><a href="{{ row.link }}">{{ row.name }}</a></td>
-                    {% for data in row.status %}
-                        <td>{% if data %} &#10004 {% else %} &#10060 {% endif %}</td>
-                    {% endfor %}
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div style="margin: auto; overflow: auto; white-space: nowrap; width: 80%;">
+        <table class="table">
+            <thead>
+                <th class="header sticky-col first-col">Name</th>
+                <th class="header sticky-col second-col">Overall</th>
+                {% for header in headers %}
+                    <th class="header">{{ header }}</th>
+                {% endfor %}
+            </thead>
+            <tbody>
+                {% for row in rows %}
+                    <tr>
+                        <td class="sticky-col first-col">
+                            <a href="{% url 'candidate:viewcand' row.username %}">{{ row.name }}</a>
+                        </td>
+                        <td class="sticky-col second-col">
+                            {% if row.overall %}
+                                <span class="req done"></span>
+                            {% else %}
+                                <span class="req not-done"></span>
+                            {% endif %}
+                        </td>
+                        {% for s in row.statuses %}
+                            <td>
+                                {% if s %}
+                                    <span class="req done"></span>
+                                {% else %}
+                                    <span class="req not-done"></span>
+                                {% endif %}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}

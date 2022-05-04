@@ -7,5 +7,5 @@ from hknweb.candidate.views.officer_challenge import (
     CandRequestView,
     challenge_detail_view,
 )
-from hknweb.candidate.views.officer_portal import OfficerPortalView
+from hknweb.candidate.views.officer_portal import officer_portal
 from hknweb.candidate.views.bitbyte import BitByteView
