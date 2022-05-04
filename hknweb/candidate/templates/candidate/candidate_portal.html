@@ -61,6 +61,7 @@
         <table class="full-table">
             <thead>
                 <th align="left">Event</th>
+                <th align="left">Event type</th>
                 <th align="left">Time</th>
                 <th align="left">Location</th>
             </thead>
@@ -69,6 +70,7 @@
             {% for event in upcoming_events %}
                 <tr>
                     <td><a href="{% url 'events:detail' event.id %}"> {{ event.name }} </a></td>
+                    <td>{{ event.event_type }}</td>
                     <td>{{event.start_time|date:"D m/d h:i A"}} - {{ event.end_time|date:"h:i A"}}</td>
                     <td>{{ event.location }}</td>
                 </tr>
@@ -90,25 +92,31 @@
         <div class="checklist-left-col">
             <h4>Events</h4>
             <ul class="checkboxes events-list">
-                {% for event in events %}
+                {% for event_req in event_reqs %}
                     <li>
-                        {% if event.status %}
+                        {% if event_req.n_finished >= event_req.n %}
                             <span class="req done"></span>
                         {% else %}
                             <span class="req not-done"></span>
                         {% endif %}
-                        <span style="background:{{ event.color }}" class="req-title">
-                            {{ event.title }}
+                        <span style="background:{{ event_req.event_types.first.color }}" class="req-title">
+                            {{ event_req.title }} ({{ event_req.n }} required, {{ event_req.n_finished }} finished)
                         </span>
                     </li>
                     <ul class="conf-events">
-                        {% for confirmed in event.confirmed %}
-                            <li><a href="{% url 'events:detail' confirmed.id %}">{{ confirmed.name }}</a><br/></li>
+                        {% for e in event_req.confirmed %}
+                            <li>
+                                <a href="{% url 'events:detail' e.id %}">{{ e.name }}</a>
+                                <br/>
+                            </li>
                         {% endfor %}
                     </ul>
                     <ul class="unconf-events">
-                        {% for unconfirmed in event.unconfirmed %}
-                            <li><a href="{% url 'events:detail' unconfirmed.id %}">{{ unconfirmed.name }}</a><br/></li>
+                        {% for e in event_req.unconfirmed %}
+                            <li>
+                                <a href="{% url 'events:detail' e.id %}">{{ e.name }}</a>
+                                <br/>
+                            </li>
                         {% endfor %}
                     </ul>
                     <br/>
