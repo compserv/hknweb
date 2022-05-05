@@ -3,41 +3,6 @@
 
 {% block header %}
 <link rel="stylesheet" href="{% static "candidate/style.css" %}">
-<style>
-    .conf-events a {
-        text-decoration: none;
-        color: #535353;
-    }
-
-    .conf-events a:hover {
-        text-decoration: underline;
-    }
-
-    .unconf-events a {
-        text-decoration: none;
-        color: #535353;
-    }
-
-    .unconf-events a:hover {
-        text-decoration: underline;
-    }
-
-    h3, h4 {
-        margin-top: 0;
-    }
-
-    h4 {
-        margin-bottom: 0;
-    }
-
-    .select2-container--default .select2-selection--single {
-        border: none;
-    }
-
-    .select2-container--default .select2-selection--multiple {
-        border: none;
-    }
-</style>
 {% endblock %}
 
 
@@ -55,7 +20,7 @@
 <div class="parent centered">
     {% if messages %}
         {% for message in messages %}
-            <h3 style="text-align: center;" {% if messages.tags %} class="{{ message.tags }}" {% endif %} class="blue">{{ message }}</h3>
+            <h3 class="hcenter" {% if messages.tags %} class="{{ message.tags }}" {% endif %} class="blue">{{ message }}</h3>
         {% endfor %}
     {% endif %}
 
@@ -69,8 +34,8 @@
 
                 {% for announcement in announcements %}
                     <p>
-                    <strong>{{ announcement.title }}</strong> [{{ announcement.release_date|date:"m/d/Y" }}]<br>
-                    {{ announcement.text }}
+                        <strong>{{ announcement.title }}</strong> [{{ announcement.release_date|date:"m/d/Y" }}]<br>
+                        {{ announcement.text }}
                     </p>
                 {% endfor %}
             </div>
@@ -104,39 +69,25 @@
     <section>
         <div class="checklist-left-col">
             <h3>
-                {% if logistics.event_reqs_finished %}
-                    <span class="req done"></span>
-                {% else %}
-                    <span class="req not-done"></span>
-                {% endif %}
+                <span class="req {% if not logistics.event_reqs_finished %}not-{% endif %}done"></span>
                 Events
             </h3>
             <ul class="checkboxes events-list">
                 {% for event_req in logistics.event_req_objs %}
                     <li>
-                        {% if event_req.n_finished >= event_req.n %}
-                            <span class="req done"></span>
-                        {% else %}
-                            <span class="req not-done"></span>
-                        {% endif %}
+                        <span class="req {% if event_req.n_finished < event_req.n %}not-{% endif %}done"></span>
                         <span style="background:{{ event_req.event_types.first.color }}" class="req-title">
                             {{ event_req.title }} ({{ event_req.n }} required, {{ event_req.n_finished }} finished)
                         </span>
                     </li>
                     <ul class="conf-events">
                         {% for e in event_req.confirmed %}
-                            <li>
-                                <a href="{% url 'events:detail' e.id %}">{{ e.name }}</a>
-                                <br/>
-                            </li>
+                            <li><a href="{% url 'events:detail' e.id %}">{{ e.name }}</a></li>
                         {% endfor %}
                     </ul>
                     <ul class="unconf-events">
                         {% for e in event_req.unconfirmed %}
-                            <li>
-                                <a href="{% url 'events:detail' e.id %}">{{ e.name }}</a>
-                                <br/>
-                            </li>
+                            <li><a href="{% url 'events:detail' e.id %}">{{ e.name }}</a></li>
                         {% endfor %}
                     </ul>
                     <br/>
@@ -144,61 +95,35 @@
             </ul>
         </div>
         <div class="checklist-right-col">
+            <!-- form_reqs -->
             <h3>
-                {% if logistics.forms_unconfirmed|length == 0 %}
-                    <span class="req done"></span>
-                {% else %}
-                    <span class="req not-done"></span>
-                {% endif %}
+                <span class="req {% if logistics.forms_unconfirmed|length > 0 %}not-{% endif %}done"></span>
                 Forms
             </h3>
             <ul class="events-list conf-events">
                 {% for f in logistics.forms_confirmed %}
-                    <li>
-                        <a href="{{ f.link }}">{{ f.title }}</a>
-                    </li>
+                    <li><a href="{{ f.link }}">{{ f.title }}</a></li>
                 {% endfor %}
             </ul>
             <ul class="events-list unconf-events">
                 {% for f in logistics.forms_unconfirmed %}
-                    <li>
-                        <a href="{{ f.link }}">{{ f.title }}</a>
-                    </li>
+                    <li><a href="{{ f.link }}">{{ f.title }}</a></li>
                 {% endfor %}
             </ul>
 
-            <ul class="events-list">
-                {% for m in misc_reqs %}
-                    <li>
-                        {% if request.user in m.completed %}
-                            <span class="req done"></span>
-                        {% else %}
-                            <span class="req not-done"></span>
-                        {% endif %}
-                        {{ m.title }} - {{ m.description }}
-                    </li>
-                {% endfor %}
-            </ul>
+            <!-- misc_reqs -->
             <h3>
-                {% if logistics.misc_unconfirmed|length == 0 %}
-                    <span class="req done"></span>
-                {% else %}
-                    <span class="req not-done"></span>
-                {% endif %}
+                <span class="req {% if logistics.misc_unconfirmed|length > 0 %}not-{% endif %}done"></span>
                 Miscellaneous Requirements
             </h3>
             <ul class="events-list conf-events">
                 {% for m in logistics.misc_confirmed %}
-                    <li>
-                        {{ m.title }} - {{ m.description }}
-                    </li>
+                    <li>{{ m.title }} - {{ m.description }}</li>
                 {% endfor %}
             </ul>
             <ul class="events-list unconf-events">
                 {% for m in logistics.misc_unconfirmed %}
-                    <li>
-                        {{ m.title }} - {{ m.description }}
-                    </li>
+                    <li>{{ m.title }} - {{ m.description }}</li>
                 {% endfor %}
             </ul>
         </div>
@@ -206,11 +131,7 @@
 
     <section>
         <h3 style="margin-bottom: 0;">
-            {% if logistics.n_bitbyte >= logistics.num_bitbyte %}
-                <span class="req done"></span>
-            {% else %}
-                <span class="req not-done"></span>
-            {% endif %}
+            <span class="req {% if logistics.n_bitbyte < logistics.num_bitbyte %}not-{% endif %}done"></span>
             Bit-Byte ({{ logistics.num_bitbyte }} required, {{ logistics.n_bitbyte }} finished)
         </h3>
         {% if user_self %}
@@ -235,7 +156,7 @@
                         {{ field }}
                         <br>
                     {% endfor %}
-                    <div style="text-align: center;">
+                    <div class="hcenter">
                         <input type="submit" name="submit_button" value="Submit" />
                     </div>
                 </form>
@@ -250,11 +171,7 @@
 
     <section>
         <h3>
-            {% if logistics.n_interactivities >= logistics.num_interactivities %}
-                <span class="req done"></span>
-            {% else %}
-                <span class="req not-done"></span>
-            {% endif %}
+            <span class="req {% if logistics.n_interactivities < logistics.num_interactivities %}not-{% endif %}done"></span>
             Interactivities ({{ logistics.num_interactivities }} required, {{ logistics.n_interactivities }} finished)
         </h3>
         {% if user_self %}
@@ -290,11 +207,7 @@
         {% endif %}
         <div class="checklist-right-col" style="width: 65%; margin-left: 2em;">
             <h4>
-                {% if logistics.hangouts_confirmed|length >= logistics.min_hangouts %}
-                    <span class="req done"></span>
-                {% else %}
-                    <span class="req not-done"></span>
-                {% endif %}
+                <span class="req {% if logistics.hangouts_confirmed|length < logistics.min_hangouts %}not-{% endif %}done"></span>
                 Officer Hangouts ({{ logistics.min_hangouts }} required, {{ logistics.hangouts_confirmed|length }} finished)
             </h4>
             <ul class="checkboxes">
@@ -311,11 +224,7 @@
             </ul>
 
             <h4>
-                {% if logistics.n_challenges_confirmed >= logistics.min_challenges %}
-                    <span class="req done"></span>
-                {% else %}
-                    <span class="req not-done"></span>
-                {% endif %}
+                <span class="req {% if logistics.n_challenges_confirmed < logistics.min_challenges %}not-{% endif %}done"></span>
                 Officer Challenges ({{ logistics.min_challenges }} required, {{ logistics.n_challenges_confirmed }} finished)
             </h4>
             <ul class="checkboxes">

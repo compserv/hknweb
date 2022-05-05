@@ -3,6 +3,10 @@
     margin: 0 auto;
 }
 
+.hcenter {
+    text-align: center;
+}
+
 .checkboxes {
     list-style: none;
     padding-left: 1em;
@@ -267,4 +271,79 @@ h2:first-child {
     max-width: 40%;
     text-align: right;
     float: right;
+}
+
+.conf-events a {
+    text-decoration: none;
+    color: #535353;
+}
+
+.conf-events a:hover {
+    text-decoration: underline;
+}
+
+.unconf-events a {
+    text-decoration: none;
+    color: #535353;
+}
+
+.unconf-events a:hover {
+    text-decoration: underline;
+}
+
+h3, h4 {
+    margin-top: 0;
+}
+
+h4 {
+    margin-bottom: 0;
+}
+
+.select2-container--default .select2-selection--single {
+    border: none;
+}
+
+.select2-container--default .select2-selection--multiple {
+    border: none;
+}
+
+.table {
+    text-align: center;
+}
+
+.header {
+    text-align: center;
+    position: relative;
+    padding: 1em;
+}
+
+.sticky-col {
+    position: -webkit-sticky;
+    position: sticky;
+    background-color: #F2F2F2;
+    z-index: 10;
+}
+
+.first-col {
+    width: 15em;
+    min-width: 15em;
+    max-width: 15em;
+    left: 0;
+    padding: 0;
+}
+
+.second-col {
+    width: 5em;
+    min-width: 5em;
+    max-width: 5em;
+    left: 15em;
+    padding: 0;
+    border-right: 0.1em solid gray;
+}
+
+.main-panel {
+    width: 80%;
+    text-align: center;
+    margin: auto;
+    margin-bottom: 0.5em;
 }

@@ -3,45 +3,6 @@
 
 {% block header %}
 <link rel="stylesheet" href="{% static "candidate/style.css" %}">
-<style>
-    .content {
-        text-align: center;
-    }
-
-    .table {
-        text-align: center;
-    }
-
-    .header {
-        text-align: center;
-        position: relative;
-        padding: 1em;
-    }
-
-    .sticky-col {
-        position: -webkit-sticky;
-        position: sticky;
-        background-color: white;
-        z-index: 10;
-    }
-
-    .first-col {
-        width: 15em;
-        min-width: 15em;
-        max-width: 15em;
-        left: 0;
-        padding: 0;
-    }
-
-    .second-col {
-        width: 5em;
-        min-width: 5em;
-        max-width: 5em;
-        left: 15em;
-        padding: 0;
-        border-right: 0.1em solid gray;
-    }
-</style>
 {% endblock %}
 
 {% block title %}Officer Portal{% endblock %}
@@ -51,44 +12,47 @@ Officer Portal
 {% endblock %}
 
 {% block content %}
-    <h2>Officer Challenges</h2>
-    <div style="width: 80%; text-align: center; margin: auto;">
-        {% include 'candidate/challenges_table.html' %}
-    </div>
-    <br><br>
+    <section class="main-panel">
+        <h2>Officer Challenges</h2>
+        <div style="width: 80%; text-align: center; margin: auto;">
+            {% include 'candidate/challenges_table.html' %}
+        </div>
+    </section>
 
-    <h2>Bit-Byte Activities</h2>
-    <div style="width: 80%; text-align: center; margin: auto;">
-        {% include 'candidate/bitbytes_table.html' %}
-    </div>
-    <br><br>
+    <section class="main-panel">
+        <h2>Bit-Byte Activities</h2>
+        <div>
+            {% include 'candidate/bitbytes_table.html' %}
+        </div>
+    </section>
 
-    <div class="heading">Candidate Summary</div>
-
-    <div style="margin: auto; overflow: auto; white-space: nowrap; width: 80%;">
-        <table class="table">
-            <thead>
-                <th class="header sticky-col first-col">Name</th>
-                <th class="header sticky-col second-col">Overall</th>
-                {% for header in headers %}
-                    <th class="header">{{ header }}</th>
-                {% endfor %}
-            </thead>
-            <tbody>
-                {% for row in rows %}
-                    <tr>
-                        <td class="sticky-col first-col">
-                            <a href="{% url 'candidate:candidate_portal_view_by_username' row.username %}">{{ row.name }}</a>
-                        </td>
-                        <td class="sticky-col second-col">
-                            <span class="req {% if not row.overall %}not-{% endif %}done"></span>
-                        </td>
-                        {% for s in row.statuses %}
-                            <td><span class="req {% if not s %}not-{% endif %}done"></span></td>
-                        {% endfor %}
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+    <section class="main-panel">
+        <h2>Candidate Summary</h2>
+        <div style="overflow: auto; white-space: nowrap;">
+            <table class="table">
+                <thead>
+                    <th class="header sticky-col first-col">Name</th>
+                    <th class="header sticky-col second-col">Overall</th>
+                    {% for header in headers %}
+                        <th class="header">{{ header }}</th>
+                    {% endfor %}
+                </thead>
+                <tbody>
+                    {% for row in rows %}
+                        <tr>
+                            <td class="sticky-col first-col">
+                                <a href="{% url 'candidate:candidate_portal_view_by_username' row.username %}">{{ row.name }}</a>
+                            </td>
+                            <td class="sticky-col second-col">
+                                <span class="req {% if not row.overall %}not-{% endif %}done"></span>
+                            </td>
+                            {% for s in row.statuses %}
+                                <td><span class="req {% if not s %}not-{% endif %}done"></span></td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
 {% endblock %}
