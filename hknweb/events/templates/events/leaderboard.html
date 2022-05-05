@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block header %}
-<link rel="stylesheet" href="{% static "events/style.css" %}">
+<link rel="stylesheet" href="{% static 'events/style.css' %}">
 <style>
     .heading {
         display: none;
@@ -24,7 +24,7 @@
 {% endblock %}
 
 {% block content %}
-    <h1 class="centered"> Events Leaderboard </h1>
+    <h1 style="text-align: center;"> Events Leaderboard </h1>
 
     <div>
         <table class="center" >
@@ -33,10 +33,10 @@
                 <th>Events Attended</th>
             </tr>
 
-            {% for tuple in page_obj %}
+            {% for user in page_obj %}
                 <tr>
-                    <td style="text-align:center; width: 20%; overflow: hidden;">{{ tuple.0 }}</td>
-                    <td style="text-align:center; width: 20%; overflow: hidden;">{{ tuple.1 }}</td>
+                    <td style="text-align:center; width: 20%; overflow: hidden;">{{ user }}</td>
+                    <td style="text-align:center; width: 20%; overflow: hidden;">{{ user.num_rsvps }}</td>
                 </tr>
             {% endfor %}
         </table>

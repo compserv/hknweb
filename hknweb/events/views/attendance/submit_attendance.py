@@ -17,7 +17,7 @@ def submit_attendance(request, event_id, attendance_form_id, rsvp_id):
         form.data["rsvp"] = rsvp_id
 
         if form.is_valid():
-            if form.data["secret_word"] == attendance_form.secret_word:
+            if form.data["secret_word"].lower() == attendance_form.secret_word.lower():
                 form.save()
                 messages.success(request, "RSVP confirmed!")
                 return redirect("events:detail", id=event_id)

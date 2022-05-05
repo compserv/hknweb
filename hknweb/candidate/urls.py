@@ -1,47 +1,40 @@
 from django.urls import path
 
-from . import views
+import hknweb.candidate.views as views
 
 app_name = "candidate"
 urlpatterns = [
-    path("", views.IndexView.as_view(), name="index"),
-    path("portal/<username>", views.candidate_portal_view_by_username, name="viewcand"),
-    # Admins and Execs access to Mass Provisioning of Candidate Accounts
-    path("create_candidates", views.create_candidates_view, name="create_candidates"),
+    # Portals
+    path("", views.candidate_portal, name="candidate_portal"),
     path(
-        "check_create_cand_status/<id>",
-        views.check_mass_candidate_status,
-        name="check_create_cand_status",
+        "portal/<username>",
+        views.candidate_portal_view_by_username,
+        name="candidate_portal_view_by_username",
     ),
-    # candidate end of officer challenge requests
-    path("candreq", views.CandRequestView.as_view(), name="candrequests"),
-    # officer end of officer challenge requests
-    path("officer", views.OfficerPortalView.as_view(), name="officer"),
-    path("bitbyte", views.BitByteView.as_view(), name="bitbyte"),
+    path("officer", views.officer_portal, name="officer_portal"),
+    # Form requests
+    path("challenge/request", views.request_challenge, name="request_challenge"),
+    path("bitbyte/request", views.request_bitbyte, name="request_bitbyte"),
+    # Confirm requests
     path(
-        "challengeconfirm/<int:pk>/",
-        views.officer_confirm_view,
-        name="challengeconfirm",
-    ),
-    path("<int:id>/confirm", views.confirm_challenge, name="confirm"),
-    path("detail/<int:pk>/", views.challenge_detail_view, name="detail"),
-    path(
-        "reviewconfirm/<int:pk>/",
-        views.officer_review_confirmation,
-        name="reviewconfirm",
+        "challenge/confirm/<int:pk>/<int:action>",
+        views.confirm_challenge,
+        name="confirm_challenge",
     ),
     path(
-        "candreq/autocomplete/",
+        "bitbyte/confirm/<int:pk>/<int:action>",
+        views.confirm_bitbyte,
+        name="confirm_bitbyte",
+    ),
+    # Autocomplete
+    path(
+        "autocomplete/officer",
         views.OfficerAutocomplete.as_view(),
-        name="candreq/autocomplete",
+        name="autocomplete_officer",
     ),
     path(
-        "bitbyte/autocomplete/",
+        "autocomplete/user",
         views.UserAutocomplete.as_view(),
-        name="bitbyte/autocomplete",
+        name="autocomplete_user",
     ),
-    path("add_cands", views.add_cands, name="add_cands"),
-    path("checkoff", views.MemberCheckoffView.as_view(), name="checkoff"),
-    path("checkoff_csv", views.checkoff_csv, name="checkoff_csv"),
-    path("summary", views.summary, name="summary"),
 ]

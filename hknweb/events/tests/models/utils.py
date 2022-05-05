@@ -31,7 +31,6 @@ class ModelFactory:
             "created_by": created_by,
         }
         default_kwargs = {
-            "slug": name,
             "start_time": timezone.now(),
             "end_time": timezone.now() + datetime.timedelta(hours=2),
             "location": "default location",

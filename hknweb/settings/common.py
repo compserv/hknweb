@@ -33,7 +33,6 @@ INSTALLED_APPS = [
     "hknweb.coursesemester",
     "hknweb.course_surveys",
     "hknweb.studentservices",
-    "hknweb.thread",
     "dal",  # must be before django.contrib.admin
     "dal_select2",  # must be before django.contrib.admin
     "django.contrib.admin",
@@ -170,7 +169,7 @@ EMAIL_USE_TLS = True
 NO_REPLY_EMAIL = "no-reply@hkn.eecs.berkeley.edu"
 
 # Set admins and managers
-ADMINS = [('HKN', "website-errors@hkn.eecs.berkeley.edu")]
+ADMINS = [("HKN", "website-errors@hkn.eecs.berkeley.edu")]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/

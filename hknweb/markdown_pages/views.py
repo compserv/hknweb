@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from hknweb.utils import markdownify, login_and_permission
+from hknweb.utils import allow_public_access, markdownify, login_and_permission
 
 from .models import MarkdownPage
 from .forms import EditPageForm
@@ -19,6 +19,7 @@ def editor(request):
     return render(request, "markdown_pages/editor.html", {"form": form})
 
 
+@allow_public_access
 def display(request, path):
     mdp = get_object_or_404(MarkdownPage, path=path)
     return render(

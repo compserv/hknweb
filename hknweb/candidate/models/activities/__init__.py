@@ -1,2 +1,0 @@
-from hknweb.candidate.models.activities.officer_challenge import OffChallenge
-from hknweb.candidate.models.activities.bit_byte_activity import BitByteActivity
