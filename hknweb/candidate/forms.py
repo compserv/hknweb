@@ -20,7 +20,7 @@ class ChallengeRequestForm(forms.ModelForm):
                 url="candidate:autocomplete_officer",
             ),
             "name": forms.Textarea(attrs={"style": TEXT_AREA_STYLE, "rows": 2}),
-            "proof": forms.Textarea(attrs={"style": TEXT_AREA_STYLE, "rows": 3}),
+            "proof": forms.Textarea(attrs={"style": TEXT_AREA_STYLE, "rows": 2}),
         }
 
 
@@ -32,7 +32,7 @@ class BitByteRequestForm(forms.ModelForm):
             "participants": autocomplete.ModelSelect2Multiple(
                 url="candidate:autocomplete_user"
             ),
-            "proof": forms.Textarea(attrs={"style": TEXT_AREA_STYLE, "rows": 3}),
+            "proof": forms.Textarea(attrs={"style": TEXT_AREA_STYLE, "rows": 2}),
         }
 
     def __init__(self, *args, **kwargs):
