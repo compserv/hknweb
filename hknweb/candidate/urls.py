@@ -4,33 +4,28 @@ import hknweb.candidate.views as views
 
 app_name = "candidate"
 urlpatterns = [
+    # Portals
     path("", views.candidate_portal, name="candidate_portal"),
-    path("portal/<username>", views.candidate_portal_view_by_username, name="viewcand"),
-    # candidate end of officer challenge requests
-    path("candreq", views.officer_challenge_request, name="candrequests"),
-    # officer end of officer challenge requests
-    path("officer", views.officer_portal, name="officer"),
-    path("bitbyte", views.bitbyte, name="bitbyte"),
+    path("portal/<username>", views.candidate_portal_view_by_username, name="candidate_portal_view_by_username"),
+    path("officer", views.officer_portal, name="officer_portal"),
+
+    # Form requests
+    path("challenge/request", views.request_challenge, name="request_challenge"),
+    path("bitbyte/request", views.request_bitbyte, name="request_bitbyte"),
+
+    # Confirm requests
+    path("challenge/confirm/<int:pk>/<int:action>", views.confirm_challenge, name="confirm_challenge"),
+    path("bitbyte/confirm/<int:pk>/<int:action>", views.confirm_challenge, name="confirm_bitbyte"),
+
+    # Autocomplete
     path(
-        "challengeconfirm/<int:pk>/",
-        views.officer_confirm_view,
-        name="challengeconfirm",
-    ),
-    path("<int:id>/confirm", views.confirm_challenge, name="confirm"),
-    path("detail/<int:pk>/", views.challenge_detail_view, name="detail"),
-    path(
-        "reviewconfirm/<int:pk>/",
-        views.officer_review_confirmation,
-        name="reviewconfirm",
-    ),
-    path(
-        "candreq/autocomplete/",
+        "autocomplete/officer",
         views.OfficerAutocomplete.as_view(),
-        name="candreq/autocomplete",
+        name="autocomplete_officer",
     ),
     path(
-        "bitbyte/autocomplete/",
+        "autocomplete/user",
         views.UserAutocomplete.as_view(),
-        name="bitbyte/autocomplete",
+        name="autocomplete_user",
     ),
 ]

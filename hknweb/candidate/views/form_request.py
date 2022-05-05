@@ -7,7 +7,7 @@ from hknweb.utils import login_and_access_level, GROUP_TO_ACCESSLEVEL
 from hknweb.candidate.forms import BitByteRequestForm, ChallengeRequestForm
 
 
-def form_request(request, form_cls, title: str):
+def request_form(request, form_cls, title: str):
     if request.method != "POST":
         return Http404()
 
@@ -21,15 +21,15 @@ def form_request(request, form_cls, title: str):
 
 
 @login_and_access_level(GROUP_TO_ACCESSLEVEL["candidate"])
-def bitbyte(request):
-    return form_request(request, BitByteRequestForm, "bitbyte")
+def request_bitbyte(request):
+    return request_form(request, BitByteRequestForm, "bitbyte")
 
 
 @login_and_access_level(GROUP_TO_ACCESSLEVEL["candidate"])
-def officer_challenge_request(request):
+def request_challenge(request):
     def form_wrapper(*args, **kwargs):
         form = ChallengeRequestForm(*args, **kwargs)
         form.instance.requester = request.user
         return form
 
-    return form_request(request, form_wrapper, "officer challenge")
+    return request_form(request, form_wrapper, "officer challenge")

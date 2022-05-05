@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 
 from hknweb.utils import login_and_access_level, GROUP_TO_ACCESSLEVEL
 
-from hknweb.candidate.models import OffChallenge
+from hknweb.candidate.models import OffChallenge, BitByteActivity
 from hknweb.candidate.views.candidate_portal import user_candidate_portal
 
 
@@ -11,6 +11,10 @@ from hknweb.candidate.views.candidate_portal import user_candidate_portal
 def officer_portal(request):
     challenges = OffChallenge.objects \
         .filter(officer__exact=request.user) \
+        .order_by("-request_date")
+
+    bitbytes = BitByteActivity.objects \
+        .filter(participants__exact=request.user) \
         .order_by("-request_date")
 
     rows = []
@@ -42,7 +46,10 @@ def officer_portal(request):
             + [m.title for m in logistics.misc_reqs.all()]
 
     context = {
-        "challenges": challenges,
+        "logistics": {
+            "challenges": challenges,
+            "bitbytes": bitbytes,
+        },
         "headers": headers,
         "rows": rows,
     }

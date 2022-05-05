@@ -1,0 +1,60 @@
+{% load static %}
+{% load app_filters %}
+
+{% if logistics.bitbytes %}
+    <table class="full-table">
+        <thead>
+            <th>Status</th>
+            <th>Participants</th>
+            <th>Request Date</th>
+            <th>Proof</th>
+            <th>Notes</th>
+            <th></th>
+            <th></th>
+        </thead>
+
+        <tbody>
+            {% for bitbyte in logistics.bitbytes %}
+                <tr>
+                    <td align="center">
+                        {% if bitbyte.is_confirmed %}
+                            <img src="{% static 'candidate/yes.png'%}" alt="confirmed" class="table-icon">
+                        {% elif bitbyte.is_rejected %}
+                            <img src="{% static 'candidate/no.png'%}" alt="rejected" class="table-icon">
+                        {% else %}
+                            <img src="{% static 'candidate/maybe.png'%}" alt="in progress" class="table-icon">
+                        {% endif %}
+                    </td>
+                    <td align="center">
+                        {% for participant in bitbyte.participants.all %}
+                            {{ participant.first_name }} {{ participant.last_name }} ({{ participant.username }}) <br>
+                        {% endfor %}
+                    </td>
+                    <td align="center">{{ bitbyte.request_date|date }}</td>
+                    <td class="table-column-max" align="center">{{ bitbyte.proof }}</td>
+                    <td class="table-column-max" align="center">{{ bitbyte.notes }}</td>
+                    {% if request.user|has_group:"officer" %}
+                        <td align="center">
+                            {% if not bitbyte.confirmed %}
+                                <form action="{% url 'candidate:confirm_bitbyte' bitbyte.id 0 %}" method="post" onsubmit="submit_button.disabled = true; return true;">
+                                    {% csrf_token %}
+                                    <input type="submit" name="submit_button" value="Confirm" />
+                                </form>
+                            {% endif %}
+                        </td>
+                        <td align="center">
+                            {% if not bitbyte.rejected %}
+                                <form action="{% url 'candidate:confirm_bitbyte' bitbyte.id 1 %}" method="post" onsubmit="submit_button.disabled = true; return true;">
+                                    {% csrf_token %}
+                                    <input type="submit" name="submit_button" value="Reject" />
+                                </form>
+                            {% endif %}
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>No activities to show.</p>
+{% endif %}

@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 
 from dal import autocomplete
 
-from .models import BitByteActivity, OffChallenge
+from hknweb.candidate.models import BitByteActivity, OffChallenge
 
 
 TEXT_AREA_STYLE = "resize:none; border: none; border-radius: 0.2em; width: 23.6em; padding: 0.2em;"
@@ -11,29 +11,14 @@ TEXT_AREA_STYLE = "resize:none; border: none; border-radius: 0.2em; width: 23.6e
 class ChallengeRequestForm(forms.ModelForm):
     class Meta:
         model = OffChallenge
-        fields = ["name", "officer", "description", "proof"]
+        fields = ["name", "officer", "proof"]
         widgets = {
             "officer": autocomplete.ModelSelect2(
-                url="candreq/autocomplete",
+                url="candidate:autocomplete_officer",
             ),
             "name": forms.Textarea(attrs={"style": TEXT_AREA_STYLE, "rows": 2}),
-            "description": forms.Textarea(attrs={"style": TEXT_AREA_STYLE, "rows": 6}),
             "proof": forms.Textarea(attrs={"style": TEXT_AREA_STYLE, "rows": 3}),
         }
-
-
-class ChallengeConfirmationForm(forms.ModelForm):
-    class Meta:
-        model = OffChallenge
-        fields = ["officer_confirmed", "officer_comment"]
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields["officer_confirmed"].label = (
-            'Choose "Yes" to confirm challenge, "No" to decline'
-            " (after you confirm, csec still has to confirm as well)"
-        )
-        self.fields["officer_comment"].label = "Optionally add a comment"
 
 
 class BitByteRequestForm(forms.ModelForm):
@@ -42,7 +27,7 @@ class BitByteRequestForm(forms.ModelForm):
         fields = ["participants", "proof"]
         widgets = {
             "participants": autocomplete.ModelSelect2Multiple(
-                url="bitbyte/autocomplete"
+                url="candidate:autocomplete_user"
             ),
             "proof": forms.Textarea(attrs={"style": TEXT_AREA_STYLE, "rows": 3}),
         }
