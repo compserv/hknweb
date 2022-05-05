@@ -15,7 +15,7 @@ urlpatterns = [
 
     # Confirm requests
     path("challenge/confirm/<int:pk>/<int:action>", views.confirm_challenge, name="confirm_challenge"),
-    path("bitbyte/confirm/<int:pk>/<int:action>", views.confirm_challenge, name="confirm_bitbyte"),
+    path("bitbyte/confirm/<int:pk>/<int:action>", views.confirm_bitbyte, name="confirm_bitbyte"),
 
     # Autocomplete
     path(

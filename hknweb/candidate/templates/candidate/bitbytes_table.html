@@ -33,7 +33,7 @@
                     <td align="center">{{ bitbyte.request_date|date }}</td>
                     <td class="table-column-max" align="center">{{ bitbyte.proof }}</td>
                     <td class="table-column-max" align="center">{{ bitbyte.notes }}</td>
-                    {% if request.user|has_group:"officer" %}
+                    {% if user_self is None and request.user|has_group:"officer" %}
                         <td align="center">
                             {% if not bitbyte.confirmed %}
                                 <form action="{% url 'candidate:confirm_bitbyte' bitbyte.id 0 %}" method="post" onsubmit="submit_button.disabled = true; return true;">

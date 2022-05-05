@@ -35,7 +35,7 @@
                     {% endif %}
                     <td align="center">{{ challenge.request_date }}</td>
                     <td align="center">{{ challenge.proof }}</td>
-                    {% if request.user|has_group:"officer" %}
+                    {% if user_self is None and request.user|has_group:"officer" %}
                         <td align="center">
                             {% if not challenge.confirmed %}
                                 <form action="{% url 'candidate:confirm_challenge' challenge.id 0 %}" method="post" onsubmit="submit_button.disabled = true; return true;">
