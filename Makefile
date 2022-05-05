@@ -89,7 +89,7 @@ mysql:
 
 .PHONY: permissions
 permissions:
-	$(MANAGE) shell < hknweb/init_permissions.py
+	$(MANAGE) shell -c "from hknweb.init_permissions import provision; provision()"
 
 .PHONY: format
 format:
