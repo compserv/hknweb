@@ -22,7 +22,9 @@ def manage_attendance(request, event_id):
             return redirect("events:detail", id=event_id)
 
     if instance:
-        feedback = [r.feedback for r in instance.attendanceresponse_set.all() if r.feedback]
+        feedback = [
+            r.feedback for r in instance.attendanceresponse_set.all() if r.feedback
+        ]
     else:
         feedback = None
 

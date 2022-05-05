@@ -9,13 +9,13 @@ from hknweb.candidate.views.candidate_portal import user_candidate_portal
 
 @login_and_access_level(GROUP_TO_ACCESSLEVEL["officer"])
 def officer_portal(request):
-    challenges = OffChallenge.objects \
-        .filter(officer__exact=request.user) \
-        .order_by("-request_date")
+    challenges = OffChallenge.objects.filter(officer__exact=request.user).order_by(
+        "-request_date"
+    )
 
-    bitbytes = BitByteActivity.objects \
-        .filter(participants__exact=request.user) \
-        .order_by("-request_date")
+    bitbytes = BitByteActivity.objects.filter(
+        participants__exact=request.user
+    ).order_by("-request_date")
 
     rows = []
     for c in User.objects.filter(groups__name="candidate"):
@@ -30,20 +30,23 @@ def officer_portal(request):
             *[c in f.completed.all() for f in logistics.form_reqs.all()],
             *[c in m.completed.all() for m in logistics.misc_reqs.all()],
         ]
-        rows.append({
-            "username": info["username"],
-            "name": f"{c.first_name} {c.last_name}",
-            "overall": all(statuses),
-            "statuses": statuses,
-        })
+        rows.append(
+            {
+                "username": info["username"],
+                "name": f"{c.first_name} {c.last_name}",
+                "overall": all(statuses),
+                "statuses": statuses,
+            }
+        )
 
     headers = []
     if rows:
-        headers = \
-            ["Challenges", "Hangouts", "Interactivities", "BitByte"] \
-            + [e.title for e in logistics.event_req_objs] \
-            + [f.title for f in logistics.form_reqs.all()] \
+        headers = (
+            ["Challenges", "Hangouts", "Interactivities", "BitByte"]
+            + [e.title for e in logistics.event_req_objs]
+            + [f.title for f in logistics.form_reqs.all()]
             + [m.title for m in logistics.misc_reqs.all()]
+        )
 
     context = {
         "logistics": {

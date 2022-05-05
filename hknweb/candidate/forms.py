@@ -6,7 +6,10 @@ from dal import autocomplete
 from hknweb.candidate.models import BitByteActivity, OffChallenge
 
 
-TEXT_AREA_STYLE = "resize:none; border: none; border-radius: 0.2em; width: 23.6em; padding: 0.2em;"
+TEXT_AREA_STYLE = (
+    "resize:none; border: none; border-radius: 0.2em; width: 23.6em; padding: 0.2em;"
+)
+
 
 class ChallengeRequestForm(forms.ModelForm):
     class Meta:

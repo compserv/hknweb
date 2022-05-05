@@ -45,7 +45,6 @@ class Logistics(models.Model):
     class Meta:
         verbose_name_plural = "Logistics"
 
-
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
     date_start = models.DateField()
     date_end = models.DateField()
@@ -62,17 +61,28 @@ class Logistics(models.Model):
     form_reqs = models.ManyToManyField(FormReq, blank=True)
 
     def populate(self, user: User):
-        date_start = timezone.make_aware(datetime.combine(self.date_start, datetime.min.time()))
-        date_end = timezone.make_aware(datetime.combine(self.date_end, datetime.min.time()))
+        date_start = timezone.make_aware(
+            datetime.combine(self.date_start, datetime.min.time())
+        )
+        date_end = timezone.make_aware(
+            datetime.combine(self.date_end, datetime.min.time())
+        )
 
-        rsvps = Rsvp.objects \
-            .filter(user=user, event__start_time__range=[date_start, date_end])
+        rsvps = Rsvp.objects.filter(
+            user=user, event__start_time__range=[date_start, date_end]
+        )
 
         self.event_req_objs = self.event_reqs.all()
         for event_req in self.event_req_objs:
-            event_req_rsvps = rsvps.filter(event__event_type__in=event_req.event_types.all())
-            event_req.confirmed = [r.event for r in event_req_rsvps.filter(confirmed=True)]
-            event_req.unconfirmed = [r.event for r in event_req_rsvps.filter(confirmed=False)]
+            event_req_rsvps = rsvps.filter(
+                event__event_type__in=event_req.event_types.all()
+            )
+            event_req.confirmed = [
+                r.event for r in event_req_rsvps.filter(confirmed=True)
+            ]
+            event_req.unconfirmed = [
+                r.event for r in event_req_rsvps.filter(confirmed=False)
+            ]
             event_req.n_finished = len(event_req.confirmed)
         self.event_reqs_finished = all(e.n_finished >= e.n for e in self.event_req_objs)
 
@@ -81,23 +91,27 @@ class Logistics(models.Model):
         self.misc_confirmed = self.misc_reqs.filter(completed__in=[user])
         self.misc_unconfirmed = self.misc_reqs.exclude(completed__in=[user])
 
-        self.challenges = OffChallenge.objects \
-            .filter(requester=user, request_date__range=[date_start, date_end])
+        self.challenges = OffChallenge.objects.filter(
+            requester=user, request_date__range=[date_start, date_end]
+        )
         self.n_challenges_confirmed = sum(c.confirmed for c in self.challenges)
         self.n_challenges_rejected = sum(c.rejected for c in self.challenges)
-        self.n_challenges_pending = \
-            self.challenges.count() - self.n_challenges_confirmed - self.n_challenges_rejected
+        self.n_challenges_pending = (
+            self.challenges.count()
+            - self.n_challenges_confirmed
+            - self.n_challenges_rejected
+        )
 
         hangouts = rsvps.filter(event__event_type__type="Hangout")
         self.hangouts_confirmed = [r.event for r in hangouts.filter(confirmed=True)]
         self.hangouts_unconfirmed = [r.event for r in hangouts.filter(confirmed=False)]
 
-        self.n_interactivities = len(self.hangouts_confirmed) + self.n_challenges_confirmed
+        self.n_interactivities = (
+            len(self.hangouts_confirmed) + self.n_challenges_confirmed
+        )
 
-        self.bitbytes = BitByteActivity.objects \
-            .filter(
-                participants__exact=user,
-                request_date__range=[date_start, date_end],
-            ) \
-            .order_by("-request_date")
+        self.bitbytes = BitByteActivity.objects.filter(
+            participants__exact=user,
+            request_date__range=[date_start, date_end],
+        ).order_by("-request_date")
         self.n_bitbyte = self.bitbytes.filter(confirmed=True).count()

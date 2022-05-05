@@ -17,7 +17,7 @@ from hknweb.utils import (
 )
 
 
-def user_candidate_portal(user: User) -> dict:    
+def user_candidate_portal(user: User) -> dict:
     semester = Semester.objects.order_by("year", "-semester").last()
     logistics: Logistics = Logistics.objects.filter(semester=semester).first()
     logistics.populate(user)
@@ -45,17 +45,18 @@ def candidate_portal_view_by_username(request, username):
 @login_and_access_level(GROUP_TO_ACCESSLEVEL["candidate"])
 def candidate_portal(request):
     today = timezone.now()
-    upcoming_events = Event.objects \
-        .filter(
-            start_time__range=(today, today + timezone.timedelta(days=7)),
-            access_level__gte=get_access_level(request.user),) \
-        .order_by("start_time")
+    upcoming_events = Event.objects.filter(
+        start_time__range=(today, today + timezone.timedelta(days=7)),
+        access_level__gte=get_access_level(request.user),
+    ).order_by("start_time")
 
     form = BitByteRequestForm()
     form.fields.update(ChallengeRequestForm().fields)
     context = {
         "user_self": True,
-        "announcements": Announcement.objects.filter(visible=True).order_by("-release_date"),
+        "announcements": Announcement.objects.filter(visible=True).order_by(
+            "-release_date"
+        ),
         "upcoming_events": upcoming_events,
         **user_candidate_portal(request.user),
         "bitbyte_form": BitByteRequestForm(),
