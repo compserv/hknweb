@@ -21,6 +21,9 @@ def officer_portal(request):
     for c in User.objects.filter(groups__name="candidate"):
         info = user_candidate_portal(c)
         logistics = info["logistics"]
+        if not logistics:
+            continue
+
         statuses = [
             logistics.n_challenges_confirmed >= logistics.min_challenges,
             len(logistics.hangouts_confirmed) >= logistics.min_hangouts,

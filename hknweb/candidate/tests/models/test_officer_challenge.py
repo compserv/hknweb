@@ -33,7 +33,6 @@ class OfficerChallengeActivityModelTests(TestCase):
 
     def test_confirmed_returns_true(self):
         self.officer_challenge.officer_confirmed = True
-        self.officer_challenge.csec_confirmed = True
         self.officer_challenge.save()
 
         self.assertTrue(
@@ -41,24 +40,7 @@ class OfficerChallengeActivityModelTests(TestCase):
         )
 
     def test_confirmed_returns_false(self):
-        self.officer_challenge.officer_confirmed = True
-        self.officer_challenge.csec_confirmed = False
-        self.officer_challenge.save()
-
-        self.assertFalse(
-            OffChallenge.objects.get(id=self.officer_challenge.id).confirmed
-        )
-
         self.officer_challenge.officer_confirmed = False
-        self.officer_challenge.csec_confirmed = True
-        self.officer_challenge.save()
-
-        self.assertFalse(
-            OffChallenge.objects.get(id=self.officer_challenge.id).confirmed
-        )
-
-        self.officer_challenge.officer_confirmed = False
-        self.officer_challenge.csec_confirmed = False
         self.officer_challenge.save()
 
         self.assertFalse(
@@ -67,7 +49,6 @@ class OfficerChallengeActivityModelTests(TestCase):
 
     def test_rejected_returns_false(self):
         self.officer_challenge.officer_confirmed = True
-        self.officer_challenge.csec_confirmed = True
         self.officer_challenge.save()
 
         self.assertFalse(
@@ -75,20 +56,7 @@ class OfficerChallengeActivityModelTests(TestCase):
         )
 
     def test_rejected_returns_true(self):
-        self.officer_challenge.officer_confirmed = True
-        self.officer_challenge.csec_confirmed = False
-        self.officer_challenge.save()
-
-        self.assertTrue(OffChallenge.objects.get(id=self.officer_challenge.id).rejected)
-
         self.officer_challenge.officer_confirmed = False
-        self.officer_challenge.csec_confirmed = True
-        self.officer_challenge.save()
-
-        self.assertTrue(OffChallenge.objects.get(id=self.officer_challenge.id).rejected)
-
-        self.officer_challenge.officer_confirmed = False
-        self.officer_challenge.csec_confirmed = False
         self.officer_challenge.save()
 
         self.assertTrue(OffChallenge.objects.get(id=self.officer_challenge.id).rejected)

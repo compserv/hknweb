@@ -1,10 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.models import User
 
-from hknweb.utils import export_model_as_csv
-
 from hknweb.candidate.models import OffChallenge
-from hknweb.candidate.utils import send_challenge_confirm_email
 
 
 @admin.register(OffChallenge)

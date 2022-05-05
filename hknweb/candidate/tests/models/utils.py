@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.contrib.auth.models import User
 
 from hknweb.coursesemester.models import Semester
@@ -7,6 +8,8 @@ from hknweb.candidate.models import (
     Announcement,
     BitByteActivity,
     OffChallenge,
+    EventReq,
+    Logistics,
 )
 
 
@@ -67,9 +70,7 @@ class ModelFactory:
         }
         default_kwargs = {
             "name": "default name",
-            "description": "default description",
             "proof": "default proof",
-            "officer_comment": "default officer_comment",
         }
         kwargs = {
             **required_kwargs,
@@ -89,3 +90,36 @@ class ModelFactory:
             **kwargs,
         }
         return Announcement.objects.create(**kwargs)
+
+    @staticmethod
+    def create_event_req(**kwargs):
+        required_kwargs = {
+            "n": 3,
+        }
+        kwargs = {
+            **required_kwargs,
+            **kwargs,
+        }
+        return EventReq.objects.create(**kwargs)
+
+    @staticmethod
+    def create_default_event_req(**kwargs):
+        event_req = ModelFactory.create_event_req()
+        event_req.event_types.add(ModelFactory.create_eventtype("test_event_type"))
+        return event_req
+
+    @staticmethod
+    def create_default_logistics(**kwargs):
+        logistics: Logistics = Logistics.objects.create(
+            semester=ModelFactory.create_semester("Fa", 1990),
+            date_start=datetime.now(),
+            date_end=datetime.now(),
+            min_challenges=1,
+            min_hangouts=1,
+            num_interactivities=3,
+            num_bitbyte=3,
+        )
+
+        logistics.event_reqs.add(ModelFactory.create_default_event_req())
+
+        return logistics

@@ -1,10 +1,4 @@
-from django.conf import settings
 from django.contrib import admin
-from django.core.mail import EmailMultiAlternatives
-from django.shortcuts import reverse
-from django.template.loader import render_to_string
-
-from hknweb.utils import export_model_as_csv, get_rand_photo
 
 from hknweb.candidate.models import BitByteActivity
 

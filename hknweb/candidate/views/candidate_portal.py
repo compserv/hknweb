@@ -18,14 +18,19 @@ from hknweb.utils import (
 
 
 def user_candidate_portal(user: User) -> dict:
+    context = {
+        "username": user.username,
+        "logistics": None,
+    }
+
     semester = Semester.objects.order_by("year", "-semester").last()
     logistics: Logistics = Logistics.objects.filter(semester=semester).first()
+    if not logistics:
+        return context
     logistics.populate(user)
 
-    return {
-        "username": user.username,
-        "logistics": logistics,
-    }
+    context["logistics"] = logistics
+    return context
 
 
 @login_and_access_level(GROUP_TO_ACCESSLEVEL["member"])
