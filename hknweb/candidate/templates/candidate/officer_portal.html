@@ -12,79 +12,47 @@ Officer Portal
 {% endblock %}
 
 {% block content %}
-<div class="parent">
+    <section class="main-panel">
+        <h2>Officer Challenges</h2>
+        <div style="width: 80%; text-align: center; margin: auto;">
+            {% include 'candidate/challenges_table.html' %}
+        </div>
+    </section>
 
-    <!-- list of requested challenges -->
-    <div id='agenda' class="table-div">
-        <h3>Past Officer Challenges</h3>
+    <section class="main-panel">
+        <h2>Bit-Byte Activities</h2>
+        <div>
+            {% include 'candidate/bitbytes_table.html' %}
+        </div>
+    </section>
 
-        {% if challenge_list %}
-            <table class="full-table">
+    <section class="main-panel">
+        <h2>Candidate Summary</h2>
+        <div style="overflow: auto; white-space: nowrap;">
+            <table class="table">
                 <thead>
-                    <th>Title</th>
-                    <th>Requester</th>
-                    <th>Overall Status</th>
-                    <th>Your Response</th>
-                    <th></th>
+                    <th class="header sticky-col first-col">Name</th>
+                    <th class="header sticky-col second-col">Overall</th>
+                    {% for header in headers %}
+                        <th class="header">{{ header }}</th>
+                    {% endfor %}
                 </thead>
-
                 <tbody>
-                {% for challenge in challenge_list %}
-                    <tr>
-                        <td align="center">
-                            <a href="{% url 'candidate:detail' challenge.id%}">
-                                {{ challenge.name }}
-                            </a>
-                        </td>
-                        <td align="center">{{ challenge.requester }}</td>
-                        <td align="center">
-                            {% if challenge.confirmed %}
-                                <img src="{% static 'candidate/yes.png'%}" alt="confirmed" class="table-icon">
-                            {% elif challenge.rejected %}
-                                <img src="{% static 'candidate/no.png'%}" alt="rejected" class="table-icon">
-                            {% else %}
-                                <img src="{% static 'candidate/maybe.png'%}" alt="in progress" class="table-icon">
-                            {% endif %}
-                        </td>
-                        <td align="center">
-                            {% if challenge.officer_confirmed is False %}
-                                <img src="{% static 'candidate/no.png'%}" alt="declined" class="table-icon">
-                            {% elif challenge.officer_confirmed is True %}
-                                <img src="{% static 'candidate/yes.png'%}" alt="confirmed" class="table-icon">
-                            {% else %}
-                                <img src="{% static 'candidate/maybe.png'%}" alt="in progress" class="table-icon">
-                            {% endif %}
-                        </td>
-                        <td align="center">
-                            {% if challenge.officer_confirmed is not True %}
-                                <form action="{% url 'candidate:confirm' challenge.id %}" method="post" onsubmit="submit_button.disabled = true; return true;">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="next" value="{{ request.path }}">
-                                    <input type="submit" name="submit_button" value="Confirm" />
-                                </form>
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% endfor %}
+                    {% for row in rows %}
+                        <tr>
+                            <td class="sticky-col first-col">
+                                <a href="{% url 'candidate:candidate_portal_view_by_username' row.username %}">{{ row.name }}</a>
+                            </td>
+                            <td class="sticky-col second-col">
+                                <span class="req {% if not row.overall %}not-{% endif %}done"></span>
+                            </td>
+                            {% for s in row.statuses %}
+                                <td><span class="req {% if not s %}not-{% endif %}done"></span></td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
                 </tbody>
             </table>
-
-        {% else %}
-            <p>No requests to show.</p>
-        {% endif %}
-
-        <!-- Legend for status of challenge request -->
-        <p>
-        Confirmed <img src="{% static 'candidate/yes.png'%}" alt="confirmed" class="inline-icon">
-        Declined <img src="{% static 'candidate/no.png'%}" alt="declined" class="inline-icon">
-        Waiting for response <img src="{% static 'candidate/maybe.png'%}" alt="in progress" class="inline-icon">
-        </p>
-
-        <p>
-            Note: Both you and csec need to confirm a challenge for it to be valid.
-        </p>
-
-    </div>
-</div>
-
+        </div>
+    </section>
 {% endblock %}

@@ -1,24 +1,62 @@
-from django.views import generic
+from django.shortcuts import render
+from django.contrib.auth.models import User
 
-from hknweb.utils import method_login_and_permission
+from hknweb.utils import login_and_access_level, GROUP_TO_ACCESSLEVEL
 
-from hknweb.candidate.models import OffChallenge
+from hknweb.candidate.models import OffChallenge, BitByteActivity
+from hknweb.candidate.views.candidate_portal import user_candidate_portal
 
 
-@method_login_and_permission("candidate.view_offchallenge")
-class OfficerPortalView(generic.ListView):
-    """Officer portal.
-    List of past challenge requests for officer.
-    Non-officers can still visit this page by typing in the url,
-    but it will not have any new entries. Option to add
-    new candidates."""
+@login_and_access_level(GROUP_TO_ACCESSLEVEL["officer"])
+def officer_portal(request):
+    challenges = OffChallenge.objects.filter(officer__exact=request.user).order_by(
+        "-request_date"
+    )
 
-    template_name = "candidate/officer_portal.html"
+    bitbytes = BitByteActivity.objects.filter(
+        participants__exact=request.user
+    ).order_by("-request_date")
 
-    context_object_name = "challenge_list"
+    rows = []
+    for c in User.objects.filter(groups__name="candidate"):
+        info = user_candidate_portal(c)
+        logistics = info["logistics"]
+        if not logistics:
+            continue
 
-    def get_queryset(self):
-        result = OffChallenge.objects.filter(officer__exact=self.request.user).order_by(
-            "-request_date"
+        statuses = [
+            logistics.n_challenges_confirmed >= logistics.min_challenges,
+            len(logistics.hangouts_confirmed) >= logistics.min_hangouts,
+            logistics.n_interactivities >= logistics.num_interactivities,
+            logistics.n_bitbyte >= logistics.num_bitbyte,
+            *[e.n_finished >= e.n for e in logistics.event_req_objs],
+            *[c in f.completed.all() for f in logistics.form_reqs.all()],
+            *[c in m.completed.all() for m in logistics.misc_reqs.all()],
+        ]
+        rows.append(
+            {
+                "username": info["username"],
+                "name": f"{c.first_name} {c.last_name}",
+                "overall": all(statuses),
+                "statuses": statuses,
+            }
         )
-        return result
+
+    headers = []
+    if rows:
+        headers = (
+            ["Challenges", "Hangouts", "Interactivities", "BitByte"]
+            + [e.title for e in logistics.event_req_objs]
+            + [f.title for f in logistics.form_reqs.all()]
+            + [m.title for m in logistics.misc_reqs.all()]
+        )
+
+    context = {
+        "logistics": {
+            "challenges": challenges,
+            "bitbytes": bitbytes,
+        },
+        "headers": headers,
+        "rows": rows,
+    }
+    return render(request, "candidate/officer_portal.html", context)
