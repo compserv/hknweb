@@ -135,7 +135,7 @@
             Bit-Byte ({{ logistics.num_bitbyte }} required, {{ logistics.n_bitbyte }} finished)
         </h3>
         {% if user_self %}
-            <div class="checklist-left-col" style="width: 25%; margin-left: 0.5em;">
+            <div class="checklist-left-col request-form">
                 <form method="POST" action="{% url 'candidate:request_bitbyte' %}" onsubmit="submit_button.disabled = true; return true;">
                     {% csrf_token %}
                     <br>
@@ -162,7 +162,7 @@
                 </form>
             </div>
         {% endif %}
-        <div class="checklist-right-col" style="width: 70%;">
+        <div class="checklist-right-col remaining-request-form">
             <ul class="checkboxes">
                 {% include 'candidate/bitbytes_table.html' %}
             </ul>
@@ -175,8 +175,8 @@
             Interactivities ({{ logistics.num_interactivities }} required, {{ logistics.n_interactivities }} finished)
         </h3>
         {% if user_self %}
-            <div class="checklist-left-col" style="width: 25%; margin-left: 0.5em;">
-                <h4 style="text-align: center; margin-bottom: 0;">Submit officer challenge</h4>
+            <div class="checklist-left-col request-form">
+                <h4 style="text-align: center;">Submit officer challenge</h4>
 
                 <form method="POST" action="{% url 'candidate:request_challenge' %}" onsubmit="submit_button.disabled = true; return true;">
                     {% csrf_token %}
@@ -205,7 +205,7 @@
                 </form>
             </div>
         {% endif %}
-        <div class="checklist-right-col" style="width: 65%; margin-left: 2em;">
+        <div class="checklist-right-col remaining-request-form" style="margin-left: 2%;">
             <h4>
                 <span class="req {% if logistics.hangouts_confirmed|length < logistics.min_hangouts %}not-{% endif %}done"></span>
                 Officer Hangouts ({{ logistics.min_hangouts }} required, {{ logistics.hangouts_confirmed|length }} finished)

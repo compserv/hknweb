@@ -166,6 +166,14 @@ h2:first-child {
     margin-left: 5%;
 }
 
+.table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+    text-align: center;
+    padding: 1em;
+}
+
 .full-table {
     width: 100%;
 }
@@ -297,6 +305,7 @@ h3, h4 {
 
 h4 {
     margin-bottom: 0;
+    width: 100%;
 }
 
 .select2-container--default .select2-selection--single {
@@ -346,4 +355,25 @@ h4 {
     text-align: center;
     margin: auto;
     margin-bottom: 0.5em;
+}
+
+.request-form {
+    width: 25%;
+    margin-left: 0.5em;
+}
+
+.remaining-request-form {
+    width: 65%;
+}
+
+@media screen and (max-width: 1000px) {
+    .request-form {
+        width: 100%;
+        margin: auto;
+    }
+
+    .remaining-request-form {
+        width: 100%;
+        margin: auto;
+    }
 }
