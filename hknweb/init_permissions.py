@@ -55,7 +55,3 @@ def provision():
         ct = ContentType.objects.get_for_model(model)
         permission = Permission.objects.get(codename=codename, content_type=ct)
         officer.permissions.add(permission)
-
-
-if __name__ == "__main__":
-    provision()
