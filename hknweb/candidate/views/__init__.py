@@ -4,8 +4,7 @@ from hknweb.candidate.views.officer_challenge import (
     officer_confirm_view,
     confirm_challenge,
     officer_review_confirmation,
-    CandRequestView,
     challenge_detail_view,
 )
 from hknweb.candidate.views.officer_portal import officer_portal
-from hknweb.candidate.views.bitbyte import bitbyte
+from hknweb.candidate.views.form_request import bitbyte, officer_challenge_request

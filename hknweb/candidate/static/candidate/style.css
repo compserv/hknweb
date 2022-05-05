@@ -27,6 +27,7 @@
     position: relative;
     vertical-align: middle;
     background-size: 1.25em 1.25em;
+    bottom: 0.075em;
 }
 
 .req-title {
@@ -102,6 +103,8 @@
 section {
     background-color: #F2F2F2;
     padding: 20px;
+    border-radius: 1.25em;
+    margin-bottom: 0.5em;
 }
 
 h2:first-child {

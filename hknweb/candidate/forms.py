@@ -6,11 +6,20 @@ from dal import autocomplete
 from .models import BitByteActivity, OffChallenge
 
 
+TEXT_AREA_STYLE = "resize:none; border: none; border-radius: 0.2em; width: 23.6em; padding: 0.2em;"
+
 class ChallengeRequestForm(forms.ModelForm):
     class Meta:
         model = OffChallenge
         fields = ["name", "officer", "description", "proof"]
-        widgets = {"officer": autocomplete.ModelSelect2(url="candreq/autocomplete")}
+        widgets = {
+            "officer": autocomplete.ModelSelect2(
+                url="candreq/autocomplete",
+            ),
+            "name": forms.Textarea(attrs={"style": TEXT_AREA_STYLE, "rows": 2}),
+            "description": forms.Textarea(attrs={"style": TEXT_AREA_STYLE, "rows": 6}),
+            "proof": forms.Textarea(attrs={"style": TEXT_AREA_STYLE, "rows": 3}),
+        }
 
 
 class ChallengeConfirmationForm(forms.ModelForm):
@@ -34,7 +43,8 @@ class BitByteRequestForm(forms.ModelForm):
         widgets = {
             "participants": autocomplete.ModelSelect2Multiple(
                 url="bitbyte/autocomplete"
-            )
+            ),
+            "proof": forms.Textarea(attrs={"style": TEXT_AREA_STYLE, "rows": 3}),
         }
 
     def __init__(self, *args, **kwargs):

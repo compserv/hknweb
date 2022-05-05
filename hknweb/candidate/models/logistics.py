@@ -81,12 +81,12 @@ class Logistics(models.Model):
         self.misc_confirmed = self.misc_reqs.filter(completed__in=[user])
         self.misc_unconfirmed = self.misc_reqs.exclude(completed__in=[user])
 
-        challenges = OffChallenge.objects \
+        self.challenges = OffChallenge.objects \
             .filter(requester=user, request_date__range=[date_start, date_end])
-        self.n_challenges_confirmed = sum(c.confirmed for c in challenges)
-        self.n_challenges_rejected = sum(c.rejected for c in challenges)
+        self.n_challenges_confirmed = sum(c.confirmed for c in self.challenges)
+        self.n_challenges_rejected = sum(c.rejected for c in self.challenges)
         self.n_challenges_pending = \
-            challenges.count() - self.n_challenges_confirmed - self.n_challenges_rejected
+            self.challenges.count() - self.n_challenges_confirmed - self.n_challenges_rejected
 
         hangouts = rsvps.filter(event__event_type__type="Hangout")
         self.hangouts_confirmed = [r.event for r in hangouts.filter(confirmed=True)]

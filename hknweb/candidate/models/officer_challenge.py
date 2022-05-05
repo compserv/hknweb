@@ -44,17 +44,15 @@ class OffChallenge(models.Model):
     officer_comment = models.TextField(max_length=MAX_TXTLEN, blank=True, default="")
     # whether officer confirmed this request, null when unreviewed
     officer_confirmed = models.BooleanField(null=True)
-    # whether corresponding secretary or other admin has confirmed this request, null when unreviewed
-    csec_confirmed = models.BooleanField(null=True)
     request_date = models.DateTimeField(auto_now_add=True)
 
     @property
     def confirmed(self):
-        return self.officer_confirmed is True and self.csec_confirmed is True
+        return self.officer_confirmed is True
 
     @property
     def rejected(self):
-        return self.officer_confirmed is False or self.csec_confirmed is False
+        return self.officer_confirmed is False
 
     def __str__(self):
         return self.name

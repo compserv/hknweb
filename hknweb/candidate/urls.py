@@ -7,7 +7,7 @@ urlpatterns = [
     path("", views.candidate_portal, name="candidate_portal"),
     path("portal/<username>", views.candidate_portal_view_by_username, name="viewcand"),
     # candidate end of officer challenge requests
-    path("candreq", views.CandRequestView.as_view(), name="candrequests"),
+    path("candreq", views.officer_challenge_request, name="candrequests"),
     # officer end of officer challenge requests
     path("officer", views.officer_portal, name="officer"),
     path("bitbyte", views.bitbyte, name="bitbyte"),
