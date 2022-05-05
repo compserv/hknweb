@@ -47,4 +47,3 @@ def access_slotfields_at_hour(form, hour):
 @register.inclusion_tag("tutoring/officer_card.html")
 def officer_card(officer_str):
     return {"officer": ast.literal_eval(officer_str)}
-
