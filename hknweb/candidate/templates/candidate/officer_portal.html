@@ -41,7 +41,7 @@ Officer Portal
                     {% for row in rows %}
                         <tr>
                             <td class="sticky-col first-col">
-                                <a href="{% url 'candidate:candidate_portal_view_by_username' row.username %}">{{ row.name }}</a>
+                                <a href="{% url 'candidate:candidate_portal_view_by_username' row.username %}">{{ row.name }} ({{ row.username }})</a>
                             </td>
                             <td class="sticky-col second-col">
                                 <span class="req {% if not row.overall %}not-{% endif %}done"></span>
