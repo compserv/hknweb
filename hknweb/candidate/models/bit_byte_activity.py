@@ -1,6 +1,6 @@
 from django.db import models
 
-from hknweb.candidate.models.constants import MAX_TXTLEN
+from hknweb.candidate.models.constants import MAX_STRLEN
 
 
 class BitByteActivity(models.Model):
@@ -16,11 +16,11 @@ class BitByteActivity(models.Model):
     participants = models.ManyToManyField("auth.User")
     # whether VP/Csec confirmed this request, null when unreviewed
     confirmed = models.BooleanField(null=True)
-    proof = models.TextField(
-        max_length=MAX_TXTLEN, blank=False, default=""
+    proof = models.CharField(
+        max_length=MAX_STRLEN, blank=False, default=""
     )  # notes and link by candidate
-    notes = models.TextField(
-        max_length=MAX_TXTLEN, blank=True, default=""
+    notes = models.CharField(
+        max_length=MAX_STRLEN, blank=True, default=""
     )  # notes by VP
     request_date = models.DateTimeField(auto_now_add=True)
 

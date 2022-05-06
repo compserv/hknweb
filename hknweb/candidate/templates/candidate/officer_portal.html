@@ -3,6 +3,32 @@
 
 {% block header %}
 <link rel="stylesheet" href="{% static "candidate/style.css" %}">
+<script>
+    function checkoff_req(button, logistics_id, type, obj_title, user_id, operation) {
+        button.disabled = true;
+
+        var formData = new FormData();
+        formData.append("logistics_id", logistics_id);
+        formData.append("type", type);
+        formData.append("obj_title", obj_title);
+        formData.append("user_id", user_id);
+        formData.append("operation", operation);
+
+        var xhr = new XMLHttpRequest();
+
+        xhr.onreadystatechange = function () {
+            if (this.readyState != 4) return;
+
+            if (this.status == 200) {
+                window.location = window.location;
+            }
+        };
+
+        xhr.open("POST", "{% url 'candidate:checkoff_req' %}", true);
+        xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+        xhr.send(formData);
+    }
+</script>
 {% endblock %}
 
 {% block title %}Officer Portal{% endblock %}
@@ -41,13 +67,22 @@ Officer Portal
                     {% for row in rows %}
                         <tr>
                             <td class="sticky-col first-col">
-                                <a href="{% url 'candidate:candidate_portal_view_by_username' row.username %}">{{ row.name }}</a>
+                                <a href="{% url 'candidate:candidate_portal_view_by_username' row.username %}">{{ row.name }} ({{ row.username }})</a>
                             </td>
                             <td class="sticky-col second-col">
                                 <span class="req {% if not row.overall %}not-{% endif %}done"></span>
                             </td>
                             {% for s in row.statuses %}
                                 <td><span class="req {% if not s %}not-{% endif %}done"></span></td>
+                            {% endfor %}
+                            {% for info in row.checkoffs %}
+                                <td>
+                                    <input
+                                        type="checkbox"
+                                        {% if info.status %}checked{% endif %}
+                                        onclick="checkoff_req(this, '{{ info.logistics_id }}', '{{ info.type }}', '{{ info.obj_title }}', '{{ info.user_id }}', '{{ info.operation }}')"
+                                    >
+                                </td>
                             {% endfor %}
                         </tr>
                     {% endfor %}

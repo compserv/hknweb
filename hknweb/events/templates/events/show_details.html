@@ -131,17 +131,8 @@
                 </td>
             </tr>
             <tr>
-                <th>
-                    Name
-                </th>
-                <th>
-                    Confirmed
-                </th>
-                {% if user_access_level == "Internal" %}
-                    <th>
-                        Action
-                    </th>
-                {% endif %}
+                <th>Name</th>
+                <th>Confirmed</th>
             </tr>
             <tbody>
                 {% if rsvp_type_data.data %}
@@ -151,21 +142,23 @@
                                 {{ rsvp.user.first_name }} {{ rsvp.user.last_name }} ({{ rsvp.user.username }})
                             </td>
                             {% if rsvp.confirmed %}
-                                <td>
-                                    <img src="{% static 'candidate/yes.png'%}" alt="confirmed" class="table-icon">
-                                </td>
                                 {% if user_access_level == "Internal" %}
                                     <td>
-                                        <button onclick="RSVP(this, '{% url 'events:confirm_rsvp' rsvp.id 1 %}')">Un-confirm</button>
+                                        <input type="checkbox" checked="False" onclick="RSVP(this, '{% url 'events:confirm_rsvp' rsvp.id 1 %}')">
+                                    </td>
+                                {% else %}
+                                    <td>
+                                        <img src="{% static 'candidate/yes.png'%}" alt="confirmed" class="table-icon">
                                     </td>
                                 {% endif %}
                             {% else %}
-                                <td>
-                                    <img src="{% static 'candidate/maybe.png'%}" alt="not yet confirmed" class="table-icon">
-                                </td>
                                 {% if user_access_level == "Internal" %}
                                     <td>
-                                        <button onclick="RSVP(this, '{% url 'events:confirm_rsvp' rsvp.id 0 %}')">Confirm</button>
+                                        <input type="checkbox" onclick="RSVP(this, '{% url 'events:confirm_rsvp' rsvp.id 0 %}')">
+                                    </td>
+                                {% else %}
+                                    <td>
+                                        <img src="{% static 'candidate/maybe.png'%}" alt="not yet confirmed" class="table-icon">
                                     </td>
                                 {% endif %}
                             {% endif %}

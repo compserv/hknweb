@@ -8,7 +8,7 @@ from hknweb.events.models import EventType, Rsvp
 from hknweb.coursesemester.models import Semester
 
 from hknweb.candidate.models import OffChallenge, BitByteActivity
-from hknweb.candidate.models.constants import MAX_STRLEN, MAX_TXTLEN
+from hknweb.candidate.models.constants import MAX_STRLEN
 
 
 class BaseReq(models.Model):
@@ -28,7 +28,7 @@ class ExternalReq(BaseReq):
 
 
 class MiscReq(ExternalReq):
-    description = models.TextField(max_length=MAX_TXTLEN, blank=True, default="")
+    description = models.CharField(max_length=MAX_STRLEN, blank=True, default="")
 
     def __str__(self):
         return f"{self.title}: {self.description}"

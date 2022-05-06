@@ -1,3 +1,5 @@
+from typing import Union
+
 from django.utils import timezone
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -17,14 +19,20 @@ from hknweb.utils import (
 )
 
 
+def get_logistics() -> Union[None, Logistics]:
+    semester = Semester.objects.order_by("year", "-semester").last()
+    logistics: Logistics = Logistics.objects.filter(semester=semester).first()
+
+    return logistics
+
+
 def user_candidate_portal(user: User) -> dict:
     context = {
         "username": user.username,
         "logistics": None,
     }
 
-    semester = Semester.objects.order_by("year", "-semester").last()
-    logistics: Logistics = Logistics.objects.filter(semester=semester).first()
+    logistics = get_logistics()
     if not logistics:
         return context
     logistics.populate(user)

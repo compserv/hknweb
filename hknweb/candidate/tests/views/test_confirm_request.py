@@ -3,6 +3,7 @@ from django.urls import reverse
 from hknweb.candidate.models import OffChallenge, BitByteActivity
 
 from hknweb.candidate.tests.views.utils import CandidateViewTestsBase
+from hknweb.candidate.tests.models.utils import ModelFactory
 
 
 class ConfirmRequestViewTests(CandidateViewTestsBase):
@@ -67,3 +68,24 @@ class ConfirmRequestViewTests(CandidateViewTestsBase):
         self.client.logout()
 
         self.assertEqual(response.status_code, 302)
+
+    def test_checkoff_req_post_returns_200(self):
+        self.client.login(username=self.officer.username, password=self.password)
+
+        logistics = ModelFactory.create_default_logistics()
+        misc_req = ModelFactory.create_misc_req()
+        logistics.misc_reqs.add(misc_req)
+        logistics.save()
+
+        data = {
+            "logistics_id": logistics.id,
+            "type": "misc_req",
+            "obj_title": misc_req.title,
+            "user_id": self.candidate.id,
+            "operation": "0",
+        }
+        response = self.client.post(reverse("candidate:checkoff_req"), data=data)
+
+        self.client.logout()
+
+        self.assertEqual(response.status_code, 200)

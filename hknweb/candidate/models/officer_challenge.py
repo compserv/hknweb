@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.db import models
 
-from hknweb.candidate.models.constants import MAX_STRLEN, MAX_TXTLEN
+from hknweb.candidate.models.constants import MAX_STRLEN
 
 
 class OffChallenge(models.Model):
@@ -37,7 +37,7 @@ class OffChallenge(models.Model):
         related_name="given_challenges",
     )
     name = models.CharField(max_length=MAX_STRLEN, default="", verbose_name="title")
-    proof = models.TextField(max_length=MAX_TXTLEN, blank=True, default="")
+    proof = models.CharField(max_length=MAX_STRLEN, blank=True, default="")
     # whether officer confirmed this request, null when unreviewed
     officer_confirmed = models.BooleanField(null=True)
     request_date = models.DateTimeField(auto_now_add=True)

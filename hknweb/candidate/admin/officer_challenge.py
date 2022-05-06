@@ -12,9 +12,7 @@ class OffChallengeAdmin(admin.ModelAdmin):
         "officer",
         "name",
         "officer_confirmed",
-        "description",
         "proof",
-        "officer_comment",
         "request_date",
     ]
     readonly_fields = ["request_date"]
