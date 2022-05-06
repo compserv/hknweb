@@ -26,6 +26,11 @@ urlpatterns = [
         views.confirm_bitbyte,
         name="confirm_bitbyte",
     ),
+    path(
+        "checkoff_req",
+        views.checkoff_req,
+        name="checkoff_req",
+    ),
     # Autocomplete
     path(
         "autocomplete/officer",

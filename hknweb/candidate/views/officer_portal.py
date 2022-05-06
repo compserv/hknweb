@@ -1,4 +1,4 @@
-from typing import DefaultDict
+from typing import DefaultDict, Tuple, List, Dict, Union
 from collections import Counter, defaultdict
 
 from django.shortcuts import render
@@ -6,10 +6,10 @@ from django.contrib.auth.models import User
 from django.db.models import Count, QuerySet, F
 
 from hknweb.utils import login_and_access_level, GROUP_TO_ACCESSLEVEL
-from hknweb.coursesemester.models import Semester
 from hknweb.events.models import Rsvp
 
 from hknweb.candidate.models import OffChallenge, BitByteActivity, Logistics
+from hknweb.candidate.views.candidate_portal import get_logistics
 
 
 @login_and_access_level(GROUP_TO_ACCESSLEVEL["officer"])
@@ -25,10 +25,9 @@ def officer_portal(request):
         },
     }
 
-    semester = Semester.objects.order_by("year", "-semester").last()
-    logistics: Logistics = Logistics.objects.filter(semester=semester).first()
+    logistics = get_logistics()
     if not logistics:
-        return context
+        return render(request, "candidate/officer_portal.html", context)
 
     candidates = User.objects.filter(groups__name="candidate")
 
@@ -52,21 +51,24 @@ def officer_portal(request):
     rows = []
     for c in candidates:
         c_id = c.id
+        checkoffable_statuses, checkoffs = \
+            get_checkoff_info(logistics, c_id, form_reqs, misc_reqs)
         statuses = [
             challenges[c_id],
             hangouts[c_id],
             interactivites[c_id],
             bitbytes[c_id],
             *[c_id in e for e in event_reqs.values()],
-            *[c_id in f for f in form_reqs.values()],
-            *[c_id in m for m in misc_reqs.values()],
         ]
+        overall_status = all(statuses) and all(checkoffable_statuses)
+
         rows.append(
             {
                 "username": c.username,
                 "name": f"{c.first_name} {c.last_name}",
-                "overall": all(statuses),
+                "overall": overall_status,
                 "statuses": statuses,
+                "checkoffs": checkoffs,
             }
         )
 
@@ -75,6 +77,35 @@ def officer_portal(request):
         "rows": rows,
     })
     return render(request, "candidate/officer_portal.html", context)
+
+
+def get_checkoff_info(
+    logistics: Logistics,
+    c_id: int,
+    form_reqs: DefaultDict[str, set],
+    misc_reqs: DefaultDict[str, set],
+) -> Tuple[List[bool], List[Dict[str, Union[str, int]]]]:
+    form_req_statuses = [c_id in f for f in form_reqs.values()]
+    misc_req_statuses = [c_id in m for m in misc_reqs.values()]
+
+    info = [
+        ("form_req", form_reqs, form_req_statuses),
+        ("misc_req", misc_reqs, misc_req_statuses),
+    ]
+    checkoffs = []
+    for type, reqs, statuses in info:
+        for title, s in zip(reqs, statuses):
+            checkoffs.append({
+                "logistics_id": logistics.id,
+                "type": type,
+                "obj_title": title,
+                "user_id": c_id,
+                "operation": int(s),
+                "status": s,
+            })
+
+    statuses = form_req_statuses + misc_req_statuses
+    return statuses, checkoffs
 
 
 def filter_by_completed(c: Counter, m: int) -> Counter:
