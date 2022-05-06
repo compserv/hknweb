@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.db import models
 
-from hknweb.candidate.models.constants import MAX_STRLEN, MAX_TXTLEN
+from hknweb.candidate.models.constants import MAX_STRLEN
 
 
 class OffChallenge(models.Model):
