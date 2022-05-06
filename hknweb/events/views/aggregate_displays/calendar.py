@@ -1,3 +1,5 @@
+from typing import List
+
 from django.shortcuts import render
 
 from hknweb.models import Profile
@@ -9,23 +11,46 @@ from hknweb.events.google_calendar_utils import get_calendar_link
 
 @allow_public_access
 def index(request):
-    return calendar_helper(request)
+    event_type_types = request.GET.get("event_types", None)
+    if event_type_types:
+        event_type_types = event_type_types.split(",")
+
+    rsvpd_display = request.GET.get("rsvpd", "show") != "hide"
+    not_rsvpd_display = request.GET.get("not_rsvpd", "show") != "hide"
+
+    return calendar_helper(
+        request,
+        event_type_types=event_type_types,
+        rsvpd_display=rsvpd_display,
+        not_rsvpd_display=not_rsvpd_display,
+    )
 
 
-def calendar_helper(request, event_type: str = None):
+def calendar_helper(
+    request,
+    event_type_types: List[str] = None,
+    rsvpd_display=True,
+    not_rsvpd_display=True,
+):
     user_access_level = get_access_level(request.user)
 
     events = Event.objects.order_by("-start_time").filter(
         access_level__gte=user_access_level
     )
-    event_types = EventType.objects.order_by("type")
-    if event_type is not None:
-        events = events.filter(event_type__type=event_type)
-        event_types = event_types.filter(type=event_type)
+    if not rsvpd_display:
+        events = events.exclude(rsvp__user=request.user)
+    if not not_rsvpd_display:
+        events = events.filter(rsvp__user=request.user)
+
+    all_event_types = event_types = EventType.objects.order_by("type")
+    if event_type_types:
+        events = events.filter(event_type__type__in=event_type_types)
+        event_types = all_event_types.filter(type__in=event_type_types)
 
     context = {
         "events": events,
         "event_types": event_types,
+        "all_event_types": all_event_types,
         "calendars": get_calendars(request, user_access_level),
     }
     return render(request, "events/index.html", context)
