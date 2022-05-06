@@ -10,6 +10,7 @@ from hknweb.candidate.models import (
     OffChallenge,
     EventReq,
     Logistics,
+    MiscReq,
 )
 
 
@@ -123,3 +124,15 @@ class ModelFactory:
         logistics.event_reqs.add(ModelFactory.create_default_event_req())
 
         return logistics
+
+    @staticmethod
+    def create_misc_req(**kwargs):
+        required_kwargs = {
+            "title": "test_title",
+            "description": "test_description",
+        }
+        kwargs = {
+            **required_kwargs,
+            **kwargs,
+        }
+        return MiscReq.objects.create(**kwargs)
