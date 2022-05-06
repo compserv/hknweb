@@ -17,7 +17,7 @@ class Event(models.Model):
     end_time = models.DateTimeField()
     location = models.CharField(max_length=255)
     event_type = models.ForeignKey(EventType, models.CASCADE)
-    description = MarkdownxField()
+    description = MarkdownxField(max_length=500)
     rsvp_limit = models.PositiveIntegerField(null=True, blank=True)
     access_level = models.IntegerField(
         choices=ACCESS_LEVELS,
