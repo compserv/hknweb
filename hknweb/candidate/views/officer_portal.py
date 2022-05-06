@@ -16,12 +16,12 @@ from hknweb.candidate.views.candidate_portal import get_logistics
 def officer_portal(request):
     context = {
         "logistics": {
-            "challenges": OffChallenge.objects \
-                            .filter(officer__exact=request.user) \
-                            .order_by("-request_date"),
-            "bitbytes": BitByteActivity.objects \
-                            .filter(participants__exact=request.user) \
-                            .order_by("-request_date"),
+            "challenges": OffChallenge.objects.filter(
+                officer__exact=request.user
+            ).order_by("-request_date"),
+            "bitbytes": BitByteActivity.objects.filter(
+                participants__exact=request.user
+            ).order_by("-request_date"),
         },
     }
 
@@ -51,8 +51,9 @@ def officer_portal(request):
     rows = []
     for c in candidates:
         c_id = c.id
-        checkoffable_statuses, checkoffs = \
-            get_checkoff_info(logistics, c_id, form_reqs, misc_reqs)
+        checkoffable_statuses, checkoffs = get_checkoff_info(
+            logistics, c_id, form_reqs, misc_reqs
+        )
         statuses = [
             challenges[c_id],
             hangouts[c_id],
@@ -72,10 +73,12 @@ def officer_portal(request):
             }
         )
 
-    context.update({
-        "headers": headers,
-        "rows": rows,
-    })
+    context.update(
+        {
+            "headers": headers,
+            "rows": rows,
+        }
+    )
     return render(request, "candidate/officer_portal.html", context)
 
 
@@ -95,67 +98,75 @@ def get_checkoff_info(
     checkoffs = []
     for type, reqs, statuses in info:
         for title, s in zip(reqs, statuses):
-            checkoffs.append({
-                "logistics_id": logistics.id,
-                "type": type,
-                "obj_title": title,
-                "user_id": c_id,
-                "operation": int(s),
-                "status": s,
-            })
+            checkoffs.append(
+                {
+                    "logistics_id": logistics.id,
+                    "type": type,
+                    "obj_title": title,
+                    "user_id": c_id,
+                    "operation": int(s),
+                    "status": s,
+                }
+            )
 
     statuses = form_req_statuses + misc_req_statuses
     return statuses, checkoffs
 
 
 def filter_by_completed(c: Counter, m: int) -> Counter:
-    return c - Counter({k: m-1 for k in c})
+    return c - Counter({k: m - 1 for k in c})
 
 
 class Bulk:
     @staticmethod
     def challenges(candidates: QuerySet) -> Counter:
-        challenges = OffChallenge.objects \
-            .filter(
+        challenges = (
+            OffChallenge.objects.filter(
                 requester__in=candidates,
                 officer_confirmed=True,
-            ) \
-            .values_list("requester") \
+            )
+            .values_list("requester")
             .annotate(Count("requester"))
+        )
         return Counter(dict(challenges))
 
     @staticmethod
     def hangouts(candidates: QuerySet) -> Counter:
-        hangouts = Rsvp.objects \
-            .filter(
+        hangouts = (
+            Rsvp.objects.filter(
                 event__event_type__type="Hangout",
                 user__in=candidates,
                 confirmed=True,
-            ) \
-            .values_list("user") \
+            )
+            .values_list("user")
             .annotate(Count("user"))
+        )
         return Counter(dict(hangouts))
 
     @staticmethod
     def bitbytes(candidates: QuerySet) -> Counter:
-        bitbytes = BitByteActivity.objects \
-            .filter(
+        bitbytes = (
+            BitByteActivity.objects.filter(
                 participants__in=candidates,
                 confirmed=True,
-            ) \
-            .values_list("participants") \
+            )
+            .values_list("participants")
             .annotate(Count("participants"))
+        )
         return Counter(dict(bitbytes))
 
     @staticmethod
-    def event_reqs(candidates: QuerySet, logistics: Logistics) -> DefaultDict[str, Counter]:
-        candidate_rsvps = Rsvp.objects \
-            .filter(
+    def event_reqs(
+        candidates: QuerySet, logistics: Logistics
+    ) -> DefaultDict[str, Counter]:
+        candidate_rsvps = (
+            Rsvp.objects.filter(
                 confirmed=True,
                 user__in=candidates,
-            ) \
-            .values_list("event__event_type__type", "user__id") \
+            )
+            .values_list("event__event_type__type", "user__id")
             .annotate(count=Count(F("event__event_type__type") + F("user__id")))
+        )
 
         events_info = defaultdict(Counter)
         for t, u, c in candidate_rsvps:
@@ -173,8 +184,7 @@ class Bulk:
     @staticmethod
     def _reqs_helper(reqs: QuerySet) -> DefaultDict[str, set]:
         res: DefaultDict[int, set] = defaultdict(set)
-        misc_reqs = reqs \
-            .values_list("title", "completed")
+        misc_reqs = reqs.values_list("title", "completed")
         for m_id, c_id in misc_reqs:
             if not c_id:
                 res[m_id]
