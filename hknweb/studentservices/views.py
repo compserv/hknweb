@@ -37,7 +37,7 @@ def resume_critique_submit(request):
 
 @allow_public_access
 def reviewsessions(request):
-    return calendar_helper(request, event_type_types=["Review Session"])
+    return calendar_helper(request, "Review Sessions", event_type_types=["Review Session"])
 
 
 @allow_public_access

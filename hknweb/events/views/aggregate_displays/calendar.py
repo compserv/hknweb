@@ -20,17 +20,21 @@ def index(request):
 
     return calendar_helper(
         request,
+        "Events",
         event_type_types=event_type_types,
         rsvpd_display=rsvpd_display,
         not_rsvpd_display=not_rsvpd_display,
+        show_sidebar=True,
     )
 
 
 def calendar_helper(
     request,
+    title,
     event_type_types: List[str] = None,
     rsvpd_display=True,
     not_rsvpd_display=True,
+    show_sidebar=False,
 ):
     user_access_level = get_access_level(request.user)
 
@@ -49,9 +53,11 @@ def calendar_helper(
 
     context = {
         "events": events,
+        "title": title,
         "event_types": event_types,
         "all_event_types": all_event_types,
         "calendars": get_calendars(request, user_access_level),
+        "show_sidebar": show_sidebar,
     }
     return render(request, "events/index.html", context)
 
