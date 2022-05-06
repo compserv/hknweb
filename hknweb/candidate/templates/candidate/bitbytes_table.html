@@ -32,7 +32,13 @@
                             {% endfor %}
                         </td>
                         <td align="center">{{ bitbyte.request_date|date }}</td>
-                        <td class="table-column-max" align="center">{{ bitbyte.proof }}</td>
+                        <td class="table-column-max" align="center">
+                            {% if bitbyte.proof|is_link %}
+                                <a href="{{ bitbyte.proof }}">link</a>
+                            {% else %}
+                                {{ bitbyte.proof }}
+                            {% endif %}
+                        </td>
                         <td class="table-column-max" align="center">{{ bitbyte.notes }}</td>
                         {% if user_self is None and request.user|has_group:"officer" %}
                             <td align="center">
