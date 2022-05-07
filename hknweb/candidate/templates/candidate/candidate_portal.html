@@ -102,12 +102,12 @@
             </h3>
             <ul class="events-list conf-events">
                 {% for f in logistics.forms_confirmed %}
-                    <li><a href="{{ f.link }}">{{ f.title }}</a></li>
+                    <li><a href="{{ f.link }}">{{ f.display }}</a></li>
                 {% endfor %}
             </ul>
             <ul class="events-list unconf-events">
                 {% for f in logistics.forms_unconfirmed %}
-                    <li><a href="{{ f.link }}">{{ f.title }}</a></li>
+                    <li><a href="{{ f.link }}">{{ f.display }}</a></li>
                 {% endfor %}
             </ul>
 
@@ -118,12 +118,12 @@
             </h3>
             <ul class="events-list conf-events">
                 {% for m in logistics.misc_confirmed %}
-                    <li>{{ m.title }} - {{ m.description }}</li>
+                    <li>{{ m }}</li>
                 {% endfor %}
             </ul>
             <ul class="events-list unconf-events">
                 {% for m in logistics.misc_unconfirmed %}
-                    <li>{{ m.title }} - {{ m.description }}</li>
+                    <li>{{ m }}</li>
                 {% endfor %}
             </ul>
         </div>

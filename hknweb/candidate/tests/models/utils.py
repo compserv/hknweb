@@ -10,6 +10,7 @@ from hknweb.candidate.models import (
     OffChallenge,
     EventReq,
     Logistics,
+    FormReq,
     MiscReq,
 )
 
@@ -130,9 +131,23 @@ class ModelFactory:
         required_kwargs = {
             "title": "test_title",
             "description": "test_description",
+            "due_date": "test_due_date",
         }
         kwargs = {
             **required_kwargs,
             **kwargs,
         }
         return MiscReq.objects.create(**kwargs)
+
+    @staticmethod
+    def create_form_req(**kwargs):
+        required_kwargs = {
+            "title": "test_title",
+            "link": "test_description",
+            "due_date": "test_due_date",
+        }
+        kwargs = {
+            **required_kwargs,
+            **kwargs,
+        }
+        return FormReq.objects.create(**kwargs)
