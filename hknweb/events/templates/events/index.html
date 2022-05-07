@@ -55,8 +55,45 @@
             {% endfor %}]
         });
 
+        {% if request.GET.nav %}
+            for (let step = 0; step < {{ request.GET.nav }}; step++) {
+                calendar.next();
+            }
+            for (let step = 0; step > {{ request.GET.nav }}; step--) {
+                calendar.prev();
+            }
+        {% endif %}
+
         calendar.render();
     });
+
+    function nav_button_onclick(class_name, default_count, incr) {
+        console.log(class_name, default_count, incr);
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has("nav")) {
+            urlParams.set("nav", parseInt(urlParams.get("nav")) + incr);
+        } else {
+            urlParams.set("nav", default_count);
+        }
+
+        if (history.pushState) {
+            var newurl = window.location.origin + window.location.pathname + "?" + urlParams.toString();
+            window.history.replaceState({path: newurl}, "", newurl);
+        }
+
+        decorate_nav_buttons();
+    }
+
+    function decorate_nav_buttons() {
+        document
+            .getElementsByClassName("fc-next-button")[0]
+            .addEventListener("click", function() { nav_button_onclick("fc-next-button", "1", 1); });
+        document
+            .getElementsByClassName("fc-prev-button")[0]
+            .addEventListener("click", function() { nav_button_onclick("fc-prev-button", "-1", -1); });
+    }
+
+    window.addEventListener("load", decorate_nav_buttons);
 
     function change_event_type(button, event_type) {
         button.disabled = true;
@@ -89,8 +126,13 @@
     function clear_filters(button) {
         button.disabled = true;
 
+        const urlParams = new URLSearchParams(window.location.search);
+        urlParams.delete("rsvpd");
+        urlParams.delete("unrsvpd");
+        urlParams.delete("event_types");
+
         if (history.pushState) {
-            var newurl = window.location.origin + window.location.pathname;
+            var newurl = window.location.origin + window.location.pathname + "?" + urlParams.toString();
             window.history.replaceState({path: newurl}, "", newurl);
         }
 
