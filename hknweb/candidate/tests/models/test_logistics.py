@@ -11,3 +11,8 @@ class LogisticsModelTests(TestCase):
 
     def test_populate(self):
         self.logistics.populate(ModelFactory.create_user(username="test_candidate"))
+
+    def test_str(self):
+        str(ModelFactory.create_default_event_req())
+        str(ModelFactory.create_form_req())
+        str(ModelFactory.create_misc_req())
