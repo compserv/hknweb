@@ -191,7 +191,7 @@ Upcoming {{ title }}
 {% endblock %}
 
 {% block content %}
-<div class="center measure-extremelywide" style="vertical-align: top;">
+<div class="center measure-extremelywide" style="vertical-align: top; overflow: auto;">
     <div style="text-align: center;">
         {% if messages %}
             {% for message in messages %}
@@ -209,7 +209,7 @@ Upcoming {{ title }}
         </p>
     {% endif %}
 
-    <div style="left: 12.5%; position: relative;">
+    <div style="left: 12.5%; position: relative; overflow: auto; min-width: 1000px;">
         <!-- FullCalendar -->
         <div style="width: 75%; display: inline-block; vertical-align: top;">
             <section id='calendar'></section>
