@@ -25,20 +25,28 @@ class EventReq(BaseReq):
 
 class ExternalReq(BaseReq):
     completed = models.ManyToManyField(User, blank=True)
+    due_date = models.CharField(max_length=MAX_STRLEN, blank=True, default="")
 
 
 class MiscReq(ExternalReq):
     description = models.CharField(max_length=MAX_STRLEN, blank=True, default="")
 
     def __str__(self):
-        return f"{self.title}: {self.description}"
+        due_date = f"(due {self.due_date})" if self.due_date else "(no due date)"
+        description = self.description or "No description"
+        return f"{self.title} {due_date} - {description}"
 
 
 class FormReq(ExternalReq):
     link = models.CharField(max_length=MAX_STRLEN)
 
-    def __str__(self):
-        return f"{self.title}: {self.link}"
+    def __str__(self, include_link=True):
+        due_date = f"(due {self.due_date})" if self.due_date else "(no due date)"
+        link = f"- self.link" if include_link else ""
+        return f"{self.title} {due_date} {link}"
+
+    def display(self):
+        return str(self, include_link=False)
 
 
 class Logistics(models.Model):
