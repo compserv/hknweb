@@ -25,6 +25,35 @@
     width: 49%;
     float: right;
 }
+@media screen and (max-width: 1000px) {
+    #left-details {
+        padding-left: 4%;
+        padding-right: 4%;
+        width: 90%;
+        float: none;
+    }
+    
+    #right-details {
+        padding-left: 4%;
+        padding-right: 4%;
+        width: 90%;
+        float: none;
+    }
+
+    .left-half {
+        width: 90%;
+        float: none;
+        padding-left: 4%;
+        padding-right: 4%;
+    }
+    
+    .right-half {
+        width: 90%;
+        float: none;
+        padding-left: 4%;
+        padding-right: 4%;
+    }
+}
 
 .aligned {
     float: left;
