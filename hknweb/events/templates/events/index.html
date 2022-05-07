@@ -159,7 +159,7 @@ Upcoming {{ title }}
     </div>
 
     {% if calendars %}
-        <p>
+        <p style="text-align: center;">
             Add HKN's calendars to your own Google Calendar! 
             {% for calendar in calendars %}
                 <a href="{{ calendar.link }}">{{ calendar.name }}</a> {{ calendar.separator }}
