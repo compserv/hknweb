@@ -1,3 +1,4 @@
+from typing import Iterable
 from urllib.parse import urlparse
 
 from django import template
@@ -13,3 +14,8 @@ def has_group(user, group_name):
 @register.filter(name="is_link")
 def is_link(s: str):
     return urlparse(s).netloc
+
+
+@register.filter(name="zip")
+def zip_filter(a: Iterable, b: Iterable):
+    return zip(a, b)
