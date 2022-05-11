@@ -380,3 +380,7 @@ h4 {
         margin: auto;
     }
 }
+
+tr.border-top td {
+    border-top: 0.1em solid grey;
+}

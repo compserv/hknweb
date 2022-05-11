@@ -1,7 +1,7 @@
 import urllib
 import json
 from django.http import HttpResponseRedirect
-from django.contrib.auth.models import User
+from django.contrib.auth.models import Group
 from hknweb.forms import (
     ProfileForm,
     SignupForm,
@@ -13,7 +13,7 @@ from django.contrib.auth import login, update_session_auth_hash
 from django.contrib.auth import authenticate
 from django.contrib import messages
 from django.conf import settings
-from hknweb.models import Profile
+from hknweb.models import Profile, CandidateProvisioningPassword
 from hknweb.coursesemester.models import Semester
 from hknweb.utils import allow_all_logged_in_users, allow_public_access
 import datetime
@@ -69,6 +69,17 @@ def account_create(request):
             profile = Profile.objects.get(user=user)
             profile.candidate_semester = get_current_cand_semester()
             profile.save()
+
+            candidate_password_obj = CandidateProvisioningPassword.objects.last()
+            if candidate_password_obj:
+                candidate_password = candidate_password_obj.password
+                if (
+                    candidate_password.lower()
+                    == form.cleaned_data["candidate_password"].lower()
+                ):
+                    group = Group.objects.get(name=settings.CAND_GROUP)
+                    group.user_set.add(user)
+                    group.save()
 
             login(request, user)
             return redirect("home")

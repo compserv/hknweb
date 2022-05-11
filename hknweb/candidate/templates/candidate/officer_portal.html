@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load app_filters %}
 
 {% block header %}
 <link rel="stylesheet" href="{% static "candidate/style.css" %}">
@@ -20,7 +21,7 @@
             if (this.readyState != 4) return;
 
             if (this.status == 200) {
-                window.location = window.location;
+                window.location.reload(true);
             }
         };
 
@@ -72,8 +73,14 @@ Officer Portal
                             <td class="sticky-col second-col">
                                 <span class="req {% if not row.overall %}not-{% endif %}done"></span>
                             </td>
-                            {% for s in row.statuses %}
-                                <td><span class="req {% if not s %}not-{% endif %}done"></span></td>
+                            {% for n_completed, n_required in row.statuses|zip:minimums %}
+                                <td>
+                                    {% if n_completed >= n_required %}
+                                        <span class="req done"></span>
+                                    {% else %}
+                                        {{ n_completed }} / {{ n_required }}
+                                    {% endif %}
+                                </td>
                             {% endfor %}
                             {% for info in row.checkoffs %}
                                 <td>
@@ -86,6 +93,13 @@ Officer Portal
                             {% endfor %}
                         </tr>
                     {% endfor %}
+                    <tr class="border-top">
+                        <td class="sticky-col first-col">Overall</td>
+                        <td class="sticky-col second-col">{{ summary.0 }} / {{ rows|length }}</td>
+                        {% for s in summary|slice:"1:" %}
+                            <td>{{ s }} / {{ rows|length }}</td>
+                        {% endfor %}
+                    </tr>
                 </tbody>
             </table>
         </div>

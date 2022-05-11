@@ -82,3 +82,7 @@ class Announcement(models.Model):
 
     def __str__(self):
         return self.title if self.title != "" else self.text
+
+
+class CandidateProvisioningPassword(models.Model):
+    password = models.CharField(max_length=30)
