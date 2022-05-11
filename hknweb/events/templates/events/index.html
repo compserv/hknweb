@@ -182,6 +182,17 @@
         max-width: 80em;
     }
 
+    .content-wrapper {
+        overflow: auto;
+    }
+
+    @media screen and (min-width: 1000px) {
+        .content-wrapper {
+            left: 12.5%;
+            position: relative;
+        }
+    }
+
 </style>
 
 {% endblock %}
@@ -191,7 +202,7 @@ Upcoming {{ title }}
 {% endblock %}
 
 {% block content %}
-<div class="center measure-extremelywide" style="vertical-align: top; overflow: auto;">
+<div class="center measure-extremelywide" style="vertical-align: top;">
     <div style="text-align: center;">
         {% if messages %}
             {% for message in messages %}
@@ -209,77 +220,79 @@ Upcoming {{ title }}
         </p>
     {% endif %}
 
-    <div style="left: 12.5%; position: relative; overflow: auto; min-width: 1000px;">
-        <!-- FullCalendar -->
-        <div style="width: 75%; display: inline-block; vertical-align: top;">
-            <section id='calendar'></section>
-        </div>
-
-        <!-- Filters and actions panel -->
-        {% if show_sidebar %}
-            <div style="width: 20%; display: inline-block; text-align: center;">
-                {% if perms.events.add_event %}
-                    <br>
-                    <form action="{% url 'events:new' %}" method="GET" id="button" onsubmit="submit_button.disabled = true; return true;">
-                        <button type='submit' name="submit_button">Add an event</button>
-                    </form>
-                {% endif %}
-
-                <div
-                    class="dib pa2 mt2 br2 white clickable"
-                    onclick="clear_filters(this)"
-                    style="background-color: slategray"
-                >
-                    Clear filters
-                </div>
-                <br>
-
-                <!-- Show/hide RSVP'd events -->
-                <div class="dib pa2 ml1 br2">
-                    Filter by RSVP status
-                </div>
-                <ul class="list w-100 pa1" style="margin: auto;">
-                    <li class="dib pa2 ml1 br2 white clickable {% if request.GET.rsvpd == 'hide'%}event-type-disabled{% endif %}"
-                        onclick="toggle_rsvp_display(this, 'rsvpd')"
-                        style="background-color: blueviolet"
-                    >
-                        {% if request.GET.rsvpd == 'hide'%}
-                            Show
-                        {% else %}
-                            Hide
-                        {% endif %}
-                        RSVP'd
-                    </li>
-                    <li class="dib pa2 ml1 br2 white clickable {% if request.GET.not_rsvpd == 'hide'%}event-type-disabled{% endif %}"
-                        onclick="toggle_rsvp_display(this, 'not_rsvpd')"
-                        style="background-color: goldenrod"
-                    >
-                        {% if request.GET.not_rsvpd == 'hide'%}
-                            Show
-                        {% else %}
-                            Hide
-                        {% endif %}
-                        Not RSVP'd
-                    </li>
-                </ul>
-
-                <!-- Event type legend -->
-                <div class="dib pa2 ml1 br2">
-                    Filter by event type
-                </div>
-                <ul class="list w-100 pa1" style="margin: auto;">
-                    {% for event_type in all_event_types %}
-                        <li class="dib pa2 br2 white clickable {% if request.GET.event_types and event_type.type not in request.GET.event_types %}event-type-disabled{% endif %}"
-                            onclick="change_event_type(this, '{{ event_type.type }}')"
-                            style="background-color: {{event_type.color}};"
-                        >
-                            {{ event_type.type }}
-                        </li>
-                        <br><br>
-                    {% endfor %}
-                </ul>
+    <div class="content-wrapper">
+        <div style="min-width: 1000px;">
+            <!-- FullCalendar -->
+            <div style="width: 75%; display: inline-block; vertical-align: top;">
+                <section id='calendar'></section>
             </div>
-        {% endif %}
+    
+            <!-- Filters and actions panel -->
+            {% if show_sidebar %}
+                <div style="width: 20%; display: inline-block; text-align: center;">
+                    {% if perms.events.add_event %}
+                        <br>
+                        <form action="{% url 'events:new' %}" method="GET" id="button" onsubmit="submit_button.disabled = true; return true;">
+                            <button type='submit' name="submit_button">Add an event</button>
+                        </form>
+                    {% endif %}
+    
+                    <div
+                        class="dib pa2 mt2 br2 white clickable"
+                        onclick="clear_filters(this)"
+                        style="background-color: slategray"
+                    >
+                        Clear filters
+                    </div>
+                    <br>
+    
+                    <!-- Show/hide RSVP'd events -->
+                    <div class="dib pa2 ml1 br2">
+                        Filter by RSVP status
+                    </div>
+                    <ul class="list w-100 pa1" style="margin: auto;">
+                        <li class="dib pa2 ml1 br2 white clickable {% if request.GET.rsvpd == 'hide'%}event-type-disabled{% endif %}"
+                            onclick="toggle_rsvp_display(this, 'rsvpd')"
+                            style="background-color: blueviolet"
+                        >
+                            {% if request.GET.rsvpd == 'hide'%}
+                                Show
+                            {% else %}
+                                Hide
+                            {% endif %}
+                            RSVP'd
+                        </li>
+                        <li class="dib pa2 ml1 br2 white clickable {% if request.GET.not_rsvpd == 'hide'%}event-type-disabled{% endif %}"
+                            onclick="toggle_rsvp_display(this, 'not_rsvpd')"
+                            style="background-color: goldenrod"
+                        >
+                            {% if request.GET.not_rsvpd == 'hide'%}
+                                Show
+                            {% else %}
+                                Hide
+                            {% endif %}
+                            Not RSVP'd
+                        </li>
+                    </ul>
+    
+                    <!-- Event type legend -->
+                    <div class="dib pa2 ml1 br2">
+                        Filter by event type
+                    </div>
+                    <ul class="list w-100 pa1" style="margin: auto;">
+                        {% for event_type in all_event_types %}
+                            <li class="dib pa2 br2 white clickable {% if request.GET.event_types and event_type.type not in request.GET.event_types %}event-type-disabled{% endif %}"
+                                onclick="change_event_type(this, '{{ event_type.type }}')"
+                                style="background-color: {{event_type.color}};"
+                            >
+                                {{ event_type.type }}
+                            </li>
+                            <br><br>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        </div>
     </div>
 </div>
 {% endblock %}
