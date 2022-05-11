@@ -41,10 +41,11 @@ def calendar_helper(
     events = Event.objects.order_by("-start_time").filter(
         access_level__gte=user_access_level
     )
-    if not rsvpd_display:
-        events = events.exclude(rsvp__user=request.user)
-    if not not_rsvpd_display:
-        events = events.filter(rsvp__user=request.user)
+    if request.user.is_authenticated:
+        if not rsvpd_display:
+            events = events.exclude(rsvp__user=request.user)
+        if not not_rsvpd_display:
+            events = events.filter(rsvp__user=request.user)
 
     all_event_types = event_types = EventType.objects.order_by("type")
     if event_type_types:
@@ -57,7 +58,7 @@ def calendar_helper(
         "event_types": event_types,
         "all_event_types": all_event_types,
         "calendars": get_calendars(request, user_access_level),
-        "show_sidebar": show_sidebar,
+        "show_sidebar": show_sidebar and request.user.is_authenticated,
     }
     return render(request, "events/index.html", context)
 
