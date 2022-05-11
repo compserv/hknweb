@@ -36,11 +36,6 @@ def officer_portal(request):
     interactivites = challenges + hangouts
     bitbytes = Bulk.bitbytes(candidates)
 
-    challenges = filter_by_completed(challenges, logistics.min_challenges)
-    hangouts = filter_by_completed(hangouts, logistics.min_hangouts)
-    interactivites = filter_by_completed(interactivites, logistics.num_interactivities)
-    bitbytes = filter_by_completed(bitbytes, logistics.num_bitbyte)
-
     event_reqs = Bulk.event_reqs(candidates, logistics)
     form_reqs = Bulk.form_reqs(logistics)
     misc_reqs = Bulk.misc_reqs(logistics)
@@ -55,13 +50,13 @@ def officer_portal(request):
             logistics, c_id, form_reqs, misc_reqs
         )
         statuses = [
-            challenges[c_id],
-            hangouts[c_id],
-            interactivites[c_id],
-            bitbytes[c_id],
-            *[c_id in e for e in event_reqs.values()],
+            (challenges[c_id], logistics.min_challenges),
+            (hangouts[c_id], logistics.min_hangouts),
+            (interactivites[c_id], logistics.num_interactivities),
+            (bitbytes[c_id], logistics.num_bitbyte),
+            *[(c[c_id], n) for c, n in event_reqs.values()],
         ]
-        overall_status = all(statuses) and all(checkoffable_statuses)
+        overall_status = all(map(lambda p: p[0] >= p[1], statuses)) and all(checkoffable_statuses)
 
         rows.append(
             {
@@ -111,10 +106,6 @@ def get_checkoff_info(
 
     statuses = form_req_statuses + misc_req_statuses
     return statuses, checkoffs
-
-
-def filter_by_completed(c: Counter, m: int) -> Counter:
-    return c - Counter({k: m - 1 for k in c})
 
 
 class Bulk:
@@ -177,7 +168,7 @@ class Bulk:
             counts = Counter()
             for event_type in event_req.event_types.all():
                 counts += events_info[event_type.type]
-            event_reqs[event_req.title] = filter_by_completed(counts, event_req.n)
+            event_reqs[event_req.title] = (counts, event_req.n)
 
         return event_reqs
 
