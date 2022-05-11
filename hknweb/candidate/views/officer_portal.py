@@ -42,14 +42,12 @@ def officer_portal(request):
 
     reqs = list(event_reqs) + list(form_reqs) + list(misc_reqs)
     headers = ["Challenges", "Hangouts", "Interactivities", "BitByte"] + reqs
-    minimums = \
-        [
-            logistics.min_challenges,
-            logistics.min_hangouts,
-            logistics.num_interactivities,
-            logistics.num_bitbyte,
-        ] \
-        + event_req_minimums
+    minimums = [
+        logistics.min_challenges,
+        logistics.min_hangouts,
+        logistics.num_interactivities,
+        logistics.num_bitbyte,
+    ] + event_req_minimums
 
     summary_statuses = [0] * (len(headers) + 1)
     rows = []
@@ -65,13 +63,16 @@ def officer_portal(request):
             bitbytes[c_id],
             *[c[c_id] for c in event_reqs.values()],
         ]
-        finished = [n_finished >= n_required for n_finished, n_required in zip(statuses, minimums)]
+        finished = [
+            n_finished >= n_required
+            for n_finished, n_required in zip(statuses, minimums)
+        ]
         overall_status = all(finished) and all(checkoffable_statuses)
 
         for i in range(len(finished)):
-            summary_statuses[i+1] += finished[i]
+            summary_statuses[i + 1] += finished[i]
         for j in range(len(checkoffable_statuses)):
-            summary_statuses[(i+1) + (j+1)] += checkoffable_statuses[j]
+            summary_statuses[(i + 1) + (j + 1)] += checkoffable_statuses[j]
         summary_statuses[0] += overall_status
 
         rows.append(

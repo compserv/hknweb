@@ -31,7 +31,7 @@ class SignupForm(UserCreationForm):
     first_name = forms.CharField(max_length=30, required=True)
     last_name = forms.CharField(max_length=30, required=True)
     email = forms.EmailField(max_length=200, required=True)
-    candidate_password = forms.CharField(max_length=30)
+    candidate_password = forms.CharField(max_length=30, required=False)
 
     def clean_email(self):
         email = self.cleaned_data.get("email")

@@ -70,11 +70,16 @@ def account_create(request):
             profile.candidate_semester = get_current_cand_semester()
             profile.save()
 
-            candidate_password = CandidateProvisioningPassword.objects.last().password
-            if candidate_password.lower() == form.cleaned_data["candidate_password"].lower():
-                group = Group.objects.get(name=settings.CAND_GROUP)
-                group.user_set.add(user)
-                group.save()
+            candidate_password_obj = CandidateProvisioningPassword.objects.last()
+            if candidate_password_obj:
+                candidate_password = candidate_password_obj.password
+                if (
+                    candidate_password.lower()
+                    == form.cleaned_data["candidate_password"].lower()
+                ):
+                    group = Group.objects.get(name=settings.CAND_GROUP)
+                    group.user_set.add(user)
+                    group.save()
 
             login(request, user)
             return redirect("home")
