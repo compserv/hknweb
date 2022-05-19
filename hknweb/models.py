@@ -91,12 +91,21 @@ class CandidateProvisioningPassword(models.Model):
 class Committee(models.Model):
     name = models.CharField(max_length=30)
 
+    def __str__(self):
+        return self.name
 
-class Elections(models.Model):
+
+class Election(models.Model):
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.semester} Election"
 
 
 class Committeeship(models.Model):
-    elections = models.ForeignKey(Elections, on_delete=models.CASCADE)
+    election = models.ForeignKey(Election, on_delete=models.CASCADE)
     committee = models.ForeignKey(Committee, on_delete=models.CASCADE)
     users = models.ManyToManyField(User)
+
+    def __str__(self):
+        return f"{self.committee}, {self.election.semester}"
