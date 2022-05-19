@@ -105,7 +105,9 @@ class Election(models.Model):
 class Committeeship(models.Model):
     election = models.ForeignKey(Election, on_delete=models.CASCADE)
     committee = models.ForeignKey(Committee, on_delete=models.CASCADE)
-    users = models.ManyToManyField(User)
+    officers = models.ManyToManyField(User, related_name="officerships")
+    assistant_officers = models.ManyToManyField(User, related_name="ao_ships")
+    committee_members = models.ManyToManyField(User, related_name="cmemberships")
 
     def __str__(self):
         return f"{self.committee}, {self.election.semester}"

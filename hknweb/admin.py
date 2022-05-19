@@ -114,7 +114,7 @@ class AnnouncementAdmin(admin.ModelAdmin):
 
 @admin.register(Committeeship)
 class CommitteeshipAdmin(admin.ModelAdmin):
-    autocomplete_fields = ["users"]
+    autocomplete_fields = ["officers", "assistant_officers", "committee_members"]
 
 
 admin.site.register(Announcement, AnnouncementAdmin)
