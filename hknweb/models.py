@@ -86,3 +86,17 @@ class Announcement(models.Model):
 
 class CandidateProvisioningPassword(models.Model):
     password = models.CharField(max_length=30)
+
+
+class Committee(models.Model):
+    name = models.CharField(max_length=30)
+
+
+class Elections(models.Model):
+    semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
+
+
+class Committeeship(models.Model):
+    elections = models.ForeignKey(Elections, on_delete=models.CASCADE)
+    committee = models.ForeignKey(Committee, on_delete=models.CASCADE)
+    users = models.ManyToManyField(User)
