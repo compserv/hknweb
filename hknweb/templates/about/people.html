@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+{% endblock %}
+
+{% block title %}People{% endblock %}
+
+
+{% block heading %}Committees for {{ semester }}{% endblock %}
+
+{% block content %}
+    <div style="text-align: center;">
+        {% for committeeship in committeeships %}
+            <div style="width: 80em; margin: auto;">
+                <h2>{{ committeeship.committee.name }}</h2>
+
+                <div>
+                    {% for title, users in committeeship.people.items %}
+                        {% for user in users %}
+                            <div style="display: inline-block; margin: 0 2em 2em 2em; vertical-align: top;">
+                                <img
+                                    style="width: 15em; height: 15em;"
+                                    {% if user.profile.picture %}
+                                        src="{{ user.profile.picture.url }}"
+                                        alt="{{ user.first_name }} {{ user.last_name }}"
+                                    {% else %}
+                                        src="{% static 'img/blank_profile_pic.jpg' %}"
+                                        alt="Missing profile picture"
+                                    {% endif %}
+                                >
+                                <br>
+                                <div style="width: 15em; overflow-x: hidden; white-space: nowrap; text-overflow: ellipsis;">
+                                    <span style="font-size: 1.2em;">{{ user.first_name }} {{ user.last_name }}</span>
+                                </div>
+                                <span style="font-style: italic;">{{ title }}</span>
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

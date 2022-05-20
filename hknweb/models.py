@@ -1,10 +1,14 @@
-from django.db import models
-from django.contrib.auth.models import User
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 import re
+from typing import Dict
+
+from django.db import models
+from django.db.models import QuerySet
+from django.db.models.signals import post_save
+from django.contrib.auth.models import User
+from django.dispatch import receiver
 from django.core.validators import RegexValidator
 from django.utils import timezone
+
 from hknweb.coursesemester.models import Semester
 
 
@@ -20,11 +24,7 @@ User.__str__ = lambda self: "{} ({} {})".format(
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, editable=False)
-    date_of_birth = models.DateField(
-        null=True,
-        blank=True,
-        help_text="Formats: '%Y-%m-%d', '%m/%d/%Y', '%m/%d/%y' (Examples: '2006-10-25', '10/25/2006', '10/25/06')",
-    )
+    date_of_birth = models.DateField(null=True, blank=True)
     picture = models.ImageField(blank=True)
     private = models.BooleanField(default=True, verbose_name="Private profile?")
     phone_regex = RegexValidator(
@@ -32,11 +32,7 @@ class Profile(models.Model):
     )
     phone_number = models.CharField(validators=[phone_regex], max_length=15, blank=True)
     resume = models.FileField(blank=True)
-    graduation_date = models.DateField(
-        null=True,
-        blank=True,
-        help_text="Formats: '%Y-%m-%d', '%m/%d/%Y', '%m/%d/%y' (Examples: '2006-10-25', '10/25/2006', '10/25/06')",
-    )
+    graduation_date = models.DateField(null=True, blank=True)
     candidate_semester = models.ForeignKey(
         Semester, on_delete=models.SET_NULL, null=True, blank=True
     )
@@ -105,9 +101,16 @@ class Election(models.Model):
 class Committeeship(models.Model):
     election = models.ForeignKey(Election, on_delete=models.CASCADE)
     committee = models.ForeignKey(Committee, on_delete=models.CASCADE)
-    officers = models.ManyToManyField(User, related_name="officerships")
-    assistant_officers = models.ManyToManyField(User, related_name="ao_ships")
-    committee_members = models.ManyToManyField(User, related_name="cmemberships")
+    officers = models.ManyToManyField(User, related_name="officerships", blank=True)
+    assistant_officers = models.ManyToManyField(User, related_name="ao_ships", blank=True)
+    committee_members = models.ManyToManyField(User, related_name="cmemberships", blank=True)
 
     def __str__(self):
         return f"{self.committee}, {self.election.semester}"
+
+    def people(self) -> Dict[str, "QuerySet[User]"]:
+        return {
+            "Officer": self.officers.all(),
+            "Assistant Officer": self.assistant_officers.all(),
+            "Committee Member": self.committee_members.all(),
+        }
