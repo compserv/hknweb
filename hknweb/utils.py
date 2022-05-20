@@ -56,21 +56,21 @@ def allow_public_access(func):
     return _record_permission(None)(func)
 
 
-allow_all_logged_in_users = _record_permission(None)
-
-
 def _wrap_with_access_check(identifier, check):
     def decorator(func):
         return wraps(func)(  # preserves function attributes to the decorated function
             _record_permission(identifier)(
                 login_required(login_url="/accounts/login/")(
                     # raises 403 error which invokes our custom 403.html
-                    check(func)
+                    check(func) if check is not None else func
                 )
             )
         )
 
     return decorator
+
+
+allow_all_logged_in_users = _wrap_with_access_check(None, None)
 
 
 def login_and_permission(permission_name):
