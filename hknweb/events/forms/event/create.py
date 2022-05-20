@@ -34,6 +34,7 @@ class EventForm(forms.ModelForm):
             "end_time",
             "rsvp_limit",
             "access_level",
+            "photographer",
         )
 
         labels = {

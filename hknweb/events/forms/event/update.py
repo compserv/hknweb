@@ -20,6 +20,7 @@ class EventUpdateForm(forms.ModelForm):
             "description",
             "rsvp_limit",
             "access_level",
+            "photographer",
         ]
 
         labels = {

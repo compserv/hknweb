@@ -68,6 +68,7 @@
     <p><b>Date(s) and Time(s)</b>: {{ event | process_event_time }}</p>
     <p><b>Semester</b>: {{event.semester}}</p>
     <p><b>Access level</b>: {{ event_access_level }}</p>
+    <p><b>Photographer</b>: {{ event.photographer.first_name }} {{ event.photographer.last_name }} ({{ event.photographer.username }})</p>
 
     {% if can_edit %}
         <p>

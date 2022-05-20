@@ -26,6 +26,7 @@ class Event(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     created_at = models.DateTimeField(auto_now_add=True)
     google_calendar_event_id = models.CharField(max_length=255, null=True, blank=True)
+    photographer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="photographer_at")
 
     @property
     def semester(self):

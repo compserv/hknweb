@@ -20,6 +20,7 @@ class EventAdmin(admin.ModelAdmin):
         "created_at",
         "access_level",
         "google_calendar_event_id",
+        "photographer",
     ]
     # NOTE: created_by should be read only, but I don't know how to set it to default to current user
     readonly_fields = ["created_at"]
