@@ -73,3 +73,9 @@ class ValidPasswordForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ("password",)
+
+
+class ProfilePictureForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ("picture",)
