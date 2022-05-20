@@ -25,7 +25,7 @@ User.__str__ = lambda self: "{} ({} {})".format(
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, editable=False)
     date_of_birth = models.DateField(null=True, blank=True)
-    picture = models.ImageField(blank=True)
+    picture = models.CharField(max_length=100, blank=True)
     private = models.BooleanField(default=True, verbose_name="Private profile?")
     phone_regex = RegexValidator(
         regex=r"^([^\d]*\d){10}$", message="Phone number must be ten digits."
@@ -58,6 +58,16 @@ class Profile(models.Model):
                 + "-"
                 + self.phone_number[6:]
             )
+
+    def picture_display_url(self) -> str:
+        re_pattern = "https:\/\/drive\.google\.com\/file\/d\/(.*)\/view\?usp=sharing"
+        url_template = "https://drive.google.com/uc?export=view&id={id}"
+        matches = re.match(re_pattern, self.picture)
+        if matches:
+            id = matches.groups()[0]
+            return url_template.format(id=id)
+
+        return self.picture
 
     def __str__(self):
         return "Profile of: " + str(self.user)

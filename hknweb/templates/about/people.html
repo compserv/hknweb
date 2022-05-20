@@ -23,7 +23,7 @@
                                 <img
                                     style="width: 15em; height: 15em;"
                                     {% if user.profile.picture %}
-                                        src="{{ user.profile.picture.url }}"
+                                        src="{{ user.profile.picture_display_url }}"
                                         alt="{{ user.first_name }} {{ user.last_name }}"
                                     {% else %}
                                         src="{% static 'img/blank_profile_pic.jpg' %}"

@@ -22,7 +22,6 @@ class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = (
-            "picture",
             "private",
             "phone_number",
             "date_of_birth",
