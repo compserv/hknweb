@@ -105,8 +105,18 @@ def confirm_recaptcha(request):  # pragma: no cover
 def account_settings(request):
     current_user = request.user
     if request.method == "POST":
+        request.POST = request.POST.copy()
+
+        # Clean date fields
+        for date_field in ["graduation_date", "date_of_birth"]:
+            value = request.POST.get(date_field)
+            if value == "____-__-__":
+                value = ""
+
+            request.POST[date_field] = value
+
         password_form = UpdatePasswordForm(current_user, request.POST)
-        profile_form = ProfileForm(request.POST, instance=current_user.profile)
+        profile_form = ProfileForm(request.POST, request.FILES, instance=current_user.profile)
         verify_form = ValidPasswordForm(request.POST, instance=current_user.profile)
         if verify_form.is_valid():
             correct_password = request.user.check_password(

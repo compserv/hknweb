@@ -1,34 +1,89 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block header %}
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+
+<!-- XDSoft DateTimePicker -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" integrity="sha256-DOS9W6NR+NFe1fUhEE0PGKY/fubbUCnOfTje2JMDw3Y=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js" integrity="sha256-FEqEelWI3WouFOo2VWP/uJfs1y8KJ++FLh2Lbqc8SJk=" crossorigin="anonymous"></script>
+
+<style>
+    table {
+        margin: auto;
+        text-align: left;
+    }
+
+    th {
+        vertical-align: top;
+    }
+
+    label.required:after {
+        content: " *";
+        color: red;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<h1>Account Settings</h1>
+<div style="text-align: center; width: 40em; margin: auto;">
+    <h1>Account Settings</h1>
 
-{% if messages %}
-<ul class="messages">
-    {% for message in messages %}
-    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-    {% endfor %}
-</ul>
-{% endif %}
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 
-<form method="post">
-	{% csrf_token %}
-	<h2>Change password</h2>
-	<label>Old password:</label>
-	{{ verify_form.password }}
-	{{ password_form.as_p }}
-	<button type="submit" name="change_password">Save</button>
-</form>
+    <form method="post" onsubmit="submit_button.disabled = true; return true;" enctype="multipart/form-data">
+        {% csrf_token %}
 
-<form method="post">
-	{% csrf_token %}
-	<!-- <h2>Account settings</h2> -->
-	<!-- {{ user_form.as_p }} -->
-	<h2>Edit profile</h2>
-	{{ profile_form.as_p }}
-	<h3>Confirm password</h3>
-	{{ verify_form.as_p }}
-	<button type="submit" name="edit_profile">Save</button>
-</form>
+        <h2>Change password</h2>
+        <table>
+            <tr>
+                <th><label>Old password:</label></th>
+                <td style="cursor: auto;">{{ verify_form.password }}</td>
+            </tr>
+            {{ password_form }}
+        </table>
+
+        <button type="submit" name="change_password">Save</button>
+    </form>
+
+    <form method="post" onsubmit="submit_button.disabled = true; return true;" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <h2>Edit profile</h2>
+        <table>
+            {{ profile_form }}
+        </table>
+
+        <h3>Confirm password</h3>
+        <table>
+            {{ verify_form }}
+        </table>
+
+        <button type="submit" name="edit_profile">Save</button>
+    </form>
+</div>
+
+<script>
+    $(function () {
+        $("#id_graduation_date").datetimepicker({
+            timepicker: false,
+            mask: true,
+            format: "Y-m-d",
+        });
+    });
+    $(function () {
+        $("#id_date_of_birth").datetimepicker({
+            timepicker: false,
+            mask: true,
+            format: "Y-m-d",
+        });
+    });
+</script>
 {% endblock %}

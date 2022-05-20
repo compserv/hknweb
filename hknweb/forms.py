@@ -14,6 +14,11 @@ class SettingsForm(forms.ModelForm):
 
 
 class ProfileForm(forms.ModelForm):
+    required_css_class = "required"
+
+    date_of_birth = forms.DateField(widget=forms.DateInput(attrs={"autocomplete": "off"}), required=False)
+    graduation_date = forms.DateField(widget=forms.DateInput(attrs={"autocomplete": "off"}), required=False)
+
     class Meta:
         model = Profile
         fields = (
