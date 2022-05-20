@@ -5,12 +5,21 @@ from django.contrib.auth.models import User
 from hknweb.utils import allow_public_access, get_access_level, GROUP_TO_ACCESSLEVEL
 
 from hknweb.models import Election, Committeeship
-from hknweb.forms import ProfilePictureForm
+from hknweb.forms import ProfilePictureForm, SemesterSelectForm
+
+from hknweb.coursesemester.models import Semester
 
 
 @allow_public_access
 def people(request):
-    election: Election = Election.objects.last()
+    semester: Semester = Semester.objects.filter(pk=request.GET.get("semester") or None).first()
+    if semester is None or not semester.election_set.exists():
+        semester = Semester.objects \
+            .exclude(election=None) \
+            .order_by("-year", "semester") \
+            .first()
+
+    election: Election = semester.election_set.first()
     committeeships: QuerySet[Committeeship] = \
         election.committeeship_set \
             .annotate(is_execs=Value(F("committee__name") == "Execs", output_field=BooleanField())) \
@@ -26,8 +35,8 @@ def people(request):
 
     context = {
         "committeeships": committeeships,
-        "semester": election.semester,
         "is_officer": is_officer,
         "form": form,
+        "semester_select_form": SemesterSelectForm({"semester": semester}),
     }
     return render(request, "about/people.html", context=context)

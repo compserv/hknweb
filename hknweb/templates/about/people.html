@@ -3,6 +3,19 @@
 
 {% block header %}
 <link rel="stylesheet" href="{% static 'css/style.css' %}">
+<style>
+    select {
+        font-size: 3rem;
+        font-family: 'Source Sans Pro', sans-serif;
+        font-weight: normal;
+        border-radius: 0.2em;
+    }
+
+    option {
+        font-size: 1rem;
+        border-radius: 0.2em;
+    }
+</style>
 <script>
     function toggle_edit(button) {
         button.disabled = true;
@@ -26,13 +39,23 @@
 {% block title %}People{% endblock %}
 
 
-{% block heading %}Committees for {{ semester }}{% endblock %}
+{% block heading %}
+    Committees for
+    <div style="display: inline-block;">
+        <form id="semester_select_form">
+            {{ semester_select_form.semester }}
+        </form>
+    </div>
+{% endblock %}
 
 {% block content %}
     <div style="text-align: center;">
         <!-- Edit button -->
         {% if is_officer %}
-            <button onclick="toggle_edit(this)">
+            <button
+                onclick="toggle_edit(this)"
+                style="border-radius: 0.3em; border-width: 0.02em;"
+            >
                 {% if request.GET.edit == "true" %}
                     Stop editing pictures
                 {% else %}
@@ -85,4 +108,12 @@
             </div>
         {% endfor %}
     </div>
+
+    <script>
+        function onchange(e) {
+            document.getElementById("semester_select_form").submit();
+        }
+
+        document.getElementById("id_semester").addEventListener("change", onchange);
+    </script>
 {% endblock %}

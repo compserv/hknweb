@@ -5,6 +5,7 @@ from django.contrib.auth.forms import (
 )
 
 from hknweb.models import User, Profile
+from hknweb.coursesemester.models import Semester
 
 
 class SettingsForm(forms.ModelForm):
@@ -79,3 +80,7 @@ class ProfilePictureForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ("picture",)
+
+
+class SemesterSelectForm(forms.Form):
+    semester = forms.ModelChoiceField(Semester.objects.order_by("-year", "semester"))
