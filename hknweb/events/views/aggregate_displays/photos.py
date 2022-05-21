@@ -12,9 +12,9 @@ PAGE_SIZE = 20
 
 @login_and_access_level(GROUP_TO_ACCESSLEVEL["member"])
 def photos(request):
-    eventphoto_objs = EventPhoto.objects \
-        .filter(event__end_time__lt=timezone.now()) \
-        .order_by("-event__end_time")
+    eventphoto_objs = EventPhoto.objects.filter(
+        event__end_time__lt=timezone.now()
+    ).order_by("-event__end_time")
 
     paginator = Paginator(eventphoto_objs, PAGE_SIZE)
 

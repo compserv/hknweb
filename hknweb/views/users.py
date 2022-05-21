@@ -116,7 +116,9 @@ def account_settings(request):
             request.POST[date_field] = value
 
         password_form = UpdatePasswordForm(current_user, request.POST)
-        profile_form = ProfileForm(request.POST, request.FILES, instance=current_user.profile)
+        profile_form = ProfileForm(
+            request.POST, request.FILES, instance=current_user.profile
+        )
         verify_form = ValidPasswordForm(request.POST, instance=current_user.profile)
         if verify_form.is_valid():
             correct_password = request.user.check_password(

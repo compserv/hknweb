@@ -63,7 +63,9 @@ def _wrap_with_access_check(identifier, check):
             _record_permission(identifier)(
                 login_required(login_url="/accounts/login/")(
                     # raises 403 error which invokes our custom 403.html
-                    check(func) if check is not None else func
+                    check(func)
+                    if check is not None
+                    else func
                 )
             )
         )

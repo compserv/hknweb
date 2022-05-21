@@ -12,18 +12,20 @@ from hknweb.coursesemester.models import Semester
 
 @allow_public_access
 def people(request):
-    semester: Semester = Semester.objects.filter(pk=request.GET.get("semester") or None).first()
+    semester: Semester = Semester.objects.filter(
+        pk=request.GET.get("semester") or None
+    ).first()
     if semester is None or not semester.election_set.exists():
-        semester = Semester.objects \
-            .exclude(election=None) \
-            .order_by("-year", "semester") \
+        semester = (
+            Semester.objects.exclude(election=None)
+            .order_by("-year", "semester")
             .first()
+        )
 
     election: Election = semester.election_set.first()
-    committeeships: QuerySet[Committeeship] = \
-        election.committeeship_set \
-            .annotate(is_execs=Value(F("committee__name") == "Execs", output_field=BooleanField())) \
-            .order_by("-is_execs", "committee__name")
+    committeeships: QuerySet[Committeeship] = election.committeeship_set.annotate(
+        is_execs=Value(F("committee__name") == "Execs", output_field=BooleanField())
+    ).order_by("-is_execs", "committee__name")
 
     is_officer = get_access_level(request.user) <= GROUP_TO_ACCESSLEVEL["officer"]
     form = ProfilePictureForm(request.POST)
