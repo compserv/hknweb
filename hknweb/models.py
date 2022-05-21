@@ -11,7 +11,7 @@ from django.utils import timezone
 
 from hknweb.coursesemester.models import Semester
 
-from hknweb.utils import googledrive_url_to_view_url
+from hknweb.utils import view_url
 
 
 MAX_STRLEN = 85  # default max length for char fields
@@ -27,7 +27,7 @@ User.__str__ = lambda self: "{} ({} {})".format(
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, editable=False)
     date_of_birth = models.DateField(null=True, blank=True)
-    picture = models.CharField(max_length=100, blank=True)
+    picture = models.CharField(max_length=500, blank=True)
     private = models.BooleanField(default=True, verbose_name="Private profile?")
     phone_regex = RegexValidator(
         regex=r"^([^\d]*\d){10}$", message="Phone number must be ten digits."
@@ -62,7 +62,7 @@ class Profile(models.Model):
             )
 
     def picture_display_url(self) -> str:
-        return googledrive_url_to_view_url(self.picture)
+        return view_url(self.picture)
 
     def __str__(self):
         return "Profile of: " + str(self.user)

@@ -22,7 +22,7 @@
         <form autocomplete="off" method="POST" onsubmit="submit_button.disabled = true; return true;">
             {% csrf_token %}
 
-            <input type="text" name="picture" maxlength="100" value="{{ user.profile.picture }}">
+            <input type="text" name="picture" maxlength="500" value="{{ user.profile.picture }}">
             <input type="hidden" value="{{ user.id }}" name="user_id">
 
             <button type="submit">Save</button>
