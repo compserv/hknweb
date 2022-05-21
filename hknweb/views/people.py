@@ -23,15 +23,13 @@ def people(request):
         )
 
     election: Election = semester.election_set.first()
-    
-    execs: QuerySet[Committeeship] = \
-        election.committeeship_set \
-            .filter(committee__is_exec=True) \
-            .order_by("committee__name")
-    committeeships: QuerySet[Committeeship] = \
-        election.committeeship_set \
-            .filter(committee__is_exec=False) \
-            .order_by("committee__name")
+
+    execs: QuerySet[Committeeship] = election.committeeship_set.filter(
+        committee__is_exec=True
+    ).order_by("committee__name")
+    committeeships: QuerySet[Committeeship] = election.committeeship_set.filter(
+        committee__is_exec=False
+    ).order_by("committee__name")
 
     is_officer = get_access_level(request.user) <= GROUP_TO_ACCESSLEVEL["officer"]
     form = ProfilePictureForm(request.POST)
