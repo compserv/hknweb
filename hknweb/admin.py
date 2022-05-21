@@ -112,13 +112,18 @@ class AnnouncementAdmin(admin.ModelAdmin):
     set_invisible.short_description = "Set selected as invisible"
 
 
+@admin.register(Committee)
+class CommitteeAdmin(admin.ModelAdmin):
+    ordering = ("name",)
+    search_fields = ("name",)
+
+
 @admin.register(Committeeship)
 class CommitteeshipAdmin(admin.ModelAdmin):
-    autocomplete_fields = ["officers", "assistant_officers", "committee_members"]
+    autocomplete_fields = ["officers", "assistant_officers", "committee_members", "committee"]
 
 
 admin.site.register(Announcement, AnnouncementAdmin)
 admin.site.register(Profile)
 admin.site.register(CandidateProvisioningPassword)
-admin.site.register(Committee)
 admin.site.register(Election)
