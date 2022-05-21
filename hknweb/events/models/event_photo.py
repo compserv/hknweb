@@ -2,7 +2,7 @@ from django.db import models
 
 from hknweb.events.models import Event
 
-from hknweb.utils import googledrive_url_to_view_url
+from hknweb.utils import view_url
 
 
 class EventPhoto(models.Model):
@@ -13,4 +13,4 @@ class EventPhoto(models.Model):
         return f"Photo(event={self.event.name}, photo={self.photo})"
 
     def photo_display_url(self):
-        return googledrive_url_to_view_url(self.photo)
+        return view_url(self.photo)

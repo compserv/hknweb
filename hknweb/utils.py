@@ -240,12 +240,21 @@ def get_access_level(user):
     return access_level
 
 
-def googledrive_url_to_view_url(s: str) -> str:
+def view_url(s: str) -> str:
+    # For Google Drive urls
     re_pattern = "https:\/\/drive\.google\.com\/file\/d\/(.*)\/view\?usp=sharing"
     url_template = "https://drive.google.com/uc?export=view&id={id}"
     matches = re.match(re_pattern, s)
     if matches:
         id = matches.groups()[0]
         return url_template.format(id=id)
+
+    # For Flickr urls
+    re_pattern = "https:\/\/live\.staticflickr\.com\/(.*)\/(.*)\.jpg"
+    url_template = "https://live.staticflickr.com/{group_id}/{picture_id}.jpg"
+    matches = re.search(re_pattern, s)
+    if matches:
+        group_id, picture_id = matches.groups()
+        return url_template.format(group_id=group_id, picture_id=picture_id)
 
     return s

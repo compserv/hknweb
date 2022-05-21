@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.db.models import QuerySet, F, BooleanField, Value
+from django.db.models import QuerySet
 from django.contrib.auth.models import User
 
 from hknweb.utils import allow_public_access, get_access_level, GROUP_TO_ACCESSLEVEL
@@ -23,9 +23,13 @@ def people(request):
         )
 
     election: Election = semester.election_set.first()
-    committeeships: QuerySet[Committeeship] = election.committeeship_set.annotate(
-        is_execs=Value(F("committee__name") == "Execs", output_field=BooleanField())
-    ).order_by("-is_execs", "committee__name")
+
+    execs: QuerySet[Committeeship] = election.committeeship_set.filter(
+        committee__is_exec=True
+    ).order_by("committee__name")
+    committeeships: QuerySet[Committeeship] = election.committeeship_set.filter(
+        committee__is_exec=False
+    ).order_by("committee__name")
 
     is_officer = get_access_level(request.user) <= GROUP_TO_ACCESSLEVEL["officer"]
     form = ProfilePictureForm(request.POST)
@@ -36,6 +40,7 @@ def people(request):
             form.save()
 
     context = {
+        "execs": execs,
         "committeeships": committeeships,
         "is_officer": is_officer,
         "form": form,
