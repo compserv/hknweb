@@ -88,6 +88,14 @@
                 Manage attendance form
             </a>
         </p>
+        <form autocomplete="off" method="POST" onsubmit="submit_button.disabled = true; return true;">
+            {% csrf_token %}
+
+            Add a photo link: {{ eventphoto_form.photo }}
+            <input type="hidden" name="event" value="{{ event.id }}">
+
+            <button type="submit">Save</button>
+        </form>
     {% endif %}
 
     <p><a href="{{ back_link }}">

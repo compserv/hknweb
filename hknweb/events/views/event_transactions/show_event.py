@@ -11,6 +11,7 @@ from hknweb.events.constants import (
     ATTR,
     RSVPS_PER_PAGE,
 )
+from hknweb.events.forms import EventPhotoForm
 from hknweb.events.models import Event, Rsvp, AttendanceForm
 from hknweb.events.utils import format_url
 from hknweb.utils import get_access_level
@@ -88,6 +89,15 @@ def show_details_helper(request, id, back_link: str, can_edit: bool):
             }
         )
 
+    eventphoto_form = None
+    if can_edit:
+        eventphoto_form = EventPhotoForm(request.POST)
+        if request.method == "POST":
+            if eventphoto_form.is_valid():
+                eventphoto_form.save()
+
+            eventphoto_form = EventPhotoForm()
+
     context = {
         **context,
         ATTR.DATA: data,
@@ -95,5 +105,6 @@ def show_details_helper(request, id, back_link: str, can_edit: bool):
         "attendance_form": AttendanceForm.objects.filter(event=event).first(),
         "waitlisted": waitlisted,
         "waitlist_position": waitlist_position,
+        "eventphoto_form": eventphoto_form,
     }
     return render(request, "events/show_details.html", context)
