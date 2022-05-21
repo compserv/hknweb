@@ -68,7 +68,14 @@
     <p><b>Date(s) and Time(s)</b>: {{ event | process_event_time }}</p>
     <p><b>Semester</b>: {{event.semester}}</p>
     <p><b>Access level</b>: {{ event_access_level }}</p>
-    <p><b>Photographer</b>: {{ event.photographer.first_name }} {{ event.photographer.last_name }} ({{ event.photographer.username }})</p>
+    <p>
+        <b>Photographer</b>:
+        {% if event.photographer %}
+            {{ event.photographer.first_name }} {{ event.photographer.last_name }} ({{ event.photographer.username }})
+        {% else %}
+            None
+        {% endif %}
+    </p>
 
     {% if can_edit %}
         <p>
@@ -198,5 +205,20 @@
     </table>
   </div>
 </div>
+
+{% if event.eventphoto_set.exists %}
+    <div style="text-align: center; overflow: auto; margin: auto;">
+        <div style="width: 80em; margin: auto;">
+            <h2>Photos</h2>
+            
+            {% for photo in event.eventphoto_set.all %}
+                <img
+                    style="height: 15em;"
+                    src="{{ photo.photo_display_url }}"
+                >
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}
 
 {% endblock %}
