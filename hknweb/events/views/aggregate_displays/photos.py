@@ -2,7 +2,6 @@ from django.core.paginator import Paginator
 from django.utils import timezone
 from django.shortcuts import render
 from hknweb.utils import login_and_access_level, GROUP_TO_ACCESSLEVEL
-from django.db.models import Count, Q, QuerySet
 
 from hknweb.events.models import EventPhoto
 
