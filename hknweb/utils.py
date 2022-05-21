@@ -1,4 +1,5 @@
 import csv
+import re
 
 from django.contrib.auth.decorators import (
     login_required,
@@ -56,9 +57,6 @@ def allow_public_access(func):
     return _record_permission(None)(func)
 
 
-allow_all_logged_in_users = _record_permission(None)
-
-
 def _wrap_with_access_check(identifier, check):
     def decorator(func):
         return wraps(func)(  # preserves function attributes to the decorated function
@@ -66,11 +64,16 @@ def _wrap_with_access_check(identifier, check):
                 login_required(login_url="/accounts/login/")(
                     # raises 403 error which invokes our custom 403.html
                     check(func)
+                    if check is not None
+                    else func
                 )
             )
         )
 
     return decorator
+
+
+allow_all_logged_in_users = _wrap_with_access_check(None, None)
 
 
 def login_and_permission(permission_name):
@@ -235,3 +238,14 @@ def get_access_level(user):
         if user.groups.filter(name=group_name).exists():
             access_level = min(access_level, access_value)
     return access_level
+
+
+def googledrive_url_to_view_url(s: str) -> str:
+    re_pattern = "https:\/\/drive\.google\.com\/file\/d\/(.*)\/view\?usp=sharing"
+    url_template = "https://drive.google.com/uc?export=view&id={id}"
+    matches = re.match(re_pattern, s)
+    if matches:
+        id = matches.groups()[0]
+        return url_template.format(id=id)
+
+    return s

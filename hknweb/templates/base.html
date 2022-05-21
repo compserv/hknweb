@@ -148,9 +148,11 @@
       <span class="slash">/</span>
       <a href="/events/rsvps?option=semester">All RSVPs</a>
       <span class="slash">/</span>
-      <a href="https://www.flickr.com/people/berkeley_hkn/">Photos</a>
+      <a href="{% url 'events:photos' %}">Photos</a>
       <span class="slash">/</span>
       <a href="{% url 'events:leaderboard' %}">Leaderboard</a>
+      <span class="slash">/</span>
+      <a href="https://www.flickr.com/people/berkeley_hkn/">Flickr</a>
     </div>
     <div class="navi-container mobile-nav-bar" style="text-align: center;">
       <label for="toggle-about">
@@ -160,9 +162,7 @@
     <div id="about-nav-bar" class="sub-nav-bar navi-container">
       <a href="{% url 'about' %}">About HKN</a>
       <span class="slash">/</span>
-      <a href="">Committees</a>
-      <span class="slash">/</span>
-      <a href="">Officers</a>
+      <a href="{% url 'people' %}">People</a>
       <span class="slash">/</span>
       <a href="/alumni">Alumni</a>
       <span class="slash">/</span>

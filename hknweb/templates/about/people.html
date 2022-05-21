@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<style>
+    select {
+        font-size: 3rem;
+        font-family: 'Source Sans Pro', sans-serif;
+        font-weight: normal;
+        border-radius: 0.2em;
+    }
+
+    option {
+        font-size: 1rem;
+        border-radius: 0.2em;
+    }
+</style>
+<script>
+    function toggle_edit(button) {
+        button.disabled = true;
+
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has("edit")) {
+            urlParams.delete("edit");
+        } else {
+            urlParams.set("edit", "true");
+        }
+
+        if (history.pushState) {
+            var newurl = window.location.origin + window.location.pathname + "?" + urlParams.toString();
+            window.history.replaceState({path: newurl}, "", newurl);
+            window.location = window.location;
+        }
+    }
+</script>
+{% endblock %}
+
+{% block title %}People{% endblock %}
+
+
+{% block heading %}
+    Committees for
+    <div style="display: inline-block;">
+        <form id="semester_select_form">
+            {{ semester_select_form.semester }}
+        </form>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div style="text-align: center;">
+        <!-- Edit button -->
+        {% if is_officer %}
+            <button
+                onclick="toggle_edit(this)"
+                style="border-radius: 0.3em; border-width: 0.02em;"
+            >
+                {% if request.GET.edit == "true" %}
+                    Stop editing pictures
+                {% else %}
+                    Edit pictures
+                {% endif %}
+            </button>
+        {% endif %}
+
+        <!-- Display committees and people -->
+        {% for committeeship in committeeships %}
+            <div style="width: 80em; margin: auto;">
+                <h2>{{ committeeship.committee.name }}</h2>
+
+                <div>
+                    {% for title, users in committeeship.people.items %}
+                        {% for user in users %}
+                            <div style="display: inline-block; margin: 0 2em 2em 2em; vertical-align: top;">
+                                <img
+                                    style="width: 15em; height: 15em;"
+                                    {% if user.profile.picture %}
+                                        src="{{ user.profile.picture_display_url }}"
+                                        alt="{{ user.first_name }} {{ user.last_name }}"
+                                    {% else %}
+                                        src="{% static 'img/blank_profile_pic.jpg' %}"
+                                        alt="Missing profile picture"
+                                    {% endif %}
+                                >
+                                <br>
+                                <div style="width: 15em; overflow-x: hidden; white-space: nowrap; text-overflow: ellipsis;">
+                                    <span style="font-size: 1.2em;">{{ user.first_name }} {{ user.last_name }}</span>
+                                </div>
+                                <span style="font-style: italic;">{{ title }}</span>
+
+                                {% if request.GET.edit == "true" %}
+                                    <br>
+                                    <form autocomplete="off" method="POST" onsubmit="submit_button.disabled = true; return true;">
+                                        {% csrf_token %}
+
+                                        <input type="text" name="picture" maxlength="100" value="{{ user.profile.picture }}">
+                                        <input type="hidden" value="{{ user.id }}" name="user_id">
+
+                                        <button type="submit">Save</button>
+                                    </form>
+                                {% endif %}
+
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        function onchange(e) {
+            document.getElementById("semester_select_form").submit();
+        }
+
+        document.getElementById("id_semester").addEventListener("change", onchange);
+    </script>
+{% endblock %}

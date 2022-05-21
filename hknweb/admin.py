@@ -2,7 +2,14 @@ from django.contrib import admin
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.admin import UserAdmin
 from django.conf import settings
-from hknweb.models import Announcement, Profile, CandidateProvisioningPassword
+from hknweb.models import (
+    Announcement,
+    Profile,
+    CandidateProvisioningPassword,
+    Committee,
+    Election,
+    Committeeship,
+)
 
 
 # Unregister the provided model admin
@@ -105,6 +112,13 @@ class AnnouncementAdmin(admin.ModelAdmin):
     set_invisible.short_description = "Set selected as invisible"
 
 
+@admin.register(Committeeship)
+class CommitteeshipAdmin(admin.ModelAdmin):
+    autocomplete_fields = ["officers", "assistant_officers", "committee_members"]
+
+
 admin.site.register(Announcement, AnnouncementAdmin)
 admin.site.register(Profile)
 admin.site.register(CandidateProvisioningPassword)
+admin.site.register(Committee)
+admin.site.register(Election)

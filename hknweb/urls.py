@@ -6,7 +6,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 from .shortlinks import views as viewsShortlink
-from hknweb.views import landing, users, indrel, serv
+from hknweb.views import landing, users, indrel, serv, people
 from .utils import method_login_and_permission
 
 __all__ = ["urlpatterns", "safe_urlpatterns"]
@@ -32,6 +32,7 @@ app_urlpatterns = [
     path("course_surveys/", include("hknweb.course_surveys.urls")),
     path("", landing.home, name="home"),
     path("<slug:temp>/", viewsShortlink.openLink),
+    path("about/people/", people.people, name="people"),
 ]
 
 markdownx_urlpatterns = [
