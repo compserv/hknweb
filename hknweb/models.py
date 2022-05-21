@@ -11,6 +11,8 @@ from django.utils import timezone
 
 from hknweb.coursesemester.models import Semester
 
+from hknweb.utils import googledrive_url_to_view_url
+
 
 MAX_STRLEN = 85  # default max length for char fields
 MAX_TXTLEN = 2000  # default max length for text fields
@@ -60,14 +62,7 @@ class Profile(models.Model):
             )
 
     def picture_display_url(self) -> str:
-        re_pattern = "https:\/\/drive\.google\.com\/file\/d\/(.*)\/view\?usp=sharing"
-        url_template = "https://drive.google.com/uc?export=view&id={id}"
-        matches = re.match(re_pattern, self.picture)
-        if matches:
-            id = matches.groups()[0]
-            return url_template.format(id=id)
-
-        return self.picture
+        return googledrive_url_to_view_url(self.picture)
 
     def __str__(self):
         return "Profile of: " + str(self.user)

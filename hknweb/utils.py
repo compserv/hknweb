@@ -1,4 +1,5 @@
 import csv
+import re
 
 from django.contrib.auth.decorators import (
     login_required,
@@ -235,3 +236,14 @@ def get_access_level(user):
         if user.groups.filter(name=group_name).exists():
             access_level = min(access_level, access_value)
     return access_level
+
+
+def googledrive_url_to_view_url(s: str) -> str:
+    re_pattern = "https:\/\/drive\.google\.com\/file\/d\/(.*)\/view\?usp=sharing"
+    url_template = "https://drive.google.com/uc?export=view&id={id}"
+    matches = re.match(re_pattern, s)
+    if matches:
+        id = matches.groups()[0]
+        return url_template.format(id=id)
+
+    return s

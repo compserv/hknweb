@@ -6,3 +6,4 @@ from hknweb.events.models.google_calendar import (
     GCalAccessLevelMapping,
 )
 from hknweb.events.models.attendance import AttendanceForm, AttendanceResponse
+from hknweb.events.models.event_photo import EventPhoto
