@@ -91,6 +91,7 @@ class CandidateProvisioningPassword(models.Model):
 
 class Committee(models.Model):
     name = models.CharField(max_length=30)
+    is_exec = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
@@ -118,6 +119,9 @@ class Committeeship(models.Model):
         return f"{self.committee}, {self.election.semester}"
 
     def people(self) -> Dict[str, "QuerySet[User]"]:
+        if self.committee.is_exec:
+            return {self.committee.name: self.officers.all()}
+
         return {
             "Officer": self.officers.all(),
             "Assistant Officer": self.assistant_officers.all(),
