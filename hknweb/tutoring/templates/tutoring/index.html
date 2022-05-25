@@ -1,7 +1,62 @@
 {% extends "base.html" %}
 {% load static %}
+{% load event_filters %}
 
 {% block title %}Tutoring{% endblock %}
+{% block heading %}Tutoring{% endblock %}
+
+{% block header %}
+    <link rel="stylesheet" href="https://unpkg.com/@fullcalendar/core@4.4.0/main.css" />
+    <link rel="stylesheet" href="https://unpkg.com/@fullcalendar/daygrid@4.4.0/main.css" />
+    <link rel="stylesheet" href="https://unpkg.com/@fullcalendar/timegrid@4.4.0/main.css" />
+
+    <script src="https://unpkg.com/@fullcalendar/core@4.4.0/main.js"></script>
+    <script src="https://unpkg.com/@fullcalendar/daygrid@4.4.0/main.js"></script>
+    <script src="https://unpkg.com/@fullcalendar/timegrid@4.4.0/main.js"></script>
+
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                // General options
+                plugins: [ 'timeGrid' ],
+                defaultView: 'timeGridWeek',
+                defaultDate: "{% now 'c' %}",
+                header: {
+                    left: 'prev',
+                    center: 'title',
+                    right: 'next',
+                },
+                height: "auto",
+                allDaySlot: false,
+                navLinks: true,
+                eventLimit: false,
+                views: {
+                    timeGrid: {
+                        minTime: "10:00:00",
+                        maxTime: "22:00:00",
+                        nowIndicator: true,
+                    }
+                },
+                // Events
+                events: [{% for slot in slots %}
+                    {
+                        title: '{{ slot.tutor_names }}',
+                        start: '{{ slot.start_time|date:"c" }}',
+                        end: '{{ slot.end_time|date:"c" }}',
+                    },
+                {% endfor %}]
+            });
+
+            calendar.render();
+        });
+    </script>
+{% endblock %}
 
 {% block content %}
+    <div style="text-align: center; overflow: auto;">
+        <div style="width: 70em; margin: auto;">
+            <section id="calendar"></section>
+        </div>
+    </div>
 {% endblock %}
