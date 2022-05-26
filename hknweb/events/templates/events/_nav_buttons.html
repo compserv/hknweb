@@ -1,0 +1,30 @@
+<script>
+    function nav_button_onclick(class_name, default_count, incr, reload) {
+        console.log(class_name, default_count, incr);
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has("nav")) {
+            urlParams.set("nav", parseInt(urlParams.get("nav")) + incr);
+        } else {
+            urlParams.set("nav", default_count);
+        }
+
+        if (history.pushState) {
+            var newurl = window.location.origin + window.location.pathname + "?" + urlParams.toString();
+            window.history.replaceState({path: newurl}, "", newurl);
+            if (reload) {
+                window.location = window.location;
+            }
+        }
+
+        decorate_nav_buttons(reload);
+    }
+
+    function decorate_nav_buttons(reload) {
+        document
+            .getElementsByClassName("fc-next-button")[0]
+            .addEventListener("click", function() { nav_button_onclick("fc-next-button", "1", 1, reload); });
+        document
+            .getElementsByClassName("fc-prev-button")[0]
+            .addEventListener("click", function() { nav_button_onclick("fc-prev-button", "-1", -1, reload); });
+    }
+</script>

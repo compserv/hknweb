@@ -6,9 +6,16 @@ from hknweb.tutoring.models import TutoringLogistics
 
 
 def index(request):
+    nav = request.GET.get("nav", "0")
+    try:
+        nav = int(nav)
+    except ValueError:
+        nav = 0
+
     context = {
-        "offset": timezone.now(),
+        "offset": timezone.now() + timezone.timedelta(weeks=nav),
     }
+    print(context["offset"])
 
     logistics: TutoringLogistics = TutoringLogistics.objects \
         .order_by("-semester__year", "semester__semester") \

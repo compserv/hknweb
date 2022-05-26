@@ -13,6 +13,8 @@
     <script src="https://unpkg.com/@fullcalendar/daygrid@4.4.0/main.js"></script>
     <script src="https://unpkg.com/@fullcalendar/timegrid@4.4.0/main.js"></script>
 
+    {% include 'events/_nav_buttons.html' %}
+
     <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', function() {
             var calendarEl = document.getElementById('calendar');
@@ -20,7 +22,7 @@
                 // General options
                 plugins: [ 'timeGrid' ],
                 defaultView: 'timeGridWeek',
-                defaultDate: '{{ offset|date:"c" }}',
+                defaultDate: "{% now 'c' %}",
                 header: {
                     left: 'prev',
                     center: 'title',
@@ -47,8 +49,20 @@
                 {% endfor %}]
             });
 
+            {% if request.GET.nav %}
+                for (let step = 0; step < {{ request.GET.nav }}; step++) {
+                    calendar.next();
+                }
+                for (let step = 0; step > {{ request.GET.nav }}; step--) {
+                    calendar.prev();
+                }
+            {% endif %}
+
             calendar.render();
         });
+
+        window.addEventListener("load", function (){ decorate_nav_buttons(true); });
+
     </script>
 {% endblock %}
 
