@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 {% load static %}
-{% load event_filters %}
 
 {% block title %}Tutoring{% endblock %}
 {% block heading %}Tutoring{% endblock %}
@@ -21,7 +20,7 @@
                 // General options
                 plugins: [ 'timeGrid' ],
                 defaultView: 'timeGridWeek',
-                defaultDate: "{% now 'c' %}",
+                defaultDate: '{{ offset|date:"c" }}',
                 header: {
                     left: 'prev',
                     center: 'title',

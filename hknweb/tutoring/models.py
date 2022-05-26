@@ -37,11 +37,14 @@ class Slot(models.Model):
     def __str__(self) -> str:
         return f"{self.logistics} {self.room}"
 
+    def _convert_datetime(self) -> timezone.datetime:
+        return self.datetime + timezone.timedelta(weeks=(self.offset - self.datetime).days // 7)
+
     def start_time(self) -> timezone.datetime:
-        return self.datetime
+        return self._convert_datetime()
 
     def end_time(self) -> timezone.datetime:
-        return self.datetime + timezone.timedelta(hours=1)
+        return self._convert_datetime() + timezone.timedelta(hours=1)
 
     def tutor_names(self) -> str:
         tutors = self.tutors \
