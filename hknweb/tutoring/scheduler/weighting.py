@@ -1,6 +1,6 @@
 from typing import Dict
 
-from scheduler.tutoring import Slot, Tutor
+from hknweb.tutoring.scheduler.tutoring import Slot, Tutor
 
 
 class Weighting:
