@@ -13,9 +13,8 @@ def index(request):
         nav = 0
 
     context = {
-        "offset": timezone.now() + timezone.timedelta(weeks=nav),
+        "offset": timezone.now() + timezone.timedelta(days=nav),
     }
-    print(context["offset"])
 
     logistics: TutoringLogistics = TutoringLogistics.objects \
         .order_by("-semester__year", "semester__semester") \

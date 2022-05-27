@@ -1,11 +1,15 @@
 <script>
     function nav_button_onclick(class_name, default_count, incr, reload) {
-        console.log(class_name, default_count, incr);
         const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has("nav")) {
-            urlParams.set("nav", parseInt(urlParams.get("nav")) + incr);
+
+        if (class_name == "fc-today-button") {
+            urlParams.delete("nav");
         } else {
-            urlParams.set("nav", default_count);
+            if (urlParams.has("nav")) {
+                urlParams.set("nav", parseInt(urlParams.get("nav")) + incr);
+            } else {
+                urlParams.set("nav", default_count);
+            }
         }
 
         if (history.pushState) {
@@ -26,5 +30,8 @@
         document
             .getElementsByClassName("fc-prev-button")[0]
             .addEventListener("click", function() { nav_button_onclick("fc-prev-button", "-1", -1, reload); });
+        document
+            .getElementsByClassName("fc-today-button")[0]
+            .addEventListener("click", function() { nav_button_onclick("fc-today-button", "0", 0, reload); });
     }
 </script>

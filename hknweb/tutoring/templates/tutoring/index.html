@@ -21,14 +21,15 @@
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 // General options
                 plugins: [ 'timeGrid' ],
-                defaultView: 'timeGridWeek',
-                defaultDate: "{% now 'c' %}",
+                defaultView: 'timeGridDay',
+                defaultDate: '{{ offset|date:"c" }}',
                 header: {
-                    left: 'prev',
+                    left: 'prev,next',
                     center: 'title',
-                    right: 'next',
+                    right: 'today',
                 },
                 height: "auto",
+                eventMaxStack: 1,
                 allDaySlot: false,
                 navLinks: true,
                 eventLimit: false,
@@ -49,15 +50,6 @@
                 {% endfor %}]
             });
 
-            {% if request.GET.nav %}
-                for (let step = 0; step < {{ request.GET.nav }}; step++) {
-                    calendar.next();
-                }
-                for (let step = 0; step > {{ request.GET.nav }}; step--) {
-                    calendar.prev();
-                }
-            {% endif %}
-
             calendar.render();
         });
 
@@ -68,7 +60,7 @@
 
 {% block content %}
     <div style="text-align: center; overflow: auto;">
-        <div style="width: 70em; margin: auto;">
+        <div style="width: 30em; margin: auto;">
             <section id="calendar"></section>
         </div>
     </div>
