@@ -10,7 +10,7 @@ class TutoringLogisticsAdmin(admin.ModelAdmin):
 
 @admin.register(Slot)
 class SlotAdmin(admin.ModelAdmin):
-    autocomplete_fields = ("tutors", "tutor_prefs")
+    autocomplete_fields = ("tutors",)
 
 
 admin.site.register(Room)

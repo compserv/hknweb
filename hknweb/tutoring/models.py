@@ -9,6 +9,7 @@ from hknweb.coursesemester.models import Semester
 
 class Room(models.Model):
     name = models.CharField(max_length=25)
+    color = models.CharField(max_length=25, default="DarkGray")
 
     def __str__(self) -> str:
         return self.name
@@ -32,7 +33,6 @@ class Slot(models.Model):
     datetime = models.DateTimeField()
     num_tutors = models.IntegerField()
     tutors = models.ManyToManyField(User, blank=True, related_name="tutoring_slots")
-    tutor_prefs = models.ManyToManyField(User, blank=True, related_name="tutoring_slotprefs")
 
     def __str__(self) -> str:
         return f"{self.logistics} {self.room}"
