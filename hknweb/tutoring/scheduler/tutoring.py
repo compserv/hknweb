@@ -10,9 +10,9 @@ class Slot:
         hour: int,
         office: str,
         courses: List[int],
-        adjacentSlotIDs: List[int],
-        adjacentSlots: "List[Slot]",
-        simultaneousSlots: "List[Slot]",
+        adjacent_slot_ids: List[int],
+        adjacent_slots: "List[Slot]",
+        simultaneous_slots: "List[Slot]",
     ):
         self.slot_id = slot_id
         self.name = name
@@ -21,9 +21,9 @@ class Slot:
         self.office = office
 
         self.courses = courses
-        self.adjacentSlotIDs = adjacentSlotIDs
-        self.adjacentSlots = adjacentSlots
-        self.simultaneousSlots = simultaneousSlots
+        self.adjacent_slot_ids = adjacent_slot_ids
+        self.adjacent_slots = adjacent_slots
+        self.simultaneous_slots = simultaneous_slots
 
         self.tutors: "Set[Tutor]" = []
 
@@ -37,7 +37,7 @@ class Slot:
         return (self.hour == other.hour) and (self.day == other.day)
 
     def adjacent(self, other: "Slot") -> bool:
-        return any(map(lambda s: s == other, self.adjacentSlots))
+        return any(map(lambda s: s == other, self.adjacent_slots))
 
     def __repr__(self) -> Dict[str, Union[int, str]]:
         return {
