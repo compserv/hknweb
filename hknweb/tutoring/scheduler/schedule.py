@@ -5,7 +5,7 @@ from hknweb.tutoring.scheduler.evaluator import Evaluator
 from hknweb.tutoring.scheduler.swapper import Swapper
 
 
-def schedule(data: Data) -> None:
+def schedule(data: Data, output_readable=True) -> float:
     weighting: Weighting = Butler()
     matcher: Matcher = Matcher(data, weighting)
 
@@ -22,6 +22,9 @@ def schedule(data: Data) -> None:
     Swapper.stabilize(data, weighting)
 
     print("\nFinished!")
-    print(data.readable_formatted_assignments())  # TODO
+    if output_readable:
+        print(data.readable_formatted_assignments())
     std, score = Evaluator.evaluate(data, weighting)
     print(f"Score: {score}, Stddev: {std}")
+
+    return score

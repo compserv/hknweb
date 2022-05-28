@@ -26,6 +26,14 @@ class SchedulerTests(TestCase):
         schedule(data)
 
     def test_scheduler_local(self):
-        path = "media/tutoring-algorithm/test/s1.json"
-        data: Data = LocalJSONData(path)
-        schedule(data)
+        test_template = "media/tutoring-algorithm/test/s{}.json"
+        scores = []
+        for i in range(1, 7+1):
+            path = test_template.format(str(i))
+            data: Data = LocalJSONData(path)
+            score = schedule(data, output_readable=False)
+
+            scores.append(score)
+
+        for i, score in enumerate(scores):
+            print(f"s{i}: {score:.d}")
