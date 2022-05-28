@@ -7,12 +7,13 @@ from hknweb.tutoring.scheduler.swapper import Swapper
 
 def schedule(data: Data) -> None:
     weighting: Weighting = Butler()
+    matcher: Matcher = Matcher(data, weighting)
 
     print("Matching...")
     score = float("-inf")
     while score < 0:
         # data.clear_assignments()  # TODO
-        Matcher.match(data, weighting)
+        matcher.match()
         std, score = Evaluator.evaluate(data, weighting)
         print(f"Score: {score}, Stddev: {std}")
 

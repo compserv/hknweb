@@ -13,8 +13,8 @@ from hknweb.tutoring.scheduler.tutoring import Slot, Tutor
 
 class Matcher:
     class AssignDTO:
-        def __init__(self, num_tutors: int) -> None:
-            self.num_tutors = num_tutors
+        def __init__(self, num_tutors: int, n: int) -> None:
+            self.num_tutors, self.n = num_tutors, n
 
         def init_assign(self) -> None:
             self.graph: Graph = Graph(self.n)
@@ -31,8 +31,6 @@ class Matcher:
 
     def __init__(self, data: Data, weighting: Weighting):
         self.data, self.weighting = data, weighting
-
-        self.n: int = len(self.data.tutors) + len(self.data.slots)
 
     def match(self) -> None:
         two_hour_tutors: List[int] = [t.num_assignments == 2 for t in self.data.tutors]
@@ -55,11 +53,12 @@ class Matcher:
 
     def assign(self, unused_slot_idxs: Set[int], tutor_idxs_to_assign: List[int]) -> None:
         # Initialize graph
-        assign_dto = self.AssignDTO(len(self.data.tutors))
+        num_tutors, num_slots = len(self.data.tutors), len(self.data.slots)
+        assign_dto = self.AssignDTO(num_tutors, num_tutors + num_slots)
         assign_dto.init_assign()
 
         retrieve_tutor = lambda i: (i, self.data.tutors[i])
-        valid_tutor_idx = lambda _, tutor: len(tutor.slots) < tutor.num_assignments
+        valid_tutor_idx = lambda p: len(p[1].slots) < p[1].num_assignments
         tutor_idxs: List[Tuple[int, Tutor]] = list(filter(valid_tutor_idx, map(retrieve_tutor, tutor_idxs_to_assign)))
         retrieve_slot = lambda i: (i, self.data.slots[i])
         slot_idxs: List[Tuple[int, Slot]] = list(map(retrieve_slot, unused_slot_idxs))
@@ -76,7 +75,7 @@ class Matcher:
             if r <= -10:
                 continue
 
-            self.updateMatching(assign_dto, tutor_idx, slot_idx + assign_dto.num_tutors, r)
+            self.update_matching(assign_dto, tutor_idx, slot_idx + assign_dto.num_tutors, r)
 
         # Assign partners
         for i, tutor in enumerate(self.data.tutors):
@@ -91,8 +90,9 @@ class Matcher:
 
             unused_slot_idxs.remove(k)
 
+    @staticmethod
     def update_matching(
-        self, assign_dto: "Matcher.AssignDTO", a: int, b: int, weight: float,
+        assign_dto: "Matcher.AssignDTO", a: int, b: int, weight: float,
     ) -> None:
         graph = assign_dto.graph
         prices = assign_dto.prices
@@ -126,19 +126,20 @@ class Matcher:
         # Should be at most 2, since we remove at most 1 matched pair, and we
         # Can add at most one new matched pair
         while True:
-            idx, end = self.find_augmenting_path(assign_dto)
-            self.update_prices(assign_dto, idx)
+            idx, end = Matcher.find_augmenting_path(assign_dto)
+            Matcher.update_prices(assign_dto, idx)
             if end == -1:
                 break
 
-            self.augment_path(assign_dto, end)
+            Matcher.augment_path(assign_dto, end)
 
+    @staticmethod
     def find_augmenting_path(assign_dto: "Matcher.AssignDTO") -> Union[int, int]:
         """
         Finds an augmenting path and returns the end node we can follow prev pointers to recreate path
         Running time is O(M log M), M is number of edges (which is usually about N^2)
         """
-        price = assign_dto.price
+        prices = assign_dto.prices
         partner = assign_dto.partner
         matched = assign_dto.matched
         delta = assign_dto.delta
@@ -154,7 +155,7 @@ class Matcher:
         for i in range(num_tutors):
             if not matched[i]:
                 for node in graph.get_neighbors(i):
-                    pq.put(Edge(price[i] + price[node.b] - node.weight, i, node.b))
+                    pq.put(Edge(prices[i] + prices[node.b] - node.weight, i, node.b))
 
                 idx += 1
                 ovis[idx] = i
@@ -179,7 +180,7 @@ class Matcher:
             l = partner[f.b]
             for node in graph.get_neighbors(l):
                 if not vis[node.b]:
-                    pq.add(Edge(price[l] + price[node.b] - node.weight + C, l, node.b));
+                    pq.add(Edge(prices[l] + prices[node.b] - node.weight + C, l, node.b));
 
             ovis[idx + 1] = f.b
             ovis[idx + 2] = l
@@ -192,7 +193,7 @@ class Matcher:
         """
         Keeps prices up to date. Running time: O(N), N is number of nodes
         """
-        price = assign_dto.price
+        prices = assign_dto.prices
         delta = assign_dto.delta
         ovis = assign_dto.ovis
         num_tutors = assign_dto.num_tutors
@@ -201,9 +202,9 @@ class Matcher:
         while idx >= 0:
             k += delta[idx]
             if ovis[idx] < num_tutors:
-                price[ovis[idx]] -= k
+                prices[ovis[idx]] -= k
             else:
-                price[ovis[idx]] += k
+                prices[ovis[idx]] += k
             idx -= 1
 
     @staticmethod
