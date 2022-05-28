@@ -2,7 +2,7 @@ from typing import List, Set, Tuple
 
 from math import sqrt
 
-from itertools import combinations_with_replacement as combos
+from itertools import combinations
 
 from hknweb.tutoring.scheduler.weighting import Weighting
 from hknweb.tutoring.scheduler.data import Data
@@ -21,7 +21,7 @@ class Evaluator:
             if len(t.slots) != t.num_assignments:
                 continue
 
-            if any(s1.simultaneous(s2) for s1, s2 in combos(t.slots, 2)):
+            if any(s1.simultaneous(s2) for s1, s2 in combinations(t.slots, 2)):
                 score -= Evaluator.PENALTY
                 continue
 
