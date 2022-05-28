@@ -25,18 +25,16 @@ class Evaluator:
                 score -= Evaluator.PENALTY
                 continue
 
-            # Reset slots
-            old_slots: Set[Slot] = t.slots.copy()
-            t.slots = set()
-
             # 0 means not available
-            if any(t.slot_prefs[s.slot_id] == 0 for s in old_slots):
+            if any(t.slot_prefs[s.slot_id] == 0 for s in t.slots):
                 score -= Evaluator.PENALTY
                 continue
 
             # Simulate re-adding the slots in one by one
             # Order shouldn't matter when adding slots in
             d: float = 0.0
+            old_slots: Set[Slot] = t.slots.copy()
+            t.slots = set()
             for s in old_slots:
                 d += weighting.weight(t, s)
                 t.assign(s)
