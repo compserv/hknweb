@@ -11,12 +11,9 @@ from hknweb.tutoring.scheduler.evaluator import Evaluator
 class Swapper:
     ITERATIONS_MULTIPLIER: int = 100000
     THRESHOLD: float = 1e-10
-    SEED = 42
 
     @staticmethod
     def stabilize(data: Data, weighting: Weighting) -> None:
-        random.seed(Swapper.SEED)
-
         iterations: int = len(data.tutors) * Swapper.ITERATIONS_MULTIPLIER
         curr_best: float = Evaluator.evaluate(data, weighting)[1]
 
@@ -32,7 +29,7 @@ class Swapper:
                     to_swap: List[Tutor] = random.sample(nonempty_tutors, k)
 
                     # Choose a random slot within each tutor
-                    slots = [random.choice(t.slots) for t in to_swap]
+                    slots = [random.choice(list(t.slots)) for t in to_swap]
                     slots_rotated_right = slots[1:] + slots[:1]
 
                     # Now do a circular swap

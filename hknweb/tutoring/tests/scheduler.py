@@ -6,6 +6,7 @@ Instead, use the below command to run them manually.
 HKNWEB_MODE='dev' python manage.py test hknweb.tutoring.tests.scheduler
 ```
 """
+import random
 
 from django.test import TestCase
 
@@ -14,6 +15,11 @@ from hknweb.tutoring.scheduler.schedule import schedule
 
 
 class SchedulerTests(TestCase):
+    SEED = 42
+
+    def setUp(self):
+        random.seed(self.SEED)
+
     def test_scheduler_url(self):
         url = "https://raw.githubusercontent.com/compserv/tutoring-algorithm/master/test/s1.json"
         data: Data = RemoteJSONData(url)
