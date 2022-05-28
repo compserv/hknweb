@@ -154,7 +154,7 @@ class Matcher:
         for i in range(num_tutors):
             if not matched[i]:
                 for node in graph.get_neighbors(i):
-                    pq.put(Edge(i, node.b, price[i] + price[node.b] - node.weight))
+                    pq.put(Edge(price[i] + price[node.b] - node.weight, i, node.b))
 
                 idx += 1
                 ovis[idx] = i
@@ -179,7 +179,7 @@ class Matcher:
             l = partner[f.b]
             for node in graph.get_neighbors(l):
                 if not vis[node.b]:
-                    pq.add(Edge(l, node.b, price[l] + price[node.b] - node.weight + C));
+                    pq.add(Edge(price[l] + price[node.b] - node.weight + C, l, node.b));
 
             ovis[idx + 1] = f.b
             ovis[idx + 2] = l
