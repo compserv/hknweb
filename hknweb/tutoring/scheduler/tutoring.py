@@ -23,7 +23,7 @@ class Slot:
         return (self.office == other.office) and (self.day == other.day) \
             and (abs(self.hour - other.hour) == 1)
 
-    def __str__(self):
+    def __repr__(self):
         return f"Slot({self.slot_id} on {self.day} at {self.hour} in {self.office})"
 
 
@@ -54,5 +54,5 @@ class Tutor:
     def unassign(self, s: "Slot") -> None:
         self.slots.remove(s)
 
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         return f"Tutor({self.tutor_id})"
