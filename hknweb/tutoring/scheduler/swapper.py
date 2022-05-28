@@ -50,7 +50,7 @@ class Swapper:
                             Swapper._swap(*swap)
 
                     i += 1
-                    print(f"Finished {i * 100 // total}%\r", end="", flush=True)
+                    print(f"Swapping {i * 100 // total}%\r", end="", flush=True)
         print()
 
     @staticmethod

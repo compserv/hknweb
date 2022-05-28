@@ -17,11 +17,9 @@ def schedule(data: Data, output_readable=True) -> float:
         std, score = Evaluator.evaluate(data, weighting)
         print(f"Score: {score}, Stddev: {std}")
 
-    print("\nSwapping...")
     # Now do some random swapping to make it stable
     Swapper.stabilize(data, weighting)
 
-    print("\nFinished!")
     if output_readable:
         print(data.readable_formatted_assignments())
     std, score = Evaluator.evaluate(data, weighting)
