@@ -5,25 +5,14 @@ class Slot:
     def __init__(
         self,
         slot_id: int,
-        name: str,
         day: str,
         hour: int,
         office: str,
-        courses: List[int],
-        adjacent_slot_ids: List[int],
-        adjacent_slots: "List[Slot]",
-        simultaneous_slots: "List[Slot]",
     ):
         self.slot_id = slot_id
-        self.name = name
         self.day = day
         self.hour = hour
         self.office = office
-
-        self.courses = courses
-        self.adjacent_slot_ids = adjacent_slot_ids
-        self.adjacent_slots = adjacent_slots
-        self.simultaneous_slots = simultaneous_slots
 
         self.tutors: "Set[Tutor]" = []
 
@@ -37,12 +26,15 @@ class Slot:
         return (self.hour == other.hour) and (self.day == other.day)
 
     def adjacent(self, other: "Slot") -> bool:
-        return any(map(lambda s: s == other, self.adjacent_slots))
+        is_same_office: bool = self.office == other.office
+        is_same_day: bool = self.day == other.day
+        is_hour_before: bool = self.hour == other.hour - 1
+        is_hour_after: bool = self.hour == other.hour + 1
+        return is_same_office and is_same_day and (is_hour_before or is_hour_after)
 
     def __repr__(self) -> Dict[str, Union[int, str]]:
         return {
             "slot_id": self.slot_id,
-            "name": self.name,
             "day": self.day,
             "hour": self.hour,
             "office": self.office,
@@ -59,19 +51,15 @@ class Tutor:
     def __init__(
         self,
         tutor_id: int,
-        name: str,
-        time_slots: List[int],
+        slot_prefs: List[int],
         office_prefs: List[int],
-        courses: List[int],
         adjacent_pref: int,
         num_assignments: int,
     ):
         self.tutor_id = tutor_id
-        self.name = name
 
-        self.time_slots = time_slots
+        self.slot_prefs = slot_prefs
         self.office_prefs = office_prefs
-        self.courses = courses
         self.adjacent_pref = adjacent_pref
         self.num_assignments = num_assignments
 

@@ -47,10 +47,10 @@ class Butler(Weighting):
         retval: float = 0.00;
 
         # Add the time preference
-        retval += Butler.TIME_PREF_TOW[tutor.time_slots[slot.slot_id]];
+        retval += Butler.TIME_PREF_TOW[tutor.slot_prefs[slot.slot_id]]
 
         # Add the office preference
-        retval += tutor.office_prefs[slot.slot_id];
+        retval += tutor.office_prefs[slot.slot_id]
 
         for s in tutor.slots:
             if s.day == slot.day:

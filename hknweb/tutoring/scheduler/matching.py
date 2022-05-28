@@ -1,4 +1,4 @@
-from typing import List, Set, Union
+from typing import List, Set, Tuple, Union
 
 import random
 
@@ -8,6 +8,7 @@ from itertools import product
 from hknweb.tutoring.scheduler.data import Data
 from hknweb.tutoring.scheduler.weighting import Weighting
 from hknweb.tutoring.scheduler.graph import Edge, Graph
+from hknweb.tutoring.scheduler.tutoring import Slot, Tutor
 
 
 class Matcher:
@@ -59,9 +60,9 @@ class Matcher:
 
         retrieve_tutor = lambda i: (i, self.data.tutors[i])
         valid_tutor_idx = lambda _, tutor: len(tutor.slots) < tutor.num_assignments
-        tutor_idxs: List[int] = list(filter(valid_tutor_idx, map(retrieve_tutor, tutor_idxs_to_assign)))
+        tutor_idxs: List[Tuple[int, Tutor]] = list(filter(valid_tutor_idx, map(retrieve_tutor, tutor_idxs_to_assign)))
         retrieve_slot = lambda i: (i, self.data.slots[i])
-        slot_idxs: List[int] = list(map(retrieve_slot, unused_slot_idxs))
+        slot_idxs: List[Tuple[int, Slot]] = list(map(retrieve_slot, unused_slot_idxs))
 
         random.shuffle(tutor_idxs)
         random.shuffle(slot_idxs)
@@ -75,14 +76,14 @@ class Matcher:
             if r <= -10:
                 continue
 
-            self.updateMatching(assign_dto, tutor_idx, slot_idx + len(self.data.tutors), r)
+            self.updateMatching(assign_dto, tutor_idx, slot_idx + assign_dto.num_tutors, r)
 
         # Assign partners
         for i, tutor in enumerate(self.data.tutors):
-            if partner[i] == -1:
+            if assign_dto.partner[i] == -1:
                 continue
 
-            k = partner[i] - len(self.data.tutors)
+            k = assign_dto.partner[i] - assign_dto.num_tutors
             slot = retrieve_slot(k)
 
             tutor.assign(slot)

@@ -18,7 +18,7 @@ class Evaluator:
         scores: List[float] = []
 
         for t in assignment.tutors:
-            if len(t.slots) < t.num_assignments:
+            if len(t.slots) != t.num_assignments:
                 continue
 
             if any(s1.simultaneous(s2) for s1, s2 in combos(t.slots, 2)):
@@ -30,7 +30,7 @@ class Evaluator:
             t.slots = set()
 
             # 0 means not available
-            if any(t.time_slots[s.slot_id] == 0 for s in old_slots):
+            if any(t.slot_prefs[s.slot_id] == 0 for s in old_slots):
                 score -= Evaluator.PENALTY
                 continue
 
@@ -44,10 +44,6 @@ class Evaluator:
             d /= t.num_assignments
             scores.append(d)
             score += d
-
-        # Not sure what this does
-        not_ok = lambda s: not any(t.num_assignments == 2 for t in s.tutors)
-        score -= sum(map(not_ok, assignment.slots)) * 100 * Evaluator.PENALTY
 
         mean: float = score / len(scores)
         std: float = sum((score - mean) ** 2 for score in scores)
