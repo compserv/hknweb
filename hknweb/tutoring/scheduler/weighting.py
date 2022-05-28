@@ -62,3 +62,30 @@ class Butler(Weighting):
                 retval += Butler.DIFFERENT_DAY_ADJACENCY[tutor.adjacent_pref]
 
         return retval
+
+
+class Gardener(Weighting):
+    TIME_PREF_TOW: Dict[int, float] = {
+        0: -1000,   # unavailable
+        1: 20,      # ambivalent
+        2: 40,      # prefer
+    }
+
+    ADJACENCY: Dict[int, float] = {
+        0: 5,   # No preference
+        1: 10,  # Prefer adjacent
+    }
+
+    @staticmethod
+    def weight(tutor: Tutor, slot: Slot) -> float:
+        retval: float = 0.0
+
+        if tutor.adjacent_pref == 0:
+            retval += Gardener.ADJACENCY[tutor.adjacent_pref]
+        elif tutor.adjacent_pref == 1:
+            has_adj = sum(slot.adjacent(s) for s in tutor.slots)
+            retval += has_adj * Gardener.ADJACENCY[tutor.adjacent_pref]
+
+        retval += Gardener.TIME_PREF_TOW[tutor.slot_prefs[slot.slot_id]]
+
+        return retval
