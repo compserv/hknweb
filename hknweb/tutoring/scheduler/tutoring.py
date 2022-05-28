@@ -1,14 +1,8 @@
-from typing import Dict, List, Set, Union
+from typing import List, Set
 
 
 class Slot:
-    def __init__(
-        self,
-        slot_id: int,
-        day: str,
-        hour: int,
-        office: str,
-    ):
+    def __init__(self, slot_id: int, day: str, hour: int, office: str):
         self.slot_id = slot_id
         self.day = day
         self.hour = hour
@@ -26,25 +20,11 @@ class Slot:
         return (self.hour == other.hour) and (self.day == other.day)
 
     def adjacent(self, other: "Slot") -> bool:
-        is_same_office: bool = self.office == other.office
-        is_same_day: bool = self.day == other.day
-        is_hour_before: bool = self.hour == other.hour - 1
-        is_hour_after: bool = self.hour == other.hour + 1
-        return is_same_office and is_same_day and (is_hour_before or is_hour_after)
-
-    def __repr__(self) -> Dict[str, Union[int, str]]:
-        return {
-            "slot_id": self.slot_id,
-            "day": self.day,
-            "hour": self.hour,
-            "office": self.office,
-        }
-
-    def __eq__(self, other: "Slot") -> bool:
-        return repr(self) == repr(other)
+        return (self.office == other.office) and (self.day == other.day) \
+            and (abs(self.hour - other.hour) == 1)
 
     def __str__(self):
-        return f"Slot({repr(self)})"
+        return f"Slot({self.slot_id} on {self.day} at {self.hour} in {self.office})"
 
 
 class Tutor:
@@ -74,11 +54,5 @@ class Tutor:
     def unassign(self, s: "Slot") -> None:
         self.slots.remove(s)
 
-    def __repr__(self) -> Dict[str, Union[str, int]]:
-        return {
-            "tutor_id": self.tutor_id,
-            "name": self.name,
-        }
-
     def __str__(self) -> str:
-        return f"Tutor({repr(self)})"
+        return f"Tutor({self.tutor_id})"
