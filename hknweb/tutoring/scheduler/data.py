@@ -1,4 +1,4 @@
-from typing import List
+from typing import Any, Dict, List
 import requests
 import json
 
@@ -18,14 +18,20 @@ class DjangoData(Data):
         super().__init__()
 
 
-class OldJSONTestData(Data):
-    def __init__(self, url: str) -> None:
+class JSONData(Data):
+    def __init__(self) -> None:
         super().__init__()
 
-        content = requests.get(url).content
-        clean = lambda s: s.replace(b"\n", b"").replace(b"\r", b"").replace(b"\'", b"\"")
-        data = json.loads(clean(content))
+        json_str = self.get_json_str()
+        clean = lambda s: s.replace("\n", "").replace("\r", "").replace("\'", "\"")
+        data: Dict[str, Any] = json.loads(clean(json_str))
 
+        self.post_init(data)
+
+    def get_json_str(self) -> str:
+        raise NotImplementedError()
+
+    def post_init(self, data: Dict[str, Any]):
         for t_dto in data["tutors"]:
             self.tutors.append(Tutor(
                 tutor_id=t_dto["tid"],
@@ -42,3 +48,23 @@ class OldJSONTestData(Data):
                 hour=s_dto["hour"],
                 office=s_dto["office"],
             ))
+
+
+class RemoteJSONData(JSONData):
+    def __init__(self, url: str) -> None:
+        self.url = url
+
+        super().__init__()
+
+    def get_json_str(self) -> str:
+        return requests.get(self.url).content.decode()
+
+
+class LocalJSONData(JSONData):
+    def __init__(self, path: str) -> None:
+        self.path = path
+
+        super().__init__()
+
+    def get_json_str(self) -> str:
+        return open(self.path).read()
