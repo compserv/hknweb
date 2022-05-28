@@ -8,9 +8,28 @@ from hknweb.tutoring.scheduler.tutoring import Slot, Tutor
 
 
 class Data:
+    DAY_SORT_MAPPING: Dict[str, str] = {
+        "Monday": "0",
+        "Tuesday": "1",
+        "Wednesday": "2",
+        "Thursday": "3",
+        "Friday": "4",
+    }
+
     def __init__(self) -> None:
         self.slots: List[Slot] = []
         self.tutors: List[Tutor] = []
+
+    def readable_formatted_assignments(self) -> str:
+        slot_sort = lambda s: Data.DAY_SORT_MAPPING[s.day] + str(s.hour)
+        slots = sorted(self.slots, key=slot_sort)
+
+        res = ""
+        for slot in slots:
+            tutors = ", ".join(map(repr, slot.tutors))
+            res += f"{slot}: {tutors}\n"
+
+        return res
 
 
 class DjangoData(Data):
