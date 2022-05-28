@@ -33,7 +33,7 @@ class Matcher:
         self.data, self.weighting = data, weighting
 
     def match(self) -> None:
-        two_hour_tutors: List[int] = [t.num_assignments == 2 for t in self.data.tutors]
+        two_hour_tutors: List[int] = [i for i, t in enumerate(self.data.tutors) if t.num_assignments == 2]
 
         # Try to assign all slots one tutor
         # This may allow one tutor to go into multiple slots
@@ -83,7 +83,7 @@ class Matcher:
                 continue
 
             k = assign_dto.partner[i] - assign_dto.num_tutors
-            slot = retrieve_slot(k)
+            _, slot = retrieve_slot(k)
 
             tutor.assign(slot)
             slot.assign(tutor)
@@ -161,7 +161,7 @@ class Matcher:
                 ovis[idx] = i
 
         end: int = -1
-        while pq:
+        while not pq.empty():
             f: Edge = pq.get()
             if vis[f.b]:
                 continue
@@ -180,7 +180,7 @@ class Matcher:
             l = partner[f.b]
             for node in graph.get_neighbors(l):
                 if not vis[node.b]:
-                    pq.add(Edge(prices[l] + prices[node.b] - node.weight + C, l, node.b));
+                    pq.put(Edge(prices[l] + prices[node.b] - node.weight + C, l, node.b));
 
             ovis[idx + 1] = f.b
             ovis[idx + 2] = l

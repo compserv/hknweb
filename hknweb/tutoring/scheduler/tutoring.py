@@ -8,7 +8,7 @@ class Slot:
         self.hour = hour
         self.office = office
 
-        self.tutors: "Set[Tutor]" = []
+        self.tutors: "Set[Tutor]" = set()
 
     def assign(self, t: "Tutor") -> None:
         self.tutors.add(t)
