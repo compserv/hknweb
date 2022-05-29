@@ -14,20 +14,18 @@ class Evaluator:
 
     @staticmethod
     def evaluate(assignment: Data, weighting: Weighting) -> Tuple[float, float]:
-        score: float = 0.0
-        scores: List[float] = []
+        total_score: float = 0.0
+        tutor_scores: List[float] = []
 
-        for t in assignment.tutors:
-            if len(t.slots) != t.num_assignments:
-                continue
-
+        has_correct_slots = lambda t: len(t.slots) == t.num_assignments
+        for t in filter(has_correct_slots, assignment.tutors):
             if any(s1.simultaneous(s2) for s1, s2 in combinations(t.slots, 2)):
-                score -= Evaluator.PENALTY
+                total_score -= Evaluator.PENALTY
                 continue
 
             # 0 means not available
             if any(t.slot_prefs[s.slot_id] == 0 for s in t.slots):
-                score -= Evaluator.PENALTY
+                total_score -= Evaluator.PENALTY
                 continue
 
             # Simulate re-adding the slots in one by one
@@ -40,9 +38,9 @@ class Evaluator:
                 t.assign(s)
 
             d /= t.num_assignments
-            scores.append(d)
-            score += d
+            tutor_scores.append(d)
 
-        mean: float = score / len(scores)
-        std: float = sum((score - mean) ** 2 for score in scores)
-        return sqrt(std), score
+        total_score += sum(tutor_scores)
+        mean: float = total_score / len(tutor_scores)
+        std: float = sum((s - mean) ** 2 for s in tutor_scores)
+        return sqrt(std), total_score
