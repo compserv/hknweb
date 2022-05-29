@@ -21,6 +21,7 @@ class Swapper:
         curr_best: float = Evaluator.evaluate(data, weighting)[1]
 
         i, total = 0, Swapper.Q * (Swapper.K_high - Swapper.K_low + 1) * iterations
+        nonempty_tutors: List[Tutor] = [t for t in data.tutors if t.slots]
         for q in range(Swapper.Q):
             # Less movement the more iterations we go
             cthresh: float = Swapper.THRESHOLD / ((10 - q) ** 2)
@@ -29,7 +30,6 @@ class Swapper:
                 # Do k-way swaps iter times
                 for _ in range(iterations):
                     # Choose k distinct tutors with nonempty slots
-                    nonempty_tutors: List[Tutor] = [t for t in data.tutors if t.slots]
                     to_swap: List[Tutor] = random.sample(nonempty_tutors, k)
 
                     # Choose a random slot within each tutor

@@ -47,5 +47,5 @@ class SchedulerTests(TestCase):
         for i, score in enumerate(scores):
             name = f"s{i+1}"
             prev_score = prev_results[name]
-            off_by = 1 - (prev_score / score)
+            off_by = 100 * (1 - (prev_score / score))
             print(f"{name}: {prev_score} {int(score)} {off_by}")
