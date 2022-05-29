@@ -9,7 +9,7 @@ from hknweb.tutoring.scheduler.evaluator import Evaluator
 
 
 class Swapper:
-    ITERATIONS_MULTIPLIER: int = 100  # Originally 100000
+    ITERATIONS_MULTIPLIER: int = 100000
     THRESHOLD: float = 1e-10
     Q = 5
     K_high = 5

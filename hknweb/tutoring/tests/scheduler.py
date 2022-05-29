@@ -48,4 +48,4 @@ class SchedulerTests(TestCase):
             name = f"s{i+1}"
             prev_score = prev_results[name]
             off_by = 1 - (prev_score / score)
-            print(f"{name}: {prev_score} {score:.d} {off_by}")
+            print(f"{name}: {prev_score} {int(score)} {off_by}")
