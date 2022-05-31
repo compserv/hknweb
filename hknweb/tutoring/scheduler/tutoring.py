@@ -1,4 +1,4 @@
-from typing import List, Set
+from typing import List
 
 
 class Slot:
@@ -8,10 +8,10 @@ class Slot:
         self.hour = hour
         self.office = office
 
-        self.tutors: "Set[Tutor]" = set()
+        self.tutors: "List[Tutor]" = []
 
     def assign(self, t: "Tutor") -> None:
-        self.tutors.add(t)
+        self.tutors.append(t)
 
     def unassign(self, t: "Tutor") -> None:
         self.tutors.remove(t)
@@ -43,16 +43,22 @@ class Tutor:
         self.adjacent_pref = adjacent_pref
         self.num_assignments = num_assignments
 
-        self.slots: "Set[Slot]" = set()
+        self.slots: "List[Slot]" = []
 
     def conflict(self, s1: "Slot") -> bool:
         return any(map(lambda s2: s1.simultaneous(s2), self.slots))
 
     def assign(self, s: "Slot") -> None:
-        self.slots.add(s)
+        self.slots.append(s)
 
     def unassign(self, s: "Slot") -> None:
         self.slots.remove(s)
+
+    def clear_slots(self) -> "List[Slot]":
+        res = self.slots.copy()
+        self.slots = []
+
+        return res
 
     def __repr__(self) -> str:
         return f"Tutor({self.tutor_id})"

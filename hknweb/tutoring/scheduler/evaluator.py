@@ -31,8 +31,7 @@ class Evaluator:
             # Simulate re-adding the slots in one by one
             # Order shouldn't matter when adding slots in
             d: float = 0.0
-            old_slots: Set[Slot] = t.slots.copy()
-            t.slots = set()
+            old_slots: List[Slot] = t.clear_slots()
             for s in old_slots:
                 d += weighting.weight(t, s)
                 t.assign(s)

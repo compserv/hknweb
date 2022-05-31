@@ -36,6 +36,7 @@ class Swapper:
                     slots = [random.choice(list(t.slots)) for t in to_swap]
                     slots_rotated_right = slots[1:] + slots[:1]
 
+                    # TODO make tutors and slots sets into lists
                     # Now do a circular swap
                     for swap in zip(to_swap, slots, slots_rotated_right):
                         Swapper._swap(*swap)
