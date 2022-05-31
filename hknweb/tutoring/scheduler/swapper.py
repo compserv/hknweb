@@ -44,7 +44,6 @@ class Swapper:
                     # Only move up if at least thresh improvement
                     cost: float = Evaluator.evaluate(data, weighting)[1]
                     if cost > (curr_best + cthresh):
-                        print(f"Moved up by {cost - curr_best:.6f}")
                         curr_best = cost
                     else:   # Undo changes otherwise
                         for swap in zip(to_swap, slots_rotated_right, slots):
