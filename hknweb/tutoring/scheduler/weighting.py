@@ -4,8 +4,8 @@ from hknweb.tutoring.scheduler.tutoring import Slot, Tutor
 
 
 class Weighting:
-    @staticmethod
-    def weight(tutor: Tutor, slot: Slot) -> float:
+    @classmethod
+    def weight(cls, tutor: Tutor, slot: Slot) -> float:
         """
         Parameters
         ----------
@@ -42,12 +42,12 @@ class Butler(Weighting):
         -1: 3,      # Prefers not adjacent
     }
 
-    @staticmethod
-    def weight(tutor: Tutor, slot: Slot) -> float:
+    @classmethod
+    def weight(cls, tutor: Tutor, slot: Slot) -> float:
         retval: float = 0.00;
 
         # Add the time preference
-        retval += Butler.TIME_PREF_TOW[tutor.slot_prefs[slot.slot_id]]
+        retval += cls.TIME_PREF_TOW[tutor.slot_prefs[slot.slot_id]]
 
         # Add the office preference
         retval += tutor.office_prefs[slot.slot_id]
@@ -55,11 +55,11 @@ class Butler(Weighting):
         for s in tutor.slots:
             if s.day == slot.day:
                 if s.adjacent(slot):
-                    retval += Butler.SAME_DAY_ADJACENCY[tutor.adjacent_pref]
+                    retval += cls.SAME_DAY_ADJACENCY[tutor.adjacent_pref]
                 else:
                     retval -= 1000
             else:
-                retval += Butler.DIFFERENT_DAY_ADJACENCY[tutor.adjacent_pref]
+                retval += cls.DIFFERENT_DAY_ADJACENCY[tutor.adjacent_pref]
 
         return retval
 
@@ -76,16 +76,24 @@ class Gardener(Weighting):
         1: 10,  # Prefer adjacent
     }
 
-    @staticmethod
-    def weight(tutor: Tutor, slot: Slot) -> float:
+    @classmethod
+    def weight(cls, tutor: Tutor, slot: Slot) -> float:
         retval: float = 0.0
 
         if tutor.adjacent_pref == 0:
-            retval += Gardener.ADJACENCY[tutor.adjacent_pref]
+            retval += cls.ADJACENCY[tutor.adjacent_pref]
         elif tutor.adjacent_pref == 1:
             has_adj = sum(slot.adjacent(s) for s in tutor.slots)
-            retval += has_adj * Gardener.ADJACENCY[tutor.adjacent_pref]
+            retval += has_adj * cls.ADJACENCY[tutor.adjacent_pref]
 
-        retval += Gardener.TIME_PREF_TOW[tutor.slot_prefs[slot.slot_id]]
+        retval += cls.TIME_PREF_TOW[tutor.slot_prefs[slot.slot_id]]
 
         return retval
+
+
+class OldGardener(Gardener):
+    TIME_PREF_TOW: Dict[int, float] = {
+        0: -1000,   # unavailable
+        1: 10,      # ambivalent
+        2: 20,      # prefer
+    }

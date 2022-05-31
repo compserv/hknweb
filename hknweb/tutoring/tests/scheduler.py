@@ -23,7 +23,7 @@ class SchedulerTests(TestCase):
     def test_scheduler_url(self):
         url = "https://raw.githubusercontent.com/compserv/tutoring-algorithm/master/test/s1.json"
         data: Data = RemoteJSONData(url)
-        schedule(data)
+        schedule(data, output_readable=False, weighting_str="old_gardener")
 
     def test_scheduler_local(self):
         test_dir = "media/tutoring-algorithm/test/"
@@ -39,7 +39,7 @@ class SchedulerTests(TestCase):
         for i in range(1, 7+1):
             path = test_template.format(str(i))
             data: Data = LocalJSONData(path)
-            score = schedule(data, output_readable=False)
+            score = schedule(data, output_readable=False, weighting_str="old_gardener")
 
             scores.append(score)
 

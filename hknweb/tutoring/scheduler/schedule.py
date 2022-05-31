@@ -1,12 +1,20 @@
+from typing import Dict
+
 from hknweb.tutoring.scheduler.data import Data
-from hknweb.tutoring.scheduler.weighting import Weighting, Gardener
+from hknweb.tutoring.scheduler.weighting import Weighting, Butler, Gardener, OldGardener
 from hknweb.tutoring.scheduler.matching import Matcher
 from hknweb.tutoring.scheduler.evaluator import Evaluator
 from hknweb.tutoring.scheduler.swapper import Swapper
 
 
-def schedule(data: Data, output_readable=True) -> float:
-    weighting: Weighting = Gardener()
+WEIGHTINGS: Dict[str, Weighting] = {
+    "butler": Butler,
+    "gardener": Gardener,
+    "old_gardener": OldGardener,
+}
+
+def schedule(data: Data, output_readable=True, weighting_str: str="gardener") -> float:
+    weighting: Weighting = WEIGHTINGS.get(weighting_str, Gardener)
     matcher: Matcher = Matcher(data, weighting)
 
     print("Matching...")
