@@ -7,6 +7,8 @@ HKNWEB_MODE='dev' python manage.py test hknweb.tutoring.tests.scheduler
 ```
 """
 import random
+from typing import Callable, List
+import requests
 
 from django.test import TestCase
 
@@ -16,36 +18,54 @@ from hknweb.tutoring.scheduler.schedule import schedule
 
 class SchedulerTests(TestCase):
     SEED = 42
+    ITERATIONS_MUL = 10
+    ALLOWABLE_MARGIN = -15
 
     def setUp(self):
         random.seed(self.SEED)
 
-    def test_scheduler_url(self):
-        url = "https://raw.githubusercontent.com/compserv/tutoring-algorithm/master/test/s1.json"
-        data: Data = RemoteJSONData(url)
-        schedule(data, output_readable=False, weighting_str="old_gardener")
-
-    def test_scheduler_local(self):
-        test_dir = "media/tutoring-algorithm/test/"
-
+    def _helper_test_scheduler(
+        self,
+        prev_results_strs: List[str],
+        get_data_fn: Callable[[int], Data],
+    ):
         # Load target experiment results
-        prev_results_strs = open(test_dir + "exp_results.txt").readlines()[-8:]
+        prev_results_strs = prev_results_strs[-8:]
         parse_result = lambda s: (s[:2], int(s[8:11]))
         prev_results = dict(map(parse_result, prev_results_strs))
 
         # Run experiments
-        test_template = test_dir + "s{}.json"
         scores = []
         for i in range(1, 7+1):
-            path = test_template.format(str(i))
-            data: Data = LocalJSONData(path)
-            score = schedule(data, output_readable=False, weighting_str="old_gardener")
+            data: Data = get_data_fn(i)
+            score = schedule(
+                data,
+                print_output=False,
+                weighting_str="old_gardener",
+                iterations_mul=self.ITERATIONS_MUL,
+            )
 
             scores.append(score)
 
-        print("Dataset target_score current_score off_by")
         for i, score in enumerate(scores):
             name = f"s{i+1}"
             prev_score = prev_results[name]
             off_by = 100 * (1 - (prev_score / score))
-            print(f"{name}: {prev_score} {int(score)} {off_by}")
+            self.assertGreaterEqual(
+                off_by, self.ALLOWABLE_MARGIN, msg=f"{name}: {prev_score} {int(score)} {off_by}",
+            )
+
+    def test_scheduler_url(self):
+        base_url = "https://raw.githubusercontent.com/compserv/tutoring-algorithm/master/test/"
+        prev_results_strs: List[str] = requests.get(f"{base_url}exp_results.txt").content.decode()
+        prev_results_strs = list(filter(None, prev_results_strs.split("\n")))
+        get_data_fn: Callable[[int], Data] = lambda i: RemoteJSONData(f"{base_url}s{i}.json")
+
+        self._helper_test_scheduler(prev_results_strs, get_data_fn)
+
+    def test_scheduler_local(self):
+        test_dir = "media/tutoring-algorithm/test/"
+        prev_results_strs: List[str] = open(f"{test_dir}exp_results.txt").readlines()
+        get_data_fn: Callable[[int], Data] = lambda i: LocalJSONData(f"{test_dir}s{i}.json")
+
+        self._helper_test_scheduler(prev_results_strs, get_data_fn)

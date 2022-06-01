@@ -1,6 +1,6 @@
 import random
 
-from typing import List
+from typing import List, Union
 
 from itertools import product
 
@@ -15,8 +15,14 @@ class Swapper:
     Ks = list(range(5, 2-1, -1))
 
     @staticmethod
-    def stabilize(data: Data, weighting: Weighting) -> None:
-        iterations: int = len(data.tutors) * Swapper.ITERATIONS_MULTIPLIER
+    def stabilize(
+        data: Data,
+        weighting: Weighting,
+        iterations_mul: Union[int, None]=None,
+        print_output: bool=True,
+    ) -> None:
+        iterations_mul: int = iterations_mul if iterations_mul else Swapper.ITERATIONS_MULTIPLIER
+        iterations: int = len(data.tutors) * iterations_mul
         curr_best: float = Evaluator.evaluate(data, weighting)[1]
 
         nonempty_tutors: List[Tutor] = [t for t in data.tutors if t.slots]
@@ -40,9 +46,9 @@ class Swapper:
                 Swapper._circular_swap(to_swap, slots_rotated_right, slots)
 
             pct = (i + 1) * 100
-            if pct % total == 0:  # Print every 1%
+            if print_output and pct % total == 0:  # Print every 1%
                 print(f"Swapping {pct // total}%\r", end="", flush=True)
-        print()
+        if print_output: print()
 
     @staticmethod
     def _circular_swap(tutors: List[Tutor], slots_from: List[Slot], slots_to: List[Slot]) -> None:
