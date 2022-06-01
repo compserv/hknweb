@@ -9,6 +9,7 @@ HKNWEB_MODE='dev' python manage.py test hknweb.tutoring.tests.scheduler
 import random
 from typing import Callable, List
 import requests
+import os
 
 from django.test import TestCase
 
@@ -20,6 +21,19 @@ class SchedulerTests(TestCase):
     SEED = 42
     ITERATIONS_MUL = 10
     ALLOWABLE_MARGIN = -15
+
+    TEST_DIR = "media/tutoring-algorithm/test/"
+    TEST_URL = "https://raw.githubusercontent.com/compserv/tutoring-algorithm/master/test/"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.can_run_local: bool = os.path.exists(self.TEST_DIR)
+        self.can_run_remote: bool = requests.get(f"{self.TEST_URL}exp_results.txt").status_code == 200
+        self.assertTrue(
+            self.can_run_local or self.can_run_remote,
+            "Can't run either local or remote scheduler tests",
+        )
 
     def setUp(self):
         random.seed(self.SEED)
@@ -56,16 +70,20 @@ class SchedulerTests(TestCase):
             )
 
     def test_scheduler_url(self):
-        base_url = "https://raw.githubusercontent.com/compserv/tutoring-algorithm/master/test/"
-        prev_results_strs: List[str] = requests.get(f"{base_url}exp_results.txt").content.decode()
+        if not self.can_run_remote:
+            return
+
+        prev_results_strs: List[str] = requests.get(f"{self.TEST_URL}exp_results.txt").content.decode()
         prev_results_strs = list(filter(None, prev_results_strs.split("\n")))
-        get_data_fn: Callable[[int], Data] = lambda i: RemoteJSONData(f"{base_url}s{i}.json")
+        get_data_fn: Callable[[int], Data] = lambda i: RemoteJSONData(f"{self.TEST_URL}s{i}.json")
 
         self._helper_test_scheduler(prev_results_strs, get_data_fn)
 
     def test_scheduler_local(self):
-        test_dir = "media/tutoring-algorithm/test/"
-        prev_results_strs: List[str] = open(f"{test_dir}exp_results.txt").readlines()
-        get_data_fn: Callable[[int], Data] = lambda i: LocalJSONData(f"{test_dir}s{i}.json")
+        if not self.can_run_local:
+            return
+
+        prev_results_strs: List[str] = open(f"{self.TEST_DIR}exp_results.txt").readlines()
+        get_data_fn: Callable[[int], Data] = lambda i: LocalJSONData(f"{self.TEST_DIR}s{i}.json")
 
         self._helper_test_scheduler(prev_results_strs, get_data_fn)

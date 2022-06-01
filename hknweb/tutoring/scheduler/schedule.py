@@ -25,7 +25,6 @@ def schedule(
     if print_output: print("Matching...")
     score = float("-inf")
     while score < 0:
-        # data.clear_assignments()  # TODO
         matcher.match()
         _, score = Evaluator.evaluate(data, weighting)
 
