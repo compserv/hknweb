@@ -9,7 +9,7 @@ from django.dispatch import receiver
 from django.core.validators import RegexValidator
 from django.utils import timezone
 
-from hknweb.coursesemester.models import Semester
+from hknweb.coursesemester.models import Semester, Course
 
 from hknweb.utils import view_url
 
@@ -39,6 +39,7 @@ class Profile(models.Model):
         Semester, on_delete=models.SET_NULL, null=True, blank=True
     )
     google_calendar_id = models.CharField(max_length=255, null=True, blank=True)
+    preferred_courses = models.ManyToManyField(Course, blank=True)
 
     @receiver(post_save, sender=User)
     def create_user_profile(sender, instance, created, **kwargs):
@@ -66,6 +67,9 @@ class Profile(models.Model):
 
     def __str__(self):
         return "Profile of: " + str(self.user)
+    
+    def preferred_courses_str(self) -> str:
+        return ", ".join(map(str, self.preferred_courses.all()))
 
 
 class Announcement(models.Model):

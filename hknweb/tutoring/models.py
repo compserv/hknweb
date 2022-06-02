@@ -50,4 +50,4 @@ class Slot(models.Model):
         tutors = self.tutors \
             .annotate(full_name=Concat("first_name", Value(" "), "last_name")) \
             .values_list("full_name", flat=True)
-        return "\n".join(tutors)
+        return ", ".join(tutors)

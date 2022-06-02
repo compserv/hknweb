@@ -15,6 +15,34 @@
 
     {% include 'events/_nav_buttons.html' %}
 
+    <style>
+        a.fc-event{
+            width: 15em;
+        }
+
+        .tooltip {
+            color: black;
+            background-color: WhiteSmoke;
+            width: 200%;
+            border-radius: 0.15em;
+            min-height: 3em;
+            padding: 0;
+            position: relative;
+            top: calc(-75% - 1px);
+            left: -1px;
+            z-index: 10;
+            display: none;
+        }
+
+        .tooltip-title {
+            text-align: center;
+            margin-bottom: 0.5em;
+            color: white;
+            font-size: 125%;
+            border-radius: inherit;
+        }
+    </style>
+
     <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', function() {
             var calendarEl = document.getElementById('calendar');
@@ -46,14 +74,31 @@
                         title: '{{ slot.tutor_names }}',
                         start: '{{ slot.start_time|date:"c" }}',
                         end: '{{ slot.end_time|date:"c" }}',
+                        color: '{{ slot.room.color }}',
+                        id: 'slot{{ slot.id }}',
                     },
-                {% endfor %}]
+                {% endfor %}],
+                eventRender: function (eventRenderInfo) {
+                    eventRenderInfo.el.append(document.getElementById(eventRenderInfo.event.id + "tooltip"));
+                },
+                eventMouseEnter: function (mouseEnterInfo) {
+                    document.getElementById(mouseEnterInfo.event.id + "tooltip").style.display = "block";
+                    mouseEnterInfo.el.style.zIndex = 10;
+                },
+                eventMouseLeave: function (mouseLeaveInfo) {
+                    document.getElementById(mouseLeaveInfo.event.id + "tooltip").style.display = "none";
+                    mouseLeaveInfo.el.style.zIndex = 1;
+                }
             });
 
             calendar.render();
         });
 
-        window.addEventListener("load", function (){ decorate_nav_buttons(true); });
+        window.addEventListener("load", function () {
+            decorate_nav_buttons(true);
+
+            document.getElementsByClassName("fc-time-grid-container")[0].style.overflow = "visible";
+        });
 
     </script>
 {% endblock %}
@@ -64,4 +109,43 @@
             <section id="calendar"></section>
         </div>
     </div>
+
+    {% for slot in slots %}
+        <div id="slot{{ slot.id }}tooltip" class="tooltip">
+            <div class="tooltip-title" style="background-color: {{ slot.room.color }};">
+                {{ slot.start_time|date:"h:iA" }} - {{ slot.end_time|date:"h:iA" }}
+                in {{ slot.room.name }}
+            </div>
+            <div style="margin-left: 0.5em; margin-right: 0.5em;">
+                {% for user in slot.tutors.all %}
+                    <div>
+                        <div style="display: inline-block; margin-right: 0.5em;">
+                            <img
+                                style="width: 12em; height: 12em;"
+                                {% if user.profile.picture %}
+                                    src="{{ user.profile.picture_display_url }}"
+                                    alt="{{ user.first_name }} {{ user.last_name }}"
+                                {% else %}
+                                    src="{% static 'img/blank_profile_pic.jpg' %}"
+                                    alt="Missing profile picture"
+                                {% endif %}
+                            >
+                        </div>
+                        <div style="display: inline-block; width: 15em; vertical-align: top;">
+                            <div style="font-weight: bold;">
+                                {{ user.first_name }} {{ user.last_name }}
+                            </div>
+
+                            Courses: 
+                            {% if user.profile.preferred_courses.exists %}
+                                {{ user.profile.preferred_courses_str }}
+                            {% else %}
+                                No preferred courses, but any lower division courses (61A, 61B, 70, 16A, 16B) welcome!
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
 {% endblock %}
