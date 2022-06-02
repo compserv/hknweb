@@ -41,6 +41,24 @@
             font-size: 125%;
             border-radius: inherit;
         }
+
+        .tooltip-body {
+            margin-left: 0.5em;
+            margin-right: 0.5em;
+        }
+
+        .tooltip-tutor-img {
+            display: inline-block;
+            margin-right: 0.5em;
+            width: 12em;
+            height: 12em;
+        }
+
+        .tooltip-tutor-desc {
+            display: inline-block;
+            width: 15em;
+            vertical-align: top;
+        }
     </style>
 
     <script type="text/javascript">
@@ -68,20 +86,47 @@
                         nowIndicator: true,
                     }
                 },
-                // Events
-                events: [{% for slot in slots %}
-                    {
-                        title: '{{ slot.tutor_names }}',
-                        start: '{{ slot.start_time|date:"c" }}',
-                        end: '{{ slot.end_time|date:"c" }}',
-                        color: '{{ slot.room.color }}',
-                        id: 'slot{{ slot.id }}',
-                    },
-                {% endfor %}],
+                events: '{% url "tutoring:slots" %}',
                 eventRender: function (eventRenderInfo) {
-                    eventRenderInfo.el.append(document.getElementById(eventRenderInfo.event.id + "tooltip"));
+                    var tooltip = document.createElement("div");
+                    tooltip.id = eventRenderInfo.event.id + "tooltip";
+                    tooltip.classList.add("tooltip");
+
+                    var tooltip_title = document.createElement("div");
+                    tooltip.append(tooltip_title);
+                    tooltip_title.classList.add("tooltip-title");
+                    tooltip_title.style.backgroundColor = eventRenderInfo.event.backgroundColor;
+                    tooltip_title.append(eventRenderInfo.event.extendedProps.tooltip_title);
+
+                    var tooltip_body = document.createElement("div");
+                    tooltip.append(tooltip_body);
+                    tooltip_body.classList.add("tooltip-body");
+
+                    eventRenderInfo.event.extendedProps.tutors.forEach(t => {
+                        var tutor_img = document.createElement("img");
+                        tutor_img.classList.add("tooltip-tutor-img");
+                        tutor_img.src = t.picture;
+                        tutor_img.alt = t.alt;
+
+                        var tutor_desc = document.createElement("div");
+                        tutor_desc.classList.add("tooltip-tutor-desc");
+
+                        var tutor_name = document.createElement("div");
+                        tutor_name.style.fontWeight = "bold";
+                        tutor_name.append(t.name);
+
+                        tutor_desc.append(tutor_name);
+                        tutor_desc.append("Courses: " + t.courses);
+
+                        tooltip_body.append(tutor_img);
+                        tooltip_body.append(tutor_desc);
+                    });
+
+                    eventRenderInfo.el.append(tooltip);
                 },
                 eventMouseEnter: function (mouseEnterInfo) {
+                    document.getElementsByClassName("fc-time-grid-container")[0].style.overflow = "visible";
+
                     document.getElementById(mouseEnterInfo.event.id + "tooltip").style.display = "block";
                     mouseEnterInfo.el.style.zIndex = 10;
                 },
@@ -96,8 +141,6 @@
 
         window.addEventListener("load", function () {
             decorate_nav_buttons();
-
-            document.getElementsByClassName("fc-time-grid-container")[0].style.overflow = "visible";
         });
 
     </script>
@@ -109,43 +152,4 @@
             <section id="calendar"></section>
         </div>
     </div>
-
-    {% for slot in slots %}
-        <div id="slot{{ slot.id }}tooltip" class="tooltip">
-            <div class="tooltip-title" style="background-color: {{ slot.room.color }};">
-                {{ slot.start_time|date:"h:iA" }} - {{ slot.end_time|date:"h:iA" }}
-                in {{ slot.room.name }}
-            </div>
-            <div style="margin-left: 0.5em; margin-right: 0.5em;">
-                {% for user in slot.tutors.all %}
-                    <div>
-                        <div style="display: inline-block; margin-right: 0.5em;">
-                            <img
-                                style="width: 12em; height: 12em;"
-                                {% if user.profile.picture %}
-                                    src="{{ user.profile.picture_display_url }}"
-                                    alt="{{ user.first_name }} {{ user.last_name }}"
-                                {% else %}
-                                    src="{% static 'img/blank_profile_pic.jpg' %}"
-                                    alt="Missing profile picture"
-                                {% endif %}
-                            >
-                        </div>
-                        <div style="display: inline-block; width: 15em; vertical-align: top;">
-                            <div style="font-weight: bold;">
-                                {{ user.first_name }} {{ user.last_name }}
-                            </div>
-
-                            Courses: 
-                            {% if user.profile.preferred_courses.exists %}
-                                {{ user.profile.preferred_courses_str }}
-                            {% else %}
-                                No preferred courses, but any lower division courses (61A, 61B, 70, 16A, 16B) welcome!
-                            {% endif %}
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
-        </div>
-    {% endfor %}
 {% endblock %}
