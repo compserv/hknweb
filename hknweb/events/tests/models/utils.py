@@ -3,7 +3,7 @@ import datetime
 from django.utils import timezone
 
 from django.contrib.auth.models import User
-from hknweb.events.models import Event, EventType, Rsvp
+from hknweb.events.models import Event, EventType, Rsvp, AttendanceForm
 
 
 class ModelFactory:
@@ -77,3 +77,8 @@ class ModelFactory:
             event,
             rsvps,
         )
+
+    @staticmethod
+    def create_attendanceform() -> AttendanceForm:
+        event = ModelFactory.create_event_with_rsvps()[-2]
+        return AttendanceForm.objects.create(event=event, secret_word="test_secret_word")

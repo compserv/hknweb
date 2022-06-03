@@ -108,16 +108,6 @@ def method_login_and_permission(permission_name):
     return method_decorator(login_and_permission(permission_name), name="dispatch")
 
 
-# photos
-
-
-def get_all_photos():
-    """This function is not used; it can be used to view all photos available."""
-    with open(find("animal_photo_urls.txt")) as f:
-        urls = f.readlines()
-    return [url.strip() + "?w=400" for url in urls]
-
-
 # images from pexels.com
 def get_rand_photo(width=400):
     with open(find("animal_photo_urls.txt")) as f:
@@ -147,22 +137,6 @@ def get_semester_bounds(date):
         return datetime(date.year, 7, 1, tzinfo=PACIFIC_TIMEZONE), datetime(
             date.year + 1, 1, 1, tzinfo=PACIFIC_TIMEZONE
         )
-
-
-# Helper. @source: http://books.agiliq.com/projects/django-admin-cookbook/en/latest/export.html
-def export_model_as_csv(model, queryset):
-    meta = model.model._meta
-    field_names = [field.name for field in meta.fields]
-
-    response = HttpResponse(content_type="text/csv")
-    response["Content-Disposition"] = "attachment; filename={}.csv".format(meta)
-    writer = csv.writer(response)
-
-    writer.writerow(field_names)
-    for obj in queryset:
-        writer.writerow([getattr(obj, field) for field in field_names])
-
-    return response
 
 
 def markdownify(text):

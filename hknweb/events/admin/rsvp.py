@@ -24,20 +24,20 @@ class RsvpAdmin(admin.ModelAdmin):
 
     actions = ["mark_confirmed", "mark_unconfirmed", "cute_animal"]
 
-    def full_name(self, rsvp):
+    def full_name(self, rsvp):  # pragma: no cover
         return rsvp.user.get_full_name()
 
-    def mark_confirmed(self, request, queryset):
+    def mark_confirmed(self, request, queryset):  # pragma: no cover
         queryset.update(confirmed=True)
 
     mark_confirmed.short_description = "Mark selected as confirmed"
 
-    def mark_unconfirmed(self, request, queryset):
+    def mark_unconfirmed(self, request, queryset):  # pragma: no cover
         queryset.update(confirmed=False)
 
     mark_unconfirmed.short_description = "Mark selected as unconfirmed"
 
-    def cute_animal(self, request, queryset):
+    def cute_animal(self, request, queryset):  # pragma: no cover
         return redirect("https://www.google.com/search?q=cute+cats&tbm=isch")
 
     cute_animal.short_description = "I wanna see a cute animal"

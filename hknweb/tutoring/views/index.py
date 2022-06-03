@@ -26,7 +26,7 @@ def index(request):
                 calendar_end_time=Max("time"),
             )
 
-        replace_hour = lambda t, offset: t.replace(hour= t.hour + offset)
+        replace_hour = lambda t, offset: t.replace(hour= min(23, max(0, t.hour + offset)))
         times["calendar_start_time"] = replace_hour(times["calendar_start_time"], -1)
         times["calendar_end_time"] = replace_hour(times["calendar_end_time"], 2)
 
