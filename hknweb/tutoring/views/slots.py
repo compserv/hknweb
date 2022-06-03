@@ -1,36 +1,14 @@
 from typing import Dict, List
 
 from django.db.models.query import QuerySet
-from django.db.models import Q
-from django.shortcuts import render
 from django.http import JsonResponse
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.contrib.staticfiles.templatetags.staticfiles import static
 
-from dal import autocomplete
-
 from hknweb.utils import allow_public_access
 
-from hknweb.coursesemester.models import Course
 from hknweb.tutoring.models import Slot, TutoringLogistics
-from hknweb.tutoring.forms import CourseFilterForm
-
-
-@allow_public_access
-def index(request):
-    nav = request.GET.get("nav", "0")
-    try:
-        nav = int(nav)
-    except ValueError:
-        nav = 0
-
-    context = {
-        "offset": timezone.now() + timezone.timedelta(days=nav),
-        "form": CourseFilterForm(),
-    }
-
-    return render(request, "tutoring/index.html", context=context)
 
 
 @allow_public_access
@@ -80,19 +58,3 @@ def slots(request):
 
     slots = list(map(serialize_slot, slot_objs))
     return JsonResponse(slots, safe=False)
-
-
-class CourseAutocomplete(autocomplete.Select2QuerySetView):
-    def get_queryset(self):
-        courses = Course.objects
-        if self.q:
-            courses = courses.filter(
-                Q(name__icontains=self.q)
-                | Q(number__icontains=self.q)
-                | Q(department__abbreviated_name__icontains=self.q)
-                | Q(department__long_name__icontains=self.q)
-            )
-        return courses.order_by("number", "department__abbreviated_name")
-
-
-course_autocomplete = allow_public_access(CourseAutocomplete.as_view())
