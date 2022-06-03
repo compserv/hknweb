@@ -1,15 +1,20 @@
-from typing import Dict
+from typing import Dict, List
 
 from django.db.models.query import QuerySet
+from django.db.models import Q
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.contrib.staticfiles.templatetags.staticfiles import static
 
+from dal import autocomplete
+
 from hknweb.utils import allow_public_access
 
+from hknweb.coursesemester.models import Course
 from hknweb.tutoring.models import Slot, TutoringLogistics
+from hknweb.tutoring.forms import CourseFilterForm
 
 
 @allow_public_access
@@ -22,6 +27,7 @@ def index(request):
 
     context = {
         "offset": timezone.now() + timezone.timedelta(days=nav),
+        "form": CourseFilterForm(),
     }
 
     return render(request, "tutoring/index.html", context=context)
@@ -36,10 +42,19 @@ def slots(request):
         return JsonResponse({})
 
     start = timezone.datetime.fromisoformat(request.GET.get("start"))
+    try:
+        course_ids: List[int] = list(map(int, request.GET.get("course_filter", "").split(",")))
+    except ValueError:
+        course_ids: List[int] = []
+    course_filter_kwargs: Dict[str, List[int]] = {}
+    if course_ids:
+        course_filter_kwargs = {"tutors__profile__preferred_courses__in": course_ids}
+
     slot_objs: QuerySet[Slot] = \
         logistics.slot_set \
-            .filter(weekday=start.weekday()) \
-            .prefetch_related("tutors")
+            .filter(weekday=start.weekday(), **course_filter_kwargs) \
+            .distinct() \
+            .prefetch_related("tutors", "room", "tutors__profile", "tutors__profile__preferred_courses")
 
     blank_pic_url = static("img/blank_profile_pic.jpg")
     def serialize_tutor(tutor: User) -> Dict[str, str]:
@@ -65,3 +80,19 @@ def slots(request):
 
     slots = list(map(serialize_slot, slot_objs))
     return JsonResponse(slots, safe=False)
+
+
+class CourseAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        courses = Course.objects
+        if self.q:
+            courses = courses.filter(
+                Q(name__icontains=self.q)
+                | Q(number__icontains=self.q)
+                | Q(department__abbreviated_name__icontains=self.q)
+                | Q(department__long_name__icontains=self.q)
+            )
+        return courses.order_by("number", "department__abbreviated_name")
+
+
+course_autocomplete = allow_public_access(CourseAutocomplete.as_view())
