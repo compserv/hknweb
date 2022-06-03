@@ -1,3 +1,5 @@
+from typing import Union
+
 from django.db import models
 from django.db.models import Value
 from django.db.models.functions import Concat
@@ -24,6 +26,14 @@ class TutoringLogistics(models.Model):
 
     def __str__(self) -> str:
         return str(self.semester)
+
+    @staticmethod
+    def get_most_recent() -> "Union[None, TutoringLogistics]":
+        logistics: TutoringLogistics = TutoringLogistics.objects \
+            .order_by("-semester__year", "semester__semester") \
+            .first()
+
+        return logistics
 
 
 class Slot(models.Model):

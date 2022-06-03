@@ -83,8 +83,8 @@
                 eventLimit: false,
                 views: {
                     timeGrid: {
-                        minTime: "10:00:00",
-                        maxTime: "22:00:00",
+                        minTime: '{{ calendar_start_time|date:"H:i:s" }}',
+                        maxTime: '{{ calendar_end_time|date:"H:i:s" }}',
                         nowIndicator: true,
                     }
                 },
@@ -184,7 +184,7 @@
 
 {% block content %}
     <div style="text-align: center; overflow: auto;">
-        <div style="width: 30em; margin: auto; display: inline-block; vertical-align: top;">
+        <div style="width: 30em; margin: auto; display: inline-block; vertical-align: top; min-height: 40em;">
             <section id="calendar"></section>
         </div>
 

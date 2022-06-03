@@ -23,9 +23,7 @@ class CourseAutocomplete(autocomplete.Select2QuerySetView):
 
 
 def get_tutors() -> "QuerySet[User]":
-    logistics: TutoringLogistics = TutoringLogistics.objects \
-        .order_by("-semester__year", "semester__semester") \
-        .first()
+    logistics = TutoringLogistics.get_most_recent()
     if logistics is None:
         return User.objects.none()
 

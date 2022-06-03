@@ -13,9 +13,7 @@ from hknweb.tutoring.models import Slot, TutoringLogistics
 
 @allow_public_access
 def slots(request):
-    logistics: TutoringLogistics = TutoringLogistics.objects \
-        .order_by("-semester__year", "semester__semester") \
-        .first()
+    logistics = TutoringLogistics.get_most_recent()
     if logistics is None:
         return JsonResponse({})
 
