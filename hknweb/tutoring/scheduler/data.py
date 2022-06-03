@@ -42,7 +42,7 @@ class JSONData(Data):
         super().__init__()
 
         json_str = self.get_json_str()
-        clean = lambda s: s.replace("\n", "").replace("\r", "").replace("\'", "\"")
+        clean = lambda s: s.replace("\n", "").replace("\r", "").replace("'", '"')
         data: Dict[str, Any] = json.loads(clean(json_str))
 
         self.post_init(data)
@@ -52,21 +52,25 @@ class JSONData(Data):
 
     def post_init(self, data: Dict[str, Any]):
         for t_dto in data["tutors"]:
-            self.tutors.append(Tutor(
-                tutor_id=t_dto["tid"],
-                slot_prefs=t_dto["timeSlots"],
-                office_prefs=t_dto["officePrefs"],
-                adjacent_pref=t_dto["adjacentPref"],
-                num_assignments=t_dto["numAssignments"],
-            ))
+            self.tutors.append(
+                Tutor(
+                    tutor_id=t_dto["tid"],
+                    slot_prefs=t_dto["timeSlots"],
+                    office_prefs=t_dto["officePrefs"],
+                    adjacent_pref=t_dto["adjacentPref"],
+                    num_assignments=t_dto["numAssignments"],
+                )
+            )
 
         for s_dto in data["slots"]:
-            self.slots.append(Slot(
-                slot_id=s_dto["sid"],
-                day=s_dto["day"],
-                hour=s_dto["hour"],
-                office=s_dto["office"],
-            ))
+            self.slots.append(
+                Slot(
+                    slot_id=s_dto["sid"],
+                    day=s_dto["day"],
+                    hour=s_dto["hour"],
+                    office=s_dto["office"],
+                )
+            )
 
 
 class RemoteJSONData(JSONData):  # pragma: no cover

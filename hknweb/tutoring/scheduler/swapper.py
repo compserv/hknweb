@@ -12,16 +12,18 @@ from hknweb.tutoring.scheduler.evaluator import Evaluator
 
 class Swapper:
     ITERATIONS_MULTIPLIER: int = 10000  # Originally 100000 * 5 (for removed Q value)
-    Ks = list(range(5, 2-1, -1))
+    Ks = list(range(5, 2 - 1, -1))
 
     @staticmethod
     def stabilize(
         data: Data,
         weighting: Weighting,
-        iterations_mul: Union[int, None]=None,
-        print_output: bool=True,
+        iterations_mul: Union[int, None] = None,
+        print_output: bool = True,
     ) -> None:
-        iterations_mul: int = iterations_mul if iterations_mul else Swapper.ITERATIONS_MULTIPLIER
+        iterations_mul: int = (
+            iterations_mul if iterations_mul else Swapper.ITERATIONS_MULTIPLIER
+        )
         iterations: int = len(data.tutors) * iterations_mul
         curr_best: float = Evaluator.evaluate(data, weighting)[1]
 
@@ -47,11 +49,16 @@ class Swapper:
 
             pct = (i + 1) * 100
             if print_output and pct % total == 0:  # Print every 1%
-                print(f"Swapping {pct // total}%\r", end="", flush=True)  # pragma: no cover
-        if print_output: print()
+                print(
+                    f"Swapping {pct // total}%\r", end="", flush=True
+                )  # pragma: no cover
+        if print_output:
+            print()
 
     @staticmethod
-    def _circular_swap(tutors: List[Tutor], slots_from: List[Slot], slots_to: List[Slot]) -> None:
+    def _circular_swap(
+        tutors: List[Tutor], slots_from: List[Slot], slots_to: List[Slot]
+    ) -> None:
         for tutor, slot_from, slot_to in zip(tutors, slots_from, slots_to):
             # Remove slot_from from tutor
             slot_from.unassign(tutor)

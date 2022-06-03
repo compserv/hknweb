@@ -21,7 +21,9 @@ def slots(request):
 
     def get_filter_params(param_name: str, kwarg_name: str) -> Dict[str, List[int]]:
         try:
-            param_ids: List[int] = list(map(int, request.GET.get(param_name, "").split(",")))
+            param_ids: List[int] = list(
+                map(int, request.GET.get(param_name, "").split(","))
+            )
         except ValueError:
             param_ids: List[int] = []
         param_filter_kwargs: Dict[str, List[int]] = {}
@@ -30,26 +32,31 @@ def slots(request):
 
         return param_filter_kwargs
 
-
     course_filter_kwargs = get_filter_params(
         "course_filter", "tutors__profile__preferred_courses__in"
     )
     tutor_filter_kwargs = get_filter_params("tutor_filter", "tutors__in")
 
-    slot_objs: QuerySet[Slot] = \
-        logistics.slot_set \
-            .filter(weekday=start.weekday(), **course_filter_kwargs, **tutor_filter_kwargs) \
-            .distinct() \
-            .prefetch_related("tutors", "room", "tutors__profile", "tutors__profile__preferred_courses")
+    slot_objs: QuerySet[Slot] = (
+        logistics.slot_set.filter(
+            weekday=start.weekday(), **course_filter_kwargs, **tutor_filter_kwargs
+        )
+        .distinct()
+        .prefetch_related(
+            "tutors", "room", "tutors__profile", "tutors__profile__preferred_courses"
+        )
+    )
 
     blank_pic_url = static("img/blank_profile_pic.jpg")
+
     def serialize_tutor(tutor: User) -> Dict[str, str]:
         return {
-            "picture": tutor.profile.picture_display_url() if tutor.profile.picture else blank_pic_url,
+            "picture": tutor.profile.picture_display_url()
+            if tutor.profile.picture
+            else blank_pic_url,
             "name": tutor.get_full_name(),
             "courses": tutor.profile.preferred_courses_str(),
         }
-
 
     def serialize_slot(slot: Slot) -> Dict[str, str]:
         start_time = timezone.datetime.combine(start.date(), slot.time)
@@ -59,7 +66,7 @@ def slots(request):
             "start": start_time.isoformat(),
             "end": end_time.isoformat(),
             "color": slot.room.color,
-            "id": f'slot{slot.id}',
+            "id": f"slot{slot.id}",
             "tooltip_title": f'{start_time.strftime("%I:%M%p")} - {end_time.strftime("%I:%M%p")} in {slot.room.name}',
             "tutors": list(map(serialize_tutor, slot.tutors.all())),
         }

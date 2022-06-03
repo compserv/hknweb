@@ -6,6 +6,7 @@ from collections import namedtuple
 Edge = namedtuple("Edge", "weight a b")
 Pair = namedtuple("Pair", "weight b")
 
+
 class Graph:
     def __init__(self, num_nodes: int):
         self.neighbors: Dict[int, List[Pair]] = {i: [] for i in range(num_nodes)}

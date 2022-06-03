@@ -81,4 +81,6 @@ class ModelFactory:
     @staticmethod
     def create_attendanceform() -> AttendanceForm:
         event = ModelFactory.create_event_with_rsvps()[-2]
-        return AttendanceForm.objects.create(event=event, secret_word="test_secret_word")
+        return AttendanceForm.objects.create(
+            event=event, secret_word="test_secret_word"
+        )

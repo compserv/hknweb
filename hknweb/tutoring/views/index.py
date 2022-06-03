@@ -19,14 +19,14 @@ def index(request):
     logistics = TutoringLogistics.get_most_recent()
     times = {}
     if logistics:
-        times = logistics.slot_set \
-            .values_list("time", flat=True) \
-            .aggregate(
-                calendar_start_time=Min("time"),
-                calendar_end_time=Max("time"),
-            )
+        times = logistics.slot_set.values_list("time", flat=True).aggregate(
+            calendar_start_time=Min("time"),
+            calendar_end_time=Max("time"),
+        )
 
-        replace_hour = lambda t, offset: t.replace(hour= min(23, max(0, t.hour + offset)))
+        replace_hour = lambda t, offset: t.replace(
+            hour=min(23, max(0, t.hour + offset))
+        )
         times["calendar_start_time"] = replace_hour(times["calendar_start_time"], -1)
         times["calendar_end_time"] = replace_hour(times["calendar_end_time"], 2)
 

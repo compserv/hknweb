@@ -9,7 +9,9 @@ from hknweb.tutoring.models import Room, Semester, Slot, TutoringLogistics
 class TuteeViewTestHelper(TestCase):
     def setUp(self):
         self.semester: Semester = Semester.objects.create(semester="Fa", year=2000)
-        self.logistics: TutoringLogistics = TutoringLogistics.objects.create(semester=self.semester)
+        self.logistics: TutoringLogistics = TutoringLogistics.objects.create(
+            semester=self.semester
+        )
         self.room: Room = Room.objects.create(name="test_room", color="gray")
         self.slot: Slot = Slot.objects.create(
             logistics=self.logistics,

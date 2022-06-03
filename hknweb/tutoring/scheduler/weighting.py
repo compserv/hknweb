@@ -26,25 +26,25 @@ class Weighting:  # pragma: no cover
 class Butler(Weighting):  # pragma: no cover
     TIME_PREF_TOW: Dict[int, float] = {
         0: -100000,  # unavailable
-        1: 6,        # ambivalent
-        2: 0.01,     # prefer
+        1: 6,  # ambivalent
+        2: 0.01,  # prefer
     }
 
     SAME_DAY_ADJACENCY: Dict[int, float] = {
-        1: 5,       # Prefers adjacent
-        0: -2,      # Indifferent
-        -1: -3,     # Prefers not adjacent
+        1: 5,  # Prefers adjacent
+        0: -2,  # Indifferent
+        -1: -3,  # Prefers not adjacent
     }
 
     DIFFERENT_DAY_ADJACENCY: Dict[int, float] = {
-        1: -2,      # Prefers adjacent
-        0: 0,       # Indifferent
-        -1: 3,      # Prefers not adjacent
+        1: -2,  # Prefers adjacent
+        0: 0,  # Indifferent
+        -1: 3,  # Prefers not adjacent
     }
 
     @classmethod
     def weight(cls, tutor: Tutor, slot: Slot) -> float:
-        retval: float = 0.00;
+        retval: float = 0.00
 
         # Add the time preference
         retval += cls.TIME_PREF_TOW[tutor.slot_prefs[slot.slot_id]]
@@ -66,13 +66,13 @@ class Butler(Weighting):  # pragma: no cover
 
 class Gardener(Weighting):
     TIME_PREF_TOW: Dict[int, float] = {
-        0: -1000,   # unavailable
-        1: 20,      # ambivalent
-        2: 40,      # prefer
+        0: -1000,  # unavailable
+        1: 20,  # ambivalent
+        2: 40,  # prefer
     }
 
     ADJACENCY: Dict[int, float] = {
-        0: 5,   # No preference
+        0: 5,  # No preference
         1: 10,  # Prefer adjacent
     }
 
@@ -93,7 +93,7 @@ class Gardener(Weighting):
 
 class OldGardener(Gardener):
     TIME_PREF_TOW: Dict[int, float] = {
-        0: -1000,   # unavailable
-        1: 10,      # ambivalent
-        2: 20,      # prefer
+        0: -1000,  # unavailable
+        1: 10,  # ambivalent
+        2: 20,  # prefer
     }

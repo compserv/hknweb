@@ -14,7 +14,9 @@ class UtilsTests(TestCase):
 
     def test_view_url_drive_link(self):
         url = "https://drive.google.com/file/d/(.*)/view?usp=sharing"
-        self.assertTrue(view_url(url).startswith("https://drive.google.com/uc?export=view&id="))
+        self.assertTrue(
+            view_url(url).startswith("https://drive.google.com/uc?export=view&id=")
+        )
 
     def test_view_url_flickr_link(self):
         url = "https://live.staticflickr.com/(.*)/(.*).jpg"

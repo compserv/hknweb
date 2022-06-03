@@ -28,12 +28,13 @@ class Matcher:
             self.ovis: List[int] = [0] * self.n
             self.delta: List[float] = [0.0] * self.n
 
-
     def __init__(self, data: Data, weighting: Weighting):
         self.data, self.weighting = data, weighting
 
     def match(self) -> None:
-        two_hour_tutors: List[int] = [i for i, t in enumerate(self.data.tutors) if t.num_assignments == 2]
+        two_hour_tutors: List[int] = [
+            i for i, t in enumerate(self.data.tutors) if t.num_assignments == 2
+        ]
 
         # Try to assign all slots one tutor
         # This may allow one tutor to go into multiple slots
@@ -51,7 +52,9 @@ class Matcher:
         # Now allow committee members to be assigned
         self.assign(unused_slot_idxs, list(range(len(self.data.tutors))))
 
-    def assign(self, unused_slot_idxs: Set[int], tutor_idxs_to_assign: List[int]) -> None:
+    def assign(
+        self, unused_slot_idxs: Set[int], tutor_idxs_to_assign: List[int]
+    ) -> None:
         # Initialize graph
         num_tutors, num_slots = len(self.data.tutors), len(self.data.slots)
         assign_dto = self.AssignDTO(num_tutors, num_tutors + num_slots)
@@ -59,7 +62,9 @@ class Matcher:
 
         retrieve_tutor = lambda i: (i, self.data.tutors[i])
         valid_tutor_idx = lambda p: len(p[1].slots) < p[1].num_assignments
-        tutor_idxs: List[Tuple[int, Tutor]] = list(filter(valid_tutor_idx, map(retrieve_tutor, tutor_idxs_to_assign)))
+        tutor_idxs: List[Tuple[int, Tutor]] = list(
+            filter(valid_tutor_idx, map(retrieve_tutor, tutor_idxs_to_assign))
+        )
         retrieve_slot = lambda i: (i, self.data.slots[i])
         slot_idxs: List[Tuple[int, Slot]] = list(map(retrieve_slot, unused_slot_idxs))
 
@@ -71,11 +76,13 @@ class Matcher:
             if tutor.conflict(slot):
                 continue
 
-            r: float = self.weighting.weight(tutor, slot);
+            r: float = self.weighting.weight(tutor, slot)
             if r <= -10:
                 continue
 
-            self.update_matching(assign_dto, tutor_idx, slot_idx + assign_dto.num_tutors, r)
+            self.update_matching(
+                assign_dto, tutor_idx, slot_idx + assign_dto.num_tutors, r
+            )
 
         # Assign partners
         for i, tutor in enumerate(self.data.tutors):
@@ -92,7 +99,10 @@ class Matcher:
 
     @staticmethod
     def update_matching(
-        assign_dto: "Matcher.AssignDTO", a: int, b: int, weight: float,
+        assign_dto: "Matcher.AssignDTO",
+        a: int,
+        b: int,
+        weight: float,
     ) -> None:
         graph = assign_dto.graph
         prices = assign_dto.prices
@@ -180,7 +190,9 @@ class Matcher:
             l = partner[f.b]
             for node in graph.get_neighbors(l):
                 if not vis[node.b]:
-                    pq.put(Edge(prices[l] + prices[node.b] - node.weight + C, l, node.b));
+                    pq.put(
+                        Edge(prices[l] + prices[node.b] - node.weight + C, l, node.b)
+                    )
 
             ovis[idx + 1] = f.b
             ovis[idx + 2] = l

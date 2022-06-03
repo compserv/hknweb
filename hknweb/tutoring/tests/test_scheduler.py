@@ -23,13 +23,17 @@ class SchedulerTests(TestCase):
     ALLOWABLE_MARGIN = -15
 
     TEST_DIR = "media/tutoring-algorithm/test/"
-    TEST_URL = "https://raw.githubusercontent.com/compserv/tutoring-algorithm/master/test/"
+    TEST_URL = (
+        "https://raw.githubusercontent.com/compserv/tutoring-algorithm/master/test/"
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.can_run_local: bool = os.path.exists(self.TEST_DIR)
-        self.can_run_remote: bool = requests.get(f"{self.TEST_URL}exp_results.txt").status_code == 200
+        self.can_run_remote: bool = (
+            requests.get(f"{self.TEST_URL}exp_results.txt").status_code == 200
+        )
         self.assertTrue(
             self.can_run_local or self.can_run_remote,
             "Can't run either local or remote scheduler tests",
@@ -50,7 +54,7 @@ class SchedulerTests(TestCase):
 
         # Run experiments
         scores = []
-        for i in range(1, 7+1):
+        for i in range(1, 7 + 1):
             data: Data = get_data_fn(i)
             score = schedule(
                 data,
@@ -66,16 +70,22 @@ class SchedulerTests(TestCase):
             prev_score = prev_results[name]
             off_by = 100 * (1 - (prev_score / score))
             self.assertGreaterEqual(
-                off_by, self.ALLOWABLE_MARGIN, msg=f"{name}: {prev_score} {int(score)} {off_by}",
+                off_by,
+                self.ALLOWABLE_MARGIN,
+                msg=f"{name}: {prev_score} {int(score)} {off_by}",
             )
 
     def test_scheduler_url(self):
         if not self.can_run_remote:
             return
 
-        prev_results_strs: List[str] = requests.get(f"{self.TEST_URL}exp_results.txt").content.decode()
+        prev_results_strs: List[str] = requests.get(
+            f"{self.TEST_URL}exp_results.txt"
+        ).content.decode()
         prev_results_strs = list(filter(None, prev_results_strs.split("\n")))
-        get_data_fn: Callable[[int], Data] = lambda i: RemoteJSONData(f"{self.TEST_URL}s{i}.json")
+        get_data_fn: Callable[[int], Data] = lambda i: RemoteJSONData(
+            f"{self.TEST_URL}s{i}.json"
+        )
 
         self._helper_test_scheduler(prev_results_strs, get_data_fn)
 
@@ -83,7 +93,11 @@ class SchedulerTests(TestCase):
         if not self.can_run_local:
             return
 
-        prev_results_strs: List[str] = open(f"{self.TEST_DIR}exp_results.txt").readlines()
-        get_data_fn: Callable[[int], Data] = lambda i: LocalJSONData(f"{self.TEST_DIR}s{i}.json")
+        prev_results_strs: List[str] = open(
+            f"{self.TEST_DIR}exp_results.txt"
+        ).readlines()
+        get_data_fn: Callable[[int], Data] = lambda i: LocalJSONData(
+            f"{self.TEST_DIR}s{i}.json"
+        )
 
         self._helper_test_scheduler(prev_results_strs, get_data_fn)

@@ -21,7 +21,9 @@ class SlotsViewTests(TuteeViewTestHelper):
 
     def test_slots_display_day_returns_200(self):
         now = timezone.now()
-        to_default_hour = lambda h, m, s: timezone.datetime(now.year, now.month, now.day, h, m, s)
+        to_default_hour = lambda h, m, s: timezone.datetime(
+            now.year, now.month, now.day, h, m, s
+        )
         to_iso_url_str = lambda t: urllib.parse.quote_plus(t.isoformat())
         start = to_iso_url_str(to_default_hour(0, 0, 0))
         end = to_iso_url_str(to_default_hour(23, 59, 59))

@@ -35,8 +35,7 @@ class TutorAutocomplete(autocomplete.Select2QuerySetView):  # pragma: no cover
         tutors = get_tutors()
         if self.q:
             tutors = tutors.filter(
-                Q(first_name__icontains=self.q)
-                | Q(last_name__icontains=self.q)
+                Q(first_name__icontains=self.q) | Q(last_name__icontains=self.q)
             )
         return tutors.order_by("first_name", "last_name")
 

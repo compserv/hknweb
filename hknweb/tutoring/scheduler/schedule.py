@@ -13,23 +13,27 @@ WEIGHTINGS: Dict[str, Weighting] = {
     "old_gardener": OldGardener,
 }
 
+
 def schedule(
     data: Data,
-    print_output: bool=True,
-    weighting_str: str="gardener",
-    iterations_mul: Union[int, None]=None,
+    print_output: bool = True,
+    weighting_str: str = "gardener",
+    iterations_mul: Union[int, None] = None,
 ) -> float:
     weighting: Weighting = WEIGHTINGS.get(weighting_str, Gardener)
     matcher: Matcher = Matcher(data, weighting)
 
-    if print_output: print("Matching...")
+    if print_output:
+        print("Matching...")
     score = float("-inf")
     while score < 0:
         matcher.match()
         _, score = Evaluator.evaluate(data, weighting)
 
     # Now do some random swapping to make it stable
-    Swapper.stabilize(data, weighting, iterations_mul=iterations_mul, print_output=print_output)
+    Swapper.stabilize(
+        data, weighting, iterations_mul=iterations_mul, print_output=print_output
+    )
 
     std, score = Evaluator.evaluate(data, weighting)
     if print_output:  # pragma: no cover

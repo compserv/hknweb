@@ -67,7 +67,7 @@ class Profile(models.Model):
 
     def __str__(self):  # pragma: no cover
         return "Profile of: " + str(self.user)
-    
+
     def preferred_courses_str(self) -> str:  # pragma: no cover
         if self.preferred_courses.exists():
             return ", ".join(map(str, self.preferred_courses.all()))

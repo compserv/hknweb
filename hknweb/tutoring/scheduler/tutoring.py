@@ -20,8 +20,11 @@ class Slot:
         return (self.hour == other.hour) and (self.day == other.day)
 
     def adjacent(self, other: "Slot") -> bool:
-        return (self.office == other.office) and (self.day == other.day) \
+        return (
+            (self.office == other.office)
+            and (self.day == other.day)
             and (abs(self.hour - other.hour) == 1)
+        )
 
     def __repr__(self):  # pragma: no cover
         return f"Slot({self.slot_id} on {self.day} at {self.hour} in {self.office})"

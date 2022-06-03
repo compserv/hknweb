@@ -21,17 +21,21 @@ class TutoringLogistics(models.Model):
         verbose_name_plural = "TutoringLogistics"
 
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
-    one_hour_tutors = models.ManyToManyField(User, blank=True, related_name="one_hour_tutoring")
-    two_hour_tutors = models.ManyToManyField(User, blank=True, related_name="two_hour_tutoring")
+    one_hour_tutors = models.ManyToManyField(
+        User, blank=True, related_name="one_hour_tutoring"
+    )
+    two_hour_tutors = models.ManyToManyField(
+        User, blank=True, related_name="two_hour_tutoring"
+    )
 
     def __str__(self) -> str:  # pragma: no cover
         return str(self.semester)
 
     @staticmethod
     def get_most_recent() -> "Union[None, TutoringLogistics]":
-        logistics: TutoringLogistics = TutoringLogistics.objects \
-            .order_by("-semester__year", "semester__semester") \
-            .first()
+        logistics: TutoringLogistics = TutoringLogistics.objects.order_by(
+            "-semester__year", "semester__semester"
+        ).first()
 
         return logistics
 
@@ -51,7 +55,7 @@ class Slot(models.Model):
         return f"{self.logistics} {self.room}"
 
     def tutor_names(self) -> str:
-        tutors = self.tutors \
-            .annotate(full_name=Concat("first_name", Value(" "), "last_name")) \
-            .values_list("full_name", flat=True)
+        tutors = self.tutors.annotate(
+            full_name=Concat("first_name", Value(" "), "last_name")
+        ).values_list("full_name", flat=True)
         return ", ".join(tutors)

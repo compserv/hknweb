@@ -41,4 +41,3 @@ class ManageAttendanceViewTests(TestCase):
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, 200)
-
