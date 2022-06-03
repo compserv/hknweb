@@ -9,7 +9,7 @@ from hknweb.coursesemester.models import Course
 from hknweb.tutoring.models import TutoringLogistics
 
 
-class CourseAutocomplete(autocomplete.Select2QuerySetView):
+class CourseAutocomplete(autocomplete.Select2QuerySetView):  # pragma: no cover
     def get_queryset(self):
         courses = Course.objects
         if self.q:
@@ -30,7 +30,7 @@ def get_tutors() -> "QuerySet[User]":
     return User.objects.filter(tutoring_slots__in=logistics.slot_set.all()).distinct()
 
 
-class TutorAutocomplete(autocomplete.Select2QuerySetView):
+class TutorAutocomplete(autocomplete.Select2QuerySetView):  # pragma: no cover
     def get_queryset(self):
         tutors = get_tutors()
         if self.q:

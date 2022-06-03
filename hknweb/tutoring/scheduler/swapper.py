@@ -47,7 +47,7 @@ class Swapper:
 
             pct = (i + 1) * 100
             if print_output and pct % total == 0:  # Print every 1%
-                print(f"Swapping {pct // total}%\r", end="", flush=True)
+                print(f"Swapping {pct // total}%\r", end="", flush=True)  # pragma: no cover
         if print_output: print()
 
     @staticmethod

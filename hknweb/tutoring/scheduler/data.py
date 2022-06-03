@@ -20,7 +20,7 @@ class Data:
         self.slots: List[Slot] = []
         self.tutors: List[Tutor] = []
 
-    def readable_formatted_assignments(self) -> str:
+    def readable_formatted_assignments(self) -> str:  # pragma: no cover
         slot_sort = lambda s: Data.DAY_SORT_MAPPING[s.day] + str(s.hour)
         slots = sorted(self.slots, key=slot_sort)
 
@@ -47,7 +47,7 @@ class JSONData(Data):
 
         self.post_init(data)
 
-    def get_json_str(self) -> str:
+    def get_json_str(self) -> str:  # pragma: no cover
         raise NotImplementedError()
 
     def post_init(self, data: Dict[str, Any]):
@@ -69,7 +69,7 @@ class JSONData(Data):
             ))
 
 
-class RemoteJSONData(JSONData):
+class RemoteJSONData(JSONData):  # pragma: no cover
     def __init__(self, url: str) -> None:
         self.url = url
 
@@ -79,7 +79,7 @@ class RemoteJSONData(JSONData):
         return requests.get(self.url).content.decode()
 
 
-class LocalJSONData(JSONData):
+class LocalJSONData(JSONData):  # pragma: no cover
     def __init__(self, path: str) -> None:
         self.path = path
 

@@ -32,7 +32,7 @@ def schedule(
     Swapper.stabilize(data, weighting, iterations_mul=iterations_mul, print_output=print_output)
 
     std, score = Evaluator.evaluate(data, weighting)
-    if print_output:
+    if print_output:  # pragma: no cover
         print(data.readable_formatted_assignments())
         print(f"Score: {score}, Stddev: {std}")
 

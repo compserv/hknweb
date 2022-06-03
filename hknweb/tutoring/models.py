@@ -12,7 +12,7 @@ class Room(models.Model):
     name = models.CharField(max_length=25)
     color = models.CharField(max_length=25, default="DarkGray")
 
-    def __str__(self) -> str:
+    def __str__(self) -> str:  # pragma: no cover
         return self.name
 
 
@@ -24,7 +24,7 @@ class TutoringLogistics(models.Model):
     one_hour_tutors = models.ManyToManyField(User, blank=True, related_name="one_hour_tutoring")
     two_hour_tutors = models.ManyToManyField(User, blank=True, related_name="two_hour_tutoring")
 
-    def __str__(self) -> str:
+    def __str__(self) -> str:  # pragma: no cover
         return str(self.semester)
 
     @staticmethod
@@ -47,7 +47,7 @@ class Slot(models.Model):
     weekday = models.IntegerField(choices=WEEKDAY_CHOICES)
     time = models.TimeField()
 
-    def __str__(self) -> str:
+    def __str__(self) -> str:  # pragma: no cover
         return f"{self.logistics} {self.room}"
 
     def tutor_names(self) -> str:

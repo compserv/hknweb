@@ -23,7 +23,7 @@ class Slot:
         return (self.office == other.office) and (self.day == other.day) \
             and (abs(self.hour - other.hour) == 1)
 
-    def __repr__(self):
+    def __repr__(self):  # pragma: no cover
         return f"Slot({self.slot_id} on {self.day} at {self.hour} in {self.office})"
 
 
@@ -60,5 +60,5 @@ class Tutor:
 
         return res
 
-    def __repr__(self) -> str:
+    def __repr__(self) -> str:  # pragma: no cover
         return f"Tutor({self.tutor_id})"

@@ -3,7 +3,7 @@ from typing import Dict
 from hknweb.tutoring.scheduler.tutoring import Slot, Tutor
 
 
-class Weighting:
+class Weighting:  # pragma: no cover
     @classmethod
     def weight(cls, tutor: Tutor, slot: Slot) -> float:
         """
@@ -23,7 +23,7 @@ class Weighting:
         raise NotImplementedError()
 
 
-class Butler(Weighting):
+class Butler(Weighting):  # pragma: no cover
     TIME_PREF_TOW: Dict[int, float] = {
         0: -100000,  # unavailable
         1: 6,        # ambivalent
