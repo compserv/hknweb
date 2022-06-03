@@ -62,7 +62,7 @@
     </style>
 
     <script type="text/javascript">
-        var course_selector_decorator;
+        var selector_decorator;
 
         document.addEventListener('DOMContentLoaded', function() {
             var calendarEl = document.getElementById('calendar');
@@ -92,24 +92,29 @@
                     {
                         url: '{% url "tutoring:slots" %}',
                         extraParams: function () {
-                            var course_select = document.getElementById("id_course");
-                            if (!course_select.nextElementSibling) {
-                                return {};
-                            }
+                            function get_filtered_ids (id) {
+                                var select_el = document.getElementById(id);
+                                if (!select_el.nextElementSibling) {
+                                    return {};
+                                }
 
-                            var text_id_mapping = {};
-                            var course_options = course_select.options;
-                            for (let i = 0; i < course_options.length; i++) {
-                                text_id_mapping[course_options[i].text] = course_options[i].value;
-                            }
+                                var text_id_mapping = {};
+                                var select_options = select_el.options;
+                                for (let i = 0; i < select_options.length; i++) {
+                                    text_id_mapping[select_options[i].text] = select_options[i].value;
+                                }
 
-                            var course_choices = course_select.nextElementSibling.getElementsByTagName("li");
-                            var course_choice_ids = [];
-                            for (let i = 0; i < course_choices.length - 1; i++) {
-                                course_choice_ids.push(text_id_mapping[course_choices[i].title]);
+                                var select_choices = select_el.nextElementSibling.getElementsByTagName("li");
+                                var select_choice_ids = [];
+                                for (let i = 0; i < select_choices.length - 1; i++) {
+                                    select_choice_ids.push(text_id_mapping[select_choices[i].title]);
+                                }
+
+                                return select_choice_ids.join(",");
                             }
                             return {
-                                course_filter: course_choice_ids.join(",")
+                                course_filter: get_filtered_ids("id_course"),
+                                tutor_filter: get_filtered_ids("id_tutor"),
                             }
                         }
                     }
@@ -165,7 +170,7 @@
 
             calendar.render();
 
-            course_selector_decorator = function () {
+            selector_decorator = function () {
                 calendar.refetchEvents();
             }
         });
@@ -179,14 +184,19 @@
 
 {% block content %}
     <div style="text-align: center; overflow: auto;">
-        <div style="width: 30em; margin: auto; display: inline-block;">
+        <div style="width: 30em; margin: auto; display: inline-block; vertical-align: top;">
             <section id="calendar"></section>
         </div>
 
         <div style="display: inline-block; text-align: center; margin-left: 1em;">
-            Filter by courses
+            Filter by course
             <br>
             {{ form.course }}
+            <br>
+
+            Filter by tutor
+            <br>
+            {{ form.tutor }}
         </div>
     </div>
 {% endblock %}

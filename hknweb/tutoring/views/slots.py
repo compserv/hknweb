@@ -20,17 +20,27 @@ def slots(request):
         return JsonResponse({})
 
     start = timezone.datetime.fromisoformat(request.GET.get("start"))
-    try:
-        course_ids: List[int] = list(map(int, request.GET.get("course_filter", "").split(",")))
-    except ValueError:
-        course_ids: List[int] = []
-    course_filter_kwargs: Dict[str, List[int]] = {}
-    if course_ids:
-        course_filter_kwargs = {"tutors__profile__preferred_courses__in": course_ids}
+
+    def get_filter_params(param_name: str, kwarg_name: str) -> Dict[str, List[int]]:
+        try:
+            param_ids: List[int] = list(map(int, request.GET.get(param_name, "").split(",")))
+        except ValueError:
+            param_ids: List[int] = []
+        param_filter_kwargs: Dict[str, List[int]] = {}
+        if param_ids:
+            param_filter_kwargs = {kwarg_name: param_ids}
+
+        return param_filter_kwargs
+
+
+    course_filter_kwargs = get_filter_params(
+        "course_filter", "tutors__profile__preferred_courses__in"
+    )
+    tutor_filter_kwargs = get_filter_params("tutor_filter", "tutors__in")
 
     slot_objs: QuerySet[Slot] = \
         logistics.slot_set \
-            .filter(weekday=start.weekday(), **course_filter_kwargs) \
+            .filter(weekday=start.weekday(), **course_filter_kwargs, **tutor_filter_kwargs) \
             .distinct() \
             .prefetch_related("tutors", "room", "tutors__profile", "tutors__profile__preferred_courses")
 

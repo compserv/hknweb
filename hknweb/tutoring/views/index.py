@@ -3,7 +3,7 @@ from django.utils import timezone
 
 from hknweb.utils import allow_public_access
 
-from hknweb.tutoring.forms import CourseFilterForm
+from hknweb.tutoring.forms import CourseFilterForm, TutorFilterForm
 
 
 @allow_public_access
@@ -14,9 +14,11 @@ def index(request):
     except ValueError:
         nav = 0
 
+    form = CourseFilterForm()
+    form.fields.update(TutorFilterForm().fields)
     context = {
         "offset": timezone.now() + timezone.timedelta(days=nav),
-        "form": CourseFilterForm(),
+        "form": form,
     }
 
     return render(request, "tutoring/index.html", context=context)

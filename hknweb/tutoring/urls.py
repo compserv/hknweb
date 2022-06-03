@@ -11,4 +11,9 @@ urlpatterns = [
         views.course_autocomplete,
         name="autocomplete_course",
     ),
+    path(
+        "autocomplete/tutor",
+        views.tutor_autocomplete,
+        name="autocomplete_tutor",
+    ),
 ]
