@@ -78,6 +78,14 @@ test: venv
 	HKNWEB_MODE='dev' coverage run --source='.' ./manage.py test --pattern="test_*.py"
 	coverage report --skip-covered --omit=deploy*,fabfile.py,hknweb/wsgi.py,manage.py,*apps.py,*test_*.py,hknweb/settings/*.py --sort=miss --fail-under=80
 
+.PHONY: test_specific
+test_specific: venv
+	$(MANAGE) test $(test_name)
+
+.PHONY: cover
+cover: venv
+	coverage html --skip-covered --omit=deploy*,fabfile.py,hknweb/wsgi.py,manage.py,*apps.py,*test_*.py,hknweb/settings/*.py
+
 .PHONY: clean
 clean:
 	rm -rf $(VENV)

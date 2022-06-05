@@ -1,126 +1,202 @@
 {% extends "base.html" %}
 {% load static %}
-{% load tutor_tags %}
 
 {% block title %}Tutoring{% endblock %}
+{% block heading %}Tutoring{% endblock %}
+
+{% block header %}
+    <link rel="stylesheet" href="https://unpkg.com/@fullcalendar/core@4.4.0/main.css" />
+    <link rel="stylesheet" href="https://unpkg.com/@fullcalendar/daygrid@4.4.0/main.css" />
+    <link rel="stylesheet" href="https://unpkg.com/@fullcalendar/timegrid@4.4.0/main.css" />
+
+    <script src="https://unpkg.com/@fullcalendar/core@4.4.0/main.js"></script>
+    <script src="https://unpkg.com/@fullcalendar/daygrid@4.4.0/main.js"></script>
+    <script src="https://unpkg.com/@fullcalendar/timegrid@4.4.0/main.js"></script>
+
+    {% include 'events/_nav_buttons.html' %}
+
+    <style>
+        a.fc-event{
+            width: 15em;
+        }
+
+        .tooltip {
+            color: black;
+            background-color: WhiteSmoke;
+            width: 200%;
+            border-radius: 0.15em;
+            min-height: 3em;
+            padding: 0;
+            position: relative;
+            top: calc(-75% - 1px);
+            left: -1px;
+            z-index: 10;
+            display: none;
+        }
+
+        .tooltip-title {
+            text-align: center;
+            margin-bottom: 0.5em;
+            color: white;
+            font-size: 125%;
+            border-radius: inherit;
+        }
+
+        .tooltip-body {
+            margin-left: 0.5em;
+            margin-right: 0.5em;
+        }
+
+        .tooltip-tutor-img {
+            display: inline-block;
+            margin-right: 0.5em;
+            width: 12em;
+            height: 12em;
+        }
+
+        .tooltip-tutor-desc {
+            display: inline-block;
+            width: 15em;
+            vertical-align: top;
+        }
+    </style>
+
+    <script type="text/javascript">
+        var selector_decorator;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                // General options
+                plugins: [ 'timeGrid' ],
+                defaultView: 'timeGridDay',
+                defaultDate: '{{ offset|date:"c" }}',
+                header: {
+                    left: 'prev,next',
+                    center: 'title',
+                    right: 'today',
+                },
+                height: "auto",
+                eventMaxStack: 1,
+                allDaySlot: false,
+                navLinks: true,
+                eventLimit: false,
+                views: {
+                    timeGrid: {
+                        minTime: '{{ calendar_start_time|date:"H:i:s" }}',
+                        maxTime: '{{ calendar_end_time|date:"H:i:s" }}',
+                        nowIndicator: true,
+                    }
+                },
+                eventSources: [
+                    {
+                        url: '{% url "tutoring:slots" %}',
+                        extraParams: function () {
+                            function get_filtered_ids (id) {
+                                var select_el = document.getElementById(id);
+                                if (!select_el.nextElementSibling) {
+                                    return {};
+                                }
+
+                                var text_id_mapping = {};
+                                var select_options = select_el.options;
+                                for (let i = 0; i < select_options.length; i++) {
+                                    text_id_mapping[select_options[i].text] = select_options[i].value;
+                                }
+
+                                var select_choices = select_el.nextElementSibling.getElementsByTagName("li");
+                                var select_choice_ids = [];
+                                for (let i = 0; i < select_choices.length - 1; i++) {
+                                    select_choice_ids.push(text_id_mapping[select_choices[i].title]);
+                                }
+
+                                return select_choice_ids.join(",");
+                            }
+                            return {
+                                course_filter: get_filtered_ids("id_course"),
+                                tutor_filter: get_filtered_ids("id_tutor"),
+                            }
+                        }
+                    }
+                ],
+                eventRender: function (eventRenderInfo) {
+                    var tooltip = document.createElement("div");
+                    tooltip.id = eventRenderInfo.event.id + "tooltip";
+                    tooltip.classList.add("tooltip");
+
+                    var tooltip_title = document.createElement("div");
+                    tooltip.append(tooltip_title);
+                    tooltip_title.classList.add("tooltip-title");
+                    tooltip_title.style.backgroundColor = eventRenderInfo.event.backgroundColor;
+                    tooltip_title.append(eventRenderInfo.event.extendedProps.tooltip_title);
+
+                    var tooltip_body = document.createElement("div");
+                    tooltip.append(tooltip_body);
+                    tooltip_body.classList.add("tooltip-body");
+
+                    eventRenderInfo.event.extendedProps.tutors.forEach(t => {
+                        var tutor_img = document.createElement("img");
+                        tutor_img.classList.add("tooltip-tutor-img");
+                        tutor_img.src = t.picture;
+                        tutor_img.alt = t.alt;
+
+                        var tutor_desc = document.createElement("div");
+                        tutor_desc.classList.add("tooltip-tutor-desc");
+
+                        var tutor_name = document.createElement("div");
+                        tutor_name.style.fontWeight = "bold";
+                        tutor_name.append(t.name);
+
+                        tutor_desc.append(tutor_name);
+                        tutor_desc.append("Courses: " + t.courses);
+
+                        tooltip_body.append(tutor_img);
+                        tooltip_body.append(tutor_desc);
+                    });
+
+                    eventRenderInfo.el.append(tooltip);
+                },
+                eventMouseEnter: function (mouseEnterInfo) {
+                    document.getElementsByClassName("fc-time-grid-container")[0].style.overflow = "visible";
+
+                    document.getElementById(mouseEnterInfo.event.id + "tooltip").style.display = "block";
+                    mouseEnterInfo.el.style.zIndex = 10;
+                },
+                eventMouseLeave: function (mouseLeaveInfo) {
+                    document.getElementById(mouseLeaveInfo.event.id + "tooltip").style.display = "none";
+                    mouseLeaveInfo.el.style.zIndex = 1;
+                }
+            });
+
+            calendar.render();
+
+            selector_decorator = function () {
+                calendar.refetchEvents();
+            }
+        });
+
+        window.addEventListener("load", function () {
+            decorate_nav_buttons();
+        });
+
+    </script>
+{% endblock %}
 
 {% block content %}
-<style>
-td {
-    height: auto;
-    text-align: center;
-    padding: 15px;
-    border-bottom: 1px solid #ddd;
-}
+    <div style="text-align: center; overflow: auto;">
+        <div style="width: 30em; margin: auto; display: inline-block; vertical-align: top; min-height: 40em;">
+            <section id="calendar"></section>
+        </div>
 
-.slider-container {
-    padding: 10px 15px;
-}
+        <div style="display: inline-block; text-align: center; margin-left: 1em;">
+            Filter by course
+            <br>
+            {{ form.course }}
+            <br>
 
-/* Tooltip container */
-.tooltip {
-  position: relative;
-  display: inline-block;
-}
-
-/* Tooltip text */
-.tooltip .tooltiptext {
-    visibility: hidden;
-    width: 120px;
-    background-color: black;
-    color: #fff;
-    text-align: center;
-    padding: 5px 0;
-    border-radius: 6px;
-    width: 120px;
-    bottom: 100%;
-    left: 50%;
-    margin-left: -60px; /* Use half of the width (120/2 = 60), to center the tooltip */
-
-    /* Position the tooltip text - see examples below! */
-    position: absolute;
-    z-index: 1;
-}
-
-li {
-    padding-bottom: 5px;
-}
-/* Show the tooltip text when you mouse over the tooltip container */
-.tooltip:hover .tooltiptext {
-  visibility: visible;
-}
-
-</style>
-
-
-<div class="center measure-narrow measure-wide-m measure-very-wide-l pv4">
-    <h1 class="font-title f3 f2-ns tc">Tutoring Schedule</h1>
-    <!-- TODO: REMOVE THIS LINE WHEN THE ROOMS ARE LISTED CORRECTLY -->
-    <p>No schedule yet!</p>
-
-    <!-- 
-    {% for office in offices %}
-    <h2 class="font-title f4 f3-ns tc pb2 bb b--light-gray">{{office.room}}</h2>
-    <table class="center font-body overflow-auto">
-        <tr>
-            <th class="w3 pv2 bb b--light-gray">Hours</th>
-            {% for day in days %}
-            <th class="w4 pv2 bb b--light-gray">{{ day }}</th>
-            {% endfor %}
-        </tr>
-        {% for hour, hour_pretty in hours %}
-        <tr>
-            <td class="pv2 w3 bb b--near-white"> {{hour_pretty}} </td>
-            {% for slot in office.slots|access_slot_at_hour:hour%}
-            <td class="pv2 w ba b--near-white">
-                <ul class="list">
-                    {% for tutor in slot.tutors.all %}
-                    <div class = "tooltip">
-                        <p class="relative dib">{{tutor.name}}
-                            <span class="tooltiptext">
-                                {% for course in tutor.get_preferred_courses %}
-                                    {{course}}
-                                {% endfor %}
-                            </span>
-                        </p>
-                    </div>
-                {% endfor %}
-                </ul>
-            </td>
-            {% endfor %}
-        </tr>
-        {% endfor %}
-    </table>
-    {% endfor %}
-    -->
-    
-    {% if perms.tutoring.add_timeslotpreference %}
-        <form action="slotpref" method="GET" id="button" onsubmit="submit_button.disabled = true; return true;">
-            <button type='submit' name="submit_button">Timeslot Preference Form</button>
-        </form>
-    {% endif %}
-    
-    {% if perms.tutoring.add_timeslotpreference %}
-        <form action="coursepref" method="GET" id="button" onsubmit="submit_button.disabled = true; return true;">
-            <button type='submit' name="submit_button">Course Preference Form</button>
-        </form>
-    {% endif %}
-
-    {% if perms.tutoring.add_slot %}
-        <form action="prepare-algorithm-input" method="GET" id="button" onsubmit="submit_button.disabled = true; return true;">
-            <button type='submit' name="submit_button">Get Tutoring Algorithm JSON Input</button>
-        </form>
-    {% endif %}
-
-    {% if perms.tutoring.add_slot %}
-        <form enctype="multipart/form-data" action="generate" method="POST" onsubmit="submit_button.disabled = true; return true;">
-            {% csrf_token %}
-            {{form.as_p}}
-            <div id="submit">
-                <input type="submit" name="submit_button" value="Submit" />
-                </div>
-        </form>
-    {% endif %}
-</div>
-
+            Filter by tutor
+            <br>
+            {{ form.tutor }}
+        </div>
+    </div>
 {% endblock %}
