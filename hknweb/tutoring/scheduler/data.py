@@ -41,7 +41,7 @@ class JSONData(Data):
     def __init__(self) -> None:
         super().__init__()
 
-        json_str = self.get_json_str()
+        json_str = self.get_json_str()  # lgtm [py/init-calls-subclass]
         clean = lambda s: s.replace("\n", "").replace("\r", "").replace("'", '"')
         data: Dict[str, Any] = json.loads(clean(json_str))
 

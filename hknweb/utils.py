@@ -1,4 +1,3 @@
-import csv
 import re
 
 from django.contrib.auth.decorators import (
@@ -7,7 +6,6 @@ from django.contrib.auth.decorators import (
     user_passes_test,
 )
 from django.core.exceptions import PermissionDenied
-from django.http import HttpResponse
 from django.utils.decorators import method_decorator
 from django.contrib.staticfiles.finders import find
 
