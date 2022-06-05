@@ -13,13 +13,13 @@ class EventForm(forms.ModelForm):
     end_time = forms.DateTimeField(
         input_formats=(DATETIME_12_HOUR_FORMAT,), widget=DATETIME_WIDGET_NO_AUTOCOMPLETE
     )
-    recurring_num_times = forms.IntegerField(
-        min_value=0, required=False, label="Number of occurences", initial=0
+    repeat_num_times = forms.IntegerField(
+        min_value=0, required=False, label="Number of Repeats (after first occurrence)", initial=0
     )
-    recurring_period = forms.IntegerField(
+    repeat_period = forms.IntegerField(
         min_value=0,
         required=False,
-        label="How often this event re-occurs (in weeks)",
+        label="How often this event repeats (in weeks)",
         initial=0,
     )
 

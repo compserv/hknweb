@@ -19,8 +19,8 @@ def add_event(request):
             times = generate_recurrence_times(
                 data["start_time"],
                 data["end_time"],
-                data["recurring_num_times"],
-                data["recurring_period"],
+                data["repeat_num_times"],
+                data["repeat_period"],
             )
 
             for start_time, end_time in times:

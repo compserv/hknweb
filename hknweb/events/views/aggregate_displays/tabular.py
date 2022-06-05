@@ -28,7 +28,8 @@ class AllRsvpsView(TemplateView):
         event_types = EventType.objects.order_by("type").all()
         event_types = sorted(event_types, key=lambda e: not (e.type == ATTR.MANDATORY))
 
-        event_type = self.request.GET.get("event_type", event_types[0].type)
+        event_type = self.request.GET.get("event_type", None)
+        event_type = event_types[0].type if ((event_type is None) and event_types) else event_type
         event_type = EventType.objects.filter(type=event_type).first()
 
         # Get all events
