@@ -9,7 +9,7 @@ from django.dispatch import receiver
 from django.core.validators import RegexValidator
 from django.utils import timezone
 
-from hknweb.coursesemester.models import Semester, Course
+from hknweb.coursesemester.models import Semester
 
 from hknweb.utils import view_url
 
@@ -39,7 +39,6 @@ class Profile(models.Model):
         Semester, on_delete=models.SET_NULL, null=True, blank=True
     )
     google_calendar_id = models.CharField(max_length=255, null=True, blank=True)
-    preferred_courses = models.ManyToManyField(Course, blank=True)
 
     @receiver(post_save, sender=User)
     def create_user_profile(sender, instance, created, **kwargs):
@@ -62,16 +61,11 @@ class Profile(models.Model):
                 + self.phone_number[6:]
             )
 
-    def picture_display_url(self) -> str:  # pragma: no cover
+    def picture_display_url(self) -> str:
         return view_url(self.picture)
 
-    def __str__(self):  # pragma: no cover
+    def __str__(self):
         return "Profile of: " + str(self.user)
-
-    def preferred_courses_str(self) -> str:  # pragma: no cover
-        if self.preferred_courses.exists():
-            return ", ".join(map(str, self.preferred_courses.all()))
-        return "No preferred courses, but any lower division courses (61A, 61B, 70, 16A, 16B) welcome!"
 
 
 class Announcement(models.Model):
@@ -87,7 +81,7 @@ class Announcement(models.Model):
     visible = models.BooleanField(default=False)
     release_date = models.DateTimeField(default=timezone.now)
 
-    def __str__(self):  # pragma: no cover
+    def __str__(self):
         return self.title if self.title != "" else self.text
 
 
@@ -99,14 +93,14 @@ class Committee(models.Model):
     name = models.CharField(max_length=30)
     is_exec = models.BooleanField(default=False)
 
-    def __str__(self):  # pragma: no cover
+    def __str__(self):
         return self.name
 
 
 class Election(models.Model):
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
 
-    def __str__(self):  # pragma: no cover
+    def __str__(self):
         return f"{self.semester} Election"
 
 
@@ -121,7 +115,7 @@ class Committeeship(models.Model):
         User, related_name="cmemberships", blank=True
     )
 
-    def __str__(self):  # pragma: no cover
+    def __str__(self):
         return f"{self.committee}, {self.election.semester}"
 
     def people(self) -> Dict[str, "QuerySet[User]"]:

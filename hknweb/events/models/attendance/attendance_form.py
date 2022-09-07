@@ -8,7 +8,7 @@ class AttendanceForm(models.Model):
     secret_word = models.CharField(max_length=255)
     description = models.TextField(blank=True)
 
-    def __repr__(self):  # pragma: no cover
+    def __repr__(self):
         event = f"event={str(self.event)}"
         secret_word = f"secret_word={self.secret_word}"
         description = f"description={self.description}"
@@ -16,5 +16,5 @@ class AttendanceForm(models.Model):
         attrs = ", ".join((event, secret_word, description))
         return f"AttendanceForm({attrs})"
 
-    def __str__(self):  # pragma: no cover
+    def __str__(self):
         return str(repr(self))

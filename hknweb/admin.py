@@ -38,51 +38,51 @@ class CustomUserAdmin(UserAdmin):
         "remove_exec",
     ]
 
-    def officer(self, user):  # pragma: no cover
+    def officer(self, user):
         return "Y" if user.groups.filter(name=settings.OFFICER_GROUP).exists() else ""
 
-    def candidate(self, user):  # pragma: no cover
+    def candidate(self, user):
         return "Y" if user.groups.filter(name=settings.CAND_GROUP).exists() else ""
 
-    def exec(self, user):  # pragma: no cover
+    def exec(self, user):
         return "Y" if user.groups.filter(name=settings.EXEC_GROUP).exists() else ""
 
-    def add_cand(self, request, queryset):  # pragma: no cover
+    def add_cand(self, request, queryset):
         group = Group.objects.get(name=settings.CAND_GROUP)
         for u in queryset:
             group.user_set.add(u)
 
     add_cand.short_description = "Add selected as candidates"
 
-    def add_officer(self, request, queryset):  # pragma: no cover
+    def add_officer(self, request, queryset):
         group = Group.objects.get(name=settings.OFFICER_GROUP)
         for u in queryset:
             group.user_set.add(u)
 
     add_officer.short_description = "Add selected as officers"
 
-    def add_exec(self, request, queryset):  # pragma: no cover
+    def add_exec(self, request, queryset):
         group = Group.objects.get(name=settings.EXEC_GROUP)
         for u in queryset:
             group.user_set.add(u)
 
     add_exec.short_description = "Add selected as execs"
 
-    def remove_cand(self, request, queryset):  # pragma: no cover
+    def remove_cand(self, request, queryset):
         group = Group.objects.get(name=settings.CAND_GROUP)
         for u in queryset:
             group.user_set.remove(u)
 
     remove_cand.short_description = "Remove selected from candidates"
 
-    def remove_officer(self, request, queryset):  # pragma: no cover
+    def remove_officer(self, request, queryset):
         group = Group.objects.get(name=settings.OFFICER_GROUP)
         for u in queryset:
             group.user_set.remove(u)
 
     remove_officer.short_description = "Remove selected from officers"
 
-    def remove_exec(self, request, queryset):  # pragma: no cover
+    def remove_exec(self, request, queryset):
         group = Group.objects.get(name=settings.EXEC_GROUP)
         for u in queryset:
             group.user_set.remove(u)
@@ -101,34 +101,24 @@ class AnnouncementAdmin(admin.ModelAdmin):
 
     actions = ["set_visible", "set_invisible"]
 
-    def set_visible(self, request, queryset):  # pragma: no cover
+    def set_visible(self, request, queryset):
         queryset.update(visible=True)
 
     set_visible.short_description = "Set selected as visible"
 
-    def set_invisible(self, request, queryset):  # pragma: no cover
+    def set_invisible(self, request, queryset):
         queryset.update(visible=False)
 
     set_invisible.short_description = "Set selected as invisible"
 
 
-@admin.register(Committee)
-class CommitteeAdmin(admin.ModelAdmin):
-    ordering = ("name",)
-    search_fields = ("name",)
-
-
 @admin.register(Committeeship)
 class CommitteeshipAdmin(admin.ModelAdmin):
-    autocomplete_fields = [
-        "officers",
-        "assistant_officers",
-        "committee_members",
-        "committee",
-    ]
+    autocomplete_fields = ["officers", "assistant_officers", "committee_members"]
 
 
 admin.site.register(Announcement, AnnouncementAdmin)
 admin.site.register(Profile)
 admin.site.register(CandidateProvisioningPassword)
+admin.site.register(Committee)
 admin.site.register(Election)

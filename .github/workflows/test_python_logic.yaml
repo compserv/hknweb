@@ -29,4 +29,4 @@ jobs:
       - name: Run python tests
         run: |
           HKNWEB_MODE='dev' coverage run --source='.' ./manage.py test --pattern="test_*.py"
-          coverage report --skip-covered --omit=deploy*,fabfile.py,hknweb/wsgi.py,manage.py,*apps.py,*test_*.py,hknweb/settings/*.py --sort=miss --fail-under=90
+          coverage report --skip-covered --omit=deploy*,fabfile.py,hknweb/wsgi.py,manage.py,*apps.py,*test_*.py,hknweb/settings/*.py --sort=miss --fail-under=85
