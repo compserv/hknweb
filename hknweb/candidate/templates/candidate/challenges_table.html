@@ -35,13 +35,7 @@
                         <td align="center">{{ challenge.officer.first_name }} {{ challenge.officer.last_name }} ({{ challenge.officer.username }})</td>
                         {% endif %}
                         <td align="center">{{ challenge.request_date }}</td>
-                        <td align="center">
-                            {% if challenge.proof|is_link %}
-                                <a href="{{ challenge.proof }}">link</a>
-                            {% else %}
-                                {{ challenge.proof }}
-                            {% endif %}
-                        </td>
+                        <td align="center">{{ challenge.proof }}</td>
                         {% if user_self is None and request.user|has_group:"officer" %}
                             <td align="center">
                                 {% if not challenge.confirmed %}

@@ -70,15 +70,15 @@
         <div style="width: 80em; margin: auto;">
             <h2>Executives</h2>
 
-            <div>
-                {% for committeeship in execs %}
+            {% for committeeship in execs %}
+                <div>
                     {% for title, users in committeeship.people.items %}
                         {% for user in users %}
                             {% include 'about/_user_image.html' %}
                         {% endfor %}
                     {% endfor %}
-                {% endfor %}
-            </div>
+                </div>
+            {% endfor %}
         </div>
 
         <!-- Display committees and people -->

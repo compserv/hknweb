@@ -168,8 +168,7 @@ h2:first-child {
 
 .table-wrap {
     width: 100%;
-    max-height: 15em;
-    overflow: auto;
+    overflow-x: auto;
     white-space: nowrap;
     text-align: center;
     padding: 1em;
