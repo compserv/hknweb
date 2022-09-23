@@ -35,7 +35,7 @@ livereload:
 .PHONY: venv
 venv:
 	$(OS_PYTHON) -m venv $(VENV)
-	@echo "When developing, remember to activate the virtualenv (see README) so Python can access the installed dependencies."
+	@echo "When developing, remember to activate the virtualenv with 'source $(BIN)/activate' so Python can access the installed dependencies."
 
 # Installs dependencies for Development and Production only
 #  shared between "install-prod" and "install"
