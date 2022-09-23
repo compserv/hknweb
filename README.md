@@ -1,67 +1,54 @@
 hknweb
 ======
 
-Welcome! This is the in-progress redesign for the HKN (Mu Chapter) website,
-built with Django.
+Welcome! This is the in-progress redesign for the HKN (Mu Chapter) website, built with Django.
 
-**`Mac M1 users or ARM computers`: VirtualBox will not work on the ARM architecture, including M1. Docker using Vagrant exists but currently is not supported and tested.**
+## Prerequisites
+These are the software you are **required** to download and install. Unless noted, default settings are OK. Consult with officers on advice for preferences of certain settings.
 
-**For now, you can create a venv Virtual Environment without the use of a Virtual Machine. Simply follow all the below instructions and ignore any `vagrant ...` commands.**
+There are other ways to install the following items. The instructions here will provide the EASIEST and SUFFICIENT way to install them. Ultimately, it is up to you on how to get them and install them if you want to do a more centalized way (i.e. Chocolatey for Windows) or a fancy pants method (i.e. Build from Scratch).
 
-## Setup (Quick)
+When `Unix` is used, it includes (not limited to) Linux, Windows WSL, and MacOS
 
-This approach is simpler if you are new to developing software.
+* git
+    * Unix systems usually have this out of the box
+    * [Windows] [git bash](https://git-scm.com/downloads)
+* Terminal
+    * Unix can use the default terminal (usually `zsh` or `bash`)
+    * [Windows] [git bash](https://git-scm.com/downloads) **ONLY** (due to Makefile syntax)
+* make (GNU Make)
+    * Unix systems usually have this out of the box
+    * [Windows] Follow [instructions here using Winget](https://www.technewstoday.com/install-and-use-make-in-windows/#using-winget)
+        * **CORRECTION**: For **Step 10**: Under `Variable value`, enter `C:\Program Files (x86)\GnuWin32\bin`
+        * Article has other options too, but Winget is more out of the box. Next best thing is using Chocolatey which requires install of Chocolatey itself.
+* Python 3.7 (https://www.python.org/)
+    * This is the OFFICIAL hknweb Python version, as it matches the OCF Version (As of Fall 2022, currently Python 3.7.3)
+    * Major and Minor MUST match, but Patch version we generally don't care
+    * NOTE: You can have multiple Python versions installed and set one of them as default
+        * You don't need Python 3.7 as system default, but will be in the Virtual Environment following [Setup](#setup)
+    * **RECOMMENDED VERSION**: [Python 3.7.9](https://www.python.org/downloads/release/python-379/) has prebuilt binaries for Windows and MacOS
 
-**Vagrant** will automatically setup a virtual machine with the correct
-setup for developing `hknweb`.
+## Setup
 
-------------------------------
-### Windows Users
-* **NOTE**: **Windows machine** users MUST open their Terminal as **Administrator**
-* We have success of the setup completing on Windows Command Prompt, Windows Git Bash, and Windows Linux Subsystem (WSL). Regardless, you must open them as Admin via a right click! Same with Windows Terminal if you use that.
-------------------------------
+Supported Terminals
+* Any Unix Terminals (including Windows WSL) -- usually `zsh` or `bash`
+* Windows Git Bash (**ONLY**)
 
-Install [Vagrant](https://www.vagrantup.com/) and [VirtualBox](https://www.virtualbox.org/) (use older version: 6.0.14):
-
-First, within the directory you cloned the hknweb repository, make sure to cd into the hknweb directory. The following commands will only work if you are within the same directory as the Vagrantfile. Then, run
-
-```sh
-$ vagrant up
-```
-
-which will download and boot a Linux virtual machine, then run setup.
-
-To access the environment, run
-
-```sh
-$ vagrant ssh
-```
-
-which will `ssh` your terminal into the virtual machine.
-
-See [Development](#development) for how to run the Django web server.
-
-To turn off the virtual machine, run
-
-```sh
-$ vagrant halt
-```
-
-which will attempt to safely shutdown the virtual machine, or kill it otherwise.
-
-## Setup (Manual)
-
-This approach requires less space, and is faster if your computer already has Python
-and GNU Make installed (i.e. most GNU/Linux machines.)
-
-Developing on `hknweb` requires a virtual environment so that every developer has the exact same development environment i.e. any errors that a developer has is not due to difference in configuration. We will be using Python's built-on [`venv`](https://docs.python.org/3/library/venv.html) to make our virtual environment. This command creates our virtual environment.
+Developing on `hknweb` requires a virtual environment so that every developer has the exact same development environment (i.e. Any errors that a developer has is not due to difference in configuration). We will be using Python's built-on [`venv`](https://docs.python.org/3/library/venv.html) to make our virtual environment. This command creates our virtual environment.
 ```sh
 $ make venv
 ```
 
-Next, we need to have our current terminal/shell use the virtual environment we just created. We do this through:
+Next, we need to have our current terminal/shell use the virtual environment we just created.
+
+For Unix OSes:
 ```sh
 $ source .venv/bin/activate
+```
+
+For Windows (Git Bash):
+```sh
+$ source .venv/Script/activate
 ```
 
 Finally, we need to install all of our dependencies:
@@ -71,41 +58,26 @@ $ make install
 
 In summary, the setup looks like:
 ```sh
-$ vagrant up                    # boot up the vm
-$ vagrant ssh                   # enter into our vm
 $ cd hknweb                     # enter our main directory
-$ make venv                     # create our virtual environment
-$ source .venv/bin/activate     # enter our virtual environment
+$ make venv                     # create our Virtual Environment
+$ # enter our virtual environment
+$ source .venv/bin/activate     # Unix
+$ # OR
+$ source .venv/Script/activate  # Windows Git Bash
+$ #######
 $ make install                  # install our dependencies
 $ make migrate                  # apply all database changes
 $ make permissions              # initialize our database
 $ make dev                      # start local web server
-$ logout                        # exit the virtual machine
-$ vagrant halt                  # after developing, shut down our virtual machine
+$ deactivate                    # Exit the Virtual Environment
 ```
-
-Without sudo privileges, you will need to add the binary location to your `PATH` variable.
-On Linux, this is `~/.local/bin`, and on Windows, this is `AppData\Roaming\Python\bin`.
-
-```sh
-$ echo "export PATH="$PATH:$HOME/.local/bin" >> .bashrc
-```
-
-Django will also require a working copy of MySQL (or MariaDB).
 
 ## Development
 
 To run the Django development server (which runs a web server locally), run
 ```sh
-$ make
+$ make dev
 ```
-
-In a Vagrant box, run
-```sh
-$ cd ~/hknweb
-$ make
-```
-
 which will make the web site available at `http://localhost:3000`.
 
 If you would like to access the admin interface in the local web server, run
@@ -113,29 +85,10 @@ If you would like to access the admin interface in the local web server, run
 $ make createsuperuser
 ```
 
-You will be prompted for some login info, after which you should be able to access
-the admin interface with your super user credentials at `http://localhost:3000/admin`.
+You will be prompted for some login info, after which you should be able to access the admin interface with your super user credentials at `http://localhost:3000/admin`.
 
 
 ## FAQ
 This is a compilation of past errors and how they were solved.
 
-### "[Errno 71] Protocol error 'lib' -> '/home/vagrant/hknweb/.venv/lib64'"
-![image](https://user-images.githubusercontent.com/46059916/140850935-fcef93ba-6ad2-4d63-a133-da959d986a70.png)
-- https://github.com/pypa/pipenv/issues/2084
-- https://stackoverflow.com/questions/24640819/protocol-error-setting-up-virtualenvironment-through-vagrant-on-ubuntu
-
-### "VBoxManage.exe: error: Call to WHvSetupPartition failed: ERROR_SUCCESS"
-```
-There was an error while executing `VBoxManage`, a CLI used by Vagrant
-for controlling VirtualBox. The command and stderr is shown below.
-
-Command: ["startvm", "3e703a10-ae97-4ef6-80fa-bf959a3905dc", "--type", "headless"]
-
-Stderr: VBoxManage.exe: error: Call to WHvSetupPartition failed: ERROR_SUCCESS
-```
-- Running the Command Prompt as Administrator, and then running: `bcdedit /set hypervisorlaunchtype off`
-- https://superuser.com/questions/1502529/call-to-whvsetuppartition-failed-error-success-last-0xc000000d-87-verr-nem-v -> see "Simon"'s response
-
-### M1 Macs
-![image (1)](https://user-images.githubusercontent.com/46059916/140851262-e65a481a-9c0a-4e99-b09f-fe0c98f55194.png)
+None so far
