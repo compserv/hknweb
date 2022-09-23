@@ -25,31 +25,23 @@ When `Unix` is used, it includes (not limited to) Linux, Windows WSL, and MacOS
     * This is the OFFICIAL hknweb Python version, as it matches the OCF Version (As of Fall 2022, currently Python 3.7.3)
     * Major and Minor MUST match, but Patch version we generally don't care
     * NOTE: You can have multiple Python versions installed and set one of them as default
-        * You don't need Python 3.7 as system default, but will be in the Virtual Environment following [Setup](#setup)
-    * **RECOMMENDED VERSION**: [Python 3.7.9](https://www.python.org/downloads/release/python-379/) has prebuilt binaries for Windows and MacOS
+        * You don't need Python 3.7 as system default, but will the default in the Virtual Environment if following [Setup](#setup)
+    * **RECOMMENDED VERSION**: [Python 3.7.9](https://www.python.org/downloads/release/python-379/) is latest version with prebuilt binaries for Windows and MacOS
 
 ## Setup
 
 Supported Terminals
 * Any Unix Terminals (including Windows WSL) -- usually `zsh` or `bash`
-* Windows Git Bash (**ONLY**)
+* Windows Git Bash (**ONLY**) -- this is due to several Makefile syntaxes
 
-Developing on `hknweb` requires a virtual environment so that every developer has the exact same development environment (i.e. Any errors that a developer has is not due to difference in configuration). We will be using Python's built-on [`venv`](https://docs.python.org/3/library/venv.html) to make our virtual environment. This command creates our virtual environment.
+Developing on `hknweb` requires a virtual environment so that every developer has the exact same development environment (i.e. Any errors that a developer has is not due to difference in configuration). We will be using Python's built-in [`venv`](https://docs.python.org/3/library/venv.html) to make our virtual environment. This command creates our virtual environment.
 ```sh
 $ make venv
 ```
 
 Next, we need to have our current terminal/shell use the virtual environment we just created.
-
-For Unix OSes:
-```sh
-$ source .venv/bin/activate
-```
-
-For Windows (Git Bash):
-```sh
-$ source .venv/Script/activate
-```
+* For Unix OSes: `source .venv/bin/activate`
+* For Windows (Git Bash): `source .venv/Script/activate`
 
 Finally, we need to install all of our dependencies:
 ```sh
