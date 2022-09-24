@@ -32,7 +32,7 @@ When `Unix` is used, it includes (not limited to) Linux, Windows WSL, and MacOS
 
 Supported Terminals
 * Any Unix Terminals (including Windows WSL) -- usually `zsh` or `bash`
-* Windows Git Bash (**ONLY**) -- this is due to several Makefile syntaxes
+* Windows Git Bash (**ONLY**) -- this is due to the Makefile syntax
 
 Developing on `hknweb` requires a virtual environment so that every developer has the exact same development environment (i.e. Any errors that a developer has is not due to difference in configuration). We will be using Python's built-in [`venv`](https://docs.python.org/3/library/venv.html) to make our virtual environment. This command creates our virtual environment.
 ```sh
