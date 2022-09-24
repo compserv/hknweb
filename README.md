@@ -25,8 +25,20 @@ When `Unix` is used, it includes (not limited to) Linux, Windows WSL, and MacOS
     * This is the OFFICIAL hknweb Python version, as it matches the OCF Version (As of Fall 2022, currently Python 3.7.3)
     * Major and Minor MUST match, but Patch version we generally don't care
     * NOTE: You can have multiple Python versions installed and set one of them as default
-        * You don't need Python 3.7 as system default, but will the default in the Virtual Environment if following [Setup](#setup)
-    * **RECOMMENDED VERSION**: [Python 3.7.9](https://www.python.org/downloads/release/python-379/) is latest version with prebuilt binaries for Windows and MacOS
+        * You don't need Python 3.7 as system default. HKNWeb's Virtual Environment default Python will be 3.7 if following [Setup](#setup)
+    * **RECOMMENDED METHODS (choose any one)**:
+        * [Python 3.7.9](https://www.python.org/downloads/release/python-379/) from python.org is latest version with easy prebuilt binaries for Windows and MacOS
+        * Use Anaconda / Miniconda
+            * [Install instructions here](https://conda.io/projects/conda/en/latest/user-guide/install/). Follow the `Regular Installation` instructions. It doesn't matter which one you choose, Anaconda has a lot of packages at once (and is large) while Miniconda allows you to pick and choose (so it's small at first, and for hknweb we just need Python 3.7 and it's dependencies).
+                * For Windows, we **HIGHLY RECOMMEND** in `Advanced Options` to leave ALL checkboxes **blank** (PATH and default Python).
+                * For Unix, after the install, you'll have to "disable automatic `base` environment activation" which will be covered in a bit.
+            * For Windows, run `Anaconda Prompt` (look for it in your start menu search). For Unix (Mac / Linux), open the `Terminal`. Then run:
+                * Initial setup: `conda create -n hknweb python=3.7.3 -y`
+                * Activate the conda environment with `conda activate hknweb` (do this every time you start developing on `hknweb`)
+                * Deactivate conda environment with `conda deactivate`
+                * For Unix, disable automatic `base` environment activation with `conda config --set auto_activate_base false`
+
+
 
 ## Setup
 
