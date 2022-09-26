@@ -16,8 +16,8 @@ livereload:
 
 .PHONY: conda
 conda:
-	# We don't use "-y" because if environment recrated, it will destroy and reinstall ... since it is an all "yes"
-	#  Just default to the default options (option given is either: Yes install OR No remove and reinstall)
+	@# We don't use "-y" because if environment recrated, it will destroy and reinstall ... since it is an all "yes"
+	@#  Just confirm to the default options (option given is either: Yes install OR No remove and reinstall)
 	echo -e "\n" | conda create -n $(CONDA_ENV) python=$(PYTHON_VERSION) -q
 	@echo "When developing, activate the HKNWeb Conda environment with 'conda activate $(CONDA_ENV)' so Python can access the installed dependencies."
 
@@ -26,12 +26,6 @@ conda:
 .PHONY: install-common
 install-common:
 	$(PYTHON) -m pip install --upgrade pip setuptools
-	# TODO: pinned/unpinned dependency version.
-	#  It's also usually useful to have a place where they're pinned (like they are here)
-	#  with all dependencies pinned too, and then have a place for the actual looser
-	#  requirements directly needed for the app (django for instance, but not specifying a
-	#  version unless there's compatibility problems),
-	#  this makes it much easier to be able to upgrade and know why things are pinned.
 	$(PYTHON) -m pip install -r requirements.txt
 
 # Installs dependencies for Production only
