@@ -14,7 +14,10 @@ class EventForm(forms.ModelForm):
         input_formats=(DATETIME_12_HOUR_FORMAT,), widget=DATETIME_WIDGET_NO_AUTOCOMPLETE
     )
     repeat_num_times = forms.IntegerField(
-        min_value=0, required=False, label="Number of Repeats (after first occurrence)", initial=0
+        min_value=0,
+        required=False,
+        label="Number of Repeats (after first occurrence)",
+        initial=0,
     )
     repeat_period = forms.IntegerField(
         min_value=0,
