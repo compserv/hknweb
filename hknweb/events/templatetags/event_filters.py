@@ -10,6 +10,7 @@ register = template.Library()
 def event_name(name):
     return bleach.clean(name, tags=[], strip=True)
 
+
 # Made like this to make it compadible with Windows + Linux
 #  Leading zero syntax on strftime has a difference ("#" and "-")
 def get_time_string(dt):
@@ -18,6 +19,7 @@ def get_time_string(dt):
     ampm = dt.strftime("%p")
     return f"{hour}:{mins} {ampm}"
 
+
 def get_date_string(dt):
     weekday = dt.strftime("%a")
     month = dt.strftime("%B")
@@ -25,6 +27,7 @@ def get_date_string(dt):
     year = dt.year
     clock_time = get_time_string(dt)
     return f"{weekday}, {month} {day}, {year} - {clock_time}"
+
 
 @register.filter
 def process_event_time(event):
