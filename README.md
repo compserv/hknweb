@@ -90,6 +90,9 @@ $ make createsuperuser
 
 You will be prompted for some login info, after which you should be able to access the admin interface with your super user credentials at `http://localhost:3000/admin`.
 
+Usually, code behavior between the Operating Systems is rare.
+However, Windows developers have the additional responsbility to make their code Linux-friendly (since our destination OS is Linux on OCF). Therefore, if there is an error on the code on Linux and not Windows, support on Linux takes precedence!
+Unix developers should also try to make their code Windows-friendly for the Window developers. [Example with `strftime`](https://github.com/compserv/hknweb/commit/3dc27dfa7556561b7c244de2c431d3c99ee2eb5a)
 
 ## FAQ
 This is a compilation of past errors and how they were solved.
