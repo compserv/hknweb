@@ -25,7 +25,7 @@ When `Unix` is used, it includes (not limited to) Linux, Windows WSL, and MacOS
     * This is the OFFICIAL hknweb Python version, as it matches the OCF Version (As of Fall 2022, currently Python 3.7.3)
     * Major and Minor MUST match, but Patch version we generally don't care
     * **HKN CompServ Standard -- Anaconda / Miniconda**:
-        * [Install instructions here](https://conda.io/projects/conda/en/latest/user-guide/install/). Follow the `Regular Installation` instructions alongside the instructions in another README file called `README-CONDA.md`
+        * [Install instructions here](https://conda.io/projects/conda/en/latest/user-guide/install/). Follow the `Regular Installation` instructions alongside the instructions in another README file called [README-CONDA.md](README-CONDA.md)
         * Commands Summary:
             * Initial setup: `conda create -n hknweb python=<VERSION> -y`, where VERSION is the Python version used by `hknweb`. Use `make conda` instead which does this for you.
             * Activate the conda environment with `conda activate hknweb` (do this every time you start developing on `hknweb`)
