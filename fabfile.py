@@ -82,7 +82,6 @@ def create_release(c: Connection):
 def symlink_shared(c: Connection):
     print("-- Symlinking shared files")
     with c.cd(c.release_path):
-        c.run("ln -s {}/venv ./.venv".format(c.shared_path), echo=True)
         c.run("ln -s {}/media ./media".format(c.shared_path), echo=True)
 
 
@@ -95,19 +94,19 @@ def decrypt_secrets(c):
 def install_deps(c: Connection):
     print("-- Installing dependencies")
     with c.cd(c.release_path):
-        c.run("source .venv/bin/activate && make install-prod")
+        c.run("make install-prod")
 
 
 def django_migrate(c: Connection):
     print("-- Migrating tables")
     with c.cd(c.release_path):
-        c.run("HKNWEB_MODE=prod .venv/bin/python ./manage.py migrate")
+        c.run("HKNWEB_MODE=prod $(CONDA_PREFIX)/python ./manage.py migrate")
 
 
 def django_collectstatic(c: Connection):
     print("-- Collecting static files")
     with c.cd(c.release_path):
-        c.run("HKNWEB_MODE=prod .venv/bin/python ./manage.py collectstatic --noinput")
+        c.run("HKNWEB_MODE=prod $(CONDA_PREFIX)/python ./manage.py collectstatic --noinput")
 
 
 def symlink_release(c: Connection):
@@ -139,12 +138,15 @@ def setup(c: Connection, commit=None, release=None):
     print("release: {}".format(c.release))
     print("commit: {}".format(c.commit))
     create_dirs(c)
-    if not path.file_exists(c, "{}/venv/bin/activate".format(c.shared_path)):
-        create_venv(c)
+    create_conda(c)
 
 
-def create_venv(c: Connection):
-    c.run("python3.7 -m venv {}/venv".format(c.shared_path))
+def create_conda(c: Connection):
+    c.run("make conda")
+
+
+def activate_conda(c: Connection):
+    c.run("conda activate hknweb")
 
 
 def update(c: Connection):
@@ -152,8 +154,8 @@ def update(c: Connection):
     create_release(c)
     symlink_shared(c)
     decrypt_secrets(c)
-    if not path.dir_exists(c, "{}/venv".format(c.shared_path)):
-        create_venv(c)
+    create_conda(c)
+    activate_conda(c)
     install_deps(c)
     django_migrate(c)
     django_collectstatic(c)
