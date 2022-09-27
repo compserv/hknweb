@@ -16,18 +16,19 @@ When `Unix` is used, it includes (not limited to) Linux, Windows WSL, and MacOS
 * Terminal
     * Unix can use the default terminal (usually `zsh` or `bash`)
     * [Windows] [git bash](https://git-scm.com/downloads) **ONLY** (due to Makefile syntax)
+        * Terminal emulator should be `Use Windows' default console window`. Don't use MinTTY.
 * make (GNU Make)
     * Unix systems usually have this out of the box
     * [Windows] Follow [instructions here using Winget](https://www.technewstoday.com/install-and-use-make-in-windows/#using-winget)
         * **CORRECTION**: For **Steps 8 to 10**: Under `User variables` (top half section), click on `Path`, click on `Edit`, click on `New`, and enter `C:\Program Files (x86)\GnuWin32\bin`
         * Article has other options too, but Winget is more out of the box. Next best thing is using Chocolatey which requires install of Chocolatey itself.
-* Python 3.7 (https://www.python.org/)
+* Python 3.7                                            
     * This is the OFFICIAL hknweb Python version, as it matches the OCF Version (As of Fall 2022, currently Python 3.7.3)
     * Major and Minor MUST match, but Patch version we generally don't care
     * **HKN CompServ Standard -- Anaconda / Miniconda**:
         * [Install instructions here](https://conda.io/projects/conda/en/latest/user-guide/install/). Follow the `Regular Installation` instructions alongside the instructions in another README file called [README-CONDA.md](README-CONDA.md)
         * Commands Summary:
-            * Initial setup: `conda create -n hknweb python=<VERSION> -y`, where VERSION is the Python version used by `hknweb`. Use `make conda` instead which does this for you.
+            * Initial setup: `conda create -n hknweb python=<VERSION>`, where VERSION is the Python version used by `hknweb`. Use `make conda` instead which does this for you.
             * Activate the conda environment with `conda activate hknweb` (do this every time you start developing on `hknweb`)
             * Deactivate conda environment with `conda deactivate`
             * Disable automatic `base` environment activation with `conda config --set auto_activate_base false`
@@ -90,11 +91,15 @@ $ make createsuperuser
 
 You will be prompted for some login info, after which you should be able to access the admin interface with your super user credentials at `http://localhost:3000/admin`.
 
-Usually, code behavior between the Operating Systems is rare.
+Usually, Python code behavior between the Operating Systems is rare.
 However, Windows developers have the additional responsbility to make their code Linux-friendly (since our destination OS is Linux on OCF). Therefore, if there is an error on the code on Linux and not Windows, support on Linux takes precedence!
 Unix developers should also try to make their code Windows-friendly for the Window developers. [Example with `strftime`](https://github.com/compserv/hknweb/commit/3dc27dfa7556561b7c244de2c431d3c99ee2eb5a)
 
 ## FAQ
 This is a compilation of past errors and how they were solved.
 
-None so far
+### Python won't load on Windows Git Bash
+
+Git Bash's Terminal emulator should be `Use Windows' default console window`. Don't use MinTTY. Just rerun the EXE (no need to install) and go through all the options (it will keep what you previously selected), and on the `Terminal Emulator` page, select `Use Windows' default console window`.
+
+You will still be able to use the normal Windows Command Line and Git Bash separately.

@@ -12,7 +12,8 @@ Get the executables here: https://conda.io/projects/conda/en/latest/user-guide/i
 Follow the `Regular Installation` instructions alongside the below instructions
 ## Unix (Windows WSL, Linux, MacOS)
 1. There are no options given during installation. Follow and complete it all normally.
-2. Open a terminal and it will show `(base)`. That is the conda base environment. Disable automatic `base` environment activation with `conda config --set auto_activate_base false`. You can activate the base environment if you so choose manually anytime using `conda activate`.
+2. Disable automatic `base` environment activation with `conda config --set auto_activate_base false`. You can activate the base environment if you so choose manually anytime using `conda activate`.
+    * If next time you open a terminal and it will show `(base)`. That is the conda base environment. This step disables that from starting (and is recommended).
 3. Open a fresh new terminal and type `conda`. If "help" stuff pops up, that means `conda` is ready for you.
 ## Windows
 The official terminal standard chosen for `hknweb` is `Git Bash`, so all instructions follow that. We officially won't write instructions for other terminals.
