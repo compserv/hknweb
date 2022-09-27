@@ -19,7 +19,7 @@ When `Unix` is used, it includes (not limited to) Linux, Windows WSL, and MacOS
 * make (GNU Make)
     * Unix systems usually have this out of the box
     * [Windows] Follow [instructions here using Winget](https://www.technewstoday.com/install-and-use-make-in-windows/#using-winget)
-        * **CORRECTION**: For **Step 10**: Under `Variable value`, enter `C:\Program Files (x86)\GnuWin32\bin`
+        * **CORRECTION**: For **Steps 8 to 10**: Under `User variables` (top half section), click on `Path`, click on `Edit`, click on `New`, and enter `C:\Program Files (x86)\GnuWin32\bin`
         * Article has other options too, but Winget is more out of the box. Next best thing is using Chocolatey which requires install of Chocolatey itself.
 * Python 3.7 (https://www.python.org/)
     * This is the OFFICIAL hknweb Python version, as it matches the OCF Version (As of Fall 2022, currently Python 3.7.3)

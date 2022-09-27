@@ -5,6 +5,8 @@ It doesn't matter which one you choose, Anaconda has a lot of packages at once (
 
 We just need Python and its dependencies, so Miniconda will suffice. If you have Anaconda already or prefer Anaconda, that's fine too.
 
+If you have Anaconda already, you can skip to the `Setup` instructions in the README, but feel free to follow the steps below as appropriate to help you avoid Conda and System conflicts.
+
 # Recommended Install Instructions
 Get the executables here: https://conda.io/projects/conda/en/latest/user-guide/install/
 Follow the `Regular Installation` instructions alongside the below instructions
@@ -21,5 +23,5 @@ The official terminal standard chosen for `hknweb` is `Git Bash`, so all instruc
 5. Run: `export PATH=$PATH:/c/Users/<USERNAME>/[miniconda3|Anaconda3]/Scripts/`, where you substitute the current Windows user's Username folder in the `Users` folder AND choose whether you installed `miniconda` or `Anaconda`. For example, if you installed miniconda and your username is "oski", it would be something like this: `export PATH=$PATH:/c/Users/oski/miniconda3/Scripts/`
     * If you installed "conda" somewhere else, replace the drive name (like "D:") and lowercase it with a forward slash at the beginning (Example: "/d"). Then add `/Scripts/` at the end of it. For example, if you installed in `D:\Programs\Anaconda3`, you would use `export PATH=$PATH:/d/Programs/Anaconda3/Scripts/`
 6. Run `conda init bash`
-7. If you ever see `(base)` next time you open Git Bash, that is the conda base environment. Disable automatic `base` environment activation with `conda config --set auto_activate_base false`. You can activate the base environment if you so choose manually anytime using `conda activate`.
+7. If you ever see `(base)` next time you open Git Bash, that is the conda base environment. Disable future automatic `base` environment activation with `conda config --set auto_activate_base false`. You can activate the base environment if you so choose manually anytime using `conda activate`.
 8. Open a fresh new terminal and type `conda`. If "help" stuff pops up, that means `conda` is ready for you.
