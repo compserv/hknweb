@@ -24,21 +24,13 @@ When `Unix` is used, it includes (not limited to) Linux, Windows WSL, and MacOS
 * Python 3.7 (https://www.python.org/)
     * This is the OFFICIAL hknweb Python version, as it matches the OCF Version (As of Fall 2022, currently Python 3.7.3)
     * Major and Minor MUST match, but Patch version we generally don't care
-    * NOTE: You can have multiple Python versions installed and set one of them as default
-        * You don't need Python 3.7 as system default. HKNWeb's Virtual Environment default Python will be 3.7 if following [Setup](#setup)
-    * **RECOMMENDED METHODS (choose any one)**:
-        * [Python 3.7.9](https://www.python.org/downloads/release/python-379/) from python.org is latest version with easy prebuilt binaries for Windows and MacOS
-        * Use Anaconda / Miniconda
-            * [Install instructions here](https://conda.io/projects/conda/en/latest/user-guide/install/). Follow the `Regular Installation` instructions. It doesn't matter which one you choose, Anaconda has a lot of packages at once (and is large) while Miniconda allows you to pick and choose (so it's small at first, and for hknweb we just need Python 3.7 and it's dependencies).
-                * For Windows, we **HIGHLY RECOMMEND** in `Advanced Options` to leave ALL checkboxes **blank** (PATH and default Python).
-                * For Unix, after the install, you'll have to "disable automatic `base` environment activation" which will be covered in a bit.
-            * For Windows, run `Anaconda Prompt` (look for it in your start menu search). For Unix (Mac / Linux), open the `Terminal`. Then run:
-                * Initial setup: `conda create -n hknweb python=3.7.3 -y`
-                * Activate the conda environment with `conda activate hknweb` (do this every time you start developing on `hknweb`)
-                * Deactivate conda environment with `conda deactivate`
-                * For Unix, disable automatic `base` environment activation with `conda config --set auto_activate_base false`
-
-
+    * **HKN CompServ Standard -- Anaconda / Miniconda**:
+        * [Install instructions here](https://conda.io/projects/conda/en/latest/user-guide/install/). Follow the `Regular Installation` instructions alongside the instructions in another README file called `README-CONDA.md`
+        * Commands Summary:
+            * Initial setup: `conda create -n hknweb python=<VERSION> -y`, where VERSION is the Python version used by `hknweb`. Use `make conda` instead which does this for you.
+            * Activate the conda environment with `conda activate hknweb` (do this every time you start developing on `hknweb`)
+            * Deactivate conda environment with `conda deactivate`
+            * Disable automatic `base` environment activation with `conda config --set auto_activate_base false`
 
 ## Setup
 
@@ -46,16 +38,23 @@ Supported Terminals
 * Any Unix Terminals (including Windows WSL) -- usually `zsh` or `bash`
 * Windows Git Bash (**ONLY**) -- this is due to the Makefile syntax
 
-Developing on `hknweb` requires a virtual environment so that every developer has the exact same development environment (i.e. Any errors that a developer has is not due to difference in configuration). We will be using Python's built-in [`venv`](https://docs.python.org/3/library/venv.html) to make our virtual environment. This command creates our virtual environment.
+Developing on `hknweb` requires a virtual environment so that every developer has the exact same development environment (i.e. Any errors that a developer has is not due to difference in configuration). We will be using Conda Environments to make our virtual environment.
+
+Others exist like Python's built-in [`venv`](https://docs.python.org/3/library/venv.html), but we won't use that here
+
+This command creates our Conda Environment.
 ```sh
-$ make venv
+$ make conda
 ```
 
-Next, we need to have our current terminal/shell use the virtual environment we just created.
-* For Unix OSes: `source .venv/bin/activate`
-* For Windows (Git Bash): `source .venv/Script/activate`
+Alternatively, this command creates our Conda Environment completely from scratch: `make conda-scratch`
 
-Finally, we need to install all of our dependencies:
+Next, we need to have our current terminal/shell use the Conda Environment we just created.
+```sh
+$ conda activate hknweb
+```
+
+Finally, we need to install all of our dependencies into the Conda Environment (and not the main computer system):
 ```sh
 $ make install
 ```
@@ -63,18 +62,18 @@ $ make install
 In summary, the setup looks like:
 ```sh
 $ cd hknweb                     # enter our main directory
-$ make venv                     # create our Virtual Environment
-$ # enter our virtual environment
-$ source .venv/bin/activate     # Unix
-$ # OR
-$ source .venv/Script/activate  # Windows Git Bash
-$ #######
+$ make conda                    # create our Conda Environment
+$ conda activate hknweb         # enter our Conda Environment
 $ make install                  # install our dependencies
 $ make migrate                  # apply all database changes
 $ make permissions              # initialize our database
 $ make dev                      # start local web server
-$ deactivate                    # Exit the Virtual Environment
+$ conda deactivate              # Exit the Conda Environment
 ```
+
+You may notice many of our Makefile commands can be ran manually.
+
+We not only use Makefile commands to simplify and abstract away many commonly used development commands (especially setting the dev environment via `HKNWEB_MODE='dev'`), but also to sanity check to make sure we don't accidentally modify our main system (see how we call `python` in the Makefile).
 
 ## Development
 

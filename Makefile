@@ -1,6 +1,7 @@
 CONDA_ENV := hknweb
 PYTHON_VERSION := 3.7.3
-PYTHON := python
+# Require Python be ran insie Conda, otherwise directory error out
+PYTHON := "$(CONDA_PREFIX)"/python
 MANAGE := HKNWEB_MODE='dev' $(PYTHON) ./manage.py
 
 IP ?= 127.0.0.1
@@ -14,11 +15,17 @@ dev:
 livereload:
 	$(MANAGE) livereload $(IP):$(PORT)
 
+.PHONY: conda-scratch
+conda-scratch:
+	# Makes hknweb environment from scratch (overwriting old one if exists)
+	conda create -n $(CONDA_ENV) python=$(PYTHON_VERSION) -y
+	@echo "When developing, activate the HKNWeb Conda environment with 'conda activate $(CONDA_ENV)' so Python can access the installed dependencies."
+
 .PHONY: conda
 conda:
 	@# We don't use "-y" because if environment recrated, it will destroy and reinstall ... since it is an all "yes"
 	@#  Just confirm to the default options (option given is either: Yes install OR No remove and reinstall)
-	echo -e "\n" | conda create -n $(CONDA_ENV) python=$(PYTHON_VERSION) -q
+	echo -e "\n" | conda create -n $(CONDA_ENV) python=$(PYTHON_VERSION)
 	@echo "When developing, activate the HKNWeb Conda environment with 'conda activate $(CONDA_ENV)' so Python can access the installed dependencies."
 
 # Installs dependencies for Development and Production only
