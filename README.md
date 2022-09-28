@@ -10,28 +10,26 @@ There are other ways to install the following items. The instructions here will 
 
 When `Unix` is used, it includes (not limited to) Linux, Windows WSL, and MacOS
 
-* git
-    * Unix systems usually have this out of the box
-    * [Windows] [git bash](https://git-scm.com/downloads)
-* Terminal
-    * Unix can use the default terminal (usually `zsh` or `bash`)
+* `git` and Terminal
+    * Unix systems usually have these out of the box
+        * Default terminal usually `zsh` or `bash`
     * [Windows] [git bash](https://git-scm.com/downloads) **ONLY** (due to Makefile syntax)
-        * Terminal emulator should be `Use Windows' default console window`. Don't use MinTTY.
-* make (GNU Make)
+        * You can use the default options, **with one exception**: Select `Use Windows' default console window` in the **Configuring the terminal emulator** to use with Git Bash step. Do not use MinTTY.
+            * This is very important! If you do not select this option, your terminal won't work with Python!
+            * If you already have Git Bash installed before, just redownload and rerun the EXE (no need to uninstall) and go through all the options (it should keep what you previously selected). On the **Configuring the terminal emulator** page, select `Use Windows' default console window`.
+* `make` (GNU Make)
     * Unix systems usually have this out of the box
     * [Windows] Follow [instructions here using Winget](https://www.technewstoday.com/install-and-use-make-in-windows/#using-winget)
         * **CORRECTION**: For **Steps 8 to 10**: Under `User variables` (top half section), click on `Path`, click on `Edit`, click on `New`, and enter `C:\Program Files (x86)\GnuWin32\bin`
         * Article has other options too, but Winget is more out of the box. Next best thing is using Chocolatey which requires install of Chocolatey itself.
-* Python 3.7                                            
-    * This is the OFFICIAL hknweb Python version, as it matches the OCF Version (As of Fall 2022, currently Python 3.7.3)
-    * Major and Minor MUST match, but Patch version we generally don't care
-    * **HKN CompServ Standard -- Anaconda / Miniconda**:
-        * [Install instructions here](https://conda.io/projects/conda/en/latest/user-guide/install/). Follow the `Regular Installation` instructions alongside the instructions in another README file called [README-CONDA.md](README-CONDA.md)
-        * Commands Summary:
-            * Initial setup: `conda create -n hknweb python=<VERSION>`, where VERSION is the Python version used by `hknweb`. Use `make conda` instead which does this for you.
-            * Activate the conda environment with `conda activate hknweb` (do this every time you start developing on `hknweb`)
-            * Deactivate conda environment with `conda deactivate`
-            * Disable automatic `base` environment activation with `conda config --set auto_activate_base false`
+* Miniconda (or Anaconda) + Python 3.7.3
+    * Our server will also use Miniconda to allow for some flexibility in installing packages without having to wait for OCF to install them for us, like upgrading the Python version. As of Fall 2022, we currently use Python 3.7.3.
+    * Install instructions here: [README-CONDA.md](README-CONDA.md)
+    * Commands Summary:
+        * Initial setup: `conda create -n hknweb python=<VERSION>`, where VERSION is the Python version used by `hknweb`. Use `make conda` instead which does this for you.
+        * Activate the conda environment with `conda activate hknweb` (do this every time you start developing on `hknweb`)
+        * Deactivate conda environment with `conda deactivate`
+        * Disable automatic `base` environment activation with `conda config --set auto_activate_base false`
 
 ## Setup
 
@@ -74,7 +72,7 @@ $ conda deactivate              # Exit the Conda Environment
 
 You may notice many of our Makefile commands can be ran manually.
 
-We not only use Makefile commands to simplify and abstract away many commonly used development commands (especially setting the dev environment via `HKNWEB_MODE='dev'`), but also to sanity check to make sure we don't accidentally modify our main system (see how we call `python` in the Makefile).
+We not only use Makefile commands to simplify and abstract away many commonly used development commands (especially setting the dev environment via `HKNWEB_MODE='dev'`), but also to sanity check to make sure we don't accidentally modify your main system (see how we call `python` in the Makefile).
 
 ## Development
 
@@ -100,6 +98,4 @@ This is a compilation of past errors and how they were solved.
 
 ### Python won't load on Windows Git Bash
 
-Git Bash's Terminal emulator should be `Use Windows' default console window`. Don't use MinTTY. Just rerun the EXE (no need to install) and go through all the options (it will keep what you previously selected), and on the `Terminal Emulator` page, select `Use Windows' default console window`.
-
-You will still be able to use the normal Windows Command Line and Git Bash separately.
+Git Bash's Terminal emulator should be `Use Windows' default console window`. Don't use MinTTY. Follow the instructions for reinstalling `Git Bash` in the **Prerequisites** section of this README. 
