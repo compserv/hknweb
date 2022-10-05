@@ -13,51 +13,97 @@ Why HKN?
         padding-top: 25px;
         padding-bottom: 25px;
     }
-    
-    #inner {
-        max-width: 700px;
+
+    .inner {
+        width: 80%;
         margin: auto;
+        text-align: center;
     }
+
+    .centered-description {
+        width: 50%;
+        margin: auto;
+        text-align: left;
+    }
+
+    .col {
+        width: 45%;
+        margin: 0;
+        display: inline-block;
+        text-align: left;
+    }
+
+    .signature {
+        text-align: left;
+        margin: auto;
+        width: 50%;
+    }
+
+    .company-sponsors-logos {
+        text-align: center;
+    }
+
+    .company-sponsors-logo {
+        width: 50%
+    }
+
 </style>
 
-<div id="inner">
-Eta Kappa Nu (HKN) is the national EECS honor society. The Mu Chapter of HKN is one of the most active student groups on the UC Berkeley campus, offering a variety of services to the Berkeley EECS community.
+<div class="inner">
+    <div class="centered-description">
+        Eta Kappa Nu (HKN) is the national EECS honor society. The Mu Chapter of HKN is one of the most active student groups on the UC Berkeley campus, offering a variety of services to the Berkeley EECS community.
+    </div>
 
-<h2>Active Organization</h2>
+    <div class="col">
+        <h2>Active Organization</h2>
 
-Membership is extended to the undergraduates in the top fourth of the junior class and the top third of the senior class in EECS, who demonstrate a commitment to serving their fellow EECS students. HKN embodies not only the prestige of academic achievement, but also the spirit of leadership and service.
+        Membership is extended to the undergraduates in the top fourth of the junior class and the top third of the senior class in EECS, who demonstrate a commitment to serving their fellow EECS students. HKN embodies not only the prestige of academic achievement, but also the spirit of leadership and service.
 
-<h2>Department and Student Relationship</h2>
+        <h2>Department and Student Relationship</h2>
 
-HKN is an essential link between the EECS students, the EECS faculty, and the industry. The Berkeley EECS Department has recognized HKN as an important channel of communications between the EECS students and the department.
+        HKN is an essential link between the EECS students, the EECS faculty, and the industry. The Berkeley EECS Department has recognized HKN as an important channel of communications between the EECS students and the department.
 
-<h2>Student and Corporate Service</h2>
+        <h2>Student and Corporate Service</h2>
 
-HKN also hosts company infosessions and annual EECS career fairs, securing a key role in many students' search for internships and other employment opportunities. HKN Mu Chapter has gained much respect from its peers as a source of academic mentorship and information.
+        HKN also hosts company infosessions and annual EECS career fairs, securing a key role in many students' search for internships and other employment opportunities. HKN Mu Chapter has gained much respect from its peers as a source of academic mentorship and information.
+    </div>
 
-<h2>Extreme Dedication</h2>
+    <div class="col">
+        <h2>Extreme Dedication</h2>
 
-With an extremely dedicated group of 36 officers and a membership of over 300 undergraduate students, the HKN Mu Chapter specializes in executing planned activities smoothly and successfully, and has won repeated recognition as one of the most active chapters around the nation.
+        With an extremely dedicated group of 36 officers and a membership of over 300 undergraduate students, the HKN Mu Chapter specializes in executing planned activities smoothly and successfully, and has won repeated recognition as one of the most active chapters around the nation.
 
-<h2>Tried and Trusted</h2>
+        <h2>Tried and Trusted</h2>
 
-Eta Kappa Nu has extensive experience working with industry. We have successfully helped many companies publicize and meet students at corporate infosessions and career fairs we coordinate. Additionally, our resume book has helped companies get in touch with some of the best and brightest EE and CS students in the country.
+        Eta Kappa Nu has extensive experience working with industry. We have successfully helped many companies publicize and meet students at corporate infosessions and career fairs we coordinate. Additionally, our resume book has helped companies get in touch with some of the best and brightest EE and CS students in the country.
 
-<h2>Serving the EECS Community</h2>
+        <h2>Serving the EECS Community</h2>
 
-HKN is committed to serving the EECS community building on more than 10 years of experience. We look forward to working with you in the future. <br><br>
+        HKN is committed to serving the EECS community building on more than 10 years of experience. We look forward to working with you in the future. <br><br>
+    </div>
 
-<hr>
+    <br><br>
 
-<div>
-    <span style="font-weight: bold;">Sincerely,</span><br><br>
+    <div class="signature">
+        <span style="font-weight: bold;">Sincerely,</span><br><br>
 
-    Katherine Shu<br>
-    Eric Wang<br>
-    Parth Gupta<br>
+        Carl Knox, Kevin Li, Vincent Wang, Matthew Fogel, Seenu Madhavan, Will Vavrik
+
+        <br>
+        HKN's Industrial Relations committee 
+    </div>
 
     <br>
-    HKN's Industrial Relations committee 
+    <hr>
+
+    <h1>Current sponsors</h1>
+    <p>We thank all of our sponsors for their support of HKN and the broader EECS community. Click on the logos display below to visit that sponsors' website!</p>
+
+    <div class="company-sponsors-logos">
+        <a href="https://www.citadel.com/">
+            <img src="{% static 'img/indrel_sponsors_citadel_logo.png' %}" class="company-sponsors-logo" alt="Citadel logo">
+        </a>
+    </div>
 </div>
-</div>
+
 {% endblock %}
