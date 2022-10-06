@@ -4,6 +4,10 @@ from django.contrib.auth.forms import (
     SetPasswordForm,
 )
 
+import csv
+
+import secrets
+
 from hknweb.models import User, Profile
 from hknweb.coursesemester.models import Semester
 
@@ -88,3 +92,15 @@ class ProfilePictureForm(forms.ModelForm):
 
 class SemesterSelectForm(forms.Form):
     semester = forms.ModelChoiceField(Semester.objects.order_by("-year", "semester"))
+
+
+class ProvisionCandidatesForm(forms.Form):
+    file = forms.FileField()
+
+    def save(self):
+        file_wrapper = self.cleaned_data["file"]
+        decoded_file = file_wrapper.read().decode("utf-8").splitlines()
+        records = csv.DictReader(decoded_file)
+
+        for line in records:
+            print(line)

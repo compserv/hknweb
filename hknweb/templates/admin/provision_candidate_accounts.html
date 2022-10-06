@@ -1,0 +1,11 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+
+    <form action="{% url 'admin:auth_user_provision_candidate_accounts' %}" method="post" enctype="multipart/form-data" onsubmit="submit_button.disabled = true; return true;">
+        {% csrf_token %}
+        <input type="file" name="file" />
+        <input type="submit" name="submit_button" value="Upload CSV" />
+    </form>
+
+{% endblock %}
