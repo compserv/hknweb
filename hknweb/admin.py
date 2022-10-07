@@ -98,7 +98,11 @@ class CustomUserAdmin(UserAdmin):
     def get_urls(self):
         urls = super().get_urls()
         my_urls = [
-            path('provision_candidate_accounts/', self.provision_candidate_accounts, name="auth_user_provision_candidate_accounts"),
+            path(
+                "provision_candidate_accounts/",
+                self.provision_candidate_accounts,
+                name="auth_user_provision_candidate_accounts",
+            ),
         ]
         return my_urls + urls
 

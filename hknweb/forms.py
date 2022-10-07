@@ -124,7 +124,9 @@ class ProvisionCandidatesForm(forms.Form):
             "events_index_link": "events:index",
             "candidate_portal_link": "candidate:candidate_portal",
         }
-        email_links = {k: request.build_absolute_uri(reverse(v)) for k, v in email_links.items()}
+        email_links = {
+            k: request.build_absolute_uri(reverse(v)) for k, v in email_links.items()
+        }
 
         def create_email(user: User, password: str) -> None:
             email_message = render_to_string(
@@ -153,7 +155,10 @@ class ProvisionCandidatesForm(forms.Form):
         invalid_emails = self.invalid_emails
 
         if invalid_emails:
-            messages.error(request, f"All accounts created successfully except the following with invalid emails: {invalid_emails}. As a reminder, all emails must end in '@berkeley.edu'.")
+            messages.error(
+                request,
+                f"All accounts created successfully except the following with invalid emails: {invalid_emails}. As a reminder, all emails must end in '@berkeley.edu'.",
+            )
         else:
             messages.info(request, "All accounts successfully created!")
 
@@ -173,12 +178,14 @@ class ProvisionCandidatesForm(forms.Form):
         uploaded_fieldnames = set(reader.fieldnames)
         if uploaded_fieldnames != required_csv_fieldnames:
             difference = required_csv_fieldnames.difference(uploaded_fieldnames)
-            raise forms.ValidationError(f"Input csv is missing the following columns: {difference}")
+            raise forms.ValidationError(
+                f"Input csv is missing the following columns: {difference}"
+            )
 
         def email_to_username(email: str) -> str:
             username = None
             if email.endswith(required_email_suffix):
-                username = email[:-len(required_email_suffix)]
+                username = email[: -len(required_email_suffix)]
 
             return username
 
@@ -196,7 +203,11 @@ class ProvisionCandidatesForm(forms.Form):
 
             row["username"] = username
 
-        existing_usernames = set(User.objects.filter(username__in=usernames).values_list("username", flat=True))
+        existing_usernames = set(
+            User.objects.filter(username__in=usernames).values_list(
+                "username", flat=True
+            )
+        )
 
         # Setup account provisioning utils
         # Get candidate group to add users to
@@ -204,6 +215,7 @@ class ProvisionCandidatesForm(forms.Form):
 
         # Convenience function for generating a password
         alphabet = string.ascii_letters + string.digits
+
         def generate_password() -> str:
             password = "".join(secrets.choice(alphabet) for _ in range(password_length))
 
