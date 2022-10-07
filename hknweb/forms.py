@@ -9,6 +9,7 @@ from django.template.loader import render_to_string
 from django.core.mail import send_mass_mail
 from django.contrib import messages
 from django.urls import reverse
+from django.core.mail import get_connection, EmailMultiAlternatives
 
 import csv
 
@@ -18,6 +19,7 @@ import secrets
 
 from hknweb.models import User, Profile
 from hknweb.coursesemester.models import Semester
+from hknweb.utils import get_rand_photo
 from hknweb.utils import get_rand_photo
 
 
@@ -128,7 +130,7 @@ class ProvisionCandidatesForm(forms.Form):
             k: request.build_absolute_uri(reverse(v)) for k, v in email_links.items()
         }
 
-        def create_email(user: User, password: str) -> None:
+        def create_email(user: User, password: str, connection):
             email_message = render_to_string(
                 "account/new_candidate_account_email.html",
                 {
@@ -141,12 +143,19 @@ class ProvisionCandidatesForm(forms.Form):
                 },
             )
 
-            return (email_subject, email_message, None, [user.email])
+            msg = EmailMultiAlternatives(
+                email_subject, email_subject, settings.NO_REPLY_EMAIL, [user.email], connection=connection
+            )
+            msg.attach_alternative(email_message, "text/html")
 
-        email_messages = [create_email(*info) for info in email_information]
+            return msg
 
-        # Mass send emails
-        send_mass_mail(email_messages, fail_silently=False)
+        # Send emails using the same connection
+        with get_connection() as connection:
+            email_messages = [create_email(*info, connection) for info in email_information]
+
+            for email in email_messages:
+                email.send()
 
     def add_messages(self, request) -> None:
         # For any accounts not created because of invalid email, report to the user
