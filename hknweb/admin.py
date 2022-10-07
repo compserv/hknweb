@@ -106,7 +106,11 @@ class CustomUserAdmin(UserAdmin):
         form = ProvisionCandidatesForm(request.POST, request.FILES)
         if request.method == "POST" and form.is_valid():
             form.save()
-            return redirect("admin:auth_user_changelist")
+
+            form.send_candidate_account_emails(request)
+            form.add_messages(request)
+
+            return redirect("candidate:officer_portal")
 
         context = {
             **self.admin_site.each_context(request),

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ subject }}</title>
+</head>
+<body>
+
+    <p>
+        Hi {{ first_name }}!
+        <br><br>
+        Welcome to HKN. This email contains information on managing your candidate semester logistics.
+        <br><br>
+        Log in to your candidate account! Your username is the same as your Berkeley email username. 
+        <br><br>
+        Username: {{ username }}
+        <br>
+        Password: {{ password }}
+        <br><br>
+        You can change your password <a href="{{ settings_link }}">here</a>. 
+        <br><br>
+        Two important parts of your candidate semester are HKN events and candidate semester requirements. 
+        <br><br>
+        You can track HKN events via our <a href="{{ events_index_link }}">events calendar</a>. Click on an event in the calendar to see more information and to RSVP to it. 
+        <br><br>
+        You can track your candidate semester progress through your <a href="{{ candidate_portal_link }}">candidate portal</a>. In your candidate portal, you can submit officer challenges and bit-byte activities and view a summary of the events you've attended.
+        <br><br>
+        If you have any questions relating to the technical logistics of your candidate semester or feedback on the website, please message in the #compserv Slack channel. 
+        <br><br>
+        Best wishes,
+        <br>
+        HKN and HKN's compserv committee
+    </p>
+
+    <img src="{{ img_link }}" alt="cute animal"><br>
+    <span style="font-size: 0.8em;"> Image source: pexels.com </span>
+
+</body>
+</html>
