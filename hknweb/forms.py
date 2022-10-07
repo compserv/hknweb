@@ -20,6 +20,7 @@ import secrets
 from hknweb.models import User, Profile
 from hknweb.coursesemester.models import Semester
 from hknweb.utils import get_rand_photo
+from hknweb.utils import get_rand_photo
 
 
 class SettingsForm(forms.ModelForm):
