@@ -39,6 +39,17 @@ Officer Portal
 {% endblock %}
 
 {% block content %}
+
+    {% if messages %}
+        <div style="text-align: center; width: 80%; margin: auto;">
+            <ul class="messages">
+                {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
     <section class="main-panel">
         <h2>Officer Challenges</h2>
         <div style="width: 80%; text-align: center; margin: auto;">
@@ -106,6 +117,23 @@ Officer Portal
     </section>
 
     <section style="text-align: center; width: 80%; margin: auto;">
-        <a href="{% url 'admin:auth_user_provision_candidate_accounts' %}">Provision candidate accounts</a>
+        <h2>Quick links</h2>
+
+        <div style="width: 80%; margin: auto;">
+            <table>
+                <tr>
+                    <th style="width: 30%;"></th>
+                    <th style="width: 70%;"></th>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="{% url 'admin:auth_user_provision_candidate_accounts' %}">Provision candidate accounts</a>
+                    </td>
+                    <td>
+                        Redirects to the admin page. Submit a CSV with three headers "First name", "Last name", and "Berkeley email". The Berkeley email must end in "@berkeley.edu".
+                    </td>
+                </tr>
+            </table>
+        </div>
     </section>
 {% endblock %}
