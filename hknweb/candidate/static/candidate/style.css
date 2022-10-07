@@ -384,3 +384,18 @@ h4 {
 tr.border-top td {
     border-top: 0.1em solid grey;
 }
+
+/* Message classes */
+.messages {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.info {
+    color: blue;
+}
+
+.error {
+    color: red;
+}

@@ -3,9 +3,22 @@ from django.contrib.auth.forms import (
     UserCreationForm,
     SetPasswordForm,
 )
+from django.conf import settings
+from django.contrib.auth.models import Group
+from django.template.loader import render_to_string
+from django.core.mail import send_mass_mail
+from django.contrib import messages
+from django.urls import reverse
+
+import csv
+
+import string
+
+import secrets
 
 from hknweb.models import User, Profile
 from hknweb.coursesemester.models import Semester
+from hknweb.utils import get_rand_photo
 
 
 class SettingsForm(forms.ModelForm):
@@ -88,3 +101,152 @@ class ProfilePictureForm(forms.ModelForm):
 
 class SemesterSelectForm(forms.Form):
     semester = forms.ModelChoiceField(Semester.objects.order_by("-year", "semester"))
+
+
+class ProvisionCandidatesForm(forms.Form):
+    file = forms.FileField()
+    REQUIRED_CSV_FIELDNAMES = set(["First name", "Last name", "Berkeley email"])
+    REQUIRED_EMAIL_SUFFIX = "@berkeley.edu"
+
+    CREATE_ACCOUNT_ERROR_MESSAGES = {
+        "invalid email": 'Emails must end with "@berkeley.edu". The following emails are invalid: ',
+    }
+    PASSWORD_LENGTH = 20
+
+    def send_candidate_account_emails(self, request) -> None:
+        # Retreive relevant objects from self
+        email_information = self.email_information
+
+        # Convenience method for emailing users
+        email_subject = "Welcome to HKN - dev-hkn candidate account information"
+        email_links = {
+            "settings_link": "account-settings",
+            "events_index_link": "events:index",
+            "candidate_portal_link": "candidate:candidate_portal",
+        }
+        email_links = {
+            k: request.build_absolute_uri(reverse(v)) for k, v in email_links.items()
+        }
+
+        def create_email(user: User, password: str) -> None:
+            email_message = render_to_string(
+                "account/new_candidate_account_email.html",
+                {
+                    "subject": email_subject,
+                    "first_name": user.first_name,
+                    "username": user.username,
+                    "password": password,
+                    "img_link": get_rand_photo(),
+                    **email_links,
+                },
+            )
+
+            return (email_subject, email_message, None, [user.email])
+
+        email_messages = [create_email(*info) for info in email_information]
+
+        # Mass send emails
+        send_mass_mail(email_messages, fail_silently=False)
+
+    def add_messages(self, request) -> None:
+        # For any accounts not created because of invalid email, report to the user
+
+        # Retrieve relevant objects from self
+        invalid_emails = self.invalid_emails
+
+        if invalid_emails:
+            messages.error(
+                request,
+                f"All accounts created successfully except the following with invalid emails: {invalid_emails}. As a reminder, all emails must end in '@berkeley.edu'.",
+            )
+        else:
+            messages.info(request, "All accounts successfully created!")
+
+    def save(self):
+        # Retrieve relevant objects
+        required_csv_fieldnames = self.REQUIRED_CSV_FIELDNAMES
+        required_email_suffix = self.REQUIRED_EMAIL_SUFFIX
+        password_length = self.PASSWORD_LENGTH
+        file_wrapper = self.cleaned_data["file"]
+
+        # Decode file from cleaned_data and throw it into a csv
+        decoded_file = file_wrapper.read().decode("utf-8").splitlines()
+        reader = csv.DictReader(decoded_file)
+        rows = list(reader)
+
+        # Check that we have the proper fieldnames
+        uploaded_fieldnames = set(reader.fieldnames)
+        if uploaded_fieldnames != required_csv_fieldnames:
+            difference = required_csv_fieldnames.difference(uploaded_fieldnames)
+            raise forms.ValidationError(
+                f"Input csv is missing the following columns: {difference}"
+            )
+
+        def email_to_username(email: str) -> str:
+            username = None
+            if email.endswith(required_email_suffix):
+                username = email[: -len(required_email_suffix)]
+
+            return username
+
+        # Get existing usernames
+        usernames = []
+        invalid_emails = []
+        for row in rows:
+            email = row["Berkeley email"]
+            username = email_to_username(email)
+
+            if username:
+                usernames.append(username)
+            else:
+                invalid_emails.append(email)
+
+            row["username"] = username
+
+        existing_usernames = set(
+            User.objects.filter(username__in=usernames).values_list(
+                "username", flat=True
+            )
+        )
+
+        # Setup account provisioning utils
+        # Get candidate group to add users to
+        group = Group.objects.get(name=settings.CAND_GROUP)
+
+        # Convenience function for generating a password
+        alphabet = string.ascii_letters + string.digits
+
+        def generate_password() -> str:
+            password = "".join(secrets.choice(alphabet) for _ in range(password_length))
+
+            return password
+
+        email_information = []
+        for row in rows:
+            # If username is None or already exists, skip provisioning
+            if (row["username"] is None) or (row["username"] in existing_usernames):
+                continue
+
+            # Generate a password
+            password = generate_password()
+
+            # Construct user object
+            user = User.objects.create_user(
+                username=row["username"],
+                first_name=row["First name"],
+                last_name=row["Last name"],
+                email=row["Berkeley email"],
+                password=password,
+            )
+            user.save()
+
+            # Add user to the candidates group
+            group.user_set.add(user)
+
+            # Add information for sending emails
+            email_information.append((user, password))
+
+        self.email_information = email_information
+
+        # Save information for adding messages
+        self.invalid_emails = invalid_emails

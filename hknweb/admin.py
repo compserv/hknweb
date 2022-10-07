@@ -1,7 +1,12 @@
 from django.contrib import admin
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.admin import UserAdmin
+
 from django.conf import settings
+from django.shortcuts import redirect, render
+
+from django.urls import path
+
 from hknweb.models import (
     Announcement,
     Profile,
@@ -10,6 +15,7 @@ from hknweb.models import (
     Election,
     Committeeship,
 )
+from hknweb.forms import ProvisionCandidatesForm
 
 
 # Unregister the provided model admin
@@ -88,6 +94,33 @@ class CustomUserAdmin(UserAdmin):
             group.user_set.remove(u)
 
     remove_exec.short_description = "Remove selected from execs"
+
+    def get_urls(self):
+        urls = super().get_urls()
+        my_urls = [
+            path(
+                "provision_candidate_accounts/",
+                self.provision_candidate_accounts,
+                name="auth_user_provision_candidate_accounts",
+            ),
+        ]
+        return my_urls + urls
+
+    def provision_candidate_accounts(self, request):
+        form = ProvisionCandidatesForm(request.POST, request.FILES)
+        if request.method == "POST" and form.is_valid():
+            form.save()
+
+            form.send_candidate_account_emails(request)
+            form.add_messages(request)
+
+            return redirect("candidate:officer_portal")
+
+        context = {
+            **self.admin_site.each_context(request),
+            "form": form,
+        }
+        return render(request, "admin/provision_candidate_accounts.html", context)
 
 
 class AnnouncementAdmin(admin.ModelAdmin):
