@@ -96,21 +96,24 @@ def decrypt_secrets(c):
 def install_deps(c: Connection):
     print("-- Installing dependencies")
     with c.cd(c.release_path):
-        c.run("make install-prod")
+        with c.prefix("conda activate hknweb"):
+            c.run("make install-prod")
 
 
 def django_migrate(c: Connection):
     print("-- Migrating tables")
     with c.cd(c.release_path):
-        c.run("make check-conda-env")
-        c.run(f"{production_python} ./manage.py migrate")
+        with c.prefix("conda activate hknweb"):
+            c.run("make check-conda-env")
+            c.run(f"{production_python} ./manage.py migrate")
 
 
 def django_collectstatic(c: Connection):
     print("-- Collecting static files")
     with c.cd(c.release_path):
-        c.run("make check-conda-env")
-        c.run(f"{production_python} ./manage.py collectstatic --noinput")
+        with c.prefix("conda activate hknweb"):
+            c.run("make check-conda-env")
+            c.run(f"{production_python} ./manage.py collectstatic --noinput")
 
 
 def symlink_release(c: Connection):
@@ -149,17 +152,12 @@ def create_conda(c: Connection):
         c.run("make conda")
 
 
-def activate_conda(c: Connection):
-    c.run("conda activate hknweb")
-
-
 def update(c: Connection):
     print("== Update ==")
     create_release(c)
     symlink_shared(c)
     decrypt_secrets(c)
     create_conda(c)
-    activate_conda(c)
     install_deps(c)
     django_migrate(c)
     django_collectstatic(c)
