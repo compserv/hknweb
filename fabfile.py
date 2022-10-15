@@ -142,11 +142,11 @@ def setup(c: Connection, commit=None, release=None):
     print("release: {}".format(c.release))
     print("commit: {}".format(c.commit))
     create_dirs(c)
-    create_conda(c)
 
 
 def create_conda(c: Connection):
-    c.run("make conda")
+    with c.cd(c.release_path):
+        c.run("make conda")
 
 
 def activate_conda(c: Connection):

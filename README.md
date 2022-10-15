@@ -14,9 +14,9 @@ When `Unix` is used, it includes (not limited to) Linux, Windows WSL, and MacOS
     * Unix systems usually have these out of the box
         * Default terminal usually `zsh` or `bash`
     * [Windows] [git bash](https://git-scm.com/downloads) **ONLY** (due to Makefile syntax)
-        * You can use the default options, **with one exception**: Select `Use Windows' default console window` in the **Configuring the terminal emulator** to use with Git Bash step. Do not use MinTTY.
+        * You can use the default options, **with one exception**: Select `Use Windows' default console window` in the **Configuring the terminal emulator** to use with Git Bash step. **Do not use "MinTTY"**.
             * This is very important! If you do not select this option, your terminal won't work with Python!
-            * If you already have Git Bash installed before, just redownload and rerun the EXE (no need to uninstall) and go through all the options (it should keep what you previously selected). On the **Configuring the terminal emulator** page, select `Use Windows' default console window`.
+            * If you already have Git Bash installed before, just redownload and rerun the EXE (no need to uninstall, but you may if you want or need to) and go through all the options (it should keep what you previously selected). On the **Configuring the terminal emulator** page, select `Use Windows' default console window`.
 * `make` (GNU Make)
     * Unix systems usually have this out of the box
     * [Windows] Follow [instructions here using Winget](https://www.technewstoday.com/install-and-use-make-in-windows/#using-winget)
