@@ -12,6 +12,8 @@ import argparse
 TARGET_FLAG = "--target"
 DEFAULT_TARGET = "prod"
 
+production_python = "HKNWEB_MODE=prod python"
+
 
 def timestamp(c: Connection) -> str:
     """
@@ -100,13 +102,15 @@ def install_deps(c: Connection):
 def django_migrate(c: Connection):
     print("-- Migrating tables")
     with c.cd(c.release_path):
-        c.run("HKNWEB_MODE=prod $(CONDA_PREFIX)/python ./manage.py migrate")
+        c.run("make check-conda-env")
+        c.run(f"{production_python} ./manage.py migrate")
 
 
 def django_collectstatic(c: Connection):
     print("-- Collecting static files")
     with c.cd(c.release_path):
-        c.run("HKNWEB_MODE=prod $(CONDA_PREFIX)/python ./manage.py collectstatic --noinput")
+        c.run("make check-conda-env")
+        c.run(f"{production_python} ./manage.py collectstatic --noinput")
 
 
 def symlink_release(c: Connection):
