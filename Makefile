@@ -35,7 +35,7 @@ conda-scratch:
 conda:
 	@# We don't use "-y" because if environment recrated, it will destroy and reinstall ... since it is an all "yes"
 	@#  Just confirm to the default options (option given is: Yes install OR, if created already, No remove and reinstall)
-	echo -e "\n" | conda create -n $(CONDA_ENV) python=$(PYTHON_VERSION)
+	printf "\n" | conda create -n $(CONDA_ENV) python=$(PYTHON_VERSION)
 	@echo "When developing, activate the $(CONDA_ENV) Conda environment with 'conda activate $(CONDA_ENV)' so Python can access the installed dependencies."
 
 # Installs dependencies for Development and Production only
