@@ -1,86 +1,89 @@
-PIP_HOME = $(shell python3 -c "import site; import os; print(os.path.join(site.USER_BASE, 'bin'))" \
-	|| python -c "import site; import os; print(os.path.join(site.USER_BASE, 'bin'))")
-
-VENV := .venv
-BIN := $(VENV)/bin
-PYTHON := $(BIN)/python
+CONDA_ENV := hknweb
+PYTHON_VERSION := 3.7.3
+PYTHON := python
 MANAGE := HKNWEB_MODE='dev' $(PYTHON) ./manage.py
 
 IP ?= 127.0.0.1
 PORT ?= 3000
 
+# This is REQUIRED on all makefile commands involving PYTHON or MANAGE
+.PHONY: check-conda-env
+check-conda-env:
+ifeq ($(CONDA_PREFIX),)
+	@echo "Conda Environment not detected. Please activate $(CONDA_ENV) Conda environment."
+	exit 1
+else ifneq ($(CONDA_DEFAULT_ENV), $(CONDA_ENV))
+	@echo "Incorrect Conda Environment, should be $(CONDA_ENV). Currently is $(CONDA_DEFAULT_ENV)."
+	exit 1
+endif
+
 .PHONY: dev
-dev:
+dev: check-conda-env
 	$(MANAGE) runserver $(IP):$(PORT)
 
 .PHONY: livereload
-livereload:
+livereload: check-conda-env
 	$(MANAGE) livereload $(IP):$(PORT)
 
-.PHONY: venv
-venv:
-	python3 -m venv $(VENV)
-	@echo "When developing, activate the virtualenv with 'source .venv/bin/activate' so Python can access the installed dependencies."
+.PHONY: conda-scratch
+conda-scratch:
+	# Makes hknweb environment from scratch (overwriting old one if exists)
+	conda create -n $(CONDA_ENV) python=$(PYTHON_VERSION) -y
+	@echo "When developing, activate the $(CONDA_ENV) Conda environment with 'conda activate $(CONDA_ENV)' so Python can access the installed dependencies."
 
-.PHONY: install-prod
-install-prod:
-	# Installs dependencies for Production only
+.PHONY: conda
+conda:
+	@# We don't use "-y" because if environment recrated, it will destroy and reinstall ... since it is an all "yes"
+	@#  Just confirm to the default options (option given is: Yes install OR, if created already, No remove and reinstall)
+	echo -e "\n" | '$(shell where conda)' create -n $(CONDA_ENV) python=$(PYTHON_VERSION)
+	@echo "When developing, activate the $(CONDA_ENV) Conda environment with 'conda activate $(CONDA_ENV)' so Python can access the installed dependencies."
 
-	# For issues with binary packages, consider https://pythonwheels.com/
-	# For destination production machine, "make install" should have
-	#  upgraded already and it should detect and move on for "pip"
+# Installs dependencies for Development and Production only
+#  shared between "install-prod" and "install"
+.PHONY: install-common
+install-common: check-conda-env
 	$(PYTHON) -m pip install --upgrade pip setuptools
-
-	# NOTE: If pip and setuptools is broken, use the following two lines
-	#       and then commenting the two line above
-	# $(PYTHON) -m pip install --upgrade "pip<=20.3.4"
-	# $(PYTHON) -m pip install --upgrade "setuptools<=51.2.0"
-
-	# TODO: pinned/unpinned dependency version.
-	# See https://hkn-mu.atlassian.net/browse/COMPSERV-110
 	$(PYTHON) -m pip install -r requirements.txt
 
+# Installs dependencies for Production only
+.PHONY: install-prod
+install-prod: check-conda-env
+	make install-common
+	$(PYTHON) -m pip install -r requirements-prod.txt
+
+# Installs dependencies for Development only
 .PHONY: install
-install:
-	# Installs dependencies for Development and Production
-
-	# See:
-	#  - https://github.com/compserv/hknweb/pull/272
-	#  - https://github.com/compserv/hknweb/commit/cf826d4
-	#  - https://github.com/compserv/hknweb/commit/124b108
-	#  - https://github.com/hashicorp/vagrant/issues/12057
-	# This is mainly a Vagrant workaround to allow pip upgrade
-	$(PYTHON) -m pip install --upgrade pip setuptools --ignore-installed
-
-	make install-prod
+install: check-conda-env
+	make install-common
 	$(PYTHON) -m pip install -r requirements-dev.txt
 
 .PHONY: createsuperuser superuser
 superuser: createsuperuser
-createsuperuser:
+createsuperuser: check-conda-env
 	$(MANAGE) createsuperuser
 
 .PHONY: migrate
-migrate:
+migrate: check-conda-env
 	$(MANAGE) migrate
 
 .PHONY: makemigrations migrations
 migrations: makemigrations
-makemigrations:
+makemigrations: check-conda-env
 	$(MANAGE) makemigrations
 
 .PHONY: shell
-shell:
+shell: check-conda-env
 	$(MANAGE) shell
 
 .PHONY: test
-test: venv
+test: conda
+	make check-conda-env
 	HKNWEB_MODE='dev' coverage run --source='.' ./manage.py test --pattern="test_*.py"
 	coverage report --skip-covered --omit=deploy*,fabfile.py,hknweb/wsgi.py,manage.py,*apps.py,*test_*.py,hknweb/settings/*.py --sort=miss --fail-under=80
 
 .PHONY: clean
 clean:
-	rm -rf $(VENV)
+	conda env remove -n $(CONDA_ENV)
 
 .PHONY: mysql
 mysql:
@@ -88,9 +91,9 @@ mysql:
 	mysql -e "GRANT ALL PRIVILEGES ON hkn.* TO 'hkn'@'localhost' IDENTIFIED BY 'hknweb-dev';"
 
 .PHONY: permissions
-permissions:
+permissions: check-conda-env
 	$(MANAGE) shell -c "from hknweb.init_permissions import provision; provision()"
 
 .PHONY: format
-format:
-	python -m black . --exclude "/(.*migrations|\.venv)/"
+format: check-conda-env
+	$(PYTHON) -m black . --exclude "/(.*migrations)/"
