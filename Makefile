@@ -1,6 +1,5 @@
 CONDA_ENV := hknweb
 PYTHON_VERSION := 3.7.3
-# Require Python be ran insie Conda, otherwise directory error out
 PYTHON := python
 MANAGE := HKNWEB_MODE='dev' $(PYTHON) ./manage.py
 
@@ -36,7 +35,7 @@ conda-scratch:
 conda:
 	@# We don't use "-y" because if environment recrated, it will destroy and reinstall ... since it is an all "yes"
 	@#  Just confirm to the default options (option given is: Yes install OR, if created already, No remove and reinstall)
-	echo -e "\n" | conda create -n $(CONDA_ENV) python=$(PYTHON_VERSION)
+	echo -e "\n" | '$(shell where conda)' create -n $(CONDA_ENV) python=$(PYTHON_VERSION)
 	@echo "When developing, activate the $(CONDA_ENV) Conda environment with 'conda activate $(CONDA_ENV)' so Python can access the installed dependencies."
 
 # Installs dependencies for Development and Production only
@@ -97,4 +96,4 @@ permissions: check-conda-env
 
 .PHONY: format
 format: check-conda-env
-	$(PYTHON) -m black . --exclude "/(.*migrations|\.venv)/"
+	$(PYTHON) -m black . --exclude "/(.*migrations)/"
