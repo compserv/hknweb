@@ -83,7 +83,7 @@ test: conda
 
 .PHONY: clean
 clean:
-	conda env remove -n hknweb
+	conda env remove -n $(CONDA_ENV)
 
 .PHONY: mysql
 mysql:
