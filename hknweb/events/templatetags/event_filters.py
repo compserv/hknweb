@@ -20,9 +20,9 @@ def military_hour_to_hour(hour):
     elif hour <= 12:
         # But more than 0
         return hour
-    elif hour >= 12:
+    else:
+        # hour > 12
         return hour - 12
-    assert False, "Should not reach here"
 
 
 # Made like this to make it compadible with Windows + Linux
