@@ -144,7 +144,11 @@ class ProvisionCandidatesForm(forms.Form):
             )
 
             msg = EmailMultiAlternatives(
-                email_subject, email_subject, settings.NO_REPLY_EMAIL, [user.email], connection=connection
+                email_subject,
+                email_subject,
+                settings.NO_REPLY_EMAIL,
+                [user.email],
+                connection=connection,
             )
             msg.attach_alternative(email_message, "text/html")
 
@@ -152,7 +156,9 @@ class ProvisionCandidatesForm(forms.Form):
 
         # Send emails using the same connection
         with get_connection() as connection:
-            email_messages = [create_email(*info, connection) for info in email_information]
+            email_messages = [
+                create_email(*info, connection) for info in email_information
+            ]
 
             for email in email_messages:
                 email.send()
