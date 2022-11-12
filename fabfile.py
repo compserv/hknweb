@@ -1,13 +1,9 @@
-from fabric import Config
-from fabric import Connection
-from fabric import task
+from fabric import Config, Connection, task
 from invoke import Collection
 from invoke.config import merge_dicts
 
-from deploy import git
-from deploy import path
+from deploy import git, path
 
-import argparse
 
 TARGET_FLAG = "--target"
 DEFAULT_TARGET = "prod"
@@ -59,7 +55,7 @@ class DeployConfig(Config):
         return merge_dicts(Config.global_defaults(), hkn_defaults)
 
 
-targets = {
+TARGETS = {
     "prod": {
         "deploy": {
             "name": "prod",
@@ -68,62 +64,7 @@ targets = {
     },
 }
 
-configs = {target: DeployConfig(overrides=config) for target, config in targets.items()}
-
-# pprint(vars(configs['prod']))
-
-
-def create_release(c: Connection):
-    print("-- Creating release")
-    git.check(c)
-    git.update(c)
-    c.commit = git.revision_number(c, c.commit)
-    git.create_archive(c)
-
-
-def symlink_shared(c: Connection):
-    print("-- Symlinking shared files")
-    with c.cd(c.release_path):
-        c.run("ln -s {}/media ./media".format(c.shared_path), echo=True)
-
-
-def decrypt_secrets(c):
-    print("-- Decrypting secrets")
-    with c.cd(c.release_path):
-        c.run("blackbox_postdeploy", echo=True)
-
-
-def install_deps(c: Connection):
-    print("-- Installing dependencies")
-    with c.cd(c.release_path):
-        with c.prefix("conda activate hknweb"):
-            c.run("make install-prod")
-
-
-def django_migrate(c: Connection):
-    print("-- Migrating tables")
-    with c.cd(c.release_path):
-        with c.prefix("conda activate hknweb"):
-            c.run("make check-conda-env")
-            c.run(f"{production_python} ./manage.py migrate")
-
-
-def django_collectstatic(c: Connection):
-    print("-- Collecting static files")
-    with c.cd(c.release_path):
-        with c.prefix("conda activate hknweb"):
-            c.run("make check-conda-env")
-            c.run(f"{production_python} ./manage.py collectstatic --noinput")
-
-
-def symlink_release(c: Connection):
-    print("-- Symlinking current@ to release")
-    c.run("ln -sfn {} {}".format(c.release_path, c.current_path), echo=True)
-
-
-def systemd_restart(c: Connection):
-    print("-- Restarting systemd unit")
-    c.run("systemctl --user restart hknweb.service", echo=True)
+CONFIGS = {target: DeployConfig(overrides=config) for target, config in TARGETS.items()}
 
 
 def setup(c: Connection, commit=None, release=None):
@@ -147,30 +88,41 @@ def setup(c: Connection, commit=None, release=None):
     create_dirs(c)
 
 
-def create_conda(c: Connection):
-    with c.cd(c.release_path):
-        c.run("make conda")
-
-
 def update(c: Connection):
     print("== Update ==")
-    create_release(c)
-    symlink_shared(c)
-    decrypt_secrets(c)
-    create_conda(c)
-    install_deps(c)
-    django_migrate(c)
-    django_collectstatic(c)
+
+    print("-- Creating release")
+    git.check(c)
+    git.update(c)
+    c.commit = git.revision_number(c, c.commit)
+    git.create_archive(c)
+
+    with c.cd(c.release_path):
+        print("-- Symlinking shared files")
+        c.run("ln -s {}/media ./media".format(c.shared_path), echo=True)
+
+        print("-- Decrypting secrets")
+        c.run("blackbox_postdeploy", echo=True)
+
+        print("-- Updating conda environment")
+        c.run("conda update -f config/hknweb-prod.yml", echo=True)
+
+        with c.prefix("conda activate hknweb-prod"):
+            print("-- Migrating tables")
+            c.run("python manage.py migrate")
+
+            print("-- Collecting static files")
+            c.run("python manage.py collectstatic --noinput")
 
 
 def publish(c: Connection):
     print("== Publish ==")
-    symlink_release(c)
-    systemd_restart(c)
 
+    print("-- Symlinking current@ to release")
+    c.run("ln -sfn {} {}".format(c.release_path, c.current_path), echo=True)
 
-def finish(c):
-    pass
+    print("-- Restarting systemd unit")
+    c.run("systemctl --user restart hknweb.service", echo=True)
 
 
 # For the following @task functions, "target" is an ignored parameter
@@ -185,7 +137,6 @@ def deploy(c, target=DEFAULT_TARGET, commit=None):
         setup(c, commit=commit)
         update(c)
         publish(c)
-        finish(c)
 
 
 @task
@@ -194,36 +145,13 @@ def rollback(c, target=DEFAULT_TARGET, release=None):
         setup(c, release=release)
         update(c)
         publish(c)
-        finish(c)
 
 
 # Please add the "target" parameter if you are adding more @task functions
 #  to allow custom targets to be used (regardless if your function itself will use it or not)
 
 
-def get_target(args):
-    target = args.target
-    if target not in configs:
-        message = '\n\tTarget Configuration "{}" is not a valid entry'.format(
-            TARGET_FLAG
-        )
-        message += "\n\tInvalid Entry: " + target
-        assert target in configs, message
-    return target
-
-
-parser = argparse.ArgumentParser(
-    description='Target parameters for the fab file through the "fab" library'
-)
-parser.add_argument(
-    "--target",
-    default="prod",
-    help="The Target Configuration key to set the deployment setting",
-)
-args, unknown = parser.parse_known_args()
-
-target_key = get_target(args)
-print("Target Set:", target_key)
-
-ns = Collection(deploy, rollback)
-ns.configure(configs[target_key])
+if __name__ == "__main__":
+    TARGET_KEY = "prod"
+    ns = Collection(deploy, rollback)
+    ns.configure(CONFIGS[TARGET_KEY])
