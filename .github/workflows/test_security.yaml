@@ -7,24 +7,12 @@ on:
     branches: [ "master" ]
 
 jobs:
-  build:
-
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.7"]
-
+  test:
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.python-version }}
+      - uses: ./.github/workflows/setup_test_environment.yaml
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
           pip install pytest
-          pip install -r requirements.txt
       - name: Handler privacy check
         run: |
-          HKNWEB_MODE='DEV' DJANGO_SETTINGS_MODULE=hknweb.settings pytest tests/test_handler_privacy.py
+          pytest tests/test_handler_privacy.py

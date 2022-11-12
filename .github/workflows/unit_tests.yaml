@@ -1,4 +1,4 @@
-name: Formatting check for Python files
+name: Run Django unit tests
 
 on:
   push:
@@ -10,5 +10,7 @@ jobs:
   test:
     steps:
       - uses: ./.github/workflows/setup_test_environment.yaml
-      - name: Run formatting check
-        run: black --check
+      - name: Run Django unit tests
+        run: |
+          coverage run
+          coverage report

@@ -1,0 +1,9 @@
+name: hknweb-dev
+dependencies:
+  - python=3.9
+  - pip:
+    - -r config/requirements.txt
+    - mysqlclient==2.1.0
+variables:
+  HKNWEB_MODE: "prod"
+  DJANGO_SETTINGS_MODULE: "hknweb.settings"
