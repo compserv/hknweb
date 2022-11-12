@@ -10,7 +10,7 @@ If `conda` is not already available, install [conda](https://docs.conda.io/proje
 
 ```sh
 # Once `conda` is installed
-$ conda env create -f config/hknweb-dev.yml          # Create dev environment
+$ conda env create -f config/hknweb-dev.yml         # Create dev environment
 $ conda activate hknweb-dev                         # Activate dev environment
 $ python manage.py migrate                          # Initialize database
 ```
@@ -24,5 +24,6 @@ $ python manage.py makemigrations       # Create migrations files
 $ python manage.py migrate              # Apply migrations files to database
 $ python manage.py createsuperuser      # Create an admin super user to login as 
 $ python manage.py runserver            # Run development server
-$ python manage.py test                 # Run tests
+$ coverage run                          # Run tests
+$ coverage report                       # Report test coverage
 ```

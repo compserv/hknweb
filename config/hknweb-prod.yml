@@ -1,8 +1,9 @@
-name: hknweb-dev
+name: hknweb-prod
 dependencies:
   - python=3.9
+  - pip
   - pip:
-    - -r config/requirements.txt
+    - -r requirements.txt
     - mysqlclient==2.1.0
 variables:
   HKNWEB_MODE: "prod"
