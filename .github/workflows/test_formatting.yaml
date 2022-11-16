@@ -12,6 +12,7 @@ jobs:
     steps:
       - name: Setup environment
         run: |
+          pwd
           bash ./.github/workflows/setup_test_env.sh
           conda activate hknweb-dev
       - name: Run formatting check
