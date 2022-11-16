@@ -8,6 +8,7 @@ on:
 
 jobs:
   test:
+    runs-on: ubuntu-latest
     steps:
       - uses: ./.github/workflows/setup_test_environment.yaml
       - name: Install dependencies
