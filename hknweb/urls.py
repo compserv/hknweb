@@ -28,6 +28,7 @@ app_urlpatterns = [
     path("studentservices/", include("hknweb.studentservices.urls")),
     path("tutoring/", include("hknweb.tutoring.urls")),
     path("cand/", include("hknweb.candidate.urls")),
+    path("polls/", include("hknweb.polls.urls")),
     path("pages/", include("hknweb.markdown_pages.urls")),
     path("course_surveys/", include("hknweb.course_surveys.urls")),
     path("", landing.home, name="home"),

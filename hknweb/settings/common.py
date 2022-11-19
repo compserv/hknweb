@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     "hknweb.coursesemester",
     "hknweb.course_surveys",
     "hknweb.studentservices",
+    "hknweb.polls",
     "dal",  # must be before django.contrib.admin
     "dal_select2",  # must be before django.contrib.admin
     "django.contrib.admin",
