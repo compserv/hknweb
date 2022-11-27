@@ -15,7 +15,7 @@ jobs:
         run: |
           bash ./.github/workflows/setup_test_env.sh
       - name: Deploy
-        run: fabfile deploy
+        run: fab deploy
       - name: End to end tests
         run: |
           source ~/miniconda/etc/profile.d/conda.sh
