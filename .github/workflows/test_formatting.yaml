@@ -14,7 +14,7 @@ jobs:
       - name: Setup environment
         run: |
           bash ./.github/workflows/setup_test_env.sh
-          source "$HOME/miniconda/etc/profile.d/conda.sh"
+          source ~/miniconda/etc/profile.d/conda.sh
           conda activate hknweb-dev
       - name: Run formatting check
         run: black --check
