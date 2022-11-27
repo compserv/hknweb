@@ -1,5 +1,4 @@
 [tool.black]
-include = '.'
 exclude = '/(.*migrations)/'
 
 [tool.coverage.run]
