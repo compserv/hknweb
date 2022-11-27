@@ -1,0 +1,19 @@
+{
+    "deploy": {
+        "name": "prod",
+        "user": "hkn",
+        "host": "apphost.ocf.berkeley.edu",
+        "path": {
+            "root": "/home/h/hk/hkn/hknweb",
+            "repo": "repo",
+            "releases": "releases",
+            "current": "current",
+            "shared": "shared"
+        },
+        "repo_url": "https://github.com/compserv/hknweb.git",
+        "branch": "master",
+        "linked_files": [],
+        "linked_dirs": [],
+        "keep_releases": 10
+    }
+}

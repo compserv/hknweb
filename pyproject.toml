@@ -5,7 +5,6 @@ exclude = '/(.*migrations)/'
 source = ["."]
 command_line = "manage.py test"
 omit = [
-    'deploy*',
     'fabfile.py',
     'hknweb/wsgi.py',
     'manage.py',

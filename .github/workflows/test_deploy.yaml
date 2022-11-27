@@ -1,0 +1,24 @@
+name: Deployment and end to end tests
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup environment
+        run: |
+          bash ./.github/workflows/setup_test_env.sh
+      - name: Deploy
+        run: fabfile deploy
+      - name: End to end tests
+        run: |
+          source ~/miniconda/etc/profile.d/conda.sh
+          conda activate hknweb-dev
+          pip install pytest
+          pytest tests/test_end_to_end.py

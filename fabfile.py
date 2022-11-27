@@ -1,24 +1,34 @@
+import os
+
+import posixpath
+
+import json
+
 from fabric import Config, Connection, task
 from invoke import Collection
-from invoke.config import merge_dicts
-
-from deploy import git, path
 
 
-TARGET_FLAG = "--target"
-DEFAULT_TARGET = "prod"
+def setup(c: Connection, commit=None, release=None):
+    print("== Setup ==")
 
-production_python = "HKNWEB_MODE=prod python"
+    # Returns the server date-time, encoded as YYYYMMSS_HHMMSS.
+    timestamp = c.run("date +%Y%m%d_%H%M%S").stdout.strip()
 
+    # Point the connection to the correct git config
+    c.release = release if release else timestamp
+    c.commit = commit if commit else c.deploy.branch
+    print("release: {}".format(c.release))
+    print("commit: {}".format(c.commit))
 
-def timestamp(c: Connection) -> str:
-    """
-    Returns the server date-time, encoded as YYYYMMSS_HHMMSS.
-    """
-    return c.run("date +%Y%m%d_%H%M%S").stdout.strip()
+    # Setup paths
+    c.deploy_path = posixpath.join(c.deploy.path.root, c.deploy.name)
+    c.repo_path = posixpath.join(c.deploy_path, c.deploy.path.repo)
+    c.releases_path = posixpath.join(c.deploy_path, c.deploy.path.releases)
+    c.current_path = posixpath.join(c.deploy_path, c.deploy.path.current)
+    c.shared_path = posixpath.join(c.deploy_path, c.deploy.path.shared)
+    c.release_path = posixpath.join(c.releases_path, c.release)
 
-
-def create_dirs(c: Connection):
+    # Create dirs
     dirs = (
         c.repo_path,
         c.deploy_path,
@@ -30,72 +40,34 @@ def create_dirs(c: Connection):
         c.run("mkdir -p {}".format(d))
 
 
-class DeployConfig(Config):
-    @staticmethod
-    def global_defaults():
-        hkn_defaults = {
-            "deploy": {
-                "name": "default",
-                "user": "hkn",
-                "host": "apphost.ocf.berkeley.edu",
-                "path": {
-                    "root": "/home/h/hk/hkn/hknweb",
-                    "repo": "repo",
-                    "releases": "releases",
-                    "current": "current",
-                    "shared": "shared",
-                },
-                "repo_url": "https://github.com/compserv/hknweb.git",
-                "branch": "master",
-                "linked_files": [],
-                "linked_dirs": [],
-                "keep_releases": 10,
-            },
-        }
-        return merge_dicts(Config.global_defaults(), hkn_defaults)
+def create_release(c: Connection) -> None:
+    # Update git repo
+    with c.cd(c.deploy_path):
+        file_exists = lambda p: c.run(f"[[ -f {p} ]]", warn=True).ok
+        repo_exists = file_exists(f"{c.repo_path}/HEAD")
+        if repo_exists:  # fetch
+            c.run(f"git remote set-url origin {c.deploy.repo_url}", echo=True)
+            c.run("git remote update", echo=True)
+            c.run(f"git fetch origin {c.commit}:{c.commit}", echo=True)
+        else:  # clone
+            c.run(f"git clone --bare {c.deploy.repo_url} {c.repo_path}")
 
+    # Create git archive
+    with c.cd(c.repo_path):
+        revision = c.commit
+        revision_number = c.run(
+            f"git rev-list --max-count=1 {revision} --", echo=True
+        ).stdout.strip()
 
-TARGETS = {
-    "prod": {
-        "deploy": {
-            "name": "prod",
-            "branch": "master",
-        },
-    },
-}
-
-CONFIGS = {target: DeployConfig(overrides=config) for target, config in TARGETS.items()}
-
-
-def setup(c: Connection, commit=None, release=None):
-    print("== Setup ==")
-    if release is None:
-        c.release = timestamp(c)
-    else:
-        c.release = release
-    c.deploy_path = path.deploy_path(c)
-    c.repo_path = path.repo_path(c)
-    c.releases_path = path.releases_path(c)
-    c.current_path = path.current_path(c)
-    c.shared_path = path.shared_path(c)
-    c.release_path = path.release_path(c)
-    if commit is None:
-        c.commit = c.deploy.branch
-    else:
-        c.commit = commit
-    print("release: {}".format(c.release))
-    print("commit: {}".format(c.commit))
-    create_dirs(c)
+        c.commit = revision_number
+        c.run(f"git archive {c.commit} | tar -x -f - -C '{c.release_path}'", echo=True)
 
 
 def update(c: Connection):
     print("== Update ==")
 
     print("-- Creating release")
-    git.check(c)
-    git.update(c)
-    c.commit = git.revision_number(c, c.commit)
-    git.create_archive(c)
+    create_release(c)
 
     with c.cd(c.release_path):
         print("-- Symlinking shared files")
@@ -115,7 +87,7 @@ def update(c: Connection):
             c.run("python manage.py collectstatic --noinput")
 
 
-def publish(c: Connection):
+def publish(c: Connection) -> None:
     print("== Publish ==")
 
     print("-- Symlinking current@ to release")
@@ -125,14 +97,14 @@ def publish(c: Connection):
     c.run("systemctl --user restart hknweb.service", echo=True)
 
 
-# For the following @task functions, "target" is an ignored parameter
-#  It is a workaround to allow for use in using command line arguments
-#  For selecting a "target" in ns.configure
-# Otherwise, fabfile will claim to not recognize it
-
+"""
+For the following @task functions, "target" is an ignored parameter. It is a workaround to
+allow for use in using command line arguments for selecting a "target" in ns.configure. 
+Otherwise, fabfile will claim to not recognize it.
+"""
 
 @task
-def deploy(c, target=DEFAULT_TARGET, commit=None):
+def deploy(c, target=None, commit=None):
     with Connection(c.deploy.host, user=c.deploy.user, config=c.config) as c:
         setup(c, commit=commit)
         update(c)
@@ -140,18 +112,25 @@ def deploy(c, target=DEFAULT_TARGET, commit=None):
 
 
 @task
-def rollback(c, target=DEFAULT_TARGET, release=None):
+def rollback(c, target=None, release=None):
     with Connection(c.deploy.host, user=c.deploy.user, config=c.config) as c:
         setup(c, release=release)
         update(c)
         publish(c)
 
 
-# Please add the "target" parameter if you are adding more @task functions
-#  to allow custom targets to be used (regardless if your function itself will use it or not)
-
-
 if __name__ == "__main__":
-    TARGET_KEY = "prod"
+    hknweb_mode = os.environ["HKNWEB_MODE"].lower()
+    if hknweb_mode == "dev":
+        config_file = "local.json"
+    elif hknweb_mode == "prod":
+        config_file = "prod.json"
+    else:
+        raise ValueError("HKNWEB_MODE is not a valid value")
+
+    root_dir = os.path.dirname(os.path.abspath(__file__))
+    config_dict = json.load(open(os.path.join(root_dir, "config", "deploy", config_file)))
+    config = Config(overrides=config_dict)
+
     ns = Collection(deploy, rollback)
-    ns.configure(CONFIGS[TARGET_KEY])
+    ns.configure(config)
