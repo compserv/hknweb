@@ -10,9 +10,9 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
       - name: Setup environment
         run: |
-          echo $(ls)
           bash ./.github/workflows/setup_test_env.sh
           conda activate hknweb-dev
       - name: Run formatting check
