@@ -12,8 +12,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Setup environment
+        run: bash ./.github/workflows/setup_test_env.sh
+      - name: Activate environment
         run: |
-          bash ./.github/workflows/setup_test_env.sh
           source ~/miniconda/etc/profile.d/conda.sh
           conda activate hknweb-dev
       - name: Run formatting check
