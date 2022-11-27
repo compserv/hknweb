@@ -13,3 +13,4 @@ conda env create -f config/hknweb-dev.yml
 conda activate hknweb-dev
 
 python manage.py migrate
+echo $SHELL
