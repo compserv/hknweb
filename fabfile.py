@@ -103,6 +103,7 @@ allow for use in using command line arguments for selecting a "target" in ns.con
 Otherwise, fabfile will claim to not recognize it.
 """
 
+
 @task
 def deploy(c, target=None, commit=None):
     with Connection(c.deploy.host, user=c.deploy.user, config=c.config) as c:
@@ -129,7 +130,9 @@ if __name__ == "__main__":
         raise ValueError("HKNWEB_MODE is not a valid value")
 
     root_dir = os.path.dirname(os.path.abspath(__file__))
-    config_dict = json.load(open(os.path.join(root_dir, "config", "deploy", config_file)))
+    config_dict = json.load(
+        open(os.path.join(root_dir, "config", "deploy", config_file))
+    )
     config = Config(overrides=config_dict)
 
     ns = Collection(deploy, rollback)
