@@ -5,7 +5,26 @@ import posixpath
 import json
 
 from fabric import Config, Connection, task
+
 from invoke import Collection
+from invoke.config import merge_dicts
+
+
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+CONFIG_DIR = os.path.join(ROOT_DIR, "config", "deploy")
+
+
+class ConfigFiles:
+    SHARED = os.path.join(CONFIG_DIR, "shared.json")
+    LOCAL = os.path.join(CONFIG_DIR, "local.json")
+    PROD = os.path.join(CONFIG_DIR, "prod.json")
+
+
+class DeployConfig(Config):
+    @staticmethod
+    def global_defaults():
+        hkn_shared = json.load(open(ConfigFiles.SHARED))
+        return merge_dicts(Config.global_defaults(), hkn_shared)
 
 
 def setup(c: Connection, commit=None, release=None):
@@ -123,17 +142,14 @@ def rollback(c, target=None, release=None):
 if __name__ == "__main__":
     hknweb_mode = os.environ["HKNWEB_MODE"].lower()
     if hknweb_mode == "dev":
-        config_file = "local.json"
+        config_file = ConfigFiles.LOCAL
     elif hknweb_mode == "prod":
-        config_file = "prod.json"
+        config_file = ConfigFiles.PROD
     else:
         raise ValueError("HKNWEB_MODE is not a valid value")
 
-    root_dir = os.path.dirname(os.path.abspath(__file__))
-    config_dict = json.load(
-        open(os.path.join(root_dir, "config", "deploy", config_file))
-    )
-    config = Config(overrides=config_dict)
+    config_dict = json.load(open(config_file))
+    config = DeployConfig(overrides=config_dict)
 
     ns = Collection(deploy, rollback)
     ns.configure(config)

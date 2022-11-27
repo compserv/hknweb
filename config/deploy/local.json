@@ -2,16 +2,8 @@
     "deploy": {
         "name": "local",
         "path": {
-            "root": "/home",
-            "repo": "repo",
-            "releases": "releases",
-            "current": "current",
-            "shared": "shared"
+            "root": "/home"
         },
-        "repo_url": "https://github.com/compserv/hknweb.git",
-        "branch": "master",
-        "linked_files": [],
-        "linked_dirs": [],
         "keep_releases": 1
     }
 }
