@@ -17,4 +17,4 @@ jobs:
         run: |
           source ~/miniconda/etc/profile.d/conda.sh
           conda activate hknweb-dev
-          black --check
+          black . --check
