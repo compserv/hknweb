@@ -50,11 +50,7 @@ markdownx_urlpatterns = [
 ]
 
 indrel_urlpatterns = [
-    path("indrel", indrel.index, name="indrel"),
-    path("indrel/resume_book", indrel.resume_book, name="resume_book"),
-    path("indrel/infosessions", indrel.infosessions, name="infosessions"),
-    path("indrel/career_fair", indrel.career_fair, name="career_fair"),
-    path("indrel/contact_us", indrel.contact_us, name="contact_us"),
+    path("indrel", indrel.indrel, name="indrel"),
 ]
 
 serv_urlpatterns = [
