@@ -1,13 +1,12 @@
 #!/usr/bin/env bash
 
 conda update -y -q -n base -c defaults conda
-conda env update -q -f config/hknweb-dev.yml
+conda env update -q -f config/"$1".yml
 conda info -a  # Print post-creation properties
 
 eval "$(conda shell.bash hook)"
 
 conda activate "$1"
-
 python manage.py migrate
 
 case $1 in
