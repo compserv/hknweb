@@ -18,7 +18,6 @@ jobs:
         run: |
           source ~/miniconda/etc/profile.d/conda.sh
           conda activate hknweb-dev
-          pwd
           fab deploy
       - name: End to end tests
         run: |

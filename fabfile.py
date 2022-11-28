@@ -16,7 +16,7 @@ CONFIG_DIR = os.path.join(ROOT_DIR, "config", "deploy")
 
 class ConfigFiles:
     SHARED = os.path.join(CONFIG_DIR, "shared.json")
-    LOCAL = os.path.join(CONFIG_DIR, "local.json")
+    GITHUB_ACTIONS = os.path.join(CONFIG_DIR, "github_actions.json")
     PROD = os.path.join(CONFIG_DIR, "prod.json")
 
 
@@ -140,7 +140,7 @@ def rollback(c, target=None, release=None):
 
 
 @task
-def deploy_local(c, target=None, commit=None):
+def deploy_github_actions(c, target=None, commit=None):
     with Connection(c.deploy.host, user=c.deploy.user, config=c.config) as c:
         c.run = c.local
         setup(c, commit=commit)
@@ -151,17 +151,16 @@ def deploy_local(c, target=None, commit=None):
 def configure_namespace() -> Collection:
     hknweb_mode = os.environ["HKNWEB_MODE"].lower()
     if hknweb_mode == "dev":
-        config_file = ConfigFiles.LOCAL
-        deploy = deploy_local
+        config_file = ConfigFiles.GITHUB_ACTIONS
     elif hknweb_mode == "prod":
         config_file = ConfigFiles.PROD
     else:
-        raise ValueError("HKNWEB_MODE is not a valid value")
+        raise ValueError(f"HKNWEB_MODE '{hknweb_mode}' is not a valid value")
 
     config_dict = json.load(open(config_file))
     config = DeployConfig(overrides=config_dict)
 
-    ns = Collection(deploy=deploy, rollback=rollback)
+    ns = Collection(deploy, rollback, deploy_github_actions)
     ns.configure(config)
 
     return ns
