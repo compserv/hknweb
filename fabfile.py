@@ -65,6 +65,7 @@ def update(c: Connection):
     if c.deploy.use_local_repo:
         c.deploy.repo_url = c.run("git config --get remote.origin.url").stdout.strip() + ".git"
         c.commit = c.run("git rev-parse HEAD").stdout.strip()
+        c.run(f"git clone --bare {c.deploy.repo_url} {c.repo_path}", echo=True)
 
     with c.cd(c.deploy_path):
         file_exists = lambda p: c.run(f"[[ -f {p} ]]", warn=True).ok
