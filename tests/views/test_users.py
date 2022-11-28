@@ -3,7 +3,7 @@ from django.test import TestCase
 
 from django.urls import reverse
 
-from hknweb.events.tests.models.utils import ModelFactory
+from tests.events.models.utils import ModelFactory
 
 
 class UsersViewsTests(TestCase):
