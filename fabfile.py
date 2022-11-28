@@ -95,10 +95,10 @@ def update(c: Connection):
         print("-- Decrypting secrets")
         c.run("blackbox_postdeploy", echo=True)
 
-        print("-- Updating conda environment")
-        c.run("conda update -f config/hknweb-prod.yml", echo=True)
-
         with c.prefix("conda activate hknweb-prod"):
+            print("-- Updating conda environment")
+            c.run("conda env update --file config/hknweb-prod.yml", echo=True)
+
             print("-- Migrating tables")
             c.run("python manage.py migrate")
 
@@ -160,10 +160,10 @@ def deploy_github_actions(c, target=None):
 
             print("-- Skipping decrypting secrets")
 
-            print("-- Updating conda environment")
-            c.run("conda update -f config/hknweb-dev.yml", echo=True)
-
             with c.prefix("conda activate hknweb-dev"):
+                print("-- Updating conda environment")
+                c.run("conda env update --file config/hknweb-dev.yml", echo=True)
+
                 print("-- Migrating tables")
                 c.run("python manage.py migrate")
 
