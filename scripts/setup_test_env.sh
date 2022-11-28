@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
-./scripts/install_miniconda_linux.sh
-./scripts/setup_env.sh hknweb-dev
+bash ./scripts/install_miniconda_linux.sh
+bash ./scripts/setup_env.sh hknweb-dev

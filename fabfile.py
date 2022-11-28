@@ -93,7 +93,7 @@ def update(c: Connection):
         else:
             print("-- Skipping decrypting secrets")
 
-        c.run(f"./scripts/setup_env.sh {c.deploy.conda_env}")
+        c.run(f"bash ./scripts/setup_env.sh {c.deploy.conda_env}")
 
 
 def publish(c: Connection) -> None:
