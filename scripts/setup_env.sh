@@ -4,8 +4,7 @@ conda update -q -n base -c defaults conda
 conda env create -q -f config/"$1".yml
 conda info -a  # Print post-creation properties
 
-conda init bash
-source ~/.bashrc
+eval "$(conda shell.bash hook)"
 
 conda activate "$1"
 
