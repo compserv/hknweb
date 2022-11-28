@@ -10,6 +10,6 @@ Type=simple
 Restart=always
 PIDFile=/home/h/hk/hkn/hknweb/prod/current/gunicorn.pid
 WorkingDirectory=/home/h/hk/hkn/hknweb/prod/current
-ExecStart=/home/h/hk/hkn/hknweb/prod/current/scripts/run.sh
+ExecStart=/home/h/hk/hkn/hknweb/prod/current/run
 ExecReload=/bin/kill -s HUP $MAINPID
 ExecStop=/bin/kill -s TERM $MAINPID
