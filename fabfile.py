@@ -62,15 +62,15 @@ def setup(c: Connection, commit=None, release=None):
 def update(c: Connection):
     print("== Update ==")
 
+    c.run("git status", echo=True)
+    c.run("git remote -v", echo=True)
+    if c.deploy.use_local_repo:
+        c.deploy.repo_url = c.run("git config --get remote.origin.url").stdout.strip()
+        c.commit = c.run("git branch --show-current").stdout.strip()
+
     with c.cd(c.deploy_path):
         file_exists = lambda p: c.run(f"[[ -f {p} ]]", warn=True).ok
         repo_exists = file_exists(f"{c.repo_path}/HEAD")
-
-        c.run("git status", echo=True)
-        c.run("git remote -v", echo=True)
-        if c.deploy.use_local_repo:
-            c.deploy.repo_url = c.run("git config --get remote.origin.url").stdout.strip()
-            c.commit = c.run("git branch --show-current").stdout.strip()
 
         if repo_exists:  # fetch
             c.run(f"git remote set-url origin {c.deploy.repo_url}", echo=True)
