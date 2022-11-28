@@ -3,6 +3,8 @@
 # https://github.com/ocf/ocfweb/blob/e53c7bcdfe7096/tests/end_to_end_test.py
 from textwrap import dedent
 
+import sys
+
 import django
 import pytest
 from django.urls import NoReverseMatch
@@ -14,6 +16,7 @@ from django.urls import URLResolver
 # properly before testing
 django.setup()
 
+sys.path.append(".")
 from hknweb.urls import urlpatterns  # noqa: E402
 
 
