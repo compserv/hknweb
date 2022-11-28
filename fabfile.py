@@ -151,6 +151,7 @@ def configure_namespace() -> Collection:
     hknweb_mode = os.environ["HKNWEB_MODE"].lower()
     if hknweb_mode == "dev":
         config_file = ConfigFiles.GITHUB_ACTIONS
+        deploy = deploy_github_actions
     elif hknweb_mode == "prod":
         config_file = ConfigFiles.PROD
     else:
@@ -159,9 +160,7 @@ def configure_namespace() -> Collection:
     config_dict = json.load(open(config_file))
     config = DeployConfig(overrides=config_dict)
 
-    ns = Collection(
-        deploy=deploy, rollback=rollback, deploy_github_actions=deploy_github_actions
-    )
+    ns = Collection(deploy=deploy, rollback=rollback)
     ns.configure(config)
 
     return ns
