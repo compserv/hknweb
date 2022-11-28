@@ -69,6 +69,7 @@ def update(c: Connection):
         if c.deploy.use_local_repo:  # local
             print("-- Symlinking local repo")
             print(f"{c.deploy_path} {c.repo_path}")
+            c.run("ls", echo=True)
             c.run(f"ln -sfn {c.deploy_path} {c.repo_path}", echo=True)
         elif repo_exists:  # fetch
             c.run(f"git remote set-url origin {c.deploy.repo_url}", echo=True)
