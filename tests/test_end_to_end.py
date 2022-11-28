@@ -4,6 +4,7 @@
 from textwrap import dedent
 
 import sys
+sys.path.append(".")  # Ensure django has access to hknweb
 
 import django
 import pytest
@@ -16,7 +17,6 @@ from django.urls import URLResolver
 # properly before testing
 django.setup()
 
-sys.path.append(".")
 from hknweb.urls import urlpatterns  # noqa: E402
 
 
