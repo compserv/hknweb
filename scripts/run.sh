@@ -6,7 +6,6 @@ SOCKFILE=/srv/apps/$(whoami)/dev.sock
 NUM_WORKERS=4
 PYTHONPATH=$DJANGO_DIR:$PYTHONPATH
 
-source ~/miniconda/etc/profile.d/conda.sh
 conda activate hknweb-dev
 
 cd $DJANGO_DIR

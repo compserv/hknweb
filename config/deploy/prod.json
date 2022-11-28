@@ -3,6 +3,8 @@
         "name": "prod",
         "user": "hkn",
         "host": "apphost.ocf.berkeley.edu",
+        "conda_env": "hknweb-prod",
+        "run_blackbox_postdeploy": true,
         "path": {
             "root": "/home/h/hk/hkn/hknweb"
         },

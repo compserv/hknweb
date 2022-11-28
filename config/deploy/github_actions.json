@@ -3,6 +3,8 @@
         "name": "github_actions",
         "user": "github_actions",
         "host": "github_actions",
+        "conda_env": "hknweb-dev",
+        "run_blackbox_postdeploy": false,
         "path": {
             "root": "/home/runner/work/hknweb"
         },

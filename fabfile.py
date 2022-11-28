@@ -59,9 +59,11 @@ def setup(c: Connection, commit=None, release=None):
         c.run("mkdir -p {}".format(d))
 
 
-def create_release(c: Connection) -> None:
-    # Update git repo
+def update(c: Connection):
+    print("== Update ==")
+
     with c.cd(c.deploy_path):
+        print("-- Updating git repo")
         file_exists = lambda p: c.run(f"[[ -f {p} ]]", warn=True).ok
         repo_exists = file_exists(f"{c.repo_path}/HEAD")
         if repo_exists:  # fetch
@@ -71,41 +73,27 @@ def create_release(c: Connection) -> None:
         else:  # clone
             c.run(f"git clone --bare {c.deploy.repo_url} {c.repo_path}")
 
-    # Create git archive
     with c.cd(c.repo_path):
+        print("-- Creating git archive for release")
         revision = c.commit
         revision_number = c.run(
             f"git rev-list --max-count=1 {revision} --", echo=True
         ).stdout.strip()
-
         c.commit = revision_number
+
         c.run(f"git archive {c.commit} | tar -x -f - -C '{c.release_path}'", echo=True)
-
-
-def update(c: Connection):
-    print("== Update ==")
-
-    print("-- Creating release")
-    create_release(c)
 
     with c.cd(c.release_path):
         print("-- Symlinking shared files")
         c.run("ln -s {}/media ./media".format(c.shared_path), echo=True)
 
-        print("-- Decrypting secrets")
-        c.run("blackbox_postdeploy", echo=True)
+        if c.deploy.run_blackbox_postdeploy:
+            print("-- Decrypting secrets")
+            c.run("blackbox_postdeploy", echo=True)
+        else:
+            print("-- Skipping decrypting secrets")
 
-        with c.prefix(
-            "source ~/miniconda/etc/profile.d/conda.sh && conda activate hknweb-prod"
-        ):
-            print("-- Updating conda environment")
-            c.run("conda env update --file config/hknweb-prod.yml", echo=True)
-
-            print("-- Migrating tables")
-            c.run("python manage.py migrate")
-
-            print("-- Collecting static files")
-            c.run("python manage.py collectstatic --noinput")
+        c.run(f"./scripts/setup_env.sh {c.deploy.conda_env}")
 
 
 def publish(c: Connection) -> None:
@@ -146,33 +134,7 @@ def deploy_github_actions(c, target=None):
     with Connection(c.deploy.host, user=c.deploy.user, config=c.config) as c:
         c.run = c.local
         setup(c)
-
-        """
-        The local update flow is slightly different than the default deploy update flow.
-        We use `hknweb-dev` instead of `hknweb-prod` conda env and we skip `blackbox_postdeploy`.
-        """
-        print("== Update ==")
-
-        print("-- Creating release")
-        create_release(c)
-
-        with c.cd(c.release_path):
-            print("-- Symlinking shared files")
-            c.run("ln -s {}/media ./media".format(c.shared_path), echo=True)
-
-            print("-- Skipping decrypting secrets")
-
-            with c.prefix(
-                "source '~/miniconda/etc/profile.d/conda.sh' && conda activate hknweb-dev"
-            ):
-                print("-- Updating conda environment")
-                c.run("conda env update --file config/hknweb-dev.yml", echo=True)
-
-                print("-- Migrating tables")
-                c.run("python manage.py migrate")
-
-                print("-- Collecting static files")
-                c.run("python manage.py collectstatic --noinput")
+        update(c)
 
         """
         The local publish flow is slightly different than the default deploy publish flow.

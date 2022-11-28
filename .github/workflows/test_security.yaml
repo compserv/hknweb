@@ -12,11 +12,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Setup environment
-        run: |
-          bash ./.github/workflows/setup_test_env.sh
+        run: bash ./scripts/setup_test_env.sh
       - name: Handler privacy check
         run: |
-          source ~/miniconda/etc/profile.d/conda.sh
           conda activate hknweb-dev
           pip install pytest
           pytest tests/test_handler_privacy.py
