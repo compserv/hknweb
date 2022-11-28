@@ -63,13 +63,12 @@ def update(c: Connection):
     print("== Update ==")
 
     with c.cd(c.deploy_path):
-        print("-- Updating git repo")
         file_exists = lambda p: c.run(f"[[ -f {p} ]]", warn=True).ok
         repo_exists = file_exists(f"{c.repo_path}/HEAD")
 
         if c.deploy.use_local_repo:  # local
             print("-- Symlinking local repo")
-            print("{c.deploy_path} {c.repo_path}")
+            print(f"{c.deploy_path} {c.repo_path}")
             c.run(f"ln -sfn {c.deploy_path} {c.repo_path}", echo=True)
         elif repo_exists:  # fetch
             c.run(f"git remote set-url origin {c.deploy.repo_url}", echo=True)
