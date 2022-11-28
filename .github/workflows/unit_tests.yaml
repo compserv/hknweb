@@ -15,6 +15,7 @@ jobs:
         run: bash ./scripts/setup_test_env.sh
       - name: Run Django unit tests
         run: |
+          source ~/miniconda/etc/profile.d/conda.sh
           conda activate hknweb-dev
           coverage run
           coverage report
