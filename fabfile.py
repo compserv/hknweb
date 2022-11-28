@@ -139,7 +139,7 @@ def rollback(c, target=None, release=None):
         publish(c)
 
 
-if __name__ == "__main__":
+def configure_namespace() -> Collection:
     hknweb_mode = os.environ["HKNWEB_MODE"].lower()
     if hknweb_mode == "dev":
         config_file = ConfigFiles.LOCAL
@@ -153,3 +153,8 @@ if __name__ == "__main__":
 
     ns = Collection(deploy, rollback)
     ns.configure(config)
+
+    return ns
+
+
+ns = configure_namespace()
