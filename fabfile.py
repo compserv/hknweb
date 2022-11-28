@@ -62,15 +62,16 @@ def setup(c: Connection, commit=None, release=None):
 def update(c: Connection):
     print("== Update ==")
 
+    repo_dir = c.run("pwd", echo=True).stdout.strip()
     with c.cd(c.deploy_path):
         file_exists = lambda p: c.run(f"[[ -f {p} ]]", warn=True).ok
         repo_exists = file_exists(f"{c.repo_path}/HEAD")
 
         if c.deploy.use_local_repo:  # local
             print("-- Symlinking local repo")
-            print(f"{c.deploy_path} {c.repo_path}")
-            c.run("ls", echo=True)
-            c.run(f"ln -sfn {c.deploy_path} {c.repo_path}", echo=True)
+            print(f"{repo_dir} {c.repo_path}")
+            c.run(f"ls {repo_dir}", echo=True)
+            c.run(f"ln -sfn {repo_dir} {c.repo_path}", echo=True)
         elif repo_exists:  # fetch
             c.run(f"git remote set-url origin {c.deploy.repo_url}", echo=True)
             c.run("git remote update", echo=True)
