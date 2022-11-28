@@ -140,9 +140,9 @@ def rollback(c, target=None, release=None):
 
 
 @task
-def deploy_github_actions(c, target=None, commit=None):
+def deploy_github_actions(c, target=None):
     c.run = c.local
-    setup(c, commit=commit)
+    setup(c)
     update(c)
     publish(c)
 
