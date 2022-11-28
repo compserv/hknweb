@@ -159,7 +159,9 @@ def configure_namespace() -> Collection:
     config_dict = json.load(open(config_file))
     config = DeployConfig(overrides=config_dict)
 
-    ns = Collection(deploy, rollback, deploy_github_actions)
+    ns = Collection(
+        deploy=deploy, rollback=rollback, deploy_github_actions=deploy_github_actions
+    )
     ns.configure(config)
 
     return ns
