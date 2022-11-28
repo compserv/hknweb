@@ -8,3 +8,4 @@ dependencies:
 variables:
   HKNWEB_MODE: "prod"
   DJANGO_SETTINGS_MODULE: "hknweb.settings"
+  DJANGO_WSGI_MODULE: "hknweb.wsgi"

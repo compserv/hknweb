@@ -146,7 +146,7 @@ def deploy_github_actions(c, target=None):
 
         """
         The local publish flow is slightly different than the default deploy publish flow.
-        We don't use systemctl to restart a service; instead, 
+        We don't use systemctl to restart a service; instead, we use a custom run script
         """
         print("== Publish ==")
 
@@ -155,9 +155,9 @@ def deploy_github_actions(c, target=None):
 
         print("-- Skipping restarting systemd unit")
 
-        # with c.prefix("conda activate hknweb-dev"):
-        #     print("-- Starting headless local development server")
-        #     c.run("python manage.py runserver &", echo=True)
+        with c.cd(c.current_path):
+            print("-- Starting server")
+            c.run("bash ./scripts/run_github_actions.sh")
 
 
 def configure_namespace() -> Collection:

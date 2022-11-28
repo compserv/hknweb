@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
 eval "$(conda shell.bash hook)"
-conda activate hknweb-prod
+conda activate hknweb-dev
 
-DJANGO_DIR=~/hknweb/prod/current
+DJANGO_DIR=~/hknweb/github_actions/current
 PYTHONPATH=$DJANGO_DIR:$PYTHONPATH
 
 SOCKFILE=/srv/apps/$(whoami)/dev.sock
-NUM_WORKERS=4
+NUM_WORKERS=1
 
 cd $DJANGO_DIR
 

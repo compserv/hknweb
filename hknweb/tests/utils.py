@@ -1,11 +1,5 @@
 from typing import List, Union
 
-import sys
-sys.path.append(".")
-
-import django
-django.setup()
-
 from django.urls import URLPattern, URLResolver
 
 from hknweb.urls import safe_urlpatterns
