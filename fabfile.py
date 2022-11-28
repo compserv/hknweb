@@ -63,7 +63,9 @@ def update(c: Connection):
     print("== Update ==")
 
     if c.deploy.use_local_repo:
-        c.deploy.repo_url = c.run("git config --get remote.origin.url").stdout.strip() + ".git"
+        c.deploy.repo_url = (
+            c.run("git config --get remote.origin.url").stdout.strip() + ".git"
+        )
         c.commit = c.run("git rev-parse HEAD").stdout.strip()
 
         c.run(f"git clone --bare {c.deploy.repo_url} {c.repo_path}", echo=True)
