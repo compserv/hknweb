@@ -15,12 +15,10 @@ jobs:
         run: bash ./scripts/setup_env.sh
       - name: Deploy
         run: |
-          source ~/miniconda/etc/profile.d/conda.sh
-          conda activate hknweb-dev
+          activate hknweb-dev
           fab deploy
       - name: End to end tests
         run: |
-          source ~/miniconda/etc/profile.d/conda.sh
-          conda activate hknweb-dev
+          activate hknweb-dev
           pip install pytest
           pytest tests/test_end_to_end.py
