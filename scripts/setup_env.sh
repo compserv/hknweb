@@ -10,7 +10,6 @@ conda activate "$1"
 
 python manage.py migrate
 
-
 case $1 in
     "hknweb-prod")
         python manage.py collectstatic --noinput
