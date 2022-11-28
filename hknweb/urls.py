@@ -24,7 +24,6 @@ app_urlpatterns = [
     path("about/", landing.about, name="about"),
     path("academics/", include("hknweb.academics.urls")),
     path("events/", include("hknweb.events.urls")),
-    path("alumni/", include("hknweb.alumni.urls")),
     path("studentservices/", include("hknweb.studentservices.urls")),
     path("tutoring/", include("hknweb.tutoring.urls")),
     path("cand/", include("hknweb.candidate.urls")),
