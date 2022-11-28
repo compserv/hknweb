@@ -144,8 +144,46 @@ def deploy_github_actions(c, target=None):
     with Connection(c.deploy.host, user=c.deploy.user, config=c.config) as c:
         c.run = c.local
         setup(c)
-        update(c)
-        publish(c)
+
+        """
+        The local update flow is slightly different than the default deploy update flow.
+        We use `hknweb-dev` instead of `hknweb-prod` conda env and we skip `blackbox_postdeploy`.
+        """
+        print("== Update ==")
+
+        print("-- Creating release")
+        create_release(c)
+
+        with c.cd(c.release_path):
+            print("-- Symlinking shared files")
+            c.run("ln -s {}/media ./media".format(c.shared_path), echo=True)
+
+            print("-- Skipping decrypting secrets")
+
+            print("-- Updating conda environment")
+            c.run("conda update -f config/hknweb-dev.yml", echo=True)
+
+            with c.prefix("conda activate hknweb-dev"):
+                print("-- Migrating tables")
+                c.run("python manage.py migrate")
+
+                print("-- Collecting static files")
+                c.run("python manage.py collectstatic --noinput")
+
+        """
+        The local publish flow is slightly different than the default deploy publish flow.
+        We don't use systemctl to restart a service; instead, 
+        """
+        print("== Publish ==")
+
+        print("-- Symlinking current@ to release")
+        c.run("ln -sfn {} {}".format(c.release_path, c.current_path), echo=True)
+
+        print("-- Skipping restarting systemd unit")
+
+        # with c.prefix("conda activate hknweb-dev"):
+        #     print("-- Starting headless local development server")
+        #     c.run("python manage.py runserver &", echo=True)
 
 
 def configure_namespace() -> Collection:
