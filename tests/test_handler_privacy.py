@@ -1,21 +1,4 @@
-import sys
-from typing import List, Union
-import django
-from django.urls import URLPattern, URLResolver
-
-sys.path.append(".")
-django.setup()  # ?
-import hknweb.urls as urls
-
-
-def gen_url_patterns(src: List[Union[URLPattern, URLResolver]], path=()):
-    for elem in src:
-        if isinstance(elem, URLResolver):
-            yield from gen_url_patterns(elem.url_patterns, (*path, elem.pattern))
-        elif isinstance(elem, URLPattern):
-            yield elem.callback, (*path, elem.pattern)
-        else:
-            raise Exception("Unexpected resolver type", type(elem))
+from .utils import gen_safe_url_patterns
 
 
 def check_handler_privacy(handler, name):
@@ -38,5 +21,5 @@ def check_handler_privacy(handler, name):
 
 
 def test_handler_privacy():
-    for pattern, path in gen_url_patterns(urls.safe_urlpatterns):
+    for pattern, path in gen_safe_url_patterns():
         check_handler_privacy(pattern, ",".join(map(str, path)))

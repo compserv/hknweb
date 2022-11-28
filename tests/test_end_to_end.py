@@ -1,23 +1,15 @@
 # Mostly taken from ocfweb's end_to_end_test.py, since it is pretty
 # comprehensive, but with some small changes to support Django's admin app:
 # https://github.com/ocf/ocfweb/blob/e53c7bcdfe7096/tests/end_to_end_test.py
+from typing import Iterable
+
 from textwrap import dedent
 
-import sys
-sys.path.append(".")  # Ensure django has access to hknweb
-
-import django
 import pytest
-from django.urls import NoReverseMatch
-from django.urls import reverse
-from django.urls import URLPattern
-from django.urls import URLResolver
 
-# Run django setup before importing urlpatterns to allow installed apps to load
-# properly before testing
-django.setup()
+from django.urls import NoReverseMatch, URLPattern, reverse
 
-from hknweb.urls import urlpatterns  # noqa: E402
+from .utils import gen_safe_url_patterns
 
 
 def assert_does_not_error(client, path):
@@ -47,21 +39,21 @@ def assert_does_not_error(client, path):
             )
 
 
-def _get_reversed_urlpatterns(urlpatterns=urlpatterns):
+def _get_reversed_urlpatterns(urlpatterns: Iterable[URLPattern]):
     """Yields a list of all URLs that we can reverse with default args."""
     for urlpattern in urlpatterns:
-        if isinstance(urlpattern, URLPattern):
-            try:
-                path = reverse(urlpattern.name, *urlpattern.default_args)
-            except NoReverseMatch:
-                pass
-            else:
-                yield path
-        elif isinstance(urlpattern, URLResolver):
-            # handle recursive urlpattern definitions
-            yield from _get_reversed_urlpatterns(urlpatterns=urlpattern.url_patterns)
+        try:
+            path = reverse(urlpattern.name, *urlpattern.default_args)
+        except NoReverseMatch:
+            pass
+        else:
+            yield path
 
 
-@pytest.mark.parametrize("path", _get_reversed_urlpatterns())
+url_patterns = [pattern for pattern, _ in gen_safe_url_patterns()]
+reversed_url_patterns = _get_reversed_urlpatterns(url_patterns)
+
+@pytest.mark.parametrize("path", reversed_url_patterns)
 def test_view_does_not_error_with_default_args(client, path):
+    print(path)
     assert_does_not_error(client, path)
