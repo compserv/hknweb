@@ -15,6 +15,5 @@ jobs:
         run: bash ./scripts/setup_test_env.sh
       - name: Run formatting check
         run: |
-          source ~/miniconda/etc/profile.d/conda.sh
           conda activate hknweb-dev
           black . --check
