@@ -139,10 +139,20 @@ def rollback(c, target=None, release=None):
         publish(c)
 
 
+@task
+def deploy_local(c, target=None, commit=None):
+    with Connection(c.deploy.host, user=c.deploy.user, config=c.config) as c:
+        c.run = c.local
+        setup(c, commit=commit)
+        update(c)
+        publish(c)
+
+
 def configure_namespace() -> Collection:
     hknweb_mode = os.environ["HKNWEB_MODE"].lower()
     if hknweb_mode == "dev":
         config_file = ConfigFiles.LOCAL
+        deploy = deploy_local
     elif hknweb_mode == "prod":
         config_file = ConfigFiles.PROD
     else:
@@ -151,7 +161,7 @@ def configure_namespace() -> Collection:
     config_dict = json.load(open(config_file))
     config = DeployConfig(overrides=config_dict)
 
-    ns = Collection(deploy, rollback)
+    ns = Collection(deploy=deploy, rollback=rollback)
     ns.configure(config)
 
     return ns
