@@ -141,11 +141,10 @@ def rollback(c, target=None, release=None):
 
 @task
 def deploy_github_actions(c, target=None, commit=None):
-    with Connection(c.deploy.host, user=c.deploy.user, config=c.config) as c:
-        c.run = c.local
-        setup(c, commit=commit)
-        update(c)
-        publish(c)
+    c.run = c.local
+    setup(c, commit=commit)
+    update(c)
+    publish(c)
 
 
 def configure_namespace() -> Collection:
