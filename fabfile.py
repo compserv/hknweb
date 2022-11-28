@@ -93,7 +93,8 @@ def update(c: Connection):
         else:
             print("-- Skipping decrypting secrets")
 
-    with c.cd(c.current_path):
+    with c.cd(c.release_path):
+        c.run("ls", echo=True)
         print("-- Updating environment")
         c.run(f"bash ./scripts/setup_env.sh {c.deploy.conda_env}", echo=True)
 
