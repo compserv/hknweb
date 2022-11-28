@@ -21,4 +21,4 @@ jobs:
       - name: End to end tests
         run: |
           eval "$(conda shell.bash hook)"
-          curl localhost:8000
+          curl -f localhost:8000
