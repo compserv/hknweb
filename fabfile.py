@@ -68,13 +68,13 @@ def update(c: Connection):
         repo_exists = file_exists(f"{c.repo_path}/HEAD")
 
         if c.deploy.use_local_repo:  # local
-            c.repo_path = repo_dir
+            c.run(f"git clone --bare {repo_dir} {c.repo_path}", echo=True)
         elif repo_exists:  # fetch
             c.run(f"git remote set-url origin {c.deploy.repo_url}", echo=True)
             c.run("git remote update", echo=True)
             c.run(f"git fetch origin {c.commit}:{c.commit}", echo=True)
         else:  # clone
-            c.run(f"git clone --bare {c.deploy.repo_url} {c.repo_path}")
+            c.run(f"git clone --bare {c.deploy.repo_url} {c.repo_path}", echo=True)
 
     with c.cd(c.repo_path):
         print("-- Creating git archive for release")
