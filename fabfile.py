@@ -36,8 +36,8 @@ def setup(c: Connection, commit=None, release=None):
     # Point the connection to the correct git config
     c.release = release if release else timestamp
     c.commit = commit if commit else c.deploy.branch
-    print("release: {}".format(c.release))
-    print("commit: {}".format(c.commit))
+    print(f"release: {c.release}")
+    print(f"commit: {c.commit}")
 
     # Setup paths
     c.deploy_path = posixpath.join(c.deploy.path.root, c.deploy.name)
@@ -56,7 +56,7 @@ def setup(c: Connection, commit=None, release=None):
         c.release_path,
     )
     for d in dirs:
-        c.run("mkdir -p {}".format(d))
+        c.run(f"mkdir -p {d}")
 
 
 def update(c: Connection):
@@ -85,7 +85,7 @@ def update(c: Connection):
 
     with c.cd(c.release_path):
         print("-- Symlinking shared files")
-        c.run("ln -s {}/media ./media".format(c.shared_path), echo=True)
+        c.run(f"ln -s {c.shared_path}/media ./media", echo=True)
 
         if c.deploy.run_blackbox_postdeploy:
             print("-- Decrypting secrets")
@@ -93,14 +93,17 @@ def update(c: Connection):
         else:
             print("-- Skipping decrypting secrets")
 
-        c.run(f"bash ./scripts/setup_env.sh {c.deploy.conda_env}")
+    with c.cd(c.release_path):
+        c.run("pwd")
+        print("-- Updating environment")
+        c.run(f"bash ./scripts/setup_env.sh {c.deploy.conda_env}", echo=True)
 
 
 def publish(c: Connection) -> None:
     print("== Publish ==")
 
     print("-- Symlinking current@ to release")
-    c.run("ln -sfn {} {}".format(c.release_path, c.current_path), echo=True)
+    c.run(f"ln -sfn {c.release_path} {c.current_path}", echo=True)
 
     print("-- Restarting systemd unit")
     c.run("systemctl --user restart hknweb.service", echo=True)
@@ -143,7 +146,7 @@ def deploy_github_actions(c, target=None):
         print("== Publish ==")
 
         print("-- Symlinking current@ to release")
-        c.run("ln -sfn {} {}".format(c.release_path, c.current_path), echo=True)
+        c.run(f"ln -sfn {c.release_path} {c.current_path}", echo=True)
 
         print("-- Skipping restarting systemd unit")
 
