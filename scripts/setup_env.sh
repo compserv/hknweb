@@ -9,4 +9,18 @@ eval "$(conda shell.bash hook)"
 conda activate "$1"
 
 python manage.py migrate
-python manage.py collectstatic --noinput
+
+
+case $1 in
+    "hknweb-prod")
+        python manage.py collectstatic --noinput
+    ;;
+
+    "hknweb-dev")
+    ;;
+
+    *)
+        echo "Unrecognized hknweb mode $1"
+        exit 1
+    ;;
+esac
