@@ -1,6 +1,8 @@
 {
     "deploy": {
         "name": "github_actions",
+        "user": "github_actions",
+        "host": "github_actions",
         "path": {
             "root": "/home/runner/work/hknweb"
         },
