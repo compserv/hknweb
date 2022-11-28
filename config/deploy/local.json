@@ -1,6 +1,7 @@
 {
     "deploy": {
         "name": "local",
+        "user": "hkn",
         "host": "localhost",
         "path": {
             "root": "/home"
