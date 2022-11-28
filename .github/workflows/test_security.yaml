@@ -15,6 +15,6 @@ jobs:
         run: bash ./scripts/setup_env.sh
       - name: Handler privacy check
         run: |
-          activate hknweb-dev
+          conda activate hknweb-dev
           pip install pytest
           pytest tests/test_handler_privacy.py

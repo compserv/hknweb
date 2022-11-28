@@ -15,5 +15,5 @@ jobs:
         run: bash ./scripts/setup_env.sh
       - name: Run formatting check
         run: |
-          activate hknweb-dev
+          conda activate hknweb-dev
           black . --check
