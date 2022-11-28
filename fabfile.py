@@ -68,10 +68,7 @@ def update(c: Connection):
         repo_exists = file_exists(f"{c.repo_path}/HEAD")
 
         if c.deploy.use_local_repo:  # local
-            print("-- Symlinking local repo")
-            c.run(f"ln -sfn {repo_dir} {c.repo_path}", echo=True)
-            c.run(f"ls {repo_dir}", echo=True)
-            c.run(f"ls {c.repo_path}", echo=True)
+            c.repo_path = repo_dir
         elif repo_exists:  # fetch
             c.run(f"git remote set-url origin {c.deploy.repo_url}", echo=True)
             c.run("git remote update", echo=True)
@@ -100,7 +97,6 @@ def update(c: Connection):
             print("-- Skipping decrypting secrets")
 
     with c.cd(c.release_path):
-        c.run("ls", echo=True)
         print("-- Updating environment")
         c.run(f"bash ./scripts/setup_env.sh {c.deploy.conda_env}", echo=True)
 
