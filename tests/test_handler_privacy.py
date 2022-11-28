@@ -1,4 +1,8 @@
-from hknweb.tests.utils import gen_safe_url_patterns
+from typing import List, Union
+
+from django.urls import URLPattern, URLResolver
+
+from hknweb.urls import safe_urlpatterns
 
 from django.test import TestCase
 
@@ -22,6 +26,15 @@ class HandlerPrivacyTests(TestCase):
         else:
             raise Exception(f"{name} ({handler}) does not check permissions")
 
+    def _gen_url_patterns(self, src: List[Union[URLPattern, URLResolver]], path=()):
+        for elem in src:
+            if isinstance(elem, URLResolver):
+                yield from self._gen_url_patterns(elem.url_patterns, (*path, elem.pattern))
+            elif isinstance(elem, URLPattern):
+                yield elem.callback, (*path, elem.pattern)
+            else:
+                raise Exception("Unexpected resolver type", type(elem))
+
     def test_handler_privacy(self):
-        for pattern, path in gen_safe_url_patterns():
+        for pattern, path in self._gen_url_patterns(safe_urlpatterns):
             self._check_handler_privacy(pattern, ",".join(map(str, path)))
