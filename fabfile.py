@@ -78,6 +78,7 @@ def update(c: Connection):
 
     with c.cd(c.repo_path):
         print("-- Creating git archive for release")
+        c.run("ls")
         revision = c.commit
         revision_number = c.run(
             f"git rev-list --max-count=1 {revision} --", echo=True
