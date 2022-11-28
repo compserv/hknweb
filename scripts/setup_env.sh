@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-conda update -q -n base -c defaults conda
-conda env create -q -f config/"$1".yml
+conda update -y -q -n base -c defaults conda
+conda env update -q -f config/hknweb-dev.yml
 conda info -a  # Print post-creation properties
 
 eval "$(conda shell.bash hook)"
