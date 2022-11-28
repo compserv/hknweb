@@ -66,19 +66,18 @@ def update(c: Connection):
         c.deploy.repo_url = c.run("git config --get remote.origin.url").stdout.strip() + ".git"
         c.commit = c.run("git rev-parse HEAD").stdout.strip()
 
-        with c.cd(c.deploy_path):
-            c.run(f"git clone --bare {c.deploy.repo_url} {c.repo_path}", echo=True)
+        c.run(f"git clone --bare {c.deploy.repo_url} {c.repo_path}", echo=True)
 
-    with c.cd(c.deploy_path):
-        file_exists = lambda p: c.run(f"[[ -f {p} ]]", warn=True).ok
-        repo_exists = file_exists(f"{c.repo_path}/HEAD")
+    file_exists = lambda p: c.run(f"[[ -f {p} ]]", warn=True).ok
+    repo_exists = file_exists(f"{c.repo_path}/HEAD")
 
-        if repo_exists:  # fetch
+    if repo_exists:  # fetch
+        with c.cd(c.repo_path):
             c.run(f"git remote set-url origin {c.deploy.repo_url}", echo=True)
             c.run("git remote update", echo=True)
             c.run(f"git fetch origin {c.commit}:{c.commit}", echo=True)
-        else:  # clone
-            c.run(f"git clone --bare {c.deploy.repo_url} {c.repo_path}", echo=True)
+    else:  # clone
+        c.run(f"git clone --bare {c.deploy.repo_url} {c.repo_path}", echo=True)
 
     with c.cd(c.repo_path):
         print("-- Creating git archive for release")
