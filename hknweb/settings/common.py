@@ -27,7 +27,6 @@ INSTALLED_APPS = [
     "hknweb.events",
     "hknweb.tutoring",
     "hknweb.markdown_pages",
-    "hknweb.shortlinks",
     "hknweb.candidate",
     "hknweb.coursesemester",
     "hknweb.course_surveys",
