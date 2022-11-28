@@ -1,28 +1,53 @@
-from fabric import Config
-from fabric import Connection
-from fabric import task
+import os
+
+import posixpath
+
+import json
+
+from fabric import Config, Connection, task
+
 from invoke import Collection
 from invoke.config import merge_dicts
 
-from deploy import git
-from deploy import path
 
-import argparse
-
-TARGET_FLAG = "--target"
-DEFAULT_TARGET = "prod"
-
-production_python = "HKNWEB_MODE=prod python"
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+CONFIG_DIR = os.path.join(ROOT_DIR, "config", "deploy")
 
 
-def timestamp(c: Connection) -> str:
-    """
-    Returns the server date-time, encoded as YYYYMMSS_HHMMSS.
-    """
-    return c.run("date +%Y%m%d_%H%M%S").stdout.strip()
+class ConfigFiles:
+    SHARED = os.path.join(CONFIG_DIR, "shared.json")
+    GITHUB_ACTIONS = os.path.join(CONFIG_DIR, "github_actions.json")
+    PROD = os.path.join(CONFIG_DIR, "prod.json")
 
 
-def create_dirs(c: Connection):
+class DeployConfig(Config):
+    @staticmethod
+    def global_defaults():
+        hkn_shared = json.load(open(ConfigFiles.SHARED))
+        return merge_dicts(Config.global_defaults(), hkn_shared)
+
+
+def setup(c: Connection, commit=None, release=None):
+    print("== Setup ==")
+
+    # Returns the server date-time, encoded as YYYYMMSS_HHMMSS.
+    timestamp = c.run("date +%Y%m%d_%H%M%S").stdout.strip()
+
+    # Point the connection to the correct git config
+    c.release = release if release else timestamp
+    c.commit = commit if commit else c.deploy.branch
+    print(f"release: {c.release}")
+    print(f"commit: {c.commit}")
+
+    # Setup paths
+    c.deploy_path = posixpath.join(c.deploy.path.root, c.deploy.name)
+    c.repo_path = posixpath.join(c.deploy_path, c.deploy.path.repo)
+    c.releases_path = posixpath.join(c.deploy_path, c.deploy.path.releases)
+    c.current_path = posixpath.join(c.deploy_path, c.deploy.path.current)
+    c.shared_path = posixpath.join(c.deploy_path, c.deploy.path.shared)
+    c.release_path = posixpath.join(c.releases_path, c.release)
+
+    # Create dirs
     dirs = (
         c.repo_path,
         c.deploy_path,
@@ -31,199 +56,129 @@ def create_dirs(c: Connection):
         c.release_path,
     )
     for d in dirs:
-        c.run("mkdir -p {}".format(d))
-
-
-class DeployConfig(Config):
-    @staticmethod
-    def global_defaults():
-        hkn_defaults = {
-            "deploy": {
-                "name": "default",
-                "user": "hkn",
-                "host": "apphost.ocf.berkeley.edu",
-                "path": {
-                    "root": "/home/h/hk/hkn/hknweb",
-                    "repo": "repo",
-                    "releases": "releases",
-                    "current": "current",
-                    "shared": "shared",
-                },
-                "repo_url": "https://github.com/compserv/hknweb.git",
-                "branch": "master",
-                "linked_files": [],
-                "linked_dirs": [],
-                "keep_releases": 10,
-            },
-        }
-        return merge_dicts(Config.global_defaults(), hkn_defaults)
-
-
-targets = {
-    "prod": {
-        "deploy": {
-            "name": "prod",
-            "branch": "master",
-        },
-    },
-}
-
-configs = {target: DeployConfig(overrides=config) for target, config in targets.items()}
-
-# pprint(vars(configs['prod']))
-
-
-def create_release(c: Connection):
-    print("-- Creating release")
-    git.check(c)
-    git.update(c)
-    c.commit = git.revision_number(c, c.commit)
-    git.create_archive(c)
-
-
-def symlink_shared(c: Connection):
-    print("-- Symlinking shared files")
-    with c.cd(c.release_path):
-        c.run("ln -s {}/media ./media".format(c.shared_path), echo=True)
-
-
-def decrypt_secrets(c):
-    print("-- Decrypting secrets")
-    with c.cd(c.release_path):
-        c.run("blackbox_postdeploy", echo=True)
-
-
-def install_deps(c: Connection):
-    print("-- Installing dependencies")
-    with c.cd(c.release_path):
-        with c.prefix("conda activate hknweb"):
-            c.run("make install-prod")
-
-
-def django_migrate(c: Connection):
-    print("-- Migrating tables")
-    with c.cd(c.release_path):
-        with c.prefix("conda activate hknweb"):
-            c.run("make check-conda-env")
-            c.run(f"{production_python} ./manage.py migrate")
-
-
-def django_collectstatic(c: Connection):
-    print("-- Collecting static files")
-    with c.cd(c.release_path):
-        with c.prefix("conda activate hknweb"):
-            c.run("make check-conda-env")
-            c.run(f"{production_python} ./manage.py collectstatic --noinput")
-
-
-def symlink_release(c: Connection):
-    print("-- Symlinking current@ to release")
-    c.run("ln -sfn {} {}".format(c.release_path, c.current_path), echo=True)
-
-
-def systemd_restart(c: Connection):
-    print("-- Restarting systemd unit")
-    c.run("systemctl --user restart hknweb.service", echo=True)
-
-
-def setup(c: Connection, commit=None, release=None):
-    print("== Setup ==")
-    if release is None:
-        c.release = timestamp(c)
-    else:
-        c.release = release
-    c.deploy_path = path.deploy_path(c)
-    c.repo_path = path.repo_path(c)
-    c.releases_path = path.releases_path(c)
-    c.current_path = path.current_path(c)
-    c.shared_path = path.shared_path(c)
-    c.release_path = path.release_path(c)
-    if commit is None:
-        c.commit = c.deploy.branch
-    else:
-        c.commit = commit
-    print("release: {}".format(c.release))
-    print("commit: {}".format(c.commit))
-    create_dirs(c)
-
-
-def create_conda(c: Connection):
-    with c.cd(c.release_path):
-        c.run("make conda")
+        c.run(f"mkdir -p {d}")
 
 
 def update(c: Connection):
     print("== Update ==")
-    create_release(c)
-    symlink_shared(c)
-    decrypt_secrets(c)
-    create_conda(c)
-    install_deps(c)
-    django_migrate(c)
-    django_collectstatic(c)
+
+    if c.deploy.use_local_repo:
+        c.deploy.repo_url = (
+            c.run("git config --get remote.origin.url").stdout.strip() + ".git"
+        )
+        c.commit = c.run("git rev-parse HEAD").stdout.strip()
+
+        c.run(f"git clone --bare {c.deploy.repo_url} {c.repo_path}", echo=True)
+
+    file_exists = lambda p: c.run(f"[[ -f {p} ]]", warn=True).ok
+    repo_exists = file_exists(f"{c.repo_path}/HEAD")
+
+    if repo_exists:  # fetch
+        with c.cd(c.repo_path):
+            c.run(f"git remote set-url origin {c.deploy.repo_url}", echo=True)
+            c.run("git remote update", echo=True)
+            c.run(f"git fetch origin {c.commit}:{c.commit}", echo=True)
+    else:  # clone
+        c.run(f"git clone --bare {c.deploy.repo_url} {c.repo_path}", echo=True)
+
+    with c.cd(c.repo_path):
+        print("-- Creating git archive for release")
+        revision = c.commit
+        revision_number = c.run(
+            f"git rev-list --max-count=1 {revision} --", echo=True
+        ).stdout.strip()
+        c.commit = revision_number
+
+        c.run(f"git archive {c.commit} | tar -x -f - -C '{c.release_path}'", echo=True)
+
+    with c.cd(c.release_path):
+        print("-- Symlinking shared files")
+        c.run(f"ln -s {c.shared_path}/media ./media", echo=True)
+
+        if c.deploy.run_blackbox_postdeploy:
+            print("-- Decrypting secrets")
+            c.run("blackbox_postdeploy", echo=True)
+        else:
+            print("-- Skipping decrypting secrets")
+
+    with c.cd(c.release_path):
+        print("-- Updating environment")
+        c.run(f"bash ./scripts/setup_env.sh {c.deploy.conda_env}", echo=True)
 
 
-def publish(c: Connection):
+def publish(c: Connection) -> None:
     print("== Publish ==")
-    symlink_release(c)
-    systemd_restart(c)
+
+    print("-- Symlinking current@ to release")
+    c.run(f"ln -sfn {c.release_path} {c.current_path}", echo=True)
+
+    print("-- Restarting systemd unit")
+    c.run("systemctl --user restart hknweb.service", echo=True)
 
 
-def finish(c):
-    pass
-
-
-# For the following @task functions, "target" is an ignored parameter
-#  It is a workaround to allow for use in using command line arguments
-#  For selecting a "target" in ns.configure
-# Otherwise, fabfile will claim to not recognize it
+"""
+For the following @task functions, "target" is an ignored parameter. It is a workaround to
+allow for use in using command line arguments for selecting a "target" in ns.configure. 
+Otherwise, fabfile will claim to not recognize it.
+"""
 
 
 @task
-def deploy(c, target=DEFAULT_TARGET, commit=None):
+def deploy(c, target=None, commit=None):
     with Connection(c.deploy.host, user=c.deploy.user, config=c.config) as c:
         setup(c, commit=commit)
         update(c)
         publish(c)
-        finish(c)
 
 
 @task
-def rollback(c, target=DEFAULT_TARGET, release=None):
+def rollback(c, target=None, release=None):
     with Connection(c.deploy.host, user=c.deploy.user, config=c.config) as c:
         setup(c, release=release)
         update(c)
         publish(c)
-        finish(c)
 
 
-# Please add the "target" parameter if you are adding more @task functions
-#  to allow custom targets to be used (regardless if your function itself will use it or not)
+@task
+def deploy_github_actions(c, target=None):
+    with Connection(c.deploy.host, user=c.deploy.user, config=c.config) as c:
+        c.run = c.local
+        setup(c)
+        update(c)
+
+        """
+        The local publish flow is slightly different than the default deploy publish flow.
+        We don't use systemctl to restart a service; instead, we use a custom run script
+        """
+        print("== Publish ==")
+
+        print("-- Symlinking current@ to release")
+        c.run(f"ln -sfn {c.release_path} {c.current_path}", echo=True)
+
+        print("-- Skipping restarting systemd unit")
+
+        with c.cd(c.current_path):
+            print("-- Starting server")
+            c.run(f"bash ./scripts/run_github_actions.sh {c.current_path}")
 
 
-def get_target(args):
-    target = args.target
-    if target not in configs:
-        message = '\n\tTarget Configuration "{}" is not a valid entry'.format(
-            TARGET_FLAG
-        )
-        message += "\n\tInvalid Entry: " + target
-        assert target in configs, message
-    return target
+def configure_namespace() -> Collection:
+    hknweb_mode = os.environ["HKNWEB_MODE"].lower()
+    if hknweb_mode == "dev":
+        config_file = ConfigFiles.GITHUB_ACTIONS
+        deploy = deploy_github_actions
+    elif hknweb_mode == "prod":
+        config_file = ConfigFiles.PROD
+    else:
+        raise ValueError(f"HKNWEB_MODE '{hknweb_mode}' is not a valid value")
+
+    config_dict = json.load(open(config_file))
+    config = DeployConfig(overrides=config_dict)
+
+    ns = Collection(deploy=deploy, rollback=rollback)
+    ns.configure(config)
+
+    return ns
 
 
-parser = argparse.ArgumentParser(
-    description='Target parameters for the fab file through the "fab" library'
-)
-parser.add_argument(
-    "--target",
-    default="prod",
-    help="The Target Configuration key to set the deployment setting",
-)
-args, unknown = parser.parse_known_args()
-
-target_key = get_target(args)
-print("Target Set:", target_key)
-
-ns = Collection(deploy, rollback)
-ns.configure(configs[target_key])
+ns = configure_namespace()

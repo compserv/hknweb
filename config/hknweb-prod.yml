@@ -1,0 +1,11 @@
+name: hknweb-prod
+dependencies:
+  - python=3.9
+  - pip
+  - pip:
+    - -r requirements.txt
+    - mysqlclient==2.1.0
+variables:
+  HKNWEB_MODE: "prod"
+  DJANGO_SETTINGS_MODULE: "hknweb.settings"
+  DJANGO_WSGI_MODULE: "hknweb.wsgi"
