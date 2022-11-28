@@ -3,7 +3,7 @@
 eval "$(conda shell.bash hook)"
 conda activate hknweb-dev
 
-DJANGO_DIR=~/hknweb/github_actions/current
+DJANGO_DIR=$1
 PYTHONPATH=$DJANGO_DIR:$PYTHONPATH
 
 cd $DJANGO_DIR

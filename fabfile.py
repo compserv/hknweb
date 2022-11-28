@@ -159,7 +159,7 @@ def deploy_github_actions(c, target=None):
 
         with c.cd(c.current_path):
             print("-- Starting server")
-            c.run("bash ./scripts/run_github_actions.sh &")
+            c.run(f"bash ./scripts/run_github_actions.sh {c.current_path}")
 
 
 def configure_namespace() -> Collection:
