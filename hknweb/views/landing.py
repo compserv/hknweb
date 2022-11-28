@@ -27,7 +27,7 @@ def home(request):
         "announcements": announcements,
         "reviewsessions": upcoming_review_sessions,
     }
-    return render(request, "landing/home.html", context)
+    return render(request, "home.html", context)
 
 
 @allow_public_access
