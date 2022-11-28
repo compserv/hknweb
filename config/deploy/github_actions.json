@@ -5,6 +5,7 @@
         "host": "github_actions",
         "conda_env": "hknweb-dev",
         "run_blackbox_postdeploy": false,
+        "use_local_repo": true,
         "path": {
             "root": "/home/runner/work/hknweb"
         },
