@@ -62,14 +62,17 @@ def setup(c: Connection, commit=None, release=None):
 def update(c: Connection):
     print("== Update ==")
 
-    repo_dir = c.run("pwd").stdout.strip()
     with c.cd(c.deploy_path):
         file_exists = lambda p: c.run(f"[[ -f {p} ]]", warn=True).ok
         repo_exists = file_exists(f"{c.repo_path}/HEAD")
 
-        if c.deploy.use_local_repo:  # local
-            c.run(f"git clone --bare {repo_dir} {c.repo_path}", echo=True)
-        elif repo_exists:  # fetch
+        c.run("git status", echo=True)
+        c.run("git remote -v", echo=True)
+        if c.deploy.use_local_repo:
+            c.deploy.repo_url = c.run("git config --get remote.origin.url").stdout.strip()
+            c.commit = c.run("git branch --show-current").stdout.strip()
+
+        if repo_exists:  # fetch
             c.run(f"git remote set-url origin {c.deploy.repo_url}", echo=True)
             c.run("git remote update", echo=True)
             c.run(f"git fetch origin {c.commit}:{c.commit}", echo=True)
@@ -78,7 +81,6 @@ def update(c: Connection):
 
     with c.cd(c.repo_path):
         print("-- Creating git archive for release")
-        c.run("ls")
         revision = c.commit
         revision_number = c.run(
             f"git rev-list --max-count=1 {revision} --", echo=True
