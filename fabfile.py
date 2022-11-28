@@ -62,11 +62,9 @@ def setup(c: Connection, commit=None, release=None):
 def update(c: Connection):
     print("== Update ==")
 
-    c.run("git status", echo=True)
-    c.run("git remote -v", echo=True)
     if c.deploy.use_local_repo:
         c.deploy.repo_url = c.run("git config --get remote.origin.url").stdout.strip()
-        c.commit = c.run("git branch --show-current").stdout.strip()
+        c.commit = c.run("git rev-parse HEAD").stdout.strip()
 
     with c.cd(c.deploy_path):
         file_exists = lambda p: c.run(f"[[ -f {p} ]]", warn=True).ok
