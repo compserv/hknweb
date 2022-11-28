@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Setup environment
-        run: bash ./scripts/setup_test_env.sh
+        run: bash ./scripts/setup_env.sh
       - name: Run formatting check
         run: |
           conda activate hknweb-dev
