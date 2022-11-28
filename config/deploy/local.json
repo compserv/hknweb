@@ -4,7 +4,7 @@
         "user": "local",
         "host": "localhost",
         "path": {
-            "root": ".."
+            "root": "/home"
         },
         "keep_releases": 1
     }

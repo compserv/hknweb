@@ -56,7 +56,7 @@ def setup(c: Connection, commit=None, release=None):
         c.release_path,
     )
     for d in dirs:
-        c.run("mkdir -p {}".format(d), echo=True)
+        c.run("mkdir -p {}".format(d))
 
 
 def create_release(c: Connection) -> None:
