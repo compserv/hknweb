@@ -62,6 +62,10 @@ def setup(c: Connection, commit=None, release=None):
 def update(c: Connection):
     print("== Update ==")
 
+    if c.deploy.use_local_repo:
+        c.deploy.repo_url = c.run("git config --get remote.origin.url").stdout.strip() + ".git"
+        c.commit = c.run("git rev-parse HEAD").stdout.strip()
+
     with c.cd(c.deploy_path):
         file_exists = lambda p: c.run(f"[[ -f {p} ]]", warn=True).ok
         repo_exists = file_exists(f"{c.repo_path}/HEAD")
@@ -73,13 +77,8 @@ def update(c: Connection):
         else:  # clone
             c.run(f"git clone --bare {c.deploy.repo_url} {c.repo_path}", echo=True)
 
-    # if c.deploy.use_local_repo:
-    #     c.deploy.repo_url = c.run("git config --get remote.origin.url").stdout.strip()
-    #     c.commit = c.run("git rev-parse HEAD").stdout.strip()
-
     with c.cd(c.repo_path):
         print("-- Creating git archive for release")
-        print(c.deploy.repo_url, c.commit)
         revision = c.commit
         revision_number = c.run(
             f"git rev-list --max-count=1 {revision} --", echo=True
