@@ -5,8 +5,8 @@ from django.conf.urls import url
 from django.conf import settings
 from django.conf.urls.static import static
 
-from hknweb.views import landing, users, indrel, serv, people
-from .utils import method_login_and_permission
+from hknweb.views import landing, outreach, users, indrel, people
+from hknweb.utils import method_login_and_permission
 
 __all__ = ["urlpatterns", "safe_urlpatterns"]
 
@@ -30,6 +30,8 @@ app_urlpatterns = [
     path("course_surveys/", include("hknweb.course_surveys.urls")),
     path("", landing.home, name="home"),
     path("about/people/", people.people, name="people"),
+    path("indrel", indrel.indrel, name="indrel"),
+    path("outreach", outreach.outreach, name="outreach"),
 ]
 
 markdownx_urlpatterns = [
@@ -49,24 +51,9 @@ markdownx_urlpatterns = [
     ),
 ]
 
-indrel_urlpatterns = [
-    path("indrel", indrel.indrel, name="indrel"),
-]
-
-serv_urlpatterns = [
-    path("serv", serv.index, name="serv"),
-    path("serv/eecsday", serv.eecsday, name="eecsday"),
-    path("serv/jreecs", serv.jreecs, name="jreecs"),
-    path("serv/bearhacks", serv.bearhacks, name="bearhacks"),
-    path("serv/makershops", serv.maker, name="makershops"),
-    path("serv/calday", serv.calday, name="calday"),
-]
-
 safe_urlpatterns = [
     *app_urlpatterns,
     *markdownx_urlpatterns,
-    *indrel_urlpatterns,
-    *serv_urlpatterns,
 ]
 
 urlpatterns = [
