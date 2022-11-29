@@ -24,7 +24,7 @@ Oops!
     <br>
 
     <div class="links-div link">
-        <a href="{% url 'home' %}">Go to home</a>
+        <a href="{% url 'home' %}" class="left">Go to home</a>
         <a href="{% url 'login' %}?next={{ request.path|urlencode }}" class="right">Switch account</a>
     </div>
 
