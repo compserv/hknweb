@@ -13,6 +13,7 @@ If `conda` is not already available, install [conda](https://docs.conda.io/proje
 $ conda env create -f config/hknweb-dev.yml         # Create dev environment
 $ conda activate hknweb-dev                         # Activate dev environment
 $ python manage.py migrate                          # Initialize database
+$ python manage.py init_permissions                 # Provision database with default permissions
 ```
 
 ## Development

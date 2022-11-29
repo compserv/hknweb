@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Outreach{% endblock %}
+
+{% block heading %}
+Outreach
+{% endblock %}
+
+{% block content %}
+
+{% include 'components/tabs.html' %}
+
+<style>
+    .content {
+        padding-top: 25px;
+        padding-bottom: 25px;
+    }
+
+    .inner {
+        max-width: 1000px;
+        margin: auto;
+        text-align: left;
+    }
+
+    .scrollable {
+        height: 500px;
+        overflow-y: auto;
+    }
+</style>
+
+<div class="inner">
+    <div>
+        Throughout the year, HKN hosts a wide range of events designed to engage students and the general public alike
+        in the fields of electrical engineering and computer science, to provide a glimpse into EECS life at UC Berkeley,
+        and to give back to our wonderful local community. Come learn how to make a programmable LED array, or how to
+        write your own facial recognition algorithms with HKN; no prior experience necessary!
+    </div><br>
+
+    <div class="tab">
+        <button id="default_option" class="tablinks" onclick="open_tab(event, 'eecs_day')">EECS Day</button>
+        <button class="tablinks" onclick="open_tab(event, 'jr_eecs_day')">Junior EECS Day</button>
+        <button class="tablinks" onclick="open_tab(event, 'maker')">Maker Workshops</button>
+        <button class="tablinks" onclick="open_tab(event, 'bearhacks')">Bear Hacks</button>
+        <button class="tablinks" onclick="open_tab(event, 'cal_day')">Cal Day</button>
+    </div>
+
+    <div class="scrollable">
+        <div id="eecs_day" class="tabcontent">
+            <p>Taking place every Fall, EECS Day is our annual open house, providing prospective students in high-school and their parents with an opportunity to learn firsthand
+                what it is like to study <a href="http://eecs.berkeley.edu">EECS at UC Berkeley</a>. The day’s activities typically include a department tour, various hands-on EECS workshops and demos, and the chance to speak to
+                UC Berkeley professors and students on their personal experiences. For those not yet in high school but are still eager to learn about EECS at Cal, HKN hosts <a href="jreecs">Junior EECS Day</a>.</p>
+            <p><i>Annual, Fall Semester</i></p>
+            <h2>Sample Schedule</h2>
+            <ul id="schedule">
+                <li>10:30 am - 11:00 am: Sign In</li>
+                <li>11:00 am - 11:40 am: Speaker</li>
+                <li>11:50 am - 12:40 am: Department Tour</li>
+                <li>12:40 pm - 1:30 pm: Lunch</li>
+                <li>1:30 pm - 2:20 pm: Computer Science Lab</li>
+                <li>2:30 pm - 3:20 pm: Electrical Engineering Lab</li>
+                <li>3:30 pm - 4:00 pm: Closing Panel</li>
+            </ul>
+        </div>
+
+        <div id="jr_eecs_day" class="tabcontent">
+            <p>Much like our <a href="eecsday">EECS Day</a> event, Junior EECS Day provides a taste of EECS at UC Berkeley for all those interested.
+                Specifically catering to students from grade 5-8 as well as their families, our HKN members will lead participants on a
+                 fun-filled day featuring introductory hands-on EECS activities and labs, a tour of campus, spectate a robotics competition,
+                  and a showcase at the end of the day.</p>
+            <p><i>Annual, Spring Semester</i></p>
+            <h2>Schedule</h2>
+            <ul id="schedule">
+                <li>9:50 - 10:00 am: Check-in @ Wozniak Lounge</li>
+                <li>10:00 - 10:30 am: Introduction and Speaker @ Wozniak Lounge</li>
+                <li>10:30 am - 12:00 pm: CS Lab @ 271, 273 Soda</li>
+                <li>12:00 - 1:00 pm: Lunch @ Wozniak Lounge</li>
+                <li>1:00 - 2:30 pm: EE Lab @ 140 Cory</li>
+                <li>2:30 - 3:00 pm: EECS Campus Tour</li>
+                <li>3:00 - 3:30 pm: Wrap-up and Sign Out @ HP Auditorium</li>
+            </ul>
+        </div>
+
+        <div id="maker" class="tabcontent">
+            <p>HKN Maker workshops are a series of weekend-afternoon workshops, open to all current high school students, that serve as an introduction to interesting and relevant EECS topics of today.
+                 We have offered lessons on everything from 3D modeling and printing, computer vision, microcontrollers, IoT (Internet of Things) devices, and much more.</p>
+            <p><i>Annual, Spring Semester</i></p>
+            <h2>Additional Resources</h2>
+            <ul>
+                <li><a href="http://docs.google.com/presentation/d/1XnqMrS39sKCBxrch1EZHocEv-1XRdMmO5W0UV8WtRKE/edit#slide=id.p4">Microcontrollers workshop slides</a></li>
+                <li><a href="http://drive.google.com/file/d/0B9Ic4VrEAB7oMTRVT2NBV0hYaHM/view">Computer vision powerpoint</a></li>
+                <li><a href="http://docs.google.com/presentation/d/1H0LHLGHvfn1s8tE0_9x4HOt6GjRDD2gounZSK6hDcU0/edit">IoT</a></li>
+                <li><a href="http://docs.google.com/presentation/d/1eE2Ju6VoRHxN76ZpOggU2ue0-bHVh0bfR31iMQdYojE/edit#slide=id.g1ec58a0453_0_59">3D printing</a></li>
+            </ul>
+        </div>
+
+        <div id="bearhacks" class="tabcontent">
+            <p>BearHacks is a day-long event for high-school students, especially those with limited EECS experience, to come to UC Berkeley and simply make something of their own.
+                A showcase is held at the end of the day, giving attendees the chance to demo their creations to fellow students and parents. Students can choose from one of our
+                starter projects, or work on anything of their choice; in either case, experienced HKN members will be glad to offer individualized guidance and support throughout the day.</p>
+            <p><i>Annual, Fall Semester</i></p>
+            <h2>Sample Schedule</h2>
+            <ul id="schedule">
+                <li>10:00 am - 10:30 am: Sign In</li>
+                <li>10:30 am - 11:00 am: Guest Speaker</li>
+                <li>11:00 am - 3:30 pm: Hack!</li>
+                <li>3:00 pm - 3:30 pm: Judging</li>
+                <li>3:30 pm - 3:50 pm: Project Showcase</li>
+                <li>3:50 pm - 4:00 pm: Awards Ceremony & Closing Speech</li>
+            </ul>
+        </div>
+
+        <div id="cal_day" class="tabcontent">
+            <p><a href="http://calday.berkeley.edu/">Cal Day</a> is UC Berkeley’s free annual public open house, and HKN will be holding drop-in introductory EECS workshops for campus visitors.
+                In past years, our hands-on workshop projects have included creating a programmable LED array that could flash in different patterns
+                 using a MSP430 microcontroller, or a blinking LED controlled by a 555 timer IC chip.</p>
+           <p><i>Annual, Spring Semester</i></p>
+           <p><b>Unfortunately, Cal Day has been cancelled this semester as part of campus policies regarding COVID-19.</b></p>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById("default_option").click();
+</script>
+
+{% endblock %}

@@ -30,9 +30,9 @@
     <input type="checkbox" name="not-toggles" class="toggle" id="toggle-account" />
     <input type="radio" name="toggles" class="toggle" id="toggle-student" onclick="untoggleAccounts()" checked="checked" />
     <input type="radio" name="toggles" class="toggle" id="toggle-industry" onclick="untoggleAccounts()" {% if request.path|slice:"1:7" == "indrel" %} checked="checked" {% endif %}/>
-    <input type="radio" name="toggles" class="toggle" id="toggle-outreach" onclick="untoggleAccounts()" {% if request.path|slice:"1:5" == "serv" %} checked="checked" {% endif %}/>
+    <input type="radio" name="toggles" class="toggle" id="toggle-outreach" onclick="untoggleAccounts()" {% if request.path|slice:"1:9" == "outreach" %} checked="checked" {% endif %}/>
     <input type="radio" name="toggles" class="toggle" id="toggle-events" onclick="untoggleAccounts()" {% if request.path|slice:"1:7" == "events" %} checked="checked" {% endif %}/>
-    <input type="radio" name="toggles" class="toggle" id="toggle-about" onclick="untoggleAccounts()" {% if request.path|slice:"1:6" == "about" or request.path|slice:"1:7" == "alumni" %} checked="checked" {% endif %}/>
+    <input type="radio" name="toggles" class="toggle" id="toggle-about" onclick="untoggleAccounts()" {% if request.path|slice:"1:6" == "about" %} checked="checked" {% endif %}/>
     <input type="radio" name="toggles" class="toggle" id="toggle-candidate-admin" onclick="untoggleAccounts()"/>
     <script>
       function untoggleAccounts() {
@@ -60,8 +60,12 @@
         </a>
         <div class="navi-menu">
           <label for="toggle-student">Student Services</label>
-          <label for="toggle-industry">Industry</label>
-          <label for="toggle-outreach">Outreach</label>
+          <label for="toggle-industry">
+            <a href="{% url 'indrel' %}">Industry</a>
+            </label>
+          <label for="toggle-outreach">
+            <a href="{% url 'outreach' %}">Outreach</a>
+            </label>
           <label for="toggle-events">Events</label>
           <label for="toggle-about">About</label>
           {% if user.is_authenticated %}
@@ -86,11 +90,6 @@
       </div>
     </div>
 
-    <div class="navi-container mobile-nav-bar" style="text-align: center;">
-      <label for="toggle-student">
-        Student Services
-      </label>
-    </div>
     <div id="student-nav-bar" class="sub-nav-bar navi-container">
       <a href="/tutoring">Tutoring Hours</a>
       <span class="slash">/</span>
@@ -104,49 +103,14 @@
       <span class="slash">/</span>
       <a href="{% url 'studentservices:resume' %}">Resume Critique</a>
     </div>
-    <div class="navi-container mobile-nav-bar" style="text-align: center;">
-      <label for="toggle-industry">
-        Industry
-      </label>
-    </div>
     <div id="industry-nav-bar" class="sub-nav-bar navi-container">
-      <a href="{% url 'indrel' %}">Why HKN?</a>
-      <span class="slash">/</span>
-      <a href="{% url 'resume_book' %}">Resume Book</a>
-      <span class="slash">/</span>
-      <a href="{% url 'infosessions' %}">Infosessions</a>
-      <span class="slash">/</span>
-      <a href="{% url 'career_fair' %}">Career Fair</a>
-      <span class="slash">/</span>
-      <a href="{% url 'contact_us' %}">Contact Us</a>
-    </div>
-    <div class="navi-container mobile-nav-bar" style="text-align: center;">
-      <label for="toggle-outreach">
-        Outreach
-      </label>
+        &nbsp
     </div>
     <div id="outreach-nav-bar" class="sub-nav-bar navi-container">
-      <a href="{% url 'serv' %}">Outreach</a>
-      <span class="slash">/</span>
-      <a href="{% url 'eecsday' %}">EECS Day</a>
-      <span class="slash">/</span>
-      <a href="{% url 'jreecs' %}">Junior EECS Day</a>
-      <span class="slash">/</span>
-      <a href="{% url 'makershops' %}">Maker Workshops</a>
-      <span class="slash">/</span>
-      <a href="{% url 'bearhacks' %}">Bear Hacks</a>
-      <span class="slash">/</span>
-      <a href="{% url 'calday' %}">Cal Day</a>
-    </div>
-    <div class="navi-container mobile-nav-bar" style="text-align: center;">
-      <label for="toggle-events">
-        Events
-      </label>
+        &nbsp
     </div>
     <div id="events-nav-bar" class="sub-nav-bar navi-container">
       <a href="/events">Calendar</a>
-      <span class="slash">/</span>
-      <a href="/events/rsvps?option=semester">All RSVPs</a>
       <span class="slash">/</span>
       <a href="{% url 'events:photos' %}">Photos</a>
       <span class="slash">/</span>
@@ -154,27 +118,14 @@
       <span class="slash">/</span>
       <a href="https://www.flickr.com/people/berkeley_hkn/">Flickr</a>
     </div>
-    <div class="navi-container mobile-nav-bar" style="text-align: center;">
-      <label for="toggle-about">
-        About
-      </label>
-    </div>
     <div id="about-nav-bar" class="sub-nav-bar navi-container">
       <a href="{% url 'about' %}">About HKN</a>
       <span class="slash">/</span>
       <a href="{% url 'people' %}">People</a>
       <span class="slash">/</span>
-      <a href="/alumni">Alumni</a>
-      <span class="slash">/</span>
       <a href="">Yearbooks</a>
     </div>
     {% if user.is_authenticated %}
-      <div class="navi-container mobile-nav-bar" style="text-align: center;">
-        <label for="toggle-account">
-          Welcome, {{ user.first_name }}
-          <i id="carrot"></i>
-        </label>
-      </div>
       <div id="account-nav-bar" class="sub-nav-bar navi-container">
         {% if viewer_is_an_officer %}
           <a href="{% url 'candidate:officer_portal' %}">Officer Portal</a>
@@ -189,28 +140,16 @@
     {% endif %}
 
     <div class="content">
-      <!-- Dummy nav section, to push the rest of the page's content down appropriately. This should be a copy of the drop-down nav bar with the most words. -->
-      <div id="dummy-nav-bar" class="sub-nav-bar navi-container">
-        Exam Archive
-        <span class="slash">/</span>
-        Tutoring Hours
-        <span class="slash">/</span>
-        Review Sessions
-        <span class="slash">/</span>
-        Course Surveys
-        <span class="slash">/</span>
-        <a href="{% url 'studentservices:course_guide' %}">Course Guide</a>
-        <span class="slash">/</span>
-        <a href="{% url 'studentservices:tours' %}">Department Tours</a>
-        <span class="slash">/</span>
-        <a href="{% url 'studentservices:resume' %}">Resume Critique</a>
-      </div>
+        <!-- Dummy nav section, to push the rest of the page's content down appropriately. This should be a copy of the drop-down nav bar with the most words. -->
+        <div id="dummy-nav-bar" class="sub-nav-bar navi-container">
+            &nbsp
+        </div>
 
-      <div class="heading">
-        {% block heading %}{% endblock %}
-      </div>
+        <div class="heading">
+            {% block heading %}{% endblock %}
+        </div>
 
-      {% block content %}{% endblock %}
+        {% block content %}{% endblock %}
     </div>
 
     <div class="footer">

@@ -1,0 +1,282 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% load event_filters %}
+
+{% block title %}{{ event.name }}{% endblock %}
+
+{% block heading %}
+{{ event.name }}
+{% endblock %}
+
+{% block header %}
+<style>
+    .heading {
+        display: none;
+    }
+
+    @media screen and (min-width: 1000px) {
+        .content {
+            padding-bottom: 1em;
+        }
+    }
+
+    .info_img_info {
+        display: none;
+        margin-left: 0.05em;
+    }
+
+    .info_img:hover + .info_img_info {
+        display: inline-block;
+        color: red;
+    }
+
+    .info_img {
+        height: 1em;
+        width: 1em;
+        margin-left: 0.05em;
+        vertical-align: middle;
+    }
+
+    #event-detail-title {
+        margin-bottom: 0.2em;
+        padding-left: 1em;
+    }
+
+    #left-details {
+        padding-left: 2em;
+        width: 45%;
+        float: left;
+    }
+
+    #right-details {
+        text-align: center;
+        padding-right: 2em;
+        width: 45%;
+        float: right;
+    }
+
+    @media screen and (max-width: 1000px) {
+        #left-details {
+            padding-left: 4%;
+            padding-right: 4%;
+            width: 90%;
+            float: none;
+        }
+        
+        #right-details {
+            padding-left: 4%;
+            padding-right: 4%;
+            width: 90%;
+            float: none;
+        }
+
+    }
+
+    .rsvp-list-title {
+        margin-bottom: 0.3em;
+    }
+
+    .rsvp-list {
+        margin: 0.2em;
+    }
+
+    .table-icon {
+        width: 1.5em;
+        vertical-align: middle;
+    }
+</style>
+<script>
+    function RSVP(button, link) {
+        button.disabled = true;
+
+        var xhr = new XMLHttpRequest();
+
+        xhr.onreadystatechange = function () {
+            if (this.readyState != 4) return;
+
+            if (this.status == 200) {
+                window.location = window.location;
+            }
+        };
+
+        xhr.open("POST", link, true);
+        xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+        xhr.send();
+    }
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="parent">
+  <h1 id="event-detail-title"> {{ event.name }} </h1>
+
+  <div id="left-details">
+
+    <p>{{ event_description | safe }}</p>
+    <p><b>Event Type</b>: {{ event.event_type }}</p>
+    <p><b>Location</b>: {{ event_location }}</p>
+    <p><b>Date(s) and Time(s)</b>: {{ event | process_event_time }}</p>
+    <p><b>Semester</b>: {{event.semester}}</p>
+    <p><b>Access level</b>: {{ event_access_level }}</p>
+    <p>
+        <b>Photographer</b>:
+        {% if event.photographer %}
+            {{ event.photographer.first_name }} {{ event.photographer.last_name }} ({{ event.photographer.username }})
+        {% else %}
+            None
+        {% endif %}
+    </p>
+
+    {% if can_edit %}
+        <p>
+            <a href="{% url 'events:edit' event.id %}">
+                Edit This Event
+            </a>
+        </p>
+        <p>
+            <a href="{% url 'events:manage_attendance' event.id %}">
+                Manage attendance form
+            </a>
+        </p>
+        <form autocomplete="off" method="POST" onsubmit="submit_button.disabled = true; return true;">
+            {% csrf_token %}
+
+            Add a photo link: {{ eventphoto_form.photo }}
+            <input type="hidden" name="event" value="{{ event.id }}">
+
+            <button type="submit">Save</button>
+        </form>
+    {% endif %}
+
+    <p><a href="{{ back_link }}">
+        Go Back to Calendar
+    </a></p>
+  </div>
+
+  <div id='right-details'>
+    {% if messages %}
+      {% for message in messages %}
+        <h3 {% if messages.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</h3>
+      {% endfor %}
+    {% endif %}
+
+    <!-- RSVP/un-RSVP button -->
+    {% if request.user.is_authenticated %}
+        {% if rsvp %}
+            <button onclick="RSVP(this, '{% url 'events:unrsvp' event.id %}')">un-RSVP</button>
+        {% else %}
+            <button onclick="RSVP(this, '{% url 'events:rsvp' event.id %}')">RSVP</button>
+        {% endif %}
+
+        {% if waitlisted %}
+        <p class="rsvp-list">You are at position {{waitlist_position}} on the waitlist. <img src="{% static 'candidate/maybe.png'%}" alt="waitlisted" class="table-icon"></p>
+        {% elif rsvp %}
+        <p class="rsvp-list">You have rsvp'd <img src="{% static 'candidate/yes.png'%}" alt="rsvp'd" class="table-icon"></p>
+        {% else %}
+        <p class="rsvp-list">You have not rsvp'd </p>
+        {% endif %}
+
+        {% if rsvp and not rsvp.confirmed and attendance_form %}
+            <a href="{% url 'events:submit_attendance' event.id attendance_form.id rsvp.id %}">
+                Attendance sign-in
+            </a>
+        {% endif %}
+    {% endif %}
+
+    <table style="margin: auto;">
+        {% for rsvp_type_data in data %}
+            <tr>
+                <td colspan="3">
+                    <h3 class="rsvp-list-title">{{ rsvp_type_data.title }}</h3>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <p class="rsvp-list"> Count: {{ rsvp_type_data.count }} </p>
+                </td>
+            </tr>
+            <tr>
+                <th>Name</th>
+                <th>Confirmed</th>
+            </tr>
+            <tbody>
+                {% if rsvp_type_data.data %}
+                    {% for rsvp in rsvp_type_data.data %}
+                        <tr class="rsvp-list">
+                            <td>
+                                {{ rsvp.user.first_name }} {{ rsvp.user.last_name }} ({{ rsvp.user.username }})
+                            </td>
+                            {% if rsvp.confirmed %}
+                                {% if user_access_level == "Internal" %}
+                                    <td>
+                                        <input type="checkbox" checked="False" onclick="RSVP(this, '{% url 'events:confirm_rsvp' rsvp.id 1 %}')">
+                                    </td>
+                                {% else %}
+                                    <td>
+                                        <img src="{% static 'candidate/yes.png'%}" alt="confirmed" class="table-icon">
+                                    </td>
+                                {% endif %}
+                            {% else %}
+                                {% if user_access_level == "Internal" %}
+                                    <td>
+                                        <input type="checkbox" onclick="RSVP(this, '{% url 'events:confirm_rsvp' rsvp.id 0 %}')">
+                                    </td>
+                                {% else %}
+                                    <td>
+                                        <img src="{% static 'candidate/maybe.png'%}" alt="not yet confirmed" class="table-icon">
+                                    </td>
+                                {% endif %}
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                    <tr>
+                        <td colspan="3">
+                            <div class="pagination">
+                                <span class="step-links">
+                                    {% if rsvp_type_data.data.has_previous %}
+                                        <a href="?{{ rsvp_type_data.page_param }}=1">&laquo; first</a>
+                                        <a href="?{{ rsvp_type_data.page_param }}={{ rsvp_type_data.data.previous_page_number }}">previous</a>
+                                    {% endif %}
+                            
+                                    <span class="current">
+                                        Page {{ rsvp_type_data.data.number }} of {{ rsvp_type_data.data.paginator.num_pages }}.
+                                    </span>
+                            
+                                    {% if rsvp_type_data.data.has_next %}
+                                        <a href="?{{ rsvp_type_data.page_param }}={{ rsvp_type_data.data.next_page_number }}">next</a>
+                                        <a href="?{{ rsvp_type_data.page_param }}={{ rsvp_type_data.data.paginator.num_pages }}">last &raquo;</a>
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="3">
+                            No RSVPs to show here!
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        {% endfor %}
+    </table>
+  </div>
+</div>
+
+{% if event.eventphoto_set.exists %}
+    <div style="text-align: center; overflow: auto; margin: auto;">
+        <div style="width: 80em; margin: auto;">
+            <h2>Photos</h2>
+            
+            {% for photo in event.eventphoto_set.all %}
+                <img
+                    style="height: 15em;"
+                    src="{{ photo.photo_display_url }}"
+                >
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}
+
+{% endblock %}

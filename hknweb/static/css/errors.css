@@ -7,10 +7,18 @@ code {
     padding: 1px;
 }
 
+.parent {
+    text-align: center;
+    max-width: 1000px;
+    margin: auto;
+}
+
 .confirm-text {
     font-size: 1.3em;
-    margin-left: 10%;
-    margin-right: 10%;
+}
+
+.left {
+    float: left;
 }
 
 .right {
@@ -23,8 +31,7 @@ code {
 
 .links-div {
     display: block;
-    margin-left: auto;
-    margin-right: auto;
+    margin: auto;
     width: 50%;
     font-size: 1.3em;
 }

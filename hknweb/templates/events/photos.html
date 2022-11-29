@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Photos{% endblock %}
+
+{% block header %}
+<style>
+    .content {
+        padding-top: 1em;
+        padding-bottom: 1em;
+        font-size: 125%;
+    }
+
+    .image-container {
+        position: relative;
+        display: inline-block;
+    }
+
+    .image-container .tooltiptext {
+        opacity: 0;
+        background-color: transparent;
+        color: white;
+        text-align: center;
+        padding: 0.1em 0;
+        border-radius: 0.2em;
+
+        width: 10em;
+        bottom: 50%;
+        left: calc(50% - 5em);
+        position: absolute;
+        z-index: 1;
+    }
+
+    .image-container:hover .tooltiptext {
+        transition: all 500ms ease;
+        opacity: 1;
+    }
+
+    .image-container:hover .image {
+        transition: all 500ms ease;
+        filter: brightness(50%);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <h1 style="text-align: center;">Photos</h1>
+
+    <div style="text-align: center;">
+        {% for photo in page_obj %}
+            <div class="image-container">
+                <a href="{% url 'events:detail' photo.event.id %}">
+                    <img
+                        class="image"
+                        style="height: 15em;"
+                        src="{{ photo.photo_display_url }}"
+                    >
+                </a>
+                <span class="tooltiptext">
+                    {{ photo.event.name }}
+                    <br>
+                    {{ photo.event.start_time }}
+                </span>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div style="text-align: center;">
+        <span>
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+            {% endif %}
+
+            <span>
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+{% endblock %}
+

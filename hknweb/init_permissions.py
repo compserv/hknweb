@@ -1,9 +1,8 @@
 from hknweb.candidate.models import Announcement, OffChallenge, BitByteActivity
 from hknweb.events.models import Event, Rsvp, AttendanceForm
 from hknweb.academics.models import AcademicEntity
-from hknweb.alumni.models import Alumnus
 from hknweb.markdown_pages.models import MarkdownPage
-from hknweb.tutoring.models import TimeSlotPreference, Slot
+from hknweb.tutoring.models import Slot
 
 from django.contrib.auth.models import User, Group, Permission
 from django.contrib.contenttypes.models import ContentType
@@ -36,11 +35,9 @@ def provision():
         ("add_academicentity", AcademicEntity),
         ("view_academicentity", AcademicEntity),
         ("change_academicentity", AcademicEntity),
-        ("view_alumnus", Alumnus),
         ("add_attendanceform", AttendanceForm),
         ("add_markdownpage", MarkdownPage),
         ("add_user", User),
-        ("add_timeslotpreference", TimeSlotPreference),
         ("add_slot", Slot),
     ]
 
