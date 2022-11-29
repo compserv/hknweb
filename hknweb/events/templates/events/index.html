@@ -7,7 +7,6 @@
 
 {% block header %}
 <!-- Scripts which make the calendar work:-->
-<link rel="stylesheet" href="{% static "events/style.css" %}">
 <link rel="stylesheet" href="https://unpkg.com/@fullcalendar/core@4.4.0/main.css" />
 <link rel="stylesheet" href="https://unpkg.com/@fullcalendar/daygrid@4.4.0/main.css" />
 <link rel="stylesheet" href="https://unpkg.com/@fullcalendar/timegrid@4.4.0/main.css" />
@@ -206,7 +205,7 @@ Upcoming {{ title }}
     <div style="text-align: center;">
         {% if messages %}
             {% for message in messages %}
-                <h3  {% if messages.tags %} class="{{ message.tags }}" {% endif %} style="color: #0000A0;">{{ message }}</h3>
+                <h3 {% if messages.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</h3>
             {% endfor %}
         {% endif %}
     </div>
@@ -232,7 +231,7 @@ Upcoming {{ title }}
                 <div style="width: 20%; display: inline-block; text-align: center;">
                     {% if perms.events.add_event %}
                         <br>
-                        <form action="{% url 'events:new' %}" method="GET" id="button" onsubmit="submit_button.disabled = true; return true;">
+                        <form action="{% url 'events:new' %}" method="GET" onsubmit="submit_button.disabled = true; return true;">
                             <button type='submit' name="submit_button">Add an event</button>
                         </form>
                     {% endif %}

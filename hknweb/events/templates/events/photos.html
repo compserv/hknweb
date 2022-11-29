@@ -4,7 +4,6 @@
 {% block title %}Photos{% endblock %}
 
 {% block header %}
-<link rel="stylesheet" href="{% static 'events/style.css' %}">
 <style>
     .content {
         padding-top: 1em;
@@ -67,13 +66,13 @@
     </div>
 
     <div style="text-align: center;">
-        <span class="step-links">
+        <span>
             {% if page_obj.has_previous %}
                 <a href="?page=1">&laquo; first</a>
                 <a href="?page={{ page_obj.previous_page_number }}">previous</a>
             {% endif %}
 
-            <span class="current">
+            <span>
                 Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
             </span>
 

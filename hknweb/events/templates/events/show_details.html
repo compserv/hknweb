@@ -10,29 +10,80 @@
 {% endblock %}
 
 {% block header %}
-<link rel="stylesheet" href="{% static "events/style.css" %}">
 <style>
     .heading {
         display: none;
     }
+
     @media screen and (min-width: 1000px) {
         .content {
             padding-bottom: 1em;
         }
     }
+
     .info_img_info {
-      display: none;
-      margin-left: 0.05em;
+        display: none;
+        margin-left: 0.05em;
     }
+
     .info_img:hover + .info_img_info {
-      display: inline-block;
-      color: red;
+        display: inline-block;
+        color: red;
     }
+
     .info_img {
-      height: 1em;
-      width: 1em;
-      margin-left: 0.05em;
-      vertical-align: middle;
+        height: 1em;
+        width: 1em;
+        margin-left: 0.05em;
+        vertical-align: middle;
+    }
+
+    #event-detail-title {
+        margin-bottom: 0.2em;
+        padding-left: 1em;
+    }
+
+    #left-details {
+        padding-left: 2em;
+        width: 45%;
+        float: left;
+    }
+
+    #right-details {
+        text-align: center;
+        padding-right: 2em;
+        width: 45%;
+        float: right;
+    }
+
+    @media screen and (max-width: 1000px) {
+        #left-details {
+            padding-left: 4%;
+            padding-right: 4%;
+            width: 90%;
+            float: none;
+        }
+        
+        #right-details {
+            padding-left: 4%;
+            padding-right: 4%;
+            width: 90%;
+            float: none;
+        }
+
+    }
+
+    .rsvp-list-title {
+        margin-bottom: 0.3em;
+    }
+
+    .rsvp-list {
+        margin: 0.2em;
+    }
+
+    .table-icon {
+        width: 1.5em;
+        vertical-align: middle;
     }
 </style>
 <script>
@@ -106,8 +157,7 @@
   <div id='right-details'>
     {% if messages %}
       {% for message in messages %}
-        <h3 class="orange-messages {% if messages.tags %} {{ message.tags }} {% endif %}">
-          {{ message }}</h3>
+        <h3 {% if messages.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</h3>
       {% endfor %}
     {% endif %}
 
