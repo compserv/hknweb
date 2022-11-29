@@ -6,7 +6,6 @@ app_name = "events"
 
 aggregate_display_urls = [
     path("", views.index, name="index"),
-    path("rsvps", views.AllRsvpsView.as_view(), name="rsvps"),
     path("leaderboard", views.get_leaderboard, name="leaderboard"),
     path("photos", views.photos, name="photos"),
 ]

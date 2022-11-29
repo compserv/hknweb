@@ -1,6 +1,5 @@
 from hknweb.events.views.aggregate_displays import (
     index,
-    AllRsvpsView,
     get_leaderboard,
     photos,
 )
