@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Markdown Placeholder{% endblock %}
+
+{% block header %}
+  <!-- -->
+{% endblock %}
+
+{% block content %}
+<div class="center measure-very-wide pv4">
+  <h1 class="font-title f3 f2-ns tc">{{ name }}</h1>
+  {{ body|safe }}
+</div>
+{% endblock %}
