@@ -32,7 +32,9 @@ def index(request):
         replace_hour = lambda t, offset: t.replace(
             hour=min(23, max(0, t.hour + offset))
         )
-        times["calendar_start_time"] = replace_hour(slot_times["calendar_start_time"], -1)
+        times["calendar_start_time"] = replace_hour(
+            slot_times["calendar_start_time"], -1
+        )
         times["calendar_end_time"] = replace_hour(slot_times["calendar_end_time"], 2)
 
     form = CourseFilterForm()

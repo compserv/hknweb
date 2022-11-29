@@ -22,7 +22,9 @@ class TutoringLogistics(models.Model):
     class Meta:
         verbose_name_plural = "TutoringLogistics"
 
-    semester = models.ForeignKey(Semester, on_delete=models.CASCADE, null=True, default=None)
+    semester = models.ForeignKey(
+        Semester, on_delete=models.CASCADE, null=True, default=None
+    )
     one_hour_tutors = models.ManyToManyField(
         User, blank=True, related_name="one_hour_tutoring"
     )
@@ -43,7 +45,9 @@ class TutoringLogistics(models.Model):
 
 
 class Slot(models.Model):
-    logistics = models.ForeignKey(TutoringLogistics, on_delete=models.CASCADE, null=True, default=None)
+    logistics = models.ForeignKey(
+        TutoringLogistics, on_delete=models.CASCADE, null=True, default=None
+    )
     room = models.ForeignKey(Room, on_delete=models.CASCADE, null=True, default=None)
     num_tutors = models.IntegerField(default=0)
     tutors = models.ManyToManyField(User, blank=True, related_name="tutoring_slots")

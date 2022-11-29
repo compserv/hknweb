@@ -29,7 +29,9 @@ class HandlerPrivacyTests(TestCase):
     def _gen_url_patterns(self, src: List[Union[URLPattern, URLResolver]], path=()):
         for elem in src:
             if isinstance(elem, URLResolver):
-                yield from self._gen_url_patterns(elem.url_patterns, (*path, elem.pattern))
+                yield from self._gen_url_patterns(
+                    elem.url_patterns, (*path, elem.pattern)
+                )
             elif isinstance(elem, URLPattern):
                 yield elem.callback, (*path, elem.pattern)
             else:
