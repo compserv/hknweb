@@ -19,6 +19,7 @@ unsafe_urlpatterns = [
 ]
 
 app_urlpatterns = [
+    path("polls/", include("hknweb.polls.urls")),
     path("accounts/create/", users.account_create, name="account-create"),
     path("accounts/settings/", users.account_settings, name="account-settings"),
     path("about/", landing.about, name="about"),
