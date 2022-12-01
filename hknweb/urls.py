@@ -18,7 +18,7 @@ unsafe_urlpatterns = [
     path("auth/", include("social_django.urls", namespace="social")),
 ]
 app_urlpatterns = [
-    path('polls/', include('polls.urls')),
+    path('polls/', include('hknweb.polls.urls')),
     path("accounts/create/", users.account_create, name="account-create"),
     path("accounts/settings/", users.account_settings, name="account-settings"),
     path("about/", landing.about, name="about"),

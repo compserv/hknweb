@@ -23,7 +23,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 """ "polls.apps.PollsConfig", """
 
 INSTALLED_APPS = [
-    "hknweb.polls",
     "rest_framework",
     "hknweb",
     "hknweb.academics",
@@ -32,6 +31,7 @@ INSTALLED_APPS = [
     "hknweb.markdown_pages",
     "hknweb.shortlinks",
     "hknweb.alumni",
+    "hknweb.polls",
     "hknweb.candidate",
     "hknweb.coursesemester",
     "hknweb.course_surveys",
