@@ -89,7 +89,11 @@
         </div>
       </div>
     </div>
-
+    <div class="navi-container mobile-nav-bar" style="text-align: center;">
+        <label for="toggle-student">
+            Student Services
+        </label>
+    </div>
     <div id="student-nav-bar" class="sub-nav-bar navi-container">
       <a href="/tutoring">Tutoring Hours</a>
       <span class="slash">/</span>
@@ -103,20 +107,40 @@
       <span class="slash">/</span>
       <a href="{% url 'studentservices:resume' %}">Resume Critique</a>
     </div>
+    <div class="navi-container mobile-nav-bar" style="text-align: center;">
+        <label for="toggle-industry">
+            <a href="{% url 'indrel' %}">Industry</a>
+        </label>
+    </div>
     <div id="industry-nav-bar" class="sub-nav-bar navi-container">
         &nbsp
+    </div>
+    <div class="navi-container mobile-nav-bar" style="text-align: center;">
+        <label for="toggle-outreach">
+            <a href="{% url 'outreach' %}">Outreach</a>
+        </label>
     </div>
     <div id="outreach-nav-bar" class="sub-nav-bar navi-container">
         &nbsp
     </div>
+    <div class="navi-container mobile-nav-bar" style="text-align: center;">
+        <label for="toggle-events">
+            Events
+        </label>
+    </div>
     <div id="events-nav-bar" class="sub-nav-bar navi-container">
-      <a href="/events">Calendar</a>
+      <a href="{% url 'events:index' %}">Calendar</a>
       <span class="slash">/</span>
       <a href="{% url 'events:photos' %}">Photos</a>
       <span class="slash">/</span>
       <a href="{% url 'events:leaderboard' %}">Leaderboard</a>
       <span class="slash">/</span>
       <a href="https://www.flickr.com/people/berkeley_hkn/">Flickr</a>
+    </div>
+    <div class="navi-container mobile-nav-bar" style="text-align: center;">
+        <label for="toggle-about">
+            About
+        </label>
     </div>
     <div id="about-nav-bar" class="sub-nav-bar navi-container">
       <a href="{% url 'about' %}">About HKN</a>
@@ -126,17 +150,23 @@
       <a href="">Yearbooks</a>
     </div>
     {% if user.is_authenticated %}
-      <div id="account-nav-bar" class="sub-nav-bar navi-container">
-        {% if viewer_is_an_officer %}
-          <a href="{% url 'candidate:officer_portal' %}">Officer Portal</a>
-          <span class="slash">/</span>
-        {% endif %}
-        <a href="{% url 'candidate:candidate_portal' %}">Candidate Portal</a>
-        <span class="slash">/</span>
-        <a href="/accounts/settings">Settings</a>
-        <span class="slash">/</span>
-        <a href="/accounts/logout?next={{request.path}}">Log out</a>
-      </div>
+        <div class="navi-container mobile-nav-bar" style="text-align: center;">
+            <label for="toggle-account">
+                Welcome, {{ user.first_name }}
+                <i id="carrot"></i>
+            </label>
+        </div>
+        <div id="account-nav-bar" class="sub-nav-bar navi-container">
+            {% if viewer_is_an_officer %}
+                <a href="{% url 'candidate:officer_portal' %}">Officer Portal</a>
+                <span class="slash">/</span>
+            {% endif %}
+            <a href="{% url 'candidate:candidate_portal' %}">Candidate Portal</a>
+            <span class="slash">/</span>
+            <a href="/accounts/settings">Settings</a>
+            <span class="slash">/</span>
+            <a href="/accounts/logout?next={{request.path}}">Log out</a>
+        </div>
     {% endif %}
 
     <div class="content">
