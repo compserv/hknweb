@@ -17,7 +17,6 @@ unsafe_urlpatterns = [
     path("accounts/", include("django.contrib.auth.urls")),
     path("auth/", include("social_django.urls", namespace="social")),
 ]
-
 app_urlpatterns = [
     path('polls/', include('polls.urls')),
     path("accounts/create/", users.account_create, name="account-create"),

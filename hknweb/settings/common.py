@@ -20,8 +20,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 # Application definition
 
+""" "polls.apps.PollsConfig", """
+
 INSTALLED_APPS = [
-    "polls.apps.PollsConfig",
+    "hknweb.polls",
     "rest_framework",
     "hknweb",
     "hknweb.academics",
