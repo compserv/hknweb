@@ -17,7 +17,6 @@ from hknweb.models import (
 )
 from hknweb.forms import ProvisionCandidatesForm
 
-
 # Unregister the provided model admin
 admin.site.unregister(User)
 
