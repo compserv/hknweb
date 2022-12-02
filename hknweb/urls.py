@@ -22,6 +22,7 @@ app_urlpatterns = [
     path("accounts/create/", users.account_create, name="account-create"),
     path("accounts/settings/", users.account_settings, name="account-settings"),
     path("about/", landing.about, name="about"),
+    path('polls/', include('hknweb.polls.urls')),
     path("academics/", include("hknweb.academics.urls")),
     path("events/", include("hknweb.events.urls")),
     path("alumni/", include("hknweb.alumni.urls")),
