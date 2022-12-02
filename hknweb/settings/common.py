@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "markdownx",
     "social_django",
-    'polls.apps.PollsConfig',
+    # 'polls.apps.PollsConfig',
+    'hknweb.polls'
 ]
 
 MIDDLEWARE = [
