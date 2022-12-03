@@ -1,0 +1,19 @@
+[tool.black]
+exclude = '/(.*migrations)/'
+
+[tool.coverage.run]
+source = ["."]
+command_line = "manage.py test"
+omit = [
+    'fabfile.py',
+    'hknweb/wsgi.py',
+    'manage.py',
+    '*apps.py',
+    '*test_*.py',
+    'hknweb/settings/*.py',
+]
+
+[tool.coverage.report]
+skip_covered = true
+sort = "miss"
+fail_under = 85

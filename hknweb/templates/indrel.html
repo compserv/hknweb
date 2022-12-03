@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Industrial Relations{% endblock %}
+
+{% block heading %}
+Industrial Relations
+{% endblock %}
+
+{% block content %}
+
+{% include 'components/tabs.html' %}
+
+<style>
+    .content {
+        padding-top: 25px;
+        padding-bottom: 25px;
+    }
+
+    .inner {
+        max-width: 1000px;
+        margin: auto;
+        text-align: left;
+    }
+
+    .scrollable {
+        height: 750px;
+        overflow-y: auto;
+    }
+
+    .company-sponsors-logos {
+        text-align: center;
+    }
+
+    .company-sponsors-logo {
+        width: 500px;
+        max-width: 100%;
+    }
+</style>
+
+<div class="inner">
+    <div class="tab">
+        <button id="default_option" class="tablinks" onclick="open_tab(event, 'what_is_hkn')">What is HKN?</button>
+        <button class="tablinks" onclick="open_tab(event, 'resume_book')">Resume Book</button>
+        <button class="tablinks" onclick="open_tab(event, 'career_fair')">EECS Career Fair</button>
+        <button class="tablinks" onclick="open_tab(event, 'infosessions')">Infosessions</button>
+        <button class="tablinks" onclick="open_tab(event, 'sponsors')">Current sponsors</button>
+    </div>
+
+    <div class="scrollable">
+        <div id="what_is_hkn" class="tabcontent">
+            Eta Kappa Nu (HKN) is the national EECS honor society. The Mu Chapter of HKN is one of the most active student groups on the UC Berkeley campus, offering a variety of services to the Berkeley EECS community.
+
+            <h3>Active Organization</h3>
+            Membership is extended to the undergraduates in the top fourth of the junior class and the top third of the senior class in EECS, who demonstrate a commitment to serving their fellow EECS students. HKN embodies not only the prestige of academic achievement, but also the spirit of leadership and service.
+
+            <h3>Department and Student Relationship</h3>
+            HKN is an essential link between the EECS students, the EECS faculty, and the industry. The Berkeley EECS Department has recognized HKN as an important channel of communications between the EECS students and the department.
+
+            <h3>Student and Corporate Service</h3>
+            HKN also hosts company infosessions and annual EECS career fairs, securing a key role in many students' search for internships and other employment opportunities. HKN Mu Chapter has gained much respect from its peers as a source of academic mentorship and information.
+
+            <h3>Extreme Dedication</h3>
+            With an extremely dedicated group of 36 officers and a membership of over 300 undergraduate students, the HKN Mu Chapter specializes in executing planned activities smoothly and successfully, and has won repeated recognition as one of the most active chapters around the nation.
+
+            <h3>Tried and Trusted</h3>
+            Eta Kappa Nu has extensive experience working with industry. We have successfully helped many companies publicize and meet students at corporate infosessions and career fairs we coordinate. Additionally, our resume book has helped companies get in touch with some of the best and brightest EE and CS students in the country.
+
+            <h3>Serving the EECS Community</h3>
+            HKN is committed to serving the EECS community building on more than 10 years of experience. We look forward to working with you in the future. <br><br>
+
+            <h3>Sincerely,</h3>
+            Carl Knox, Kevin Li, Vincent Wang, Matthew Fogel, Seenu Madhavan, Will Vavrik
+        </div>
+
+        <div id="resume_book" class="tabcontent">
+            The Berkeley HKN Resume Book contains the resumes of our membership, which is pooled from the top 25% of the junior class and the top 33% of the senior class. Resumes are continually updated and categorized by graduation date and engineering focus to help you find the perfect match for any employment opportunity.
+
+            <h3>How current is the Resume Book?</h3>
+            It is updated every semester.
+
+            <h3>In what form will I receive the Resume Book?</h3>
+            HKN provides a downloadable Resume Book (as a pdf), or we can also mail a version on a CD.
+
+            <h3>How much does the Resume Book cost?</h3>
+            HKN asks for a $250 donation for the Resume Book. Your donations help us to continue improving the services we offer which include tutoring, exam archives, course surveys and contact with industry to connect the students of the Berkeley EECS community.
+
+            <h3>What kinds of students would I be able to find in the Resume Book?</h3>
+            Check back later to see statistics!
+
+            <h3>How do I order it?</h3>
+            If you would like to order a resume book, please feel free to <a href="mailto:indrel@hkn.eecs.berkeley.edu">contact us</a>.
+        </div>
+
+        <div id="career_fair" class="tabcontent">
+            The University of California at Berkeley chapter of Eta Kappa Nu would like to thank all those involved in making our EECS Career Fair a major success.
+
+            <h3>What is the HKN Career Fair?</h3>
+            The EECS Career Fair is the largest technical career fair held on the Berkeley campus and is the only career fair specifically targeting students majoring in Engineering and Computer Science.
+
+            <h3>Reputation</h3>
+            The EE and CS programs here at Berkeley continue to rank top three in the nation, with a total enrollment exceeding 1,400 students. All companies in attendance can expect to meet hundreds of these highly motivated and highly qualified students.
+
+            <h3>Why choose HKN?</h3>
+            Through the years, HKN has built a strong relationship with both the UC Berkeley EECS Department and the EECS community on campus and in industry. It is our reputation and leadership with the students and the department that allow us to publicize and host successful career fairs. This year, our career fair drew in approximately 650 students.
+
+            <h3>Why our Career Fair?</h3>
+            Because we only target students from technical/engineering majors, your company will see precisely those you wish to recruit. Other larger campus-wide career fairs usually draw in more students, but force companies to be ready to deal with positions spanning multiple departments. Also, companies in the past have found it easier and more effective to take the extra time to talk to students more intimately and ask questions about resumes at our fair.
+
+            <h3>Questions?</h3>
+            Feel free to <a href="mailto:indrel@hkn.eecs.berkeley.edu">contact us</a> with any questions or comments you may have.
+        </div>
+
+        <div id="infosessions" class="tabcontent">
+            Short for information session, it is a recruiting event for students to meet with employers. It is a great opportunity to give potential employees an up-close and personal insight into your company, establish a campus presence, and collect resumes from interested students.
+
+            <h3>What kind of turnout can we expect?</h3>
+            It can vary depending on how well-known your company is among students. If your company has a strong presence and reputation, it can expect 50 to 80 students. An up and coming company can expect 20 to 30 students.
+
+            <h3>What days would you recommend?</h3>
+            The best days of the week are either Tuesday, Wednesday or Thursday after 6pm. Mondays are also an option, or holding the event after 5pm, although both are less optimal. We will help you schedule the most optimal time.
+
+            <h3>What location will be used to host the event?</h3>
+            Infosessions are held in the EECS sector of campus, most often in Soda Hall, the Computer Science building. The rooms vary from lounges, auditoriums, or classrooms, depending on availability. We will try to accommodate any room requests you may have.
+
+            <h3>What if extra equipment is required?</h3>
+            We can accommodate almost any equipment given enough notice. Common equipment that we have provided include a LCD projector, laptop or whiteboard.
+
+            <h3>How does your group advertise the event?</h3>
+            We typically post flyers among the campus buildings that will target the majors that your company is seeking. We also send an e-mail advertising your event to all our members. We will also make announcements to targeted classes on the day of the event if we feel it will help generate a stronger turnout.
+
+            <h3>How much would it cost to hold it with HKN and what does it include?</h3>
+            We typically ask for a standard tax-deductible donation of $800, not including food or equipment rental expenses, but more generosity is welcomed. We are a 501(c)3 tax-exempt non-profit (IEEE, Inc.), university-affiliated organization and we use this money to help improve our services to the EECS community.
+
+            <h3>What kind of food can you provide?</h3>
+            The choice is really up to you and your budget. We can help you decide or you can leave it to us to choose. Our selections help distinguish our infosessions from the typical pizza infosession and provide a better experience for students.
+
+            <h3>Can you co-sponsor an infosession?</h3>
+            Yes, we can work with other organizations to coordinate and setup your infosession. We require that your company is part of the EECS Industrial Liaison Program (ILP) before we are able to coordinate an infosession for your company. You can determine if your company is a member by checking the list here. Acting as co-sponsor, we ask for a separate gift towards our organization.
+
+            <h3>Sounds good, who should I contact?</h3>
+            If you would like to register an infosession, please feel free to <a href="mailto:indrel@hkn.eecs.berkeley.edu">contact us</a>.
+        </div>
+
+        <div id="sponsors" class="tabcontent">
+            We thank all of our sponsors for their support of HKN and the broader EECS community. Click on the logos display below to visit that sponsors' website!
+        
+            <div class="company-sponsors-logos">
+                <a href="https://www.citadel.com/">
+                    <img src="{% static 'img/indrel_sponsors_citadel_logo.png' %}" class="company-sponsors-logo" alt="Citadel logo">
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById("default_option").click();
+</script>
+
+{% endblock %}

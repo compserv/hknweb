@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<style>
+    select {
+        font-size: 3rem;
+        font-family: 'Source Sans Pro', sans-serif;
+        font-weight: normal;
+        border-radius: 0.2em;
+    }
+
+    option {
+        font-size: 1rem;
+        border-radius: 0.2em;
+    }
+</style>
+<script>
+    function toggle_edit(button) {
+        button.disabled = true;
+
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has("edit")) {
+            urlParams.delete("edit");
+        } else {
+            urlParams.set("edit", "true");
+        }
+
+        if (history.pushState) {
+            var newurl = window.location.origin + window.location.pathname + "?" + urlParams.toString();
+            window.history.replaceState({path: newurl}, "", newurl);
+            window.location = window.location;
+        }
+    }
+</script>
+
+<script async src="//embedr.flickr.com/assets/client-code.js" charset="utf-8"></script>
+{% endblock %}
+
+{% block title %}People{% endblock %}
+
+
+{% block heading %}
+    Committees for
+    <div style="display: inline-block;">
+        <form id="semester_select_form">
+            {{ semester_select_form.semester }}
+        </form>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div style="text-align: center; overflow: auto;">
+        <!-- Edit button -->
+        {% if is_officer %}
+            <button
+                onclick="toggle_edit(this)"
+                style="border-radius: 0.3em; border-width: 0.02em;"
+            >
+                {% if request.GET.edit == "true" %}
+                    Stop editing pictures
+                {% else %}
+                    Edit pictures
+                {% endif %}
+            </button>
+        {% endif %}
+
+        <!-- Display execs -->
+        <div style="width: 80em; margin: auto;">
+            <h2>Executives</h2>
+
+            {% for committeeship in execs %}
+                <div>
+                    {% for title, users in committeeship.people.items %}
+                        {% for user in users %}
+                            {% include 'about/_user_image.html' %}
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Display committees and people -->
+        {% for committeeship in committeeships %}
+            <div style="width: 80em; margin: auto;">
+                <h2>{{ committeeship.committee.name }}</h2>
+
+                <div>
+                    {% for title, users in committeeship.people.items %}
+                        {% for user in users %}
+                            {% include 'about/_user_image.html' %}
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        function onchange(e) {
+            document.getElementById("semester_select_form").submit();
+        }
+
+        document.getElementById("id_semester").addEventListener("change", onchange);
+    </script>
+{% endblock %}

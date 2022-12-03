@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% load static %}
+{% load app_filters %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static "candidate/style.css" %}">
+<script>
+    function checkoff_req(button, logistics_id, type, obj_title, user_id, operation) {
+        button.disabled = true;
+
+        var formData = new FormData();
+        formData.append("logistics_id", logistics_id);
+        formData.append("type", type);
+        formData.append("obj_title", obj_title);
+        formData.append("user_id", user_id);
+        formData.append("operation", operation);
+
+        var xhr = new XMLHttpRequest();
+
+        xhr.onreadystatechange = function () {
+            if (this.readyState != 4) return;
+
+            if (this.status == 200) {
+                window.location.reload(true);
+            }
+        };
+
+        xhr.open("POST", "{% url 'candidate:checkoff_req' %}", true);
+        xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+        xhr.send(formData);
+    }
+</script>
+{% endblock %}
+
+{% block title %}Officer Portal{% endblock %}
+
+{% block heading %}
+Officer Portal
+{% endblock %}
+
+{% block content %}
+
+    {% if messages %}
+        <div style="text-align: center; width: 80%; margin: auto;">
+            <ul class="messages">
+                {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    <section class="main-panel">
+        <h2>Officer Challenges</h2>
+        <div style="width: 80%; text-align: center; margin: auto;">
+            {% include 'candidate/challenges_table.html' %}
+        </div>
+    </section>
+
+    <section class="main-panel">
+        <h2>Bit-Byte Activities</h2>
+        <div style="width: 80%; text-align: center; margin: auto;">
+            {% include 'candidate/bitbytes_table.html' %}
+        </div>
+    </section>
+
+    <section class="main-panel">
+        <h2>Candidate Summary</h2>
+        <div style="overflow: auto; white-space: nowrap; min-width: 1000px; text-align: center; margin: auto;">
+            <table class="table">
+                <thead>
+                    <th class="header sticky-col first-col">Name</th>
+                    <th class="header sticky-col second-col">Overall</th>
+                    {% for header in headers %}
+                        <th class="header">{{ header }}</th>
+                    {% endfor %}
+                </thead>
+                <tbody>
+                    {% for row in rows %}
+                        <tr>
+                            <td class="sticky-col first-col">
+                                <a href="{% url 'candidate:candidate_portal_view_by_username' row.username %}">{{ row.name }} ({{ row.username }})</a>
+                            </td>
+                            <td class="sticky-col second-col">
+                                <span class="req {% if not row.overall %}not-{% endif %}done"></span>
+                            </td>
+                            {% for n_completed, n_required in row.statuses|zip:minimums %}
+                                <td>
+                                    {% if n_completed >= n_required %}
+                                        <span class="req done"></span>
+                                    {% else %}
+                                        {{ n_completed }} / {{ n_required }}
+                                    {% endif %}
+                                </td>
+                            {% endfor %}
+                            {% for info in row.checkoffs %}
+                                <td>
+                                    <input
+                                        type="checkbox"
+                                        {% if info.status %}checked{% endif %}
+                                        onclick="checkoff_req(this, '{{ info.logistics_id }}', '{{ info.type }}', '{{ info.obj_title }}', '{{ info.user_id }}', '{{ info.operation }}')"
+                                    >
+                                </td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                    <tr class="border-top">
+                        <td class="sticky-col first-col">Overall</td>
+                        <td class="sticky-col second-col">{{ summary.0 }} / {{ rows|length }}</td>
+                        {% for s in summary|slice:"1:" %}
+                            <td>{{ s }} / {{ rows|length }}</td>
+                        {% endfor %}
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section style="text-align: center; width: 80%; margin: auto;">
+        <h2>Quick links</h2>
+
+        <div style="width: 80%; margin: auto;">
+            <table>
+                <tr>
+                    <th style="width: 30%;"></th>
+                    <th style="width: 70%;"></th>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="{% url 'admin:auth_user_provision_candidate_accounts' %}">Provision candidate accounts</a>
+                    </td>
+                    <td>
+                        Redirects to the admin page. Submit a CSV with three headers "First name", "Last name", and "Berkeley email". The Berkeley email must end in "@berkeley.edu".
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </section>
+{% endblock %}

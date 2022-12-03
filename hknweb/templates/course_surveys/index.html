@@ -1,0 +1,1030 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    Course surveys
+{% endblock %}
+
+{% block header %}
+    <style>
+        .header {
+            margin: auto;
+            width: 50%;
+            text-align: center;
+            padding-bottom: 0.25%;
+        }
+    </style>
+
+    <!-- Demographic selection and information panels -->
+    <style>
+        .demographic-selection-panel {
+            box-shadow: 0 0 0.5em #252525;
+            margin: auto;
+            height: 30vh;
+            width: 20vw;
+            border-radius: 0.75em;
+            text-align: center;
+            position: relative;
+            display: inline-block;
+            margin-bottom: 2%;
+        }
+
+        .demographic-selection-panel:hover {
+            box-shadow: none;
+            background-color: #252525;
+            color: white;
+        }
+
+        .demographic-selection-panel-header {
+            padding-top: 50%;
+            font-size: 150%;
+        }
+
+        .demographic-information-panel {
+            box-shadow: 0 0 0.5em #252525;
+            margin: auto;
+            height: 40vh;
+            width: 62vw;
+            border-radius: 0.75em;
+            text-align: center;
+            position: relative;
+            margin-bottom: 1%;
+        }
+
+        .demographic-information-panel-header {
+            font-size: 150%;
+            margin-bottom: 1%;
+        }
+
+        .demographic-information-panel-selection {
+            display: inline-block;
+            margin-left: 1em;
+            margin-right: 1em;
+            margin-top: 0.5em;
+        }
+
+        .demographic-information-panel-body {
+            font-size: 125%;
+            text-align: left;
+            padding-left: 10%;
+            padding-right: 10%;
+        }
+
+        .demographic-information-panel-footer {
+            font-size: 150%;
+            position: absolute;
+            bottom: 2%;
+            margin-left: auto;
+            margin-right: auto;
+            left: 0;
+            right: 0;
+            text-align: center;
+        }
+    </style>
+
+    <!-- Search panel -->
+    <style>
+        .search-panel {
+            box-shadow: 0 0 0.5em #252525;
+            margin: auto;
+            margin-left: 5%;
+            margin-bottom: 2%;
+            height: 75vh;
+            width: 30vw;
+            border-radius: 0.75em;
+            text-align: center;
+            position: relative;
+            float: left;
+        }
+
+        .search-panel-list-item-text {
+            margin: 0;
+            padding: 0;
+            padding-top: 0.2em;
+            display: inline-block;
+            width: 50%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .search-panel-list-item-bubble {
+            border: 0.1em solid gainsboro;
+            border-radius: 0.75em;
+            background-color: rgb(135, 206, 250, 0.9);
+            width: 40%;
+            margin: 0;
+            padding: 0;
+            display: inline;
+            float: left;
+            font-size: 110%;
+        }
+
+        .search-panel-selection {
+            display: inline-block;
+            margin-left: 1em;
+            margin-right: 1em;
+            border: 0.1em solid gainsboro;
+            border-radius: 0.75em;
+            width: 30%;
+        }
+
+        .previous-page {
+            float: left;
+            margin-left: 2em;
+        }
+
+        .next-page {
+            float: right;
+            margin-right: 2em;
+        }
+
+        .page-number-selector {
+            text-decoration: underline;
+            border: 0.1em solid gainsboro;
+            border-radius: 0.75em;
+            padding: 0;
+            font-size: 80%;
+            width: 30%;
+        }
+
+        @media screen and (max-height: 768px) {
+            .search-panel {
+                box-shadow: 0 0 0.5em #252525;
+                margin: auto;
+                margin-left: 5%;
+                margin-bottom: 2%;
+                height: 90vh;
+                width: 30vw;
+                border-radius: 0.75em;
+                text-align: center;
+                position: relative;
+                float: left;
+            }
+
+            .search-panel-list-item-text {
+                display: none;
+            }
+
+            .search-panel-list-item-bubble {
+                border: 0.1em solid gainsboro;
+                border-radius: 0.75em;
+                background-color: rgb(135, 206, 250, 0.9);
+                width: 100%;
+                margin: 0;
+                padding: 0;
+                display: inline;
+                float: left;
+                font-size: 110%;
+            }
+        }
+
+        @media screen and (max-height: 600px) {
+            .search-panel {
+                box-shadow: 0 0 0.5em #252525;
+                margin: auto;
+                margin-left: 5%;
+                margin-bottom: 2%;
+                height: 120vh;
+                width: 30vw;
+                border-radius: 0.75em;
+                text-align: center;
+                position: relative;
+                float: left;
+            }
+        }
+
+        @media screen and (max-height: 450px) {
+            .search-panel {
+                box-shadow: 0 0 0.5em #252525;
+                margin: auto;
+                margin-left: 5%;
+                margin-bottom: 2%;
+                height: 150vh;
+                width: 30vw;
+                border-radius: 0.75em;
+                text-align: center;
+                position: relative;
+                float: left;
+            }
+        }
+
+        @media screen and (max-width: 1024px) {
+            .search-panel {
+                box-shadow: 0 0 0.5em #252525;
+                margin: auto;
+                margin-left: 5%;
+                margin-bottom: 2%;
+                height: 90vh;
+                width: 90%;
+                border-radius: 0.75em;
+                text-align: center;
+            }
+
+            .previous-page {
+                float: none;
+                margin: auto;
+            }
+
+            .next-page {
+                float: none;
+                margin: auto;
+            }
+
+            .page-number-selector {
+                text-decoration: underline;
+                border: 0.1em solid gainsboro;
+                border-radius: 0.75em;
+                padding: 0;
+                font-size: 100%;
+                width: 80%;
+            }
+
+            @media screen and (max-height: 768px) {
+                .search-panel {
+                    box-shadow: 0 0 0.5em #252525;
+                    margin: auto;
+                    margin-left: 5%;
+                    margin-bottom: 2%;
+                    height: 90vh;
+                    width: 90%;
+                    border-radius: 0.75em;
+                    text-align: center;
+                }
+            }
+
+            @media screen and (max-height: 600px) {
+                .search-panel {
+                    box-shadow: 0 0 0.5em #252525;
+                    margin: auto;
+                    margin-left: 5%;
+                    margin-bottom: 2%;
+                    height: 120vh;
+                    width: 90%;
+                    border-radius: 0.75em;
+                    text-align: center;
+                }
+            }
+
+            @media screen and (max-height: 450px) {
+                .search-panel {
+                    box-shadow: 0 0 0.5em #252525;
+                    margin: auto;
+                    margin-left: 5%;
+                    margin-bottom: 2%;
+                    height: 150vh;
+                    width: 90%;
+                    border-radius: 0.75em;
+                    text-align: center;
+                }
+            }
+
+            .search-panel-selection {
+                display: inline-block;
+                margin-left: 1em;
+                margin-right: 1em;
+                border: 0.1em solid gainsboro;
+                border-radius: 0.75em;
+                width: 80%;
+            }
+        }
+
+        .search-panel-header {
+            font-weight: normal;
+            font-size: 135%;
+            margin-top: 1%;
+        }
+
+        .search-panel-selection:hover {
+            cursor: pointer;
+        }
+
+        .search-panel-body {
+            text-align: center;
+            margin: 0;
+            margin-top: 1.5em;
+            padding: 0.5em;
+        }
+
+        .search-panel-list {
+            list-style-type: none;
+            padding: 0.5em;
+            padding-top: 0;
+            padding-bottom: 0;
+            margin-top: 0;
+            overflow: scroll;
+        }
+
+        .search-panel-list-item {
+            margin: auto;
+            padding: 0.5em;
+            width: 90%;
+            text-align: center;
+            border: 0.1em solid gainsboro;
+            border-bottom: none;
+            height: 1.75em;
+        }
+
+        .search-panel-list-item:hover {
+            cursor: pointer;
+        }
+
+        .search-bar {
+            border: 0.1em solid gainsboro;
+            border-radius: 0.3em;
+            border-bottom: none;
+            background: gainsboro;
+            width: 80%;
+            margin: auto;
+            margin-top: 0.5em;
+            margin-bottom: 1%;
+            padding-left: 0.2em;
+            padding-right: 0.2em;
+            padding-top: 0.1em;
+            padding-bottom: 0.1em;
+            text-align: left;
+            font-size: 100%;
+        }
+
+        .page-number-selector:hover {
+            cursor: pointer;
+        }
+
+    </style>
+
+    <!-- Information panels -->
+    <style>
+        .information-panel {
+            box-shadow: 0 0 0.5em #252525;
+            height: 25vh;
+            margin: auto;
+            margin-left: 1%;
+            width: 55vw;
+            border-radius: 0.75em;
+            text-align: center;
+            position: relative;
+            display: inline-block;
+            float: none;
+            padding: 0;
+        }
+
+        .ratings-panel {
+            box-shadow: 0 0 0.5em #252525;
+            height: 50vh;
+            margin: auto;
+            margin-top: 0;
+            margin-left: 1%;
+            margin-bottom: 3%;
+            width: 55vw;
+            border-radius: 0.75em;
+            text-align: center;
+            position: relative;
+            display: inline-block;
+            float: none;
+            padding: 0;
+        }
+
+        .previous-survey {
+            float: left;
+        }
+
+        .next-survey {
+            float: right;
+        }
+
+        @media screen and (max-height: 768px) {
+            .information-panel {
+                box-shadow: 0 0 0.5em #252525;
+                height: 30vh;
+                margin: auto;
+                margin-left: 1%;
+                width: 55vw;
+                border-radius: 0.75em;
+                text-align: center;
+                position: relative;
+                display: inline-block;
+                float: none;
+                padding: 0;
+            }
+
+            .ratings-panel {
+                box-shadow: 0 0 0.5em #252525;
+                height: 60vh;
+                margin: auto;
+                margin-top: 0;
+                margin-left: 1%;
+                margin-bottom: 3%;
+                width: 55vw;
+                border-radius: 0.75em;
+                text-align: center;
+                position: relative;
+                display: inline-block;
+                float: none;
+                padding: 0;
+            }
+        }
+
+        @media screen and (max-height: 600px) {
+            .information-panel {
+                box-shadow: 0 0 0.5em #252525;
+                height: 40vh;
+                margin: auto;
+                margin-left: 1%;
+                width: 55vw;
+                border-radius: 0.75em;
+                text-align: center;
+                position: relative;
+                display: inline-block;
+                float: none;
+                padding: 0;
+            }
+
+            .ratings-panel {
+                box-shadow: 0 0 0.5em #252525;
+                height: 80vh;
+                margin: auto;
+                margin-top: 0;
+                margin-left: 1%;
+                margin-bottom: 3%;
+                width: 55vw;
+                border-radius: 0.75em;
+                text-align: center;
+                position: relative;
+                display: inline-block;
+                float: none;
+                padding: 0;
+            }
+        }
+
+        @media screen and (max-height: 450px) {
+            .information-panel {
+                box-shadow: 0 0 0.5em #252525;
+                height: 60vh;
+                margin: auto;
+                margin-left: 1%;
+                width: 55vw;
+                border-radius: 0.75em;
+                text-align: center;
+                position: relative;
+                display: inline-block;
+                float: none;
+                padding: 0;
+            }
+
+            .ratings-panel {
+                box-shadow: 0 0 0.5em #252525;
+                height: 90vh;
+                margin: auto;
+                margin-top: 0;
+                margin-left: 1%;
+                margin-bottom: 3%;
+                width: 55vw;
+                border-radius: 0.75em;
+                text-align: center;
+                position: relative;
+                display: inline-block;
+                float: none;
+                padding: 0;
+            }
+        }
+
+        @media screen and (max-width: 1024px) {
+            .information-panel {
+                box-shadow: 0 0 0.5em #252525;
+                height: 100%;
+                margin: auto;
+                margin-left: 5%;
+                width: 90%;
+                border-radius: 0.75em;
+                text-align: center;
+                position: relative;
+                display: inline-block;
+                float: none;
+                padding: 0;
+            }
+
+            .ratings-panel {
+                box-shadow: 0 0 0.5em #252525;
+                height: 100%;
+                margin: auto;
+                margin-top: 0;
+                margin-left: 5%;
+                margin-bottom: 3%;
+                width: 90%;
+                border-radius: 0.75em;
+                text-align: center;
+                position: relative;
+                display: inline-block;
+                float: none;
+                padding: 0;
+            }
+            @media screen and (max-height: 768px) {
+                .information-panel {
+                    box-shadow: 0 0 0.5em #252525;
+                    height: 100%;
+                    margin: auto;
+                    margin-left: 5%;
+                    width: 90%;
+                    border-radius: 0.75em;
+                    text-align: center;
+                    position: relative;
+                    display: inline-block;
+                    float: none;
+                    padding: 0;
+                }
+
+                .ratings-panel {
+                    box-shadow: 0 0 0.5em #252525;
+                    height: 100%;
+                    margin: auto;
+                    margin-top: 0;
+                    margin-left: 5%;
+                    margin-bottom: 3%;
+                    width: 90%;
+                    border-radius: 0.75em;
+                    text-align: center;
+                    position: relative;
+                    display: inline-block;
+                    float: none;
+                    padding: 0;
+                }
+            }
+
+            @media screen and (max-height: 600px) {
+                .information-panel {
+                    box-shadow: 0 0 0.5em #252525;
+                    height: 40vh;
+                    margin: auto;
+                    margin-left: 5%;
+                    width: 90%;
+                    border-radius: 0.75em;
+                    text-align: center;
+                    position: relative;
+                    display: inline-block;
+                    float: none;
+                    padding: 0;
+                }
+
+                .ratings-panel {
+                    box-shadow: 0 0 0.5em #252525;
+                    height: 100%;
+                    margin: auto;
+                    margin-top: 0;
+                    margin-left: 5%;
+                    margin-bottom: 3%;
+                    width: 90%;
+                    border-radius: 0.75em;
+                    text-align: center;
+                    position: relative;
+                    display: inline-block;
+                    float: none;
+                    padding: 0;
+                }
+            }
+
+            @media screen and (max-height: 450px) {
+                .information-panel {
+                    box-shadow: 0 0 0.5em #252525;
+                    height: 60vh;
+                    margin: auto;
+                    margin-left: 5%;
+                    width: 90%;
+                    border-radius: 0.75em;
+                    text-align: center;
+                    position: relative;
+                    display: inline-block;
+                    float: none;
+                    padding: 0;
+                }
+
+                .ratings-panel {
+                    box-shadow: 0 0 0.5em #252525;
+                    height: 100%;
+                    margin: auto;
+                    margin-top: 0;
+                    margin-left: 5%;
+                    margin-bottom: 3%;
+                    width: 90%;
+                    border-radius: 0.75em;
+                    text-align: center;
+                    position: relative;
+                    display: inline-block;
+                    float: none;
+                    padding: 0;
+                }
+            }
+
+            .previous-survey {
+                float: none;
+            }
+
+            .next-survey {
+                float: none;
+            }
+        }
+
+        .information-panel-header {
+            font-size: 150%;
+            text-align: center;
+            margin: 1em;
+        }
+
+        .ratings-panel-header {
+            font-size: 125%;
+            margin: 1em;
+            height: calc(20% - 2em);
+        }
+
+        .ratings-panel-body {
+            padding: 1em;
+            overflow: scroll;
+            height: calc(80% - 2em);
+        }
+
+        .survey-number-navigator {
+            text-decoration: underline;
+            border: 0.1em solid gainsboro;
+            border-radius: 0.75em;
+            padding: 0.2em;
+        }
+
+        .survey-number-navigator:hover {
+            cursor: pointer;
+        }
+
+        .ratings-table {
+            padding: auto;
+            margin: auto;
+            width: 100%;
+        }
+
+        .ratings-item-bubble {
+            border-radius: 1em;
+            color: white;
+        }
+
+        .related-link:hover {
+            cursor: pointer;
+        }
+
+    </style>
+
+    <!-- Designs -->
+    <style>
+        .design-list {
+            font-size: 150%;
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .design-list-item {
+            display: inline-block;
+            margin-left: 1em;
+            margin-right: 1em;
+            min-width: 5.5em;
+        }
+
+    </style>
+
+    <script>
+        function clickSelectionStudent() {
+            document.getElementById("student-selection").style.fontWeight="Bold";
+            document.getElementById("ta-selection").style.fontWeight="Normal";
+            document.getElementById("instructor-selection").style.fontWeight="Normal";
+
+            document.getElementById("selection-text-none").style.display="none";
+            document.getElementById("selection-text-student").style.display="block";
+            document.getElementById("selection-text-ta").style.display="none";
+            document.getElementById("selection-text-instructor").style.display="none";
+        }
+
+        function clickSelectionTA() {
+            document.getElementById("student-selection").style.fontWeight="Normal";
+            document.getElementById("ta-selection").style.fontWeight="Bold";
+            document.getElementById("instructor-selection").style.fontWeight="Normal";
+
+            document.getElementById("selection-text-none").style.display="none";
+            document.getElementById("selection-text-student").style.display="none";
+            document.getElementById("selection-text-ta").style.display="block";
+            document.getElementById("selection-text-instructor").style.display="none";
+        }
+
+        function clickSelectionInstructor() {
+            document.getElementById("student-selection").style.fontWeight="Normal";
+            document.getElementById("ta-selection").style.fontWeight="Normal";
+            document.getElementById("instructor-selection").style.fontWeight="Bold";
+
+            document.getElementById("selection-text-none").style.display="none";
+            document.getElementById("selection-text-student").style.display="none";
+            document.getElementById("selection-text-ta").style.display="none";
+            document.getElementById("selection-text-instructor").style.display="block";
+        }
+
+        function clickSearchByCourse() {
+            document.getElementById("search-panel-selection-course").style.fontWeight="Bold";
+            document.getElementById("search-panel-selection-instructor").style.fontWeight="Normal";
+
+            document.getElementById("search-panel-list-course").style.display="block";
+            document.getElementById("search-panel-list-instructor").style.display="none";
+
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set("search_by", "courses");
+            urlParams.delete("page_number");
+            urlParams.delete("search_value");
+            window.location.search = urlParams;
+        }
+
+        function clickSearchByInstructor() {
+            document.getElementById("search-panel-selection-course").style.fontWeight="Normal";
+            document.getElementById("search-panel-selection-instructor").style.fontWeight="Bold";
+
+            document.getElementById("search-panel-list-course").style.display="none";
+            document.getElementById("search-panel-list-instructor").style.display="block";
+
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set("search_by", "instructors");
+            urlParams.delete("page_number");
+            urlParams.delete("search_value");
+            window.location.search = urlParams;
+        }
+
+        function clickInformationInstructor(id) {
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set("instructor", id);
+            urlParams.delete("course");
+            urlParams.delete("survey_number");
+            window.location.search = urlParams;
+        }
+
+        function clickInformationCourse(id) {
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set("course", id);
+            urlParams.delete("instructor");
+            urlParams.delete("survey_number");
+            window.location.search = urlParams;
+        }
+
+        function clickSurveyNumber(survey_number) {
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set("survey_number", survey_number);
+            window.location.search = urlParams;
+        }
+
+        function clickPageNumber(page_number) {
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set("page_number", page_number);
+            window.location.search = urlParams;
+        }
+    </script>
+{% endblock %}
+
+{% block content %}
+    <h1 class="header">
+        Course surveys
+    </h1>
+
+    <!-- Demographic selection and information panels -->
+    {% if courses is None and instructors is None %}
+        <div>
+            <div id="instructions">
+                <div class="panel panel-primary demographic-selection-panel" style="float: left; left: 17.5vw;" onclick="clickSelectionStudent()">
+                    <div class="panel-header demographic-selection-panel-header">
+                        For students
+                    </div>
+                </div>
+                <div class="panel panel-primary demographic-selection-panel" style="float: none; left: 18.5vw;" onclick="clickSelectionTA()">
+                    <div class="panel-header demographic-selection-panel-header">
+                        For TAs or (u)GSIs
+                    </div>
+                </div>
+                <div class="panel panel-primary demographic-selection-panel" style="float: right; right: 17.5vw;" onclick="clickSelectionInstructor()">
+                    <div class="panel-header demographic-selection-panel-header">
+                        For instructors
+                    </div>
+                </div>
+        
+                <div class="panel panel-primary demographic-information-panel">
+                    <div class="panel-header demographic-information-panel-header">
+                        <div class="demographic-information-panel-selection" id="student-selection">
+                            Student
+                        </div>
+                        /
+                        <div class="demographic-information-panel-selection" id="ta-selection">
+                            Teaching Assistant
+                        </div>
+                        /
+                        <div class="demographic-information-panel-selection" id="instructor-selection">
+                            Instructor
+                        </div>
+                    </div>
+                    <div class="panel-body demographic-information-panel-body" id="selection-text">
+                        <div id="selection-text-none" style="text-align: center;">
+                            Click on a panel!
+                        </div>
+                        <div id="selection-text-student" style="display: none;">
+                            As a student, you are able to: <br>
+        
+                            - browse through our course map<br>
+                            - view course and instructor ratings throughout the semesters<br>
+                        </div>
+                        <div id="selection-text-ta" style="display: none;">
+                            If you are a Teaching Assistant for any EE/CS course, you are able to: <br>
+        
+                            - view and print your course evaluations <br>
+                            - enable public view for your data <br>
+                            - update your contact informations (ie. website, email, interests, profile picture). <br>
+                            - view as Student <br>
+                        </div>
+                        <div id="selection-text-instructor" style="display: none;">
+                            If you are a Faculty Instructor for any EE/CS course, you are able to: <br>
+        
+                            - view and print your course evaluations <br>
+                            - update your contact informations (ie. website, email, interests, profile picture). <br>
+                            - view TA evaluations for hiring purposes <br>
+                            - view as Student <br>
+                        </div>
+                    </div>
+                    <div class="panel-footer demographic-information-panel-footer">
+                        Sign in via <a href="https://auth.berkeley.edu/cas/login?service={{ service }}">CalNet</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Course and instructor information panels -->
+    {% if courses is not None or instructors is not None %}
+        <div>
+            <div class="panel panel-primary search-panel">
+                <div class="panel-header search-panel-header">
+                    Filter by: <br>
+                    <div class="search-panel-selection" id="search-panel-selection-course" onclick="clickSearchByCourse()" {% if courses %} style="font-weight: bold;" {% endif %}>
+                        Course
+                    </div>
+                    /
+                    <div class="search-panel-selection" id="search-panel-selection-instructor" onclick="clickSearchByInstructor()" {% if instructors %} style="font-weight: bold" {% endif %}>
+                        Instructor
+                    </div>
+                    <br>
+                    <form action="{% url 'course_surveys:index' %}">
+                        <input type="hidden" name="search_by" value="{{ search_by }}">
+                        <input class="search-bar" type="text" placeholder="Search" name="search_value" {% if search_value %} value={{ search_value }} {% endif %}>
+                    </form>
+                    <div class="page-number-selector previous-page" {% if previous_page %} onClick="clickPageNumber({{ previous_page }})" {% else %} style="opacity: 0.6; text-decoration: none;" {% endif %}>
+                        Prev
+                    </div>
+                    <div class="page-number-selector next-page" {% if next_page %} onClick="clickPageNumber({{ next_page }})" {% else %} style="opacity: 0.6; text-decoration: none;" {% endif %}>
+                        Next
+                    </div>
+                </div>
+                <div class="panel-body search-panel-body">
+                    <ul class="search-panel-list" id="search-panel-list-course" {% if not courses %} style="display: none;" {% endif %}>
+                        {% for course in courses %}
+                            <li class="search-panel-list-item" onclick="clickInformationCourse({{ course.id }})">
+                                <div class="search-panel-list-item-bubble">
+                                    {{course.dept}} {{course.number}}
+                                </div>
+                                <div class="search-panel-list-item-text">
+                                    {{ course.name }}
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    <ul class="search-panel-list" id="search-panel-list-instructor"  {% if not instructors %} style="display: none;" {% endif %}>
+                        {% for instructor in instructors %}
+                            <li class="search-panel-list-item" onclick="clickInformationInstructor({{ instructor.id }})">
+                                <div class="search-panel-list-item-bubble" style="padding-left: 20%; padding-right: 20%; width: 60%;">
+                                    {{instructor.name}}
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="panel panel-primary information-panel">
+                <div class="panel-header information-panel-header">
+                    {% if course %}
+                        <div>
+                            {{ course.dept }} {{ course.number }}: {{ course.name }}
+                        </div>
+                    {% elif instructor %}
+                        <div>
+                            {{ instructor.name }}
+                        </div>
+                    {% else %}
+                        <div>
+                            Click on a course or instructor to show information!
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="panel-body information-panel-body">
+                    {% if course %}
+                        <div>
+                            No additional information about this course available at this time!
+                        </div>
+                    {% elif instructor %}
+                        <div>
+                            Instructor type: {{ instructor.instructor_type }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="panel panel-primary ratings-panel">
+                <div class="panel-header ratings-panel-header">
+                    {% if course or instructor %}
+                        <div class="survey-number-navigator previous-survey" {% if previous_survey %} onClick="clickSurveyNumber({{ previous_survey }})" {% else %} style="opacity: 0.6; text-decoration: none;" {% endif %}>
+                            Prev
+                        </div>
+                    {% endif %}
+                    {% if course %}
+                        <div style="display: inline-block;">
+                            {{ survey.semester }} taught by <div class="related-link" style="text-decoration: underline; display: inline;" onclick="clickInformationInstructor({{ survey.instructor_id }})">{{ survey.instructor_name }}</div>
+                            <br>
+                            {% if survey.ratings %}
+                                {{ survey.num_students }} students ({{ survey.response_count }} responses)
+                            {% endif %}
+                        </div>
+                    {% elif instructor %}
+                        <div style="display: inline-block;">
+                            {{ survey.semester }} as a {{ instructor.instructor_type }} for <div class="related-link" style="text-decoration: underline; display: inline;" onclick="clickInformationCourse({{ survey.course_id }})">{{ survey.dept }} {{ survey.number }}</div>
+                            <br>
+                            {% if survey.ratings %}
+                                {{ survey.num_students }} students ({{ survey.response_count }} responses)
+                            {% endif %}
+                        </div>
+                    {% else %}
+                        Course survey information will appear here once a course or instructor is selected.
+                    {% endif %}
+                    {% if course or instructor %}
+                        <div class="survey-number-navigator next-survey" {% if next_survey %} onClick="clickSurveyNumber({{ next_survey }})" {% else %} style="opacity: 0.6; text-decoration: none;" {% endif %}>
+                            Next
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="panel-body ratings-panel-body">
+                    {% if survey.ratings %}
+                        <table class="ratings-table">
+                            <tr>
+                                <th style="width: 70%;">
+                                    Question
+                                </th>
+                                <th style="width: 30%;">
+                                    Rating
+                                </th>
+                            </tr>
+                            {% for rating in survey.ratings %}
+                                <tr>
+                                    <td>
+                                        {{ rating.text }}
+                                    </td>
+                                    <td class="ratings-item-bubble" style="background-color: {{ rating.color }};">
+                                        {{ rating.value }} / {{ rating.max }}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    {% elif survey and not survey.ratings %}
+                        No ratings from this semester
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Designs -->
+    <div>
+        <h2 style="margin: auto; text-align: center; padding-bottom: 1.5%;">
+            Designs
+        </h2>
+
+        {% if pages %}
+            <ul class="design-list">
+                {% for page in pages %}
+                    <li class="design-list-item">
+                        <a href={{page.path}}>{{page.name}}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            No course surveys design pages at the moment! Check back later or contact HKN.
+        {% endif %}
+    </div>
+
+    <!-- Upload link -->
+    {% if upload_allowed %}
+        <div style="margin: auto; text-align: center; padding-top: 1.5%;">
+            <a href="{% url 'course_surveys:upload' %}">Upload</a> course surveys data
+        </div>
+    {% endif %}
+
+    <!-- Design credit -->
+    <h2 style="margin: auto; text-align: center; padding-top: 3%; color: grey; font-weight: normal;">
+        UI/UX designed by <a href="https://www.linkedin.com/in/dan-y-chu/" style="text-decoration: none;">Danny Chu</a>.
+    </h2>
+
+{% endblock %}

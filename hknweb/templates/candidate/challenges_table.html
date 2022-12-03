@@ -1,0 +1,64 @@
+{% load static %}
+{% load app_filters %}
+
+{% if logistics.challenges %}
+    <div class="table-wrap">
+        <table class="full-table">
+            <thead>
+                <th>Status</th>
+                <th>Title</th>
+                {% if request.user|has_group:"officer" %}
+                    <th>Requester</th>
+                {% else %}
+                    <th>Officer</th>
+                {% endif %}
+                <th>Request Date</th>
+                <th>Proof</th>
+            </thead>
+
+            <tbody>
+                {% for challenge in logistics.challenges %}
+                    <tr>
+                        <td align="center">
+                            {% if challenge.confirmed %}
+                                <img src="{% static 'candidate/yes.png'%}" alt="confirmed" class="table-icon">
+                            {% elif challenge.rejected %}
+                                <img src="{% static 'candidate/no.png'%}" alt="rejected" class="table-icon">
+                            {% else %}
+                                <img src="{% static 'candidate/maybe.png'%}" alt="in progress" class="table-icon">
+                            {% endif %}
+                        </td>
+                        <td align="center">{{ challenge.name }}</td>
+                        {% if request.user|has_group:"officer" %}
+                        <td align="center">{{ challenge.requester.first_name }} {{ challenge.requester.last_name }} ({{ challenge.requester.username }})</td>
+                        {% else %}
+                        <td align="center">{{ challenge.officer.first_name }} {{ challenge.officer.last_name }} ({{ challenge.officer.username }})</td>
+                        {% endif %}
+                        <td align="center">{{ challenge.request_date }}</td>
+                        <td align="center">{{ challenge.proof }}</td>
+                        {% if user_self is None and request.user|has_group:"officer" %}
+                            <td align="center">
+                                {% if not challenge.confirmed %}
+                                    <form action="{% url 'candidate:confirm_challenge' challenge.id 0 %}" method="post" onsubmit="submit_button.disabled = true; return true;">
+                                        {% csrf_token %}
+                                        <input type="submit" name="submit_button" value="Confirm" />
+                                    </form>
+                                {% endif %}
+                            </td>
+                            <td align="center">
+                                {% if not challenge.rejected %}
+                                    <form action="{% url 'candidate:confirm_challenge' challenge.id 1 %}" method="post" onsubmit="submit_button.disabled = true; return true;">
+                                        {% csrf_token %}
+                                        <input type="submit" name="submit_button" value="Reject" />
+                                    </form>
+                                {% endif %}
+                            </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <p>No requests to show.</p>
+{% endif %}

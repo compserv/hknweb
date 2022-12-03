@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+source ~/.bashrc
+
+eval "$(conda shell.bash hook)"
+conda activate hknweb-prod
+
+DJANGO_DIR=~/hknweb/prod/current
+PYTHONPATH=$DJANGO_DIR:$PYTHONPATH
+
+SOCKFILE=/srv/apps/$(whoami)/dev.sock
+NUM_WORKERS=4
+
+cd $DJANGO_DIR
+
+exec gunicorn "$DJANGO_WSGI_MODULE" \
+    -w $NUM_WORKERS \
+    --log-level debug \
+    --log-file - \
+    -b unix:"$SOCKFILE"
