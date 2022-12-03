@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    Events Leaderboard
+{% endblock %}
+
+{% block header %}
+<style>
+    .heading {
+        display: none;
+    }
+    .content {
+        padding-top: 1em;
+        padding-bottom: 1em;
+        font-size: 125%;
+    }
+    table.center {
+	    margin-left:auto; 
+	    margin-right:auto;
+  	}
+</style>
+{% endblock %}
+
+{% block content %}
+    <h1 style="text-align: center;"> Events Leaderboard </h1>
+
+    <div>
+        <table class="center" >
+            <tr>
+                <th>Name</th>
+                <th>Events Attended</th>
+            </tr>
+
+            {% for user in page_obj %}
+                <tr>
+                    <td style="text-align:center; width: 20%; overflow: hidden;">{{ user }}</td>
+                    <td style="text-align:center; width: 20%; overflow: hidden;">{{ user.num_rsvps }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div style="text-align: center;">
+        <span>
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+            {% endif %}
+
+            <span>
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+{% endblock %}
+

@@ -1,0 +1,2 @@
+from hknweb.events.admin.attendance.attendance_form import AttendanceFormAdmin
+from hknweb.events.admin.attendance.attendance_response import AttendanceResponseAdmin

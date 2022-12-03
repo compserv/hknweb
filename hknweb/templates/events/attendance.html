@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Manage attendance form{% endblock %}
+{% block heading %}Manage attendance form{% endblock %}
+
+{% block content %}
+
+    {% if description %}
+        <div style="margin: auto; text-align: center;">
+            {{ description }}
+        </div>
+        <br>
+    {% endif %}
+
+    {% include 'events/form.html' %}
+
+    {% if feedback %}
+        <br>
+        <div style="display: table; text-align: center; margin: auto;">
+            <h3>Feedback</h3>
+            <ul>
+                {% for f in feedback %}
+                    <li>{{ f }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+{% endblock %}

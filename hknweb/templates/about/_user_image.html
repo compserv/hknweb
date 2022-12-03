@@ -1,0 +1,31 @@
+{% load static %}
+
+<div style="display: inline-block; margin: 0 2em 2em 2em; vertical-align: top;">
+    <img
+        style="width: 15em; height: 15em;"
+        {% if user.profile.picture %}
+            src="{{ user.profile.picture_display_url }}"
+            alt="{{ user.first_name }} {{ user.last_name }}"
+        {% else %}
+            src="{% static 'img/blank_profile_pic.jpg' %}"
+            alt="Missing profile picture"
+        {% endif %}
+    >
+    <br>
+    <div style="width: 15em; overflow-x: hidden; white-space: nowrap; text-overflow: ellipsis;">
+        <span style="font-size: 1.2em;">{{ user.first_name }} {{ user.last_name }}</span>
+    </div>
+    <span style="font-style: italic;">{{ title }}</span>
+
+    {% if request.GET.edit == "true" %}
+        <br>
+        <form autocomplete="off" method="POST" onsubmit="submit_button.disabled = true; return true;">
+            {% csrf_token %}
+
+            <input type="text" name="picture" maxlength="500" value="{{ user.profile.picture }}">
+            <input type="hidden" value="{{ user.id }}" name="user_id">
+
+            <button type="submit">Save</button>
+        </form>
+    {% endif %}
+</div>
