@@ -1,0 +1,12 @@
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'polls/style.css' %}">
+<h1>
+  <p> Here is Oski! What a cutie! He has some questions for you!</p>
+</h1>
+
+<ul>
+  {% for question in latest_question_list %}
+    <li><a href="{% url 'polls:detail' question.id %}">{{ question.question_text }}</a></li>
+  {% endfor %}
+</ul>
