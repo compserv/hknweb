@@ -14,5 +14,7 @@ class LogisticsModelTests(TestCase):
 
     def test_str(self):
         str(ModelFactory.create_default_event_req())
-        str(ModelFactory.create_form_req())
+        form_req = ModelFactory.create_form_req()
+        str(form_req)
+        form_req.display()
         str(ModelFactory.create_misc_req())

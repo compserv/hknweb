@@ -40,13 +40,14 @@ class MiscReq(ExternalReq):
 class FormReq(ExternalReq):
     link = models.CharField(max_length=MAX_STRLEN)
 
-    def __str__(self, include_link=True):
+    def __str__(self):
         due_date = f"(due {self.due_date})" if self.due_date else "(no due date)"
-        link = f"- self.link" if include_link else ""
+        link = f"- {self.link}"
         return f"{self.title} {due_date} {link}"
 
     def display(self):
-        return str(self, include_link=False)
+        due_date = f"(due {self.due_date})" if self.due_date else "(no due date)"
+        return f"{self.title} {due_date}"
 
 
 class Logistics(models.Model):
