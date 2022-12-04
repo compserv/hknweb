@@ -12,7 +12,9 @@ class BitByteActivityActivityModelTests(TestCase):
         user = ModelFactory.create_user()
         participants = [user]
         bitbyteactivity = ModelFactory.create_bitbyteactivity_activity(participants)
-        bitbyteactivity_admin = BitByteActivityAdmin(model=BitByteActivity, admin_site=AdminSite())
+        bitbyteactivity_admin = BitByteActivityAdmin(
+            model=BitByteActivity, admin_site=AdminSite()
+        )
 
         self.user = user
         self.participants = participants
