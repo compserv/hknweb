@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.db.models import Count, QuerySet, F
 
 from hknweb.utils import login_and_access_level, GROUP_TO_ACCESSLEVEL
-from hknweb.events.models import Event, Rsvp
+from hknweb.events.models import Rsvp
 
 from hknweb.candidate.models import OffChallenge, BitByteActivity, Logistics
 from hknweb.candidate.views.candidate_portal import get_logistics
