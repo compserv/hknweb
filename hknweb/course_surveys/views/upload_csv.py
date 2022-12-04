@@ -12,7 +12,7 @@ from hknweb.course_surveys.constants import Attr, COURSE_SURVEYS_EDIT_PERMISSION
 @login_and_permission(COURSE_SURVEYS_EDIT_PERMISSION)
 def upload_csv(request):
     if request.method != "POST":
-        return Http404()
+        raise Http404()
     next_page = request.POST.get("next", "/")
 
     cs_csv = request.FILES.get(Attr.COURSE_SURVEYS_CSV, None)

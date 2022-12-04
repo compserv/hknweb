@@ -31,6 +31,11 @@ urlpatterns = [
         views.checkoff_req,
         name="checkoff_req",
     ),
+    path(
+        "checkoff_event",
+        views.checkoff_event,
+        name="checkoff_event",
+    ),
     # Autocomplete
     path(
         "autocomplete/officer",

@@ -4,6 +4,7 @@ from hknweb.candidate.models import OffChallenge, BitByteActivity
 
 from tests.candidate.views.utils import CandidateViewTestsBase
 from tests.candidate.models.utils import ModelFactory
+from tests.events.models.utils import ModelFactory as EventsModelFactory
 
 
 class ConfirmRequestViewTests(CandidateViewTestsBase):
@@ -85,6 +86,26 @@ class ConfirmRequestViewTests(CandidateViewTestsBase):
             "operation": "0",
         }
         response = self.client.post(reverse("candidate:checkoff_req"), data=data)
+
+        self.client.logout()
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_checkoff_event_post_returns_200(self):
+        self.client.login(username=self.officer.username, password=self.password)
+
+        logistics = ModelFactory.create_default_logistics()
+        event = EventsModelFactory.create_event_with_rsvps()[4]
+        logistics.mandatory_events.add(event)
+        logistics.save()
+
+        data = {
+            "logistics_id": logistics.id,
+            "event_id": event.id,
+            "user_id": self.candidate.id,
+            "operation": "0",
+        }
+        response = self.client.post(reverse("candidate:checkoff_event"), data=data)
 
         self.client.logout()
 

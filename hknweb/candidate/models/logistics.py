@@ -4,7 +4,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 
-from hknweb.events.models import EventType, Rsvp
+from hknweb.events.models import Event, EventType, Rsvp
 from hknweb.coursesemester.models import Semester
 
 from hknweb.candidate.models import OffChallenge, BitByteActivity
@@ -40,13 +40,14 @@ class MiscReq(ExternalReq):
 class FormReq(ExternalReq):
     link = models.CharField(max_length=MAX_STRLEN)
 
-    def __str__(self, include_link=True):
+    def __str__(self):
         due_date = f"(due {self.due_date})" if self.due_date else "(no due date)"
-        link = f"- self.link" if include_link else ""
+        link = f"- {self.link}"
         return f"{self.title} {due_date} {link}"
 
     def display(self):
-        return str(self, include_link=False)
+        due_date = f"(due {self.due_date})" if self.due_date else "(no due date)"
+        return f"{self.title} {due_date}"
 
 
 class Logistics(models.Model):
@@ -57,6 +58,7 @@ class Logistics(models.Model):
     date_start = models.DateField()
     date_end = models.DateField()
 
+    mandatory_events = models.ManyToManyField(Event, blank=True)
     event_reqs = models.ManyToManyField(EventReq, blank=True)
 
     min_challenges = models.PositiveSmallIntegerField()

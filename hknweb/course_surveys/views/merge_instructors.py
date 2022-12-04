@@ -10,7 +10,7 @@ from hknweb.course_surveys.constants import Attr, COURSE_SURVEYS_EDIT_PERMISSION
 @login_and_permission(COURSE_SURVEYS_EDIT_PERMISSION)
 def merge_instructors(request):
     if request.method != "POST":
-        return Http404()
+        raise Http404()
 
     instructor_ids = request.GET.get(Attr.INSTRUCTOR_IDS, None)
     instructor_ids = json.loads(instructor_ids)

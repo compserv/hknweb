@@ -15,4 +15,4 @@ class ExternalReqAdmin(admin.ModelAdmin):
 @admin.register(Logistics)
 class LogisticsAdmin(admin.ModelAdmin):
     list_display = ("semester", "date_start", "date_end")
-    filter_horizontal = ("event_reqs", "misc_reqs", "form_reqs")
+    filter_horizontal = ("event_reqs", "misc_reqs", "form_reqs", "mandatory_events")

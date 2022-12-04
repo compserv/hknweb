@@ -29,6 +29,30 @@
         xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
         xhr.send(formData);
     }
+
+    function checkoff_event(button, logistics_id, event_id, user_id, operation) {
+        button.disabled = true;
+
+        var formData = new FormData();
+        formData.append("logistics_id", logistics_id);
+        formData.append("event_id", event_id);
+        formData.append("user_id", user_id);
+        formData.append("operation", operation);
+
+        var xhr = new XMLHttpRequest();
+
+        xhr.onreadystatechange = function () {
+            if (this.readyState != 4) return;
+
+            if (this.status == 200) {
+                window.location.reload(true);
+            }
+        };
+
+        xhr.open("POST", "{% url 'candidate:checkoff_event' %}", true);
+        xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+        xhr.send(formData);
+    }
 </script>
 {% endblock %}
 
@@ -99,6 +123,15 @@ Officer Portal
                                         type="checkbox"
                                         {% if info.status %}checked{% endif %}
                                         onclick="checkoff_req(this, '{{ info.logistics_id }}', '{{ info.type }}', '{{ info.obj_title }}', '{{ info.user_id }}', '{{ info.operation }}')"
+                                    >
+                                </td>
+                            {% endfor %}
+                            {% for info in row.mandatory_events_checkoffs %}
+                                <td>
+                                    <input
+                                        type="checkbox"
+                                        {% if info.status %}checked{% endif %}
+                                        onclick="checkoff_event(this, '{{ info.logistics_id }}', '{{ info.event_id }}', '{{ info.user_id }}', '{{ info.operation }}')"
                                     >
                                 </td>
                             {% endfor %}

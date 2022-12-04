@@ -9,7 +9,7 @@ from hknweb.candidate.forms import BitByteRequestForm, ChallengeRequestForm
 
 def request_form(request, form_cls, title: str):
     if request.method != "POST":
-        return Http404()
+        raise Http404()
 
     form = form_cls(request.POST or None)
     if not form.is_valid():
