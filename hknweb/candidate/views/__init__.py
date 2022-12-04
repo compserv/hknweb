@@ -8,5 +8,6 @@ from hknweb.candidate.views.confirm_request import (
     confirm_challenge,
     confirm_bitbyte,
     checkoff_req,
+    checkoff_event,
 )
 from hknweb.candidate.views.autocomplete import OfficerAutocomplete, UserAutocomplete

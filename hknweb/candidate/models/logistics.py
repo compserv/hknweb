@@ -4,7 +4,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 
-from hknweb.events.models import EventType, Rsvp
+from hknweb.events.models import Event, EventType, Rsvp
 from hknweb.coursesemester.models import Semester
 
 from hknweb.candidate.models import OffChallenge, BitByteActivity
@@ -57,6 +57,7 @@ class Logistics(models.Model):
     date_start = models.DateField()
     date_end = models.DateField()
 
+    mandatory_events = models.ManyToManyField(Event, blank=True)
     event_reqs = models.ManyToManyField(EventReq, blank=True)
 
     min_challenges = models.PositiveSmallIntegerField()

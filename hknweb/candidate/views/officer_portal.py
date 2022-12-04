@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.db.models import Count, QuerySet, F
 
 from hknweb.utils import login_and_access_level, GROUP_TO_ACCESSLEVEL
-from hknweb.events.models import Rsvp
+from hknweb.events.models import Event, Rsvp
 
 from hknweb.candidate.models import OffChallenge, BitByteActivity, Logistics
 from hknweb.candidate.views.candidate_portal import get_logistics
@@ -37,11 +37,17 @@ def officer_portal(request):
     bitbytes = Bulk.bitbytes(candidates)
 
     event_reqs, event_req_minimums = Bulk.event_reqs(candidates, logistics)
+    mandatory_events = Bulk.mandatory_events(candidates, logistics)
     form_reqs = Bulk.form_reqs(logistics)
     misc_reqs = Bulk.misc_reqs(logistics)
 
+    mandatory_event_headers = [e.name for e in logistics.mandatory_events.all()]
     reqs = list(event_reqs) + list(form_reqs) + list(misc_reqs)
-    headers = ["Challenges", "Hangouts", "Interactivities", "BitByte"] + reqs
+    headers = (
+        ["Challenges", "Hangouts", "Interactivities", "BitByte"]
+        + reqs
+        + mandatory_event_headers
+    )
     minimums = [
         logistics.min_challenges,
         logistics.min_hangouts,
@@ -56,6 +62,9 @@ def officer_portal(request):
         checkoffable_statuses, checkoffs = get_checkoff_info(
             logistics, c_id, form_reqs, misc_reqs
         )
+        m_events_statuses, m_events_checkoffs = get_mandatory_events_info(
+            logistics, c_id, mandatory_events
+        )
         statuses = [
             challenges[c_id],
             hangouts[c_id],
@@ -67,13 +76,21 @@ def officer_portal(request):
             n_finished >= n_required
             for n_finished, n_required in zip(statuses, minimums)
         ]
-        overall_status = all(finished) and all(checkoffable_statuses)
+        overall_status = (
+            all(finished) and all(checkoffable_statuses) and all(m_events_statuses)
+        )
 
-        for i in range(len(finished)):
-            summary_statuses[i + 1] += finished[i]
-        for j in range(len(checkoffable_statuses)):
-            summary_statuses[(i + 1) + (j + 1)] += checkoffable_statuses[j]
         summary_statuses[0] += overall_status
+        i = 1
+        for v in finished:
+            summary_statuses[i] += v
+            i += 1
+        for v in checkoffable_statuses:
+            summary_statuses[i] += v
+            i += 1
+        for v in m_events_statuses:
+            summary_statuses[i] += v
+            i += 1
 
         rows.append(
             {
@@ -82,6 +99,7 @@ def officer_portal(request):
                 "overall": overall_status,
                 "statuses": statuses,
                 "checkoffs": checkoffs,
+                "mandatory_events_checkoffs": m_events_checkoffs,
             }
         )
 
@@ -127,6 +145,26 @@ def get_checkoff_info(
     return statuses, checkoffs
 
 
+def get_mandatory_events_info(
+    logistics: Logistics, c_id: int, mandatory_events: DefaultDict[int, set]
+) -> Tuple[List[bool], List[Dict[str, int]]]:
+    statuses = []
+    checkoffs = []
+    for event in logistics.mandatory_events.all():
+        statuses.append(c_id in mandatory_events[event.id])
+        checkoffs.append(
+            {
+                "logistics_id": logistics.id,
+                "event_id": event.id,
+                "user_id": c_id,
+                "operation": int(statuses[-1]),
+                "status": statuses[-1],
+            }
+        )
+
+    return statuses, checkoffs
+
+
 class Bulk:
     @staticmethod
     def challenges(candidates: QuerySet) -> Counter:
@@ -164,6 +202,20 @@ class Bulk:
             .annotate(Count("participants"))
         )
         return Counter(dict(bitbytes))
+
+    @staticmethod
+    def mandatory_events(candidates: QuerySet, logistics: Logistics) -> Dict[int, set]:
+        rsvps = Rsvp.objects.filter(
+            confirmed=True,
+            user__in=candidates,
+            event__in=logistics.mandatory_events.all(),
+        ).values_list("event__id", "user__id")
+
+        mandatory_events_info = {e.id: set() for e in logistics.mandatory_events.all()}
+        for event_id, user_id in rsvps:
+            mandatory_events_info[event_id].add(user_id)
+
+        return mandatory_events_info
 
     @staticmethod
     def event_reqs(
