@@ -13,7 +13,7 @@ from hknweb.coursesemester.models import Semester
 
 @allow_public_access
 def people(request):
-    if ('semester' in request.GET and not request.GET['semester'].isdigit()):
+    if "semester" in request.GET and not request.GET["semester"].isdigit():
         raise Http404
     semester: Semester = Semester.objects.filter(
         pk=request.GET.get("semester") or None
