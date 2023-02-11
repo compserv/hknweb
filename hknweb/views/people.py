@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.db.models import QuerySet
 from django.contrib.auth.models import User
+from django.http import Http404
 
 from hknweb.utils import allow_public_access, get_access_level, GROUP_TO_ACCESSLEVEL
 
@@ -12,6 +13,8 @@ from hknweb.coursesemester.models import Semester
 
 @allow_public_access
 def people(request):
+    if ('semester' in request.GET and not request.GET['semester'].isdigit()):
+        raise Http404
     semester: Semester = Semester.objects.filter(
         pk=request.GET.get("semester") or None
     ).first()
@@ -21,7 +24,6 @@ def people(request):
             .order_by("-year", "semester")
             .first()
         )
-
     election: Election = semester.election_set.first()
 
     execs: QuerySet[Committeeship] = election.committeeship_set.filter(
