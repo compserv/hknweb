@@ -50,6 +50,10 @@ class EventForm(forms.ModelForm):
         end_time = cleaned_data.get("end_time")
         if (start_time is None) or (end_time is None):
             error_source = "start_time" if (start_time is None) else "end_time"
-            self.add_error(error_source, "Please use the time picker to select the time, the formatter is picky")
+            self.add_error(
+                error_source,
+                "Please use the time picker to select the time, the formatter is picky",
+            )
         elif end_time < start_time:
             self.add_error("end_time", "End Time is not after Start Time")
+
