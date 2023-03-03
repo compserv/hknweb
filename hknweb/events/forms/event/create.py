@@ -56,4 +56,3 @@ class EventForm(forms.ModelForm):
             )
         elif end_time < start_time:
             self.add_error("end_time", "End Time is not after Start Time")
-
