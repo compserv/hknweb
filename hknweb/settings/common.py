@@ -14,7 +14,8 @@ from django.conf.global_settings import DATETIME_INPUT_FORMATS
 from hknweb.utils import DATETIME_12_HOUR_FORMAT
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+BASE_DIR = os.path.dirname(os.path.dirname(
+    os.path.dirname(os.path.abspath(__file__))))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
@@ -23,6 +24,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 INSTALLED_APPS = [
     "rest_framework",
     "hknweb",
+    "hknweb.polls",
     "hknweb.academics",
     "hknweb.events",
     "hknweb.tutoring",
@@ -210,7 +212,7 @@ EXEC_GROUP = "exec"
 MARKDOWNX_MARKDOWNIFY_FUNCTION = "hknweb.utils.markdownify"
 MARKDOWNIFY_STRIP = False
 
-## markdownify
+# markdownify
 MARKDOWNIFY_WHITELIST_TAGS = [
     "a",
     "abbr",
