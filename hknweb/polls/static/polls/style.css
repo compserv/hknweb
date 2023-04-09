@@ -1,0 +1,10 @@
+li a {
+    color: green;
+}
+li a:visited {
+    color: green;
+}
+
+body {
+    background: white url("images/background.png") no-repeat;
+}
