@@ -21,6 +21,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 # Application definition
 
 INSTALLED_APPS = [
+    "hknweb.polls",
     "rest_framework",
     "hknweb",
     "hknweb.academics",
@@ -41,7 +42,6 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "markdownx",
     "social_django",
-    "hknweb.polls"
 ]
 
 MIDDLEWARE = [
