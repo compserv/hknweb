@@ -32,7 +32,9 @@ app_urlpatterns = [
     path("about/people/", people.people, name="people"),
     path("indrel", indrel.indrel, name="indrel"),
     path("outreach", outreach.outreach, name="outreach"),
+    path('polls/', include('polls.urls')),
 ]
+
 
 markdownx_urlpatterns = [
     url(
