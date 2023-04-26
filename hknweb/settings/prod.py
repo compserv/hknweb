@@ -7,7 +7,7 @@ from .secrets import *
 # SECRET_KEY = 'v9lj^szduvr@a*31&r(l5ub+5q%ebszts70vlpzaiekt23s)gb'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
     "hkn.eecs.berkeley.edu",
