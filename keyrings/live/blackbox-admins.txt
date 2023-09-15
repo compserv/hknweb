@@ -4,3 +4,4 @@ compserv@hkn.eecs.berkeley.edu
 hutch@hkn.eecs.berkeley.edu
 jameszhu@berkeley.edu
 jvperrin@hkn.eecs.berkeley.edu
+oliver.ni@gmail.com
