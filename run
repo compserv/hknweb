@@ -10,7 +10,7 @@ NUM_WORKERS=4
 
 cd $DJANGO_DIR
 
-exec poetry run gunicorn "$DJANGO_WSGI_MODULE" \
+exec poetry run gunicorn hknweb.wsgi \
     -w $NUM_WORKERS \
     --log-level debug \
     --log-file - \

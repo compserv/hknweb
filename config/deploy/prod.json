@@ -1,5 +1,6 @@
 {
   "deploy": {
+    "branch": "modernization",
     "name": "prod",
     "user": "hkn",
     "host": "apphost.ocf.berkeley.edu",

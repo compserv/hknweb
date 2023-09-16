@@ -5,4 +5,4 @@ PYTHONPATH=$DJANGO_DIR:$PYTHONPATH
 
 cd $DJANGO_DIR
 
-exec poetry run gunicorn "$DJANGO_WSGI_MODULE" --daemon
+exec poetry run gunicorn hknweb.wsgi --daemon

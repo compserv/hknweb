@@ -1,3 +1,6 @@
+# TODO: Refactor or replace this file. It's kinda overengineered and fabric
+# is terribly documented
+
 import json
 import os
 import posixpath
@@ -100,12 +103,17 @@ def update(c: Connection):
         print("-- Updating dependencies")
         c.run("poetry install")
 
+        # Can't figure out how to properly set an env var with fabric
+        # so leaving them at the starts of the commands for now
+
         print("-- Running migrations")
-        c.run("poetry run python manage.py migrate")
+        c.run(f"HKNWEB_MODE={hknweb_mode} poetry run python manage.py migrate")
 
         if c.deploy.run_collectstatic:
             print("-- Collecting static files")
-            c.run("poetry run python manage.py collectstatic --noinput")
+            c.run(
+                f"HKNWEB_MODE={hknweb_mode} poetry run python manage.py collectstatic --noinput"
+            )
         else:
             print("-- Skipping collecting static files")
 

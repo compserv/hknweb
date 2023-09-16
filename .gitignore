@@ -1,7 +1,11 @@
+# direnv
+.direnv
+
 # hknweb-specific stuff
 .vagrant/
 db.sqlite3
 venv/
+.venv/
 media/
 
 # Generic python stuff

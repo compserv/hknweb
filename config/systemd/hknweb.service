@@ -10,6 +10,7 @@ Type=simple
 Restart=always
 PIDFile=/home/h/hk/hkn/hknweb/prod/current/gunicorn.pid
 WorkingDirectory=/home/h/hk/hkn/hknweb/prod/current
+Environment="HKNWEB_MODE=prod"
 ExecStart=/home/h/hk/hkn/hknweb/prod/current/run
 ExecReload=/bin/kill -s HUP $MAINPID
 ExecStop=/bin/kill -s TERM $MAINPID
