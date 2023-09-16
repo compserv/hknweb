@@ -177,14 +177,14 @@ def deploy_github_actions(c, target=None):
             c.run(f"bash ./scripts/run_github_actions.sh {c.current_path}")
 
 
-hknweb_mode = os.environ["HKNWEB_MODE"].lower()
+hknweb_mode = os.getenv("HKNWEB_MODE", "dev").lower()
 if hknweb_mode == "dev":
     config_file = ConfigFiles.GITHUB_ACTIONS
     deploy = deploy_github_actions
 elif hknweb_mode == "prod":
     config_file = ConfigFiles.PROD
 else:
-    raise ValueError(f"HKNWEB_MODE '{hknweb_mode}' is not a valid value")
+    raise ValueError(f"HKNWEB_MODE {hknweb_mode!r} is not a valid value")
 
 config_dict = json.load(open(config_file))
 config = DeployConfig(overrides=config_dict)
