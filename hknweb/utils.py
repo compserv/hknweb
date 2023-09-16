@@ -210,7 +210,6 @@ def markdownify(text):
 
     # Sanitize html if wanted
     if getattr(settings, "MARKDOWNIFY_BLEACH", True):
-
         cleaner = bleach.Cleaner(
             tags=whitelist_tags,
             attributes=whitelist_attrs,

@@ -21,6 +21,7 @@ from hknweb.forms import ProvisionCandidatesForm
 # Unregister the provided model admin
 admin.site.unregister(User)
 
+
 # Register out own model admin, based on the default UserAdmin
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
@@ -124,7 +125,6 @@ class CustomUserAdmin(UserAdmin):
 
 
 class AnnouncementAdmin(admin.ModelAdmin):
-
     # NOTE: release_date is not readonly because we can reuse announcements from past semesters
     # The VP can just change the date and release it again
     fields = ["title", "text", "visible", "release_date"]

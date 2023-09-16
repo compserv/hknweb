@@ -5,7 +5,6 @@ from hknweb.candidate.models import BitByteActivity
 
 @admin.register(BitByteActivity)
 class BitByteActivityAdmin(admin.ModelAdmin):
-
     fields = ["participants", "confirmed", "proof", "notes", "request_date"]
     readonly_fields = ["request_date"]
     list_display = (

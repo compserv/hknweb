@@ -5,7 +5,6 @@ from hknweb.candidate.models import Announcement
 
 @admin.register(Announcement)
 class AnnouncementAdmin(admin.ModelAdmin):
-
     # NOTE: release_date is not readonly because we can reuse announcements from past semesters
     # The VP can just change the date and release it again
     fields = ["title", "text", "visible", "release_date"]

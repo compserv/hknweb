@@ -8,7 +8,6 @@ import hknweb.events.google_calendar_utils as gcal
 
 @admin.register(Rsvp)
 class RsvpAdmin(admin.ModelAdmin):
-
     fields = ["event", "user", "confirmed", "comment", "created_at"]
     readonly_fields = ["created_at"]
     list_display = ("event", "user", "full_name", "confirmed", "created_at")
