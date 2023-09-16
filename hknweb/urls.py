@@ -33,7 +33,20 @@ app_urlpatterns = [
 ]
 
 markdownx_urlpatterns = [
-    path("markdownx/", include("markdownx.urls")),
+    path(
+        "markdownx/upload/",
+        method_login_and_permission("markdown_pages.add_markdownpage")(
+            markdownx_views.ImageUploadView
+        ).as_view(),
+        name="markdownx_upload",
+    ),
+    path(
+        "markdownx/markdownify/",
+        method_login_and_permission("markdown_pages.add_markdownpage")(
+            markdownx_views.MarkdownifyView
+        ).as_view(),
+        name="markdownx_markdownify",
+    ),
 ]
 
 safe_urlpatterns = [
