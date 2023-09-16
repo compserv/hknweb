@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class TutoringConfig(AppConfig):
-    name = "tutoring"
+    name = "hknweb.tutoring"

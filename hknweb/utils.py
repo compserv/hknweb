@@ -1,30 +1,25 @@
 import csv
 import re
+from datetime import datetime
 
+### For Markdownx Security Patch
+from functools import partial, wraps
+from random import randint
+
+import bleach
+import markdown
+from django.conf import settings
 from django.contrib.auth.decorators import (
     login_required,
     permission_required,
     user_passes_test,
 )
+from django.contrib.staticfiles.finders import find
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
 from django.utils.decorators import method_decorator
-from django.contrib.staticfiles.finders import find
-
-from functools import wraps
-from random import randint
-from datetime import datetime
-
-from pytz import timezone
-
-### For Markdownx Security Patch
-from functools import partial
-
-from django.conf import settings
 from django.utils.safestring import mark_safe
-
-import markdown
-import bleach
+from pytz import timezone
 
 ###
 
@@ -173,9 +168,6 @@ def markdownify(text):
     whitelist_attrs = getattr(
         settings, "MARKDOWNIFY_WHITELIST_ATTRS", bleach.sanitizer.ALLOWED_ATTRIBUTES
     )
-    whitelist_styles = getattr(
-        settings, "MARKDOWNIFY_WHITELIST_STYLES", bleach.sanitizer.ALLOWED_STYLES
-    )
     whitelist_protocols = getattr(
         settings, "MARKDOWNIFY_WHITELIST_PROTOCOLS", bleach.sanitizer.ALLOWED_PROTOCOLS
     )
@@ -213,7 +205,6 @@ def markdownify(text):
         cleaner = bleach.Cleaner(
             tags=whitelist_tags,
             attributes=whitelist_attrs,
-            styles=whitelist_styles,
             protocols=whitelist_protocols,
             strip=strip,
             filters=linkify,

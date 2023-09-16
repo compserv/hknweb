@@ -10,7 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 import os
+
 from django.conf.global_settings import DATETIME_INPUT_FORMATS
+
 from hknweb.utils import DATETIME_12_HOUR_FORMAT
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -40,12 +42,10 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "markdownx",
-    "social_django",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -55,17 +55,6 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "hknweb.urls"
-
-SOCIAL_AUTH_PIPELINE = (
-    "social_core.pipeline.social_auth.social_details",
-    "social_core.pipeline.social_auth.social_uid",
-    "social_core.pipeline.social_auth.auth_allowed",
-    "social_core.pipeline.social_auth.social_user",
-    "social_core.pipeline.social_auth.associate_by_email",
-    "social_core.pipeline.social_auth.associate_user",
-    "social_core.pipeline.social_auth.load_extra_data",
-    "social_core.pipeline.user.user_details",
-)
 
 TEMPLATES = [
     {
@@ -78,8 +67,6 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "social_django.context_processors.backends",
-                "social_django.context_processors.login_redirect",
                 "hknweb.views.users.add_officer_context",
                 "hknweb.views.users.add_exec_context",
             ],
@@ -89,11 +76,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "hknweb.wsgi.application"
 
-AUTHENTICATION_BACKENDS = (
-    "social_core.backends.open_id.OpenIdAuth",  # for Google authentication
-    "social_core.backends.google.GoogleOAuth2",  # for Google authentication
-    "django.contrib.auth.backends.ModelBackend",
-)
+AUTHENTICATION_BACKENDS = ("django.contrib.auth.backends.ModelBackend",)
+
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
@@ -185,17 +170,8 @@ LOGOUT_REDIRECT_URL = "home"
 
 MESSAGE_STORAGE = "django.contrib.messages.storage.session.SessionStorage"
 
-# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-# SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = ['hkn.eecs.berkeley.edu']
-
 # Recaptcha: public and private key
 RECAPTCHA_PUBLIC_KEY = "6LeYTKAUAAAAADooVC_FG9ua47PnwP_gGWOSwauK"
-
-# python-social-auth: MySQL InnoDB index limits
-# https://python-social-auth-docs.readthedocs.io/en/latest/configuration/settings.html#tweaking-some-fields-length
-SOCIAL_AUTH_UID_LENGTH = 223
-SOCIAL_AUTH_NONCE_SERVER_URL_LENGTH = 100
-SOCIAL_AUTH_ASSOCIATION_SERVER_URL_LENGTH = 100
 
 # Constants for backend code
 

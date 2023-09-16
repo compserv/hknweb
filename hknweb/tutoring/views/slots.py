@@ -4,7 +4,7 @@ from django.db.models.query import QuerySet
 from django.http import JsonResponse
 from django.utils import timezone
 from django.contrib.auth.models import User
-from django.contrib.staticfiles.templatetags.staticfiles import static
+from django.templatetags.static import static
 
 from hknweb.utils import allow_public_access
 
