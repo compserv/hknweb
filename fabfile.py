@@ -76,7 +76,7 @@ def update(c: Connection):
         with c.cd(c.repo_path):
             c.run(f"git remote set-url origin {c.deploy.repo_url}", echo=True)
             c.run("git remote update", echo=True)
-            c.run(f"git fetch origin {c.revision}:{c.revision}", echo=True)
+            c.run(f"git fetch origin {c.revision}:{c.revision} --force", echo=True)
     else:  # clone
         c.run(f"git clone --bare {c.deploy.repo_url} {c.repo_path}", echo=True)
 
