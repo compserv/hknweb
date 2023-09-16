@@ -26,7 +26,7 @@ class DeployConfig(Config):
         return merge_dicts(Config.global_defaults(), hkn_shared)
 
 
-def setup(c: Connection, commit=None, release=None):
+def setup(c: Connection, revision=None, release=None):
     print("== Setup ==")
 
     # Returns the server date-time, encoded as YYYYMMSS_HHMMSS.
@@ -34,9 +34,9 @@ def setup(c: Connection, commit=None, release=None):
 
     # Point the connection to the correct git config
     c.release = release if release else timestamp
-    c.commit = commit if commit else c.deploy.branch
+    c.revision = revision if revision else c.deploy.branch
     print(f"release: {c.release}")
-    print(f"commit: {c.commit}")
+    print(f"revision: {c.revision}")
 
     # Setup paths
     c.deploy_path = posixpath.join(c.deploy.path.root, c.deploy.name)
@@ -65,7 +65,7 @@ def update(c: Connection):
         c.deploy.repo_url = (
             c.run("git config --get remote.origin.url").stdout.strip() + ".git"
         )
-        c.commit = c.run("git rev-parse HEAD").stdout.strip()
+        c.revision = c.run("git rev-parse HEAD").stdout.strip()
 
         c.run(f"git clone --bare {c.deploy.repo_url} {c.repo_path}", echo=True)
 
@@ -76,19 +76,21 @@ def update(c: Connection):
         with c.cd(c.repo_path):
             c.run(f"git remote set-url origin {c.deploy.repo_url}", echo=True)
             c.run("git remote update", echo=True)
-            c.run(f"git fetch origin {c.commit}:{c.commit}", echo=True)
+            c.run(f"git fetch origin {c.revision}:{c.revision}", echo=True)
     else:  # clone
         c.run(f"git clone --bare {c.deploy.repo_url} {c.repo_path}", echo=True)
 
     with c.cd(c.repo_path):
         print("-- Creating git archive for release")
-        revision = c.commit
+        revision = c.revision
         revision_number = c.run(
             f"git rev-list --max-count=1 {revision} --", echo=True
         ).stdout.strip()
-        c.commit = revision_number
+        c.revision = revision_number
 
-        c.run(f"git archive {c.commit} | tar -x -f - -C '{c.release_path}'", echo=True)
+        c.run(
+            f"git archive {c.revision} | tar -x -f - -C '{c.release_path}'", echo=True
+        )
 
     with c.cd(c.release_path):
         print("-- Symlinking shared files")
@@ -137,9 +139,9 @@ Otherwise, fabfile will claim to not recognize it.
 
 
 @task
-def deploy(c, target=None, commit=None):
+def deploy(c, target=None, revision=None):
     with Connection(c.deploy.host, user=c.deploy.user, config=c.config) as c:
-        setup(c, commit=commit)
+        setup(c, revision=revision)
         update(c)
         publish(c)
 
