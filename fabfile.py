@@ -1,14 +1,10 @@
+import json
 import os
-
 import posixpath
 
-import json
-
 from fabric import Config, Connection, task
-
 from invoke import Collection
 from invoke.config import merge_dicts
-
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 CONFIG_DIR = os.path.join(ROOT_DIR, "config", "deploy")
@@ -101,9 +97,17 @@ def update(c: Connection):
         else:
             print("-- Skipping decrypting secrets")
 
-    with c.cd(c.release_path):
-        print("-- Updating environment")
-        c.run(f"bash ./scripts/setup_env.sh {c.deploy.conda_env}", echo=True)
+        print("-- Updating dependencies")
+        c.run("poetry install")
+
+        print("-- Running migrations")
+        c.run("poetry run python manage.py migrate")
+
+        if c.deploy.run_collectstatic:
+            print("-- Collecting static files")
+            c.run("poetry run python manage.py collectstatic --noinput")
+        else:
+            print("-- Skipping collecting static files")
 
 
 def publish(c: Connection) -> None:
@@ -119,7 +123,7 @@ def publish(c: Connection) -> None:
 
 """
 For the following @task functions, "target" is an ignored parameter. It is a workaround to
-allow for use in using command line arguments for selecting a "target" in ns.configure. 
+allow for use in using command line arguments for selecting a "target" in ns.configure.
 Otherwise, fabfile will claim to not recognize it.
 """
 

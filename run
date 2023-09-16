@@ -2,9 +2,6 @@
 
 source ~/.bashrc
 
-eval "$(conda shell.bash hook)"
-conda activate hknweb-prod
-
 DJANGO_DIR=~/hknweb/prod/current
 PYTHONPATH=$DJANGO_DIR:$PYTHONPATH
 
@@ -13,7 +10,7 @@ NUM_WORKERS=4
 
 cd $DJANGO_DIR
 
-exec gunicorn "$DJANGO_WSGI_MODULE" \
+exec poetry run gunicorn "$DJANGO_WSGI_MODULE" \
     -w $NUM_WORKERS \
     --log-level debug \
     --log-file - \
