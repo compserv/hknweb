@@ -27,7 +27,7 @@ jobs:
           path: .venv
           key: venv-${{ hashFiles('poetry.lock') }}
 
-      - run: poetry install --no-interaction --no-root
+      - run: poetry install --with prod --no-interaction --no-root
 
       - name: Run formatting check
         run: poetry run black . --check
@@ -67,7 +67,7 @@ jobs:
           path: .venv
           key: venv-${{ hashFiles('poetry.lock') }}
 
-      - run: poetry install --no-interaction --no-root
+      - run: poetry install --with prod --no-interaction --no-root
 
       - name: Unseal secrets
         uses: jrmcdonald/blackbox-github-actions@v0.2.0

@@ -103,7 +103,7 @@ def update(c: Connection):
             print("-- Skipping decrypting secrets")
 
         print("-- Updating dependencies")
-        c.run("poetry install")
+        c.run("poetry install --with prod")
 
         # Can't figure out how to properly set an env var with fabric
         # so leaving them at the starts of the commands for now
