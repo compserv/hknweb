@@ -16,6 +16,11 @@ ALLOWED_HOSTS = [
     "dev-hkn.eecs.berkeley.edu",
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://hkn.eecs.berkeley.edu",
+    "https://dev-hkn.eecs.berkeley.edu",
+]
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 STATIC_URL = "https://www.ocf.berkeley.edu/~hkn/hknweb/static/"

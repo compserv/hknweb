@@ -1,0 +1,95 @@
+name: Test 🧪 and deploy 🚀
+
+on:
+  push:
+    branches:
+      - "*"
+  pull_request:
+    branches: ["master"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      HKNWEB_MODE: dev
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+      - uses: snok/install-poetry@v1
+        with:
+          version: 1.6.1
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+      - uses: actions/cache@v3
+        with:
+          path: .venv
+          key: venv-${{ hashFiles('poetry.lock') }}
+
+      - run: poetry install --with prod --no-interaction --no-root
+
+      - name: Run formatting check
+        run: poetry run black . --check
+
+      - name: Run unit tests
+        run: |
+          poetry run coverage run
+          poetry run coverage report
+
+      - name: Deploy
+        run: |
+          poetry run fab deploy
+
+      - name: Run end-to-end tests
+        run: |
+          poetry run curl -f localhost:8000
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: success() && github.ref == 'refs/heads/master'
+    environment:
+      name: Production
+      url: https://dev-hkn.eecs.berkeley.edu/
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+      - uses: snok/install-poetry@v1
+        with:
+          version: 1.6.1
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+      - uses: actions/cache@v3
+        with:
+          path: .venv
+          key: venv-${{ hashFiles('poetry.lock') }}
+
+      - run: poetry install --with prod --no-interaction --no-root
+
+      - name: Unseal secrets
+        uses: jrmcdonald/blackbox-github-actions@v0.2.0
+        with:
+          bb_actions_subcommand: "postdeploy"
+        env:
+          BLACKBOX_PUBKEY: ${{ secrets.BLACKBOX_PUBLIC_KEY }}
+          BLACKBOX_PRIVKEY: ${{ secrets.BLACKBOX_PRIVATE_KEY }}
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/pkey
+          sudo chmod 600 ~/.ssh/pkey
+          echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+        shell: bash
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.OCF_SSH_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.OCF_SSH_KNOWN_HOSTS }}
+
+      - name: Deploy
+        run: |
+          poetry run fab deploy -i ~/.ssh/pkey --revision ${{ github.sha }}
+        env:
+          HKNWEB_MODE: ${{ vars.HKNWEB_MODE }}

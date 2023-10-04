@@ -1,14 +1,14 @@
 {
-    "deploy": {
-        "name": "prod",
-        "user": "hkn",
-        "host": "apphost.ocf.berkeley.edu",
-        "conda_env": "hknweb-prod",
-        "run_blackbox_postdeploy": true,
-        "use_local_repo": false,
-        "path": {
-            "root": "/home/h/hk/hkn/hknweb"
-        },
-        "keep_releases": 10
-    }
+  "deploy": {
+    "name": "prod",
+    "user": "hkn",
+    "host": "apphost.ocf.berkeley.edu",
+    "run_blackbox_postdeploy": true,
+    "run_collectstatic": true,
+    "use_local_repo": false,
+    "path": {
+      "root": "/home/h/hk/hkn/hknweb"
+    },
+    "keep_releases": 10
+  }
 }

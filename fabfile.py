@@ -1,14 +1,13 @@
-import os
-
-import posixpath
+# TODO: Refactor or replace this file. It's kinda overengineered and fabric
+# is terribly documented
 
 import json
+import os
+import posixpath
 
 from fabric import Config, Connection, task
-
 from invoke import Collection
 from invoke.config import merge_dicts
-
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 CONFIG_DIR = os.path.join(ROOT_DIR, "config", "deploy")
@@ -27,7 +26,7 @@ class DeployConfig(Config):
         return merge_dicts(Config.global_defaults(), hkn_shared)
 
 
-def setup(c: Connection, commit=None, release=None):
+def setup(c: Connection, revision=None, release=None):
     print("== Setup ==")
 
     # Returns the server date-time, encoded as YYYYMMSS_HHMMSS.
@@ -35,9 +34,9 @@ def setup(c: Connection, commit=None, release=None):
 
     # Point the connection to the correct git config
     c.release = release if release else timestamp
-    c.commit = commit if commit else c.deploy.branch
+    c.revision = revision if revision else c.deploy.branch
     print(f"release: {c.release}")
-    print(f"commit: {c.commit}")
+    print(f"revision: {c.revision}")
 
     # Setup paths
     c.deploy_path = posixpath.join(c.deploy.path.root, c.deploy.name)
@@ -66,7 +65,7 @@ def update(c: Connection):
         c.deploy.repo_url = (
             c.run("git config --get remote.origin.url").stdout.strip() + ".git"
         )
-        c.commit = c.run("git rev-parse HEAD").stdout.strip()
+        c.revision = c.run("git rev-parse HEAD").stdout.strip()
 
         c.run(f"git clone --bare {c.deploy.repo_url} {c.repo_path}", echo=True)
 
@@ -77,19 +76,21 @@ def update(c: Connection):
         with c.cd(c.repo_path):
             c.run(f"git remote set-url origin {c.deploy.repo_url}", echo=True)
             c.run("git remote update", echo=True)
-            c.run(f"git fetch origin {c.commit}:{c.commit}", echo=True)
+            c.run(f"git fetch origin {c.revision}:{c.revision} --force", echo=True)
     else:  # clone
         c.run(f"git clone --bare {c.deploy.repo_url} {c.repo_path}", echo=True)
 
     with c.cd(c.repo_path):
         print("-- Creating git archive for release")
-        revision = c.commit
+        revision = c.revision
         revision_number = c.run(
             f"git rev-list --max-count=1 {revision} --", echo=True
         ).stdout.strip()
-        c.commit = revision_number
+        c.revision = revision_number
 
-        c.run(f"git archive {c.commit} | tar -x -f - -C '{c.release_path}'", echo=True)
+        c.run(
+            f"git archive {c.revision} | tar -x -f - -C '{c.release_path}'", echo=True
+        )
 
     with c.cd(c.release_path):
         print("-- Symlinking shared files")
@@ -101,9 +102,22 @@ def update(c: Connection):
         else:
             print("-- Skipping decrypting secrets")
 
-    with c.cd(c.release_path):
-        print("-- Updating environment")
-        c.run(f"bash ./scripts/setup_env.sh {c.deploy.conda_env}", echo=True)
+        print("-- Updating dependencies")
+        c.run("poetry install --with prod")
+
+        # Can't figure out how to properly set an env var with fabric
+        # so leaving them at the starts of the commands for now
+
+        print("-- Running migrations")
+        c.run(f"HKNWEB_MODE={hknweb_mode} poetry run python manage.py migrate")
+
+        if c.deploy.run_collectstatic:
+            print("-- Collecting static files")
+            c.run(
+                f"HKNWEB_MODE={hknweb_mode} poetry run python manage.py collectstatic --noinput"
+            )
+        else:
+            print("-- Skipping collecting static files")
 
 
 def publish(c: Connection) -> None:
@@ -119,15 +133,15 @@ def publish(c: Connection) -> None:
 
 """
 For the following @task functions, "target" is an ignored parameter. It is a workaround to
-allow for use in using command line arguments for selecting a "target" in ns.configure. 
+allow for use in using command line arguments for selecting a "target" in ns.configure.
 Otherwise, fabfile will claim to not recognize it.
 """
 
 
 @task
-def deploy(c, target=None, commit=None):
+def deploy(c, target=None, revision=None):
     with Connection(c.deploy.host, user=c.deploy.user, config=c.config) as c:
-        setup(c, commit=commit)
+        setup(c, revision=revision)
         update(c)
         publish(c)
 
@@ -163,14 +177,14 @@ def deploy_github_actions(c, target=None):
             c.run(f"bash ./scripts/run_github_actions.sh {c.current_path}")
 
 
-hknweb_mode = os.environ["HKNWEB_MODE"].lower()
+hknweb_mode = os.getenv("HKNWEB_MODE", "dev").lower()
 if hknweb_mode == "dev":
     config_file = ConfigFiles.GITHUB_ACTIONS
     deploy = deploy_github_actions
 elif hknweb_mode == "prod":
     config_file = ConfigFiles.PROD
 else:
-    raise ValueError(f"HKNWEB_MODE '{hknweb_mode}' is not a valid value")
+    raise ValueError(f"HKNWEB_MODE {hknweb_mode!r} is not a valid value")
 
 config_dict = json.load(open(config_file))
 config = DeployConfig(overrides=config_dict)

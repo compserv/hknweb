@@ -1,5 +1,39 @@
+[tool.poetry]
+name = "hknweb"
+version = "0.1.0"
+description = "Eta Kappa Nu, Mu Chapter website"
+authors = ["HKN Mu Chapter Computing Services <compserv@hkn.eecs.berkeley.edu>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "~3.9"
+django = "^4.2.5"
+django-markdownx = "^4.0.2"
+bleach = { extras = ["css"], version = "^6.0.0" }
+gunicorn = "^21.2.0"
+fabric = "^3.2.2"
+django-autocomplete-light = "^3.9.7"
+djangorestframework = "^3.14.0"
+google-api-python-client = "^2.99.0"
+
+[tool.poetry.group.prod]
+optional = true
+
+[tool.poetry.group.prod.dependencies]
+# These two are specifically pinned on older versions to avoid OCF issues
+mysqlclient = "~2.1.0"
+urllib3 = "~1.26.6"
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.9.1"
+coverage = { extras = ["toml"], version = "^7.3.1" }
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
 [tool.black]
-exclude = '/(.*migrations)/'
+extend-exclude = '(.*migrations)/'
 
 [tool.coverage.run]
 source = ["."]

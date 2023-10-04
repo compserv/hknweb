@@ -6,7 +6,6 @@ from hknweb.candidate.models import OffChallenge
 
 @admin.register(OffChallenge)
 class OffChallengeAdmin(admin.ModelAdmin):
-
     fields = [
         "requester",
         "officer",

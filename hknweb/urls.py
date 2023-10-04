@@ -1,12 +1,11 @@
 import markdownx.views as markdownx_views
-from django.contrib import admin
-from django.urls import include, path
-from django.conf.urls import url
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib import admin
+from django.urls import include, path
 
-from hknweb.views import landing, outreach, users, indrel, people
 from hknweb.utils import method_login_and_permission
+from hknweb.views import indrel, landing, outreach, people, users
 
 __all__ = ["urlpatterns", "safe_urlpatterns"]
 
@@ -14,7 +13,6 @@ __all__ = ["urlpatterns", "safe_urlpatterns"]
 unsafe_urlpatterns = [
     path("admin/", admin.site.urls),
     path("accounts/", include("django.contrib.auth.urls")),
-    path("auth/", include("social_django.urls", namespace="social")),
 ]
 
 app_urlpatterns = [
@@ -35,15 +33,15 @@ app_urlpatterns = [
 ]
 
 markdownx_urlpatterns = [
-    url(
-        r"^markdownx/upload/$",
+    path(
+        "markdownx/upload/",
         method_login_and_permission("markdown_pages.add_markdownpage")(
             markdownx_views.ImageUploadView
         ).as_view(),
         name="markdownx_upload",
     ),
-    url(
-        r"^markdownx/markdownify/$",
+    path(
+        "markdownx/markdownify/",
         method_login_and_permission("markdown_pages.add_markdownpage")(
             markdownx_views.MarkdownifyView
         ).as_view(),

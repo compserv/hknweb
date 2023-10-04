@@ -1,5 +1,4 @@
 from django.test import TestCase
-
 from django.urls import reverse
 
 from tests.events.models.utils import ModelFactory
@@ -18,7 +17,7 @@ class CalendarViewTests(TestCase):
         response = self.client.get(reverse("events:index"))
 
         self.assertEqual(response.status_code, 200)
-        self.assertQuerysetEqual(response.context["event_types"], [repr(event_type)])
+        self.assertQuerysetEqual(response.context["event_types"], [event_type])
         self.assertQuerysetEqual(response.context["events"], [])
 
     def test_events_with_event_type_with_access(self):
@@ -34,8 +33,8 @@ class CalendarViewTests(TestCase):
         response = self.client.get(reverse("events:index"))
 
         self.assertEqual(response.status_code, 200)
-        self.assertQuerysetEqual(response.context["event_types"], [repr(event_type)])
-        self.assertQuerysetEqual(response.context["events"], [repr(event)])
+        self.assertQuerysetEqual(response.context["event_types"], [event_type])
+        self.assertQuerysetEqual(response.context["events"], [event])
 
     def test_events_with_event_type_without_access(self):
         user = ModelFactory.create_user()
@@ -50,7 +49,7 @@ class CalendarViewTests(TestCase):
         response = self.client.get(reverse("events:index"))
 
         self.assertEqual(response.status_code, 200)
-        self.assertQuerysetEqual(response.context["event_types"], [repr(event_type)])
+        self.assertQuerysetEqual(response.context["event_types"], [event_type])
         self.assertQuerysetEqual(response.context["events"], [])
 
     def test_event_types_ordered_by_type_ascending(self):
@@ -63,9 +62,8 @@ class CalendarViewTests(TestCase):
         response = self.client.get(reverse("events:index"))
 
         self.assertEqual(response.status_code, 200)
-        expected = [repr(event_type) for event_type in event_types]
         actual = response.context["event_types"]
-        self.assertQuerysetEqual(actual, expected)
+        self.assertQuerysetEqual(actual, event_types)
 
     def test_events_ordered_by_start_time_descending(self):
         user = ModelFactory.create_user()
@@ -84,6 +82,5 @@ class CalendarViewTests(TestCase):
         response = self.client.get(reverse("events:index"))
 
         self.assertEqual(response.status_code, 200)
-        expected = [repr(event) for event in reversed(events)]
         actual = response.context["events"]
-        self.assertQuerysetEqual(actual, expected)
+        self.assertQuerysetEqual(actual, events[::-1])

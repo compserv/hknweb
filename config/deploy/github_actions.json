@@ -1,14 +1,14 @@
 {
-    "deploy": {
-        "name": "github_actions",
-        "user": "github_actions",
-        "host": "github_actions",
-        "conda_env": "hknweb-dev",
-        "run_blackbox_postdeploy": false,
-        "use_local_repo": true,
-        "path": {
-            "root": "/home/runner/work/hknweb"
-        },
-        "keep_releases": 1
-    }
+  "deploy": {
+    "name": "github_actions",
+    "user": "github_actions",
+    "host": "github_actions",
+    "run_blackbox_postdeploy": false,
+    "run_collectstatic": false,
+    "use_local_repo": true,
+    "path": {
+      "root": "/home/runner/work/hknweb"
+    },
+    "keep_releases": 1
+  }
 }

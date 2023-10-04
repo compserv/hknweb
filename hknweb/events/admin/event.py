@@ -7,7 +7,6 @@ import hknweb.events.google_calendar_utils as gcal
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
-
     fields = [
         "name",
         "start_time",
