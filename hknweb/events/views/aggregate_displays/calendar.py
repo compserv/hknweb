@@ -91,6 +91,14 @@ def get_calendars(request, user_access_level: int):
                 }
             )
 
+        ical_view, _ = ICalView.objects.get_or_create(user=request.user)
+        calendars.append(
+            {
+                "name": "personal (ics)",
+                "link": get_calendar_link(calendar_id=ical_view.url),
+            }
+        )
+
     for calendar in calendars[:-1]:
         calendar["separator"] = "/"
     if len(calendars) > 0:
