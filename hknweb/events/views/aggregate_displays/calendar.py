@@ -1,13 +1,15 @@
+import uuid
 from typing import List
 
-from django.shortcuts import render
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, render
 
-from hknweb.models import Profile
-from hknweb.events.models import Event, EventType, GCalAccessLevelMapping
+from hknweb.events.google_calendar_utils import get_calendar_link
+from hknweb.events.models import Event, EventType, GCalAccessLevelMapping, ICalView
 from hknweb.events.models.constants import ACCESS_LEVELS
 from hknweb.events.utils import get_events
+from hknweb.models import Profile
 from hknweb.utils import allow_public_access, get_access_level
-from hknweb.events.google_calendar_utils import get_calendar_link
 
 
 @allow_public_access
@@ -27,6 +29,12 @@ def index(request):
         not_rsvpd_display=not_rsvpd_display,
         show_sidebar=True,
     )
+
+
+@allow_public_access
+def ical(request, *, id: uuid.UUID):
+    ical_view = get_object_or_404(ICalView, pk=id)
+    return HttpResponse(ical_view.to_ical_obj().to_ical())
 
 
 def calendar_helper(

@@ -1,5 +1,6 @@
 from hknweb.events.views.aggregate_displays import (
     index,
+    ical,
     get_leaderboard,
     photos,
 )
