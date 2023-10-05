@@ -5,6 +5,7 @@ from django.shortcuts import render
 from hknweb.models import Profile
 from hknweb.events.models import Event, EventType, GCalAccessLevelMapping
 from hknweb.events.models.constants import ACCESS_LEVELS
+from hknweb.events.utils import get_events
 from hknweb.utils import allow_public_access, get_access_level
 from hknweb.events.google_calendar_utils import get_calendar_link
 
@@ -37,15 +38,7 @@ def calendar_helper(
     show_sidebar=False,
 ):
     user_access_level = get_access_level(request.user)
-
-    events = Event.objects.order_by("-start_time").filter(
-        access_level__gte=user_access_level
-    )
-    if request.user.is_authenticated:
-        if not rsvpd_display:
-            events = events.exclude(rsvp__user=request.user)
-        if not not_rsvpd_display:
-            events = events.filter(rsvp__user=request.user)
+    events = get_events(request.user, rsvpd_display, not_rsvpd_display)
 
     all_event_types = event_types = EventType.objects.order_by("type")
     if event_type_types:
