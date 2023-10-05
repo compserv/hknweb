@@ -34,7 +34,7 @@ def index(request):
 @allow_public_access
 def ical(request, *, id: uuid.UUID):
     ical_view = get_object_or_404(ICalView, pk=id)
-    return HttpResponse(ical_view.to_ical_obj().to_ical())
+    return HttpResponse(ical_view.to_ical_obj().to_ical(), content_type="text/calendar")
 
 
 def calendar_helper(
