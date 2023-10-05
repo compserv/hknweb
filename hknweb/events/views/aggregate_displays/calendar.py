@@ -4,7 +4,7 @@ from typing import List
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 
-from hknweb.events.google_calendar_utils import get_calendar_link
+from hknweb.events.google_calendar_utils import SHARE_LINK_TEMPLATE, get_calendar_link
 from hknweb.events.models import Event, EventType, GCalAccessLevelMapping, ICalView
 from hknweb.events.models.constants import ACCESS_LEVELS
 from hknweb.events.utils import get_events
@@ -86,16 +86,18 @@ def get_calendars(request, user_access_level: int):
         if profile.google_calendar_id:
             calendars.append(
                 {
-                    "name": "personal",
+                    "name": "personal (gcal)",
                     "link": get_calendar_link(calendar_id=profile.google_calendar_id),
                 }
             )
 
         ical_view, _ = ICalView.objects.get_or_create(user=request.user)
+        ical_url = request.build_absolute_uri(ical_view.url)
+        ical_url = ical_url.replace("https://", "webcal://")
         calendars.append(
             {
                 "name": "personal (ics)",
-                "link": get_calendar_link(calendar_id=ical_view.url),
+                "link": SHARE_LINK_TEMPLATE.format(cid=ical_url),
             }
         )
 
