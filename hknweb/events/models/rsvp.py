@@ -33,7 +33,7 @@ class Rsvp(models.Model):
             # we no longer provision new personal google calendars
             # instead, we generate a ICalView and a route to view it
             # so they can add it to any calendar app
-            return
+            return super().save(*args, **kwargs)
 
         if self.google_calendar_event_id is None:
             self.google_calendar_event_id = gcal.create_event(
