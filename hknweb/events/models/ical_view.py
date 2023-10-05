@@ -16,3 +16,14 @@ class ICalView(models.Model):
     show_rsvpd = models.BooleanField(default=True)
     show_not_rsvpd = models.BooleanField(default=False)
 
+    def to_ical_obj(self):
+        cal = icalendar.Calendar()
+        cal.add("prodid", "-//Eta Kappa Nu, Mu Chapter//Calendar//EN")
+        cal.add("version", "2.0")
+        cal.add("summary", f"HKN Personal Calendar for {self.user}")
+
+        events = get_events(self.user, self.show_rsvpd, self.show_not_rsvpd)
+        for event in events:
+            cal.add_component(event.to_ical_obj())
+
+        return cal

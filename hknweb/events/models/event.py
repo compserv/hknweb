@@ -1,14 +1,14 @@
-from django.db import models
+import icalendar
 from django.contrib.auth.models import User
-
+from django.db import models
+from icalendar import vCalAddress, vText
 from markdownx.models import MarkdownxField
 
-from hknweb.utils import get_semester
 import hknweb.events.google_calendar_utils as gcal
-
+from hknweb.events.models.constants import ACCESS_LEVELS
 from hknweb.events.models.event_type import EventType
 from hknweb.events.models.google_calendar import GCalAccessLevelMapping
-from hknweb.events.models.constants import ACCESS_LEVELS
+from hknweb.utils import get_semester
 
 
 class Event(models.Model):
@@ -40,6 +40,29 @@ class Event(models.Model):
         Assumes that there are only spring and fall semesters, separated at 07/01.
         Example: "Spring 2020" """
         return get_semester(self.start_time)
+
+    def to_ical_obj(self):
+        event = icalendar.Event()
+        event.add("uid", self.id)
+        event.add("summary", self.name)
+        event.add("location", self.location)
+        event.add("description", self.description)
+        event.add("dtstart", self.start_time)
+        event.add("dtend", self.end_time)
+        event.add("dtstamp", self.created_at)
+
+        def make_attendee(user, status):
+            attendee = vCalAddress(f"MAILTO:{user.email}")
+            attendee.params["PARTSTAT"] = vText(status)
+            attendee.params["CN"] = vText(f"{user.first_name} {user.last_name}")
+            return attendee
+
+        for rsvp in self.admitted_set():
+            event.add("attendee", make_attendee(rsvp.user, "ACCEPTED"), encode=0)
+        for rsvp in self.waitlist_set():
+            event.add("attendee", make_attendee(rsvp.user, "TENTATIVE"), encode=0)
+
+        return event
 
     def get_absolute_url(self):
         return "/events/{}".format(self.id)
