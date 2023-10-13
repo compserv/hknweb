@@ -23,7 +23,7 @@ optional = true
 [tool.poetry.group.prod.dependencies]
 # These two are specifically pinned on older versions to avoid OCF issues
 mysqlclient = "~2.1.0"
-urllib3 = "~1.26.6"
+urllib3 = "~1.26.17"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.9.1"
