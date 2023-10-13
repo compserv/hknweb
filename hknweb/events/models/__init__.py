@@ -7,3 +7,4 @@ from hknweb.events.models.google_calendar import (
 )
 from hknweb.events.models.attendance import AttendanceForm, AttendanceResponse
 from hknweb.events.models.event_photo import EventPhoto
+from hknweb.events.models.ical_view import ICalView

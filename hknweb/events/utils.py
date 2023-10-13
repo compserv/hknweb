@@ -7,6 +7,37 @@ from django.utils.safestring import mark_safe
 
 from hknweb.events.constants import ATTR
 from hknweb.events.models import Event
+from hknweb.utils import get_access_level
+
+
+def get_events(user, show_rsvpd, show_not_rsvpd):
+    """Retrieves the events a user can see.
+
+    Parameters
+    ----------
+    user: django.contrib.auth.models.User
+        The user authenticating the request (can be anonymous)
+    show_rsvpd: bool
+        Whether to include events the user has RSVP'd for
+    show_not_rsvpd: bool
+        Whether to include events the user has not RSVP'd for
+
+    Returns
+    -------
+    QuerySet of Event objects
+    """
+
+    events = Event.objects.order_by("-start_time").filter(
+        access_level__gte=get_access_level(user)
+    )
+
+    if user.is_authenticated:
+        if not show_rsvpd:
+            events = events.exclude(rsvp__user=user)
+        if not show_not_rsvpd:
+            events = events.filter(rsvp__user=user)
+
+    return events
 
 
 def create_event(data, start_time, end_time, user):
