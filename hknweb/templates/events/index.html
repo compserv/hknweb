@@ -187,7 +187,12 @@
 
     @media screen and (min-width: 1000px) {
         .content-wrapper {
-            left: 12.5%;
+		    {% if show_sidebar %}
+				left: 3.33%;
+			{% else %}
+				left: 12.5%;
+			{% endif %}
+			
             position: relative;
         }
     }
