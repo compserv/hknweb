@@ -1,12 +1,15 @@
+import uuid
 from typing import List
 
-from django.shortcuts import render
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, render
 
-from hknweb.models import Profile
-from hknweb.events.models import Event, EventType, GCalAccessLevelMapping
+from hknweb.events.google_calendar_utils import SHARE_LINK_TEMPLATE, get_calendar_link
+from hknweb.events.models import Event, EventType, GCalAccessLevelMapping, ICalView
 from hknweb.events.models.constants import ACCESS_LEVELS
+from hknweb.events.utils import get_events
+from hknweb.models import Profile
 from hknweb.utils import allow_public_access, get_access_level
-from hknweb.events.google_calendar_utils import get_calendar_link
 
 
 @allow_public_access
@@ -28,6 +31,12 @@ def index(request):
     )
 
 
+@allow_public_access
+def ical(request, *, id: uuid.UUID):
+    ical_view = get_object_or_404(ICalView, pk=id)
+    return HttpResponse(ical_view.to_ical_obj().to_ical(), content_type="text/calendar")
+
+
 def calendar_helper(
     request,
     title,
@@ -37,15 +46,7 @@ def calendar_helper(
     show_sidebar=False,
 ):
     user_access_level = get_access_level(request.user)
-
-    events = Event.objects.order_by("-start_time").filter(
-        access_level__gte=user_access_level
-    )
-    if request.user.is_authenticated:
-        if not rsvpd_display:
-            events = events.exclude(rsvp__user=request.user)
-        if not not_rsvpd_display:
-            events = events.filter(rsvp__user=request.user)
+    events = get_events(request.user, rsvpd_display, not_rsvpd_display)
 
     all_event_types = event_types = EventType.objects.order_by("type")
     if event_type_types:
@@ -85,10 +86,20 @@ def get_calendars(request, user_access_level: int):
         if profile.google_calendar_id:
             calendars.append(
                 {
-                    "name": "personal",
+                    "name": "personal (gcal)",
                     "link": get_calendar_link(calendar_id=profile.google_calendar_id),
                 }
             )
+
+        ical_view, _ = ICalView.objects.get_or_create(user=request.user)
+        ical_url = request.build_absolute_uri(ical_view.url)
+        ical_url = ical_url.replace("https://", "webcal://")
+        calendars.append(
+            {
+                "name": "personal (ics)",
+                "link": SHARE_LINK_TEMPLATE.format(cid=ical_url),
+            }
+        )
 
     for calendar in calendars[:-1]:
         calendar["separator"] = "/"

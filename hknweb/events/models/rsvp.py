@@ -1,9 +1,9 @@
-from django.db import models
 from django.contrib.auth.models import User
+from django.db import models
 
-from hknweb.models import Profile
-from hknweb.events.models.event import Event
 import hknweb.events.google_calendar_utils as gcal
+from hknweb.events.models.event import Event
+from hknweb.models import Profile
 
 
 class Rsvp(models.Model):
@@ -30,8 +30,10 @@ class Rsvp(models.Model):
     def save(self, *args, **kwargs):
         profile = Profile.objects.filter(user=self.user).first()
         if not profile.google_calendar_id:
-            profile.google_calendar_id = gcal.create_personal_calendar()
-            profile.save()
+            # we no longer provision new personal google calendars
+            # instead, we generate a ICalView and a route to view it
+            # so they can add it to any calendar app
+            return super().save(*args, **kwargs)
 
         if self.google_calendar_event_id is None:
             self.google_calendar_event_id = gcal.create_event(

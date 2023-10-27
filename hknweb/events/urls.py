@@ -1,11 +1,12 @@
 from django.urls import path
-import hknweb.events.views as views
 
+import hknweb.events.views as views
 
 app_name = "events"
 
 aggregate_display_urls = [
     path("", views.index, name="index"),
+    path("ical/<uuid:id>.ics", views.ical, name="ical"),
     path("leaderboard", views.get_leaderboard, name="leaderboard"),
     path("photos", views.photos, name="photos"),
 ]

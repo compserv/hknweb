@@ -25,3 +25,6 @@ CSRF_TRUSTED_ORIGINS = [
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 STATIC_URL = "https://www.ocf.berkeley.edu/~hkn/hknweb/static/"
 STATIC_ROOT = "/home/h/hk/hkn/public_html/hknweb/static/"
+
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
