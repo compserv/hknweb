@@ -15,11 +15,7 @@ fabric = "^3.2.2"
 django-autocomplete-light = "^3.9.7"
 djangorestframework = "^3.14.0"
 google-api-python-client = "^2.99.0"
-<<<<<<< HEAD
-pillow = "^9.5.0"
-=======
 icalendar = "^5.0.10"
->>>>>>> aeb8ef26d262cbd2094143129e97b43fb58f6bfd
 
 [tool.poetry.group.prod]
 optional = true
