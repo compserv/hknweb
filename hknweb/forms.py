@@ -236,30 +236,51 @@ class ProvisionCandidatesForm(forms.Form):
 
             return password
 
-        email_information = []
+        # Process user data into useable structs
+        user_data = []
         for row in rows:
-            # If username is None or already exists, skip provisioning
-            if (row["username"] is None) or (row["username"] in existing_usernames):
+            if row["username"] is None or row["username"] in existing_usernames:
                 continue
-
-            # Generate a password
-            password = generate_password()
-
-            # Construct user object
-            user = User.objects.create_user(
+            user_data.append(User(
                 username=row["username"],
                 first_name=row["First name"],
                 last_name=row["Last name"],
                 email=row["Berkeley email"],
-                password=password,
-            )
+                password=generate_password(),
+            ))
+        
+        users = User.objects.bulk_create(user_data) # Bulk process accounts into database
+        
+        # Save each user, add to candidate group set, and add information for emails
+        email_information = []
+        for user in users:
             user.save()
-
-            # Add user to the candidates group
             group.user_set.add(user)
+            email_information.append((user, user.password))
 
-            # Add information for sending emails
-            email_information.append((user, password))
+        # for row in rows:
+        #     # If username is None or already exists, skip provisioning
+        #     if (row["username"] is None) or (row["username"] in existing_usernames):
+        #         continue
+
+        #     # Generate a password
+        #     password = generate_password()
+
+        #     # Construct user object
+        #     user = User.objects.create_user(
+        #         username=row["username"],
+        #         first_name=row["First name"],
+        #         last_name=row["Last name"],
+        #         email=row["Berkeley email"],
+        #         password=password,
+        #     )
+        #     user.save()
+
+        #     # Add user to the candidates group
+        #     group.user_set.add(user)
+
+        #     # Add information for sending emails
+        #     email_information.append((user, password))
 
         self.email_information = email_information
 
