@@ -7,7 +7,7 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "~3.9"
-django = "^4.2.5"
+django = "^4.2.7"
 django-markdownx = "^4.0.2"
 bleach = { extras = ["css"], version = "^6.0.0" }
 gunicorn = "^21.2.0"
