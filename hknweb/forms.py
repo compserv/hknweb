@@ -241,13 +241,17 @@ class ProvisionCandidatesForm(forms.Form):
         for row in rows:
             if row["username"] is None or row["username"] in existing_usernames:
                 continue
-            user_data.append(User(
+
+            user = User(
                 username=row["username"],
                 first_name=row["First name"],
                 last_name=row["Last name"],
                 email=row["Berkeley email"],
-                password=generate_password(),
-            ))
+            )
+
+            password = generate_password()
+            user.set_password(password)
+            user_data.append(user)
         
         users = User.objects.bulk_create(user_data) # Bulk process accounts into database
         
