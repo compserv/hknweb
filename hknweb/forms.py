@@ -261,7 +261,7 @@ class ProvisionCandidatesForm(forms.Form):
         
         # Save each user, add to candidate group set, and add information for emails
         email_information = []
-        for i in range(len(users)):
+        for i in range(len(user_data)):
             user = users[i]
             pwrd = user_pwrds[i]
             email_information.append((user, pwrd))
