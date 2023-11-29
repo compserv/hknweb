@@ -238,6 +238,7 @@ class ProvisionCandidatesForm(forms.Form):
 
         # Process user data into useable structs
         user_data = []
+        user_pwrds = []
         for row in rows:
             if row["username"] is None or row["username"] in existing_usernames:
                 continue
@@ -250,16 +251,20 @@ class ProvisionCandidatesForm(forms.Form):
             )
 
             password = generate_password()
+
+            user_pwrds.append(password)
             user.set_password(password)
             user_data.append(user)
         
         users = User.objects.bulk_create(user_data) # Bulk process accounts into database
+        group.user_set.add(*users)
         
         # Save each user, add to candidate group set, and add information for emails
         email_information = []
-        for user in users:
-            group.user_set.add(user)
-            email_information.append((user, user.password))
+        for i in range(len(users)):
+            user = users[i]
+            pwrd = user_pwrds[i]
+            email_information.append((user, pwrd))
 
         self.email_information = email_information
 
