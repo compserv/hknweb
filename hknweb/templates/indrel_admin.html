@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Industrial Relations Admin Page{% endblock %}
+
+{% block heading %}
+Industrial Relations Admin Page
+{% endblock %}
+
+{% block content %}
+
+{% include 'components/tabs.html' %}
+
+<style>
+    .content {
+        padding-top: 25px;
+        padding-bottom: 25px;
+    }
+
+    .inner {
+        max-width: 1000px;
+        margin: auto;
+        text-align: left;
+    }
+
+    .scrollable {
+        height: 750px;
+        overflow-y: auto;
+    }
+
+    .company-sponsors-logos {
+        text-align: center;
+    }
+
+    .company-sponsors-logo {
+        width: 500px;
+        max-width: 100%;
+    }
+</style>
+<!-- 
+<div class="inner">
+    <div class="tab">
+        <button id="default_option" class="tablinks" onclick="open_tab(event, 'what_is_hkn')">What is HKN?</button>
+        <button class="tablinks" onclick="open_tab(event, 'resume_book')">Resume Book</button>
+        <button class="tablinks" onclick="open_tab(event, 'career_fair')">EECS Career Fair</button>
+        <button class="tablinks" onclick="open_tab(event, 'infosessions')">Infosessions</button>
+        <button class="tablinks" onclick="open_tab(event, 'sponsors')">Current sponsors</button>
+    </div>
+
+
+</div> -->
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    $(document).ready(function () {
+        let maxFields = 200;
+        let addButton = $('.add-button');
+        let inputWrapper = $('.input-wrapper');
+
+        $(addButton).click(function () {
+            if (inputWrapper.children().length < maxFields) {
+                let index = inputWrapper.children().length;
+                let inputName = `name_${index}`;
+                let inputUrl = `url_${index}`; 
+                let inputFile = `file_${index}`; 
+                inputWrapper.append(`<div class = "input-elem"><input type="text" name="${inputName}" placeholder="">
+                                     <input type="text" name="${inputUrl}" placeholder="">
+                                     <input type="file" name="${inputFile}"></div>`);
+            }
+        });
+
+        $(document).on('click', '.remove-button', function () {
+            $(this).prev('input').remove();
+        });
+    });
+</script>
+
+<h3>Current sponsors:</h3>
+<form method="POST" action= "{% url 'indrel_admin' %}" enctype = "multipart/form-data">
+    {% csrf_token %}
+    <div class = "input-wrapper">
+    {% for index, company_name, company_url, company_file in company_data %}
+    <div class = "input-elem">
+        <input type = "text" size = "32" value = {{company_name}} name = "name_{{index}}">
+        <input type = "text" size = "32" value = {{company_url}} name = "url_{{index}}">
+        <input type = "file" size = "32" value = "Upload Image" name = "file_{{index}}">
+        <!-- <a href = {{company_url}}>
+            <img src = "{% static company_file %}" class = "company-sponsors-logo" alt = {{company_name}}>
+        </a> -->
+    </div>
+    {% endfor %}
+    </div>   
+    <button type="button" class="add-button">Add Sponsor</button>
+    <button type="submit" name="submit_button" class="btn btn-primary">Submit Changes</button>
+    <button type = "button" class = "remove-button">Remove Sponsor (Doesn't Work)</button>
+</form>
+<script>
+    document.getElementById("default_option").click();
+</script>
+
+{% endblock %}
