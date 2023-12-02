@@ -144,12 +144,14 @@ Industrial Relations
 
         <div id="sponsors" class="tabcontent">
             We thank all of our sponsors for their support of HKN and the broader EECS community. Click on the logos display below to visit that sponsors' website!
-        
-            <div class="company-sponsors-logos">
-                <a href="https://www.citadel.com/">
-                    <img src="{% static 'img/indrel_sponsors_citadel_logo.png' %}" class="company-sponsors-logo" alt="Citadel logo">
+            {% for index, company_name, company_url, company_file in company_data %}
+            <div class = "company-sponsors-logos">
+                <a href = {{company_url}}>
+                    <img src = "{% static company_file %}" class = "company-sponsors-logo" alt = {{company_name}}>
                 </a>
-            </div>
+            </div>      
+            {% endfor %}
+        
         </div>
     </div>
 </div>
