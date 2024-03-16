@@ -114,6 +114,7 @@
   <div id="left-details">
 
     <p>{{ event_description | safe }}</p>
+    <p><b>Point of Contact</b>: {{ event.point_of_contact}}</p>
     <p><b>Event Type</b>: {{ event.event_type }}</p>
     <p><b>Location</b>: {{ event_location }}</p>
     <p><b>Date(s) and Time(s)</b>: {{ event | process_event_time }}</p>

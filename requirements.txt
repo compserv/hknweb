@@ -1,0 +1,11 @@
+bleach==6.1.0
+dal==0.2
+djangorestframework==3.14.0
+Fabric==3.2.2
+google_api_python_client==2.122.0
+icalendar==5.0.11
+invoke==2.2.0
+Markdown==3.6
+protobuf==5.26.0
+pytz==2024.1
+Requests==2.31.0
