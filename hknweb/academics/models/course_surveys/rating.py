@@ -13,7 +13,7 @@ class Rating(AcademicEntity):
     )
 
     # value attributes
-    question_text = models.TextField(max_length=500)
+    question_text = models.TextField(max_length=2000)
     inverted = models.BooleanField(default=False)
     range_max = models.IntegerField(default=7)
     rating_value = models.FloatField()

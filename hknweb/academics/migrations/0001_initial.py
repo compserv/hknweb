@@ -91,7 +91,7 @@ class Migration(migrations.Migration):
             name='Rating',
             fields=[
                 ('academicentity_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='academics.AcademicEntity')),
-                ('question_text', models.TextField(max_length=500)),
+                ('question_text', models.TextField(max_length=2000)),
                 ('inverted', models.BooleanField(default=False)),
                 ('range_max', models.IntegerField(default=7)),
                 ('rating_value', models.FloatField()),
