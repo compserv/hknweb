@@ -30,6 +30,7 @@ def show_details_helper(request, id, back_link: str, can_edit: bool):
 
     context = {
         "event": event,
+        "event_point_of_contact": markdownify(event.point_of_contact),
         "event_description": markdownify(event.description),
         "event_location": format_url(event.location),
         "user_access_level": ACCESSLEVEL_TO_DESCRIPTION[get_access_level(request.user)],
