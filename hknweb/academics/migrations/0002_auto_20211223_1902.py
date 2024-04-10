@@ -17,6 +17,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='icsr',
             name='course_name',
-            field=models.TextField(default='', max_length=500),
+            field=models.TextField(default='', max_length=2000),
         ),
     ]
