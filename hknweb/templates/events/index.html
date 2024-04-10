@@ -185,10 +185,15 @@
         overflow: auto;
     }
 
+
     @media screen and (min-width: 1000px) {
         .content-wrapper {
-            left: 12.5%;
-            position: relative;
+		    {% if show_sidebar %}
+				left: 5%;
+			{% else %}
+				left: 12.5%;
+			{% endif %}
+			position: relative;
         }
     }
 

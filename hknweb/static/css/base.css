@@ -24,6 +24,7 @@ body {
 
 .content {
     padding-bottom: 1em;
+	overflow:auto;
 }
 
 /*
