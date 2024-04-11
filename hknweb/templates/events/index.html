@@ -127,7 +127,7 @@
 
         const urlParams = new URLSearchParams(window.location.search);
         urlParams.delete("rsvpd");
-        urlParams.delete("unrsvpd");
+        urlParams.delete("not_rsvpd");
         urlParams.delete("event_types");
 
         if (history.pushState) {
