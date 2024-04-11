@@ -172,7 +172,7 @@ class ProvisionCandidatesForm(forms.Form):
         if invalid_emails:
             messages.error(
                 request,
-                f"All accounts created successfully except the following with invalid emails: {invalid_emails}. As a reminder, all emails must end in '@berkeley.edu'.",
+                f"All accounts created successfully except the following with invalid or existing emails: {invalid_emails}. As a reminder, all emails must end in '@berkeley.edu'.",
             )
         else:
             messages.info(request, "All accounts successfully created!")
@@ -206,6 +206,7 @@ class ProvisionCandidatesForm(forms.Form):
 
         # Get existing usernames
         usernames = []
+        emails = []
         invalid_emails = []
         for row in rows:
             email = row["Berkeley email"]
@@ -213,14 +214,21 @@ class ProvisionCandidatesForm(forms.Form):
 
             if username:
                 usernames.append(username)
+                emails.append(email)
             else:
                 invalid_emails.append(email)
 
             row["username"] = username
 
-        existing_usernames = set(
+        existing_usernames = {u.lower() for u in
             User.objects.filter(username__in=usernames).values_list(
                 "username", flat=True
+            )
+        }
+
+        existing_emails = set(
+            User.objects.filter(email__in=emails).values_list(
+                "email", flat=True
             )
         )
 
@@ -238,8 +246,9 @@ class ProvisionCandidatesForm(forms.Form):
 
         email_information = []
         for row in rows:
-            # If username is None or already exists, skip provisioning
-            if (row["username"] is None) or (row["username"] in existing_usernames):
+            # If username is None or already exists or email already exists, skip provisioning
+            if (row["username"] is None) or (row["username"].lower() in existing_usernames) or (row["Berkeley email"] in existing_emails):
+                invalid_emails.append(row["Berkeley email"])
                 continue
 
             # Generate a password
