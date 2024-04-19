@@ -206,6 +206,7 @@ class ProvisionCandidatesForm(forms.Form):
 
         # Get existing usernames
         usernames = []
+        emails = []
         invalid_emails = []
         for row in rows:
             email = row["Berkeley email"]
@@ -213,6 +214,7 @@ class ProvisionCandidatesForm(forms.Form):
 
             if username:
                 usernames.append(username)
+                emails.append(email)
             else:
                 invalid_emails.append(email)
 
@@ -221,6 +223,12 @@ class ProvisionCandidatesForm(forms.Form):
         existing_usernames = set(
             User.objects.filter(username__in=usernames).values_list(
                 "username", flat=True
+            )
+        )
+
+        existing_emails = set(
+            User.objects.filter(email__in=emails).values_list(
+                "email", flat=True
             )
         )
 
@@ -237,9 +245,14 @@ class ProvisionCandidatesForm(forms.Form):
             return password
 
         email_information = []
+        skipped_rows = []
         for row in rows:
             # If username is None or already exists, skip provisioning
             if (row["username"] is None) or (row["username"] in existing_usernames):
+                skipped_rows.append(row)
+                continue
+            if ((row["Berkeley email"] is None) or (row["Berkeley email"] in existing_emails)):
+                skipped_rows.append(row)
                 continue
 
             # Generate a password
@@ -250,7 +263,7 @@ class ProvisionCandidatesForm(forms.Form):
                 username=row["username"],
                 first_name=row["First name"],
                 last_name=row["Last name"],
-                email=row["Berkeley email"],
+                email=row["Berkeley email"].lower(),
                 password=password,
             )
             user.save()
@@ -260,8 +273,13 @@ class ProvisionCandidatesForm(forms.Form):
 
             # Add information for sending emails
             email_information.append((user, password))
+            existing_usernames.add(row["username"])
+            existing_emails.add(row["Berkeley email"].lower())
 
         self.email_information = email_information
 
         # Save information for adding messages
         self.invalid_emails = invalid_emails
+
+        for row in skipped_rows:
+            print(row)
