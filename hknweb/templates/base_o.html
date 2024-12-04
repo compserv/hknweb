@@ -58,63 +58,22 @@
             </div>
           </div>
         </a>
-        
         <div class="navi-menu">
-            <div class="dropdown-container">
-                <label for="toggle-student">Student Services</label>
-                <div class="dropdown-content" id="student-dropdown">
-                  <a href="/tutoring">Tutoring Hours</a>
-                  <a href="/studentservices/reviewsessions">Review Sessions</a>
-                  <a href="{% url 'course_surveys:index' %}">Course Surveys</a>
-                  <a href="{% url 'studentservices:course_guide' %}">Course Guide</a>
-                  <a href="/studentservices/tours">Department Tours</a>
-                </div>
-            </div>
-            <div class="dropdown-container">
-                <label for="toggle-industry">Industry</label>
-                <div class="dropdown-content" id="industry-dropdown">
-                  <a href="{% url 'indrel' %}">Industry</a>
-                </div>
-            </div>
-            <div class="dropdown-container">
-                <label for="toggle-outreach">Outreach</label>
-                <div class="dropdown-content" id="outreach-dropdown">
-                  <a href="{% url 'outreach' %}">Outreach</a>
-                </div>
-            </div>
-            <div class="dropdown-container">
-                <label for="toggle-events">Events</label>
-                <div class="dropdown-content" id="events-dropdown">
-                  <a href="{% url 'events:index' %}">Calendar</a>
-                  <a href="{% url 'events:photos' %}">Photos</a>
-                  <a href="{% url 'events:leaderboard' %}">Leaderboard</a>
-                  <a href="https://www.flickr.com/people/berkeley_hkn/">Flickr</a>
-                </div>
-            </div>
-            <div class="dropdown-container">
-                <label for="toggle-about">About</label>
-                <div class="dropdown-content" id="about-dropdown">
-                  <a href="{% url 'about' %}">About HKN</a>
-                  <a href="{% url 'people' %}">People</a>
-                  <a href="">Yearbooks</a>
-                </div>
-            </div>
+          <label for="toggle-student">Student Services</label>
+          <label for="toggle-industry">
+            <a href="{% url 'indrel' %}">Industry</a>
+            </label>
+          <label for="toggle-outreach">
+            <a href="{% url 'outreach' %}">Outreach</a>
+            </label>
+          <label for="toggle-events">Events</label>
+          <label for="toggle-about">About</label>
           {% if user.is_authenticated %}
-          <span style="height: 1.8em; width: 1px; border-left: 1px black solid;"></span>
-          <div class="dropdown-container">
+            <span style="height: 1.8em; width: 1px; border-left: 1px black solid;"></span>
             <label for="toggle-account">
               Welcome, {{ user.first_name }}
               <i id="carrot"></i>
             </label>
-            <div class="dropdown-content" id="account-dropdown">
-              {% if viewer_is_an_officer %}
-              <a href="{% url 'candidate:officer_portal' %}">Officer Portal</a>
-              {% endif %}
-              <a href="{% url 'candidate:candidate_portal' %}">Candidate Portal</a>
-              <a href="/accounts/settings">Settings</a>
-              <a href="/accounts/logout?next={{request.path}}">Log out</a>
-            </div>
-          </div>
           {% else %}
             <a class="account-button" href="/accounts/login?next={{request.path}}">Account</a>
           {% endif %}
@@ -131,11 +90,11 @@
       </div>
     </div>
     <div class="navi-container mobile-nav-bar" style="text-align: center;">
-      <label for="toggle-student">
-          Student Services
-      </label>
+        <label for="toggle-student">
+            Student Services
+        </label>
     </div>
-    <div id="student-nav-bar" class="sub-nav-bar mobile-nav-bar navi-container">
+    <div id="student-nav-bar" class="sub-nav-bar navi-container">
       <a href="/tutoring">Tutoring Hours</a>
       <span class="slash">/</span>
       <a href="/studentservices/reviewsessions">Review Sessions</a>
@@ -153,15 +112,21 @@
             <a href="{% url 'indrel' %}">Industry</a>
         </label>
     </div>
+    <div id="industry-nav-bar" class="sub-nav-bar navi-container">
+        &nbsp
+    </div>
     <div class="navi-container mobile-nav-bar" style="text-align: center;">
         <label for="toggle-outreach">
             <a href="{% url 'outreach' %}">Outreach</a>
         </label>
     </div>
+    <div id="outreach-nav-bar" class="sub-nav-bar navi-container">
+        &nbsp
+    </div>
     <div class="navi-container mobile-nav-bar" style="text-align: center;">
-      <label for="toggle-events">
-          Events
-      </label>
+        <label for="toggle-events">
+            Events
+        </label>
     </div>
     <div id="events-nav-bar" class="sub-nav-bar navi-container">
       <a href="{% url 'events:index' %}">Calendar</a>
@@ -173,9 +138,9 @@
       <a href="https://www.flickr.com/people/berkeley_hkn/">Flickr</a>
     </div>
     <div class="navi-container mobile-nav-bar" style="text-align: center;">
-      <label for="toggle-about">
-          About
-      </label>
+        <label for="toggle-about">
+            About
+        </label>
     </div>
     <div id="about-nav-bar" class="sub-nav-bar navi-container">
       <a href="{% url 'about' %}">About HKN</a>
