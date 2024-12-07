@@ -208,7 +208,7 @@ body {
   transform: rotate(45deg);
   transition: transform 0.4s ease-out;
 }
-#toggle-account:checked ~ .navi-container #carrot {
+.dropdown-container:hover #carrot {
   transform: rotate(225deg);
   transition: transform 0.4s ease-out;
 }
