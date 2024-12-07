@@ -14,6 +14,7 @@ from hknweb.utils import get_semester
 class Event(models.Model):
     name = models.CharField(max_length=255)
     start_time = models.DateTimeField()
+    point_of_contact = models.CharField(max_length=255, default="N/A")
     end_time = models.DateTimeField()
     location = models.CharField(max_length=255)
     event_type = models.ForeignKey(EventType, models.CASCADE)

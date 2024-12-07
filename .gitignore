@@ -15,6 +15,7 @@ __pycache__/
 *.so
 .Python
 env/
+myvenv/
 build/
 develop-eggs/
 dist/
