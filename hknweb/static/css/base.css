@@ -179,7 +179,7 @@ body {
 #toggle-account:not(:checked) ~ #toggle-about:checked ~ #about-nav-bar *,
 #toggle-account:not(:checked) ~ #toggle-candidate-admin:checked ~ #candidate-admin-nav-bar *,
 #toggle-account:checked ~ #account-nav-bar * {
-  display: inline;
+  display: none;
 }
 @media screen and (max-width: 710px) {
   #toggle-mobile:checked ~ #toggle-account:not(:checked) ~ #toggle-student:checked ~ #student-nav-bar,
