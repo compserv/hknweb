@@ -59,7 +59,7 @@ class EventModelTests(TestCase):
         time = datetime.datetime(
             year=current_time.year,
             month=6,
-            day=current_time.day,
+            day=15,
         )
         self.event.start_time = time
 
