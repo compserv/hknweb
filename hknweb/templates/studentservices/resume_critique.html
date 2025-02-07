@@ -1,33 +1,8 @@
 {% extends 'base.html' %}
 {% block title %}Resume Review{% endblock %}
-{% block heading %}Resume Review{% endblock %}
-
-{% block header %}
-    <style>
-        .content {
-            padding-top: 1em;
-            padding-bottom: 1em;
-            padding-left: 30%;
-            padding-right: 30%;
-            text-align: left;
-        }
-    </style>
-{% endblock %}
-
-
 {% block content %}
-    {% if success %}
-        <div style="text-align: center;">
-            {% if messages %}
-                {% for message in messages %}
-                    <h3  {% if messages.tags %} class="{{ message.tags }}" {% endif %} style="color: #0000A0;">{{ message }}</h3>
-                {% endfor %}
-            {% endif %}
-            <form action="{% url 'home' %}">
-                <input type="submit" value="Return home" />
-            </form>
-        </div>
-    {% else %}
-        {% include 'events/form.html' %}
-    {% endif %}
+    <div style="text-align: center; margin-bottom: 20vh;">
+        <h1>Resume Review</h1>
+        <p>Come to HKN Professional Development Office Hours for Resume Critique.</p>
+    </div>
 {% endblock %}
