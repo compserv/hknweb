@@ -10,5 +10,3 @@ class ResumeAdmin(admin.ModelAdmin):
     #readonly_fields = ["first_name", "last_name", "middle_name", "grad_year", "pdf", "current"]
     list_display = ("first_name", "last_name", "middle_name", "grad_year", "pdf", "current")
     
-
-admin.site.register(Resume)
