@@ -16,6 +16,23 @@
 
 
 {% block content %}
+    <!-- Disabled until full backend functionality is implemented.
+	{% if success %}
+        <div style="text-align: center;">
+            {% if messages %}
+                {% for message in messages %}
+                    <h3  {% if messages.tags %} class="{{ message.tags }}" {% endif %} style="color: #0000A0;">{{ message }}</h3>
+                {% endfor %}
+            {% endif %}
+            <form action="{% url 'home' %}">
+                <input type="submit" value="Return home" />
+            </form>
+        </div>
+    {% else %}
+        {% include 'events/form.html' %}
+    {% endif %}
+	-->
+
     <div style="text-align: center; margin-bottom: 20vh;">
         <p> Come to HKN Professional Development Office Hours for Resume Critique.
 		To check hours for this week visit <a href="//hkn.mu/tutor">hkn.mu/tutor</a>. </p>
