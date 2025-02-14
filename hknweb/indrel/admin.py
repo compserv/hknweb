@@ -6,7 +6,11 @@ from hknweb.indrel.models import Resume
 
 @admin.register(Resume)
 class ResumeAdmin(admin.ModelAdmin):
-    fields = ["first_name", "last_name", "middle_name", "grad_year", "pdf", "current"]
-    #readonly_fields = ["first_name", "last_name", "middle_name", "grad_year", "pdf", "current"]
-    list_display = ("first_name", "last_name", "middle_name", "grad_year", "pdf", "current")
-    
+    fields = ["profile", "pdf", "current"]
+    # readonly_fields = ["first_name", "last_name", "middle_name", "grad_year", "pdf", "current"]
+    list_display = (
+        "profile",
+        "pdf",
+        "current",
+    )
+    list_filter = ["current"]
