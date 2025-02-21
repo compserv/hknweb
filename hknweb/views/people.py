@@ -21,15 +21,16 @@ def people(request):
     semester: Semester = Semester.objects.filter(
         pk=request.GET.get("semester") or None
     ).first()
-    if semester is None or not semester.election_set.exists():
+    if semester is None:
         semester = (
             semesters_with_elections
             .order_by("-year", "semester")
             .first()
         )
     
-    if semester == None:
-        officers = None
+    if semester is None or not semester.election_set.exists():
+        execs = None
+        committeeships = None
     else:
         election: Election = semester.election_set.first()
 
@@ -39,11 +40,7 @@ def people(request):
         committeeships: QuerySet[Committeeship] = election.committeeship_set.filter(
             committee__is_exec=False
         ).order_by("committee__name")
-        officers = {
-            "execs": execs,
-            "committeeships": committeeships
-        }
-    
+
     is_officer = get_access_level(request.user) <= GROUP_TO_ACCESSLEVEL["officer"]
     
     form = ProfilePictureForm(request.POST)
@@ -52,9 +49,13 @@ def people(request):
         form.instance = user.profile
         if form.is_valid():
             form.save()
+    
+    print(execs)
+    print(committeeships)
 
     context = {
-        "officers": officers,
+        "execs": execs,
+        "committeeships": committeeships,
         "is_officer": is_officer,
         "form": form,
         "semester_select_form": SemesterSelectForm({"semester": semester}),

@@ -66,13 +66,12 @@
             </button>
         {% endif %}
 
-        {% if officers == None %}
-            <p>We don't have officers data for this semester 😔</p>
-        {% else %}
-            <!-- Display execs -->
-            <div style="width: 80em; margin: auto;">
+        <!-- Display execs -->
+        <div style="width: 80em; margin: auto;">
+            {% if execs == None %}
+                <p>We don't have execs data for that semester. This is probably a mistake - please contact Compserv or Bridge.</p>
+            {% else %}
                 <h2>Executives</h2>
-
                 {% for committeeship in execs %}
                     <div>
                         {% for title, users in committeeship.people.items %}
@@ -82,8 +81,12 @@
                         {% endfor %}
                     </div>
                 {% endfor %}
-            </div>
+            {% endif %}
+        </div>
 
+        {% if committeeships == None %}
+            <p>We don't have committeeships data for that semester. This is probably a mistake - please contact Compserv or Bridge.</p>
+        {% else %}
             <!-- Display committees and people -->
             {% for committeeship in committeeships %}
                 <div style="width: 80em; margin: auto;">
