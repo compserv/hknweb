@@ -66,35 +66,39 @@
             </button>
         {% endif %}
 
-        <!-- Display execs -->
-        <div style="width: 80em; margin: auto;">
-            <h2>Executives</h2>
+        {% if officers == None %}
+            <p>We don't have officers data for this semester 😔</p>
+        {% else %}
+            <!-- Display execs -->
+            <div style="width: 80em; margin: auto;">
+                <h2>Executives</h2>
 
-            {% for committeeship in execs %}
-                <div>
-                    {% for title, users in committeeship.people.items %}
-                        {% for user in users %}
-                            {% include 'about/_user_image.html' %}
+                {% for committeeship in execs %}
+                    <div>
+                        {% for title, users in committeeship.people.items %}
+                            {% for user in users %}
+                                {% include 'about/_user_image.html' %}
+                            {% endfor %}
                         {% endfor %}
-                    {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Display committees and people -->
+            {% for committeeship in committeeships %}
+                <div style="width: 80em; margin: auto;">
+                    <h2>{{ committeeship.committee.name }}</h2>
+
+                    <div>
+                        {% for title, users in committeeship.people.items %}
+                            {% for user in users %}
+                                {% include 'about/_user_image.html' %}
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
                 </div>
             {% endfor %}
-        </div>
-
-        <!-- Display committees and people -->
-        {% for committeeship in committeeships %}
-            <div style="width: 80em; margin: auto;">
-                <h2>{{ committeeship.committee.name }}</h2>
-
-                <div>
-                    {% for title, users in committeeship.people.items %}
-                        {% for user in users %}
-                            {% include 'about/_user_image.html' %}
-                        {% endfor %}
-                    {% endfor %}
-                </div>
-            </div>
-        {% endfor %}
+        {% endif %}
     </div>
 
     <script>
