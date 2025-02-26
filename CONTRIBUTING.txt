@@ -1,0 +1,7 @@
+Thank you for investing your time in contributing to the HKN Website!
+
+Please review our official Contribution Procedures here: https://github.com/compserv/hknweb/wiki/Contribution-Procedure
+
+Long story short:
+* We would review your request if it is not a major bug, have the LGTM Analysis check the code, we'll let you know if it's good to merge in, and then the original author should merge it in.
+* If you were not an HKN CompServ Officer now or in the past, an HKN CompServ Officer (who are usually the admins of this GitHub repo) can merge for you if they deem your code worthy enough!
