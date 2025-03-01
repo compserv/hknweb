@@ -5,7 +5,7 @@ from django.contrib import admin
 from django.urls import include, path
 
 from hknweb.utils import method_login_and_permission
-from hknweb.views import indrel, landing, outreach, people, users
+from hknweb.views import landing, outreach, people, users
 
 __all__ = ["urlpatterns", "safe_urlpatterns"]
 
@@ -28,7 +28,7 @@ app_urlpatterns = [
     path("course_surveys/", include("hknweb.course_surveys.urls")),
     path("", landing.home, name="home"),
     path("about/people/", people.people, name="people"),
-    path("indrel", indrel.indrel, name="indrel"),
+    path("indrel/", include("hknweb.indrel.urls")),
     path("outreach", outreach.outreach, name="outreach"),
 ]
 

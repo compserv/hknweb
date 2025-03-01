@@ -6,19 +6,19 @@ from hknweb.models import Profile
 MAX_STRLEN = 100
 
 
-class Resume(models.Model):
+class UserResume(models.Model):
     # Name + Graduation Year
-    profile = models.OneToOneField(Profile, on_delete=models.CASCADE, editable=False)
+    userInfo = models.OneToOneField(Profile, on_delete=models.CASCADE, editable=True)
 
     # If they are a current member and/or if this is the resume that should be included
     current = models.BooleanField()
 
-    # Resume PDF
+    # Not Too sure about this one
     pdf = models.FileField(upload_to="resume/")
-
-
+    
     def __str__(self):
-        return f"{self.first_name} {self.last_name}'s Resume"
+        return f"{self.userInfo.user.last_name}, {self.userInfo.user.first_name}"
 
 
-# class ResumeBook(models.Model):
+
+#class ResumeBook(models.Model):
