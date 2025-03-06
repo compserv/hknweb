@@ -28,15 +28,17 @@
 
 %For some reason, you need at least five items before it uses the third column
 %Repeat everything between \section*{} and \end{multicols} for each year
-{% for year in years %}
+{% for year, names in data %}
 \vspace{-30pt}
-\section*{ Class of {{ year }} }
+\section*{Class of {{ year }}}
 \vspace{-30pt}
 \rule{\textwidth}{1pt}
 \begin{multicols}{3}
 	\begin{list}{}{\setlength{\itemsep}{-2mm} \setlength{\leftmargin}{0pt}}
-	{% for resume in resumes.year %}
-		\item {{ resumes }}
+	{% for name in names %}
+
+		\item {{ name }}
+		
 	{% endfor %}
 	\end{list}
 \end{multicols}

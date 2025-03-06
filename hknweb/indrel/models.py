@@ -14,11 +14,10 @@ class UserResume(models.Model):
     current = models.BooleanField()
 
     # Not Too sure about this one
-    pdf = models.FileField(upload_to="resume/")
-    
+    pdf = models.FileField(upload_to="indrel/resume/")
+
     def __str__(self):
         return f"{self.userInfo.user.last_name}, {self.userInfo.user.first_name}"
 
 
-
-#class ResumeBook(models.Model):
+# class ResumeBook(models.Model):

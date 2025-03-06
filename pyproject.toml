@@ -18,7 +18,9 @@ google-api-python-client = "^2.99.0"
 pillow = "^9.5.0"
 icalendar = "^5.0.10"
 requests = "^2.32.3"
+PyPDF2 = "^3.0.1"
 pandoc = "^2.4"
+
 
 
 [tool.poetry.group.prod]
