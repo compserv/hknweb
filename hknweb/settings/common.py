@@ -187,6 +187,7 @@ EXEC_GROUP = "exec"
 # Markdown settings
 MARKDOWNX_MARKDOWNIFY_FUNCTION = "hknweb.utils.markdownify"
 MARKDOWNIFY_STRIP = False
+MARKDOWNX_EDITOR_RESIZABLE = False
 
 ## markdownify
 MARKDOWNIFY_WHITELIST_TAGS = [

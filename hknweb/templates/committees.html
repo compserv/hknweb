@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+{% endblock %}
+
+{% block title %} Committee Portal {% endblock %}
+
+{% block heading %} Committee Portal {% endblock %}
+
+
+{% block content %}
+
+<div class="parent">
+    
+    <div class="links-div link">
+        <table class="centered">
+            <tr>
+                <th class="right"> <a href="{% url 'home' %}" class="left">Go to home</a> </th>
+                <th class="left"> <a href="{% url 'login' %}?next={{ request.path|urlencode }}" class="left">Switch account</a> </th>
+            </tr>
+            <tr>
+                <th> <a href="{% url 'indrel_portal' %}" class="right"> Indrel </a> </th>
+            </tr>
+        </table>
+    </div>
+
+    <br>
+
+</div>
+
+
+
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block header %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+{% endblock %}
+
+
+{% block title %} Indrel Portal {% endblock %}
+{% block heading %} Indrel Admin Page {% endblock%}
+
+{% block content%}
+<div class="links-div link">
+    <a href = "{% url 'committee-portal' %}" class="left"> Return to Committees </a>
+    <a href = "{% url 'generate_resumebook' %}" class="right"> Generate Resumebook </a>
+</div>
+{% endblock %}
