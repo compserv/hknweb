@@ -73,13 +73,11 @@
             {% else %}
                 <h2>Executives</h2>
                 {% for committeeship in execs %}
-                    <div>
-                        {% for title, users in committeeship.people.items %}
-                            {% for user in users %}
-                                {% include 'about/_user_image.html' %}
-                            {% endfor %}
+                    {% for title, users in committeeship.people.items %}
+                        {% for user in users %}
+                            {% include 'about/_user_image.html' %}
                         {% endfor %}
-                    </div>
+                    {% endfor %}
                 {% endfor %}
             {% endif %}
         </div>
