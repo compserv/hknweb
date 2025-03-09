@@ -17,17 +17,13 @@ def people(request):
         raise Http404
 
     semesters_with_elections = Semester.objects.exclude(election=None)
-    
+
     semester: Semester = Semester.objects.filter(
         pk=request.GET.get("semester") or None
     ).first()
     if semester is None:
-        semester = (
-            semesters_with_elections
-            .order_by("-year", "semester")
-            .first()
-        )
-    
+        semester = semesters_with_elections.order_by("-year", "semester").first()
+
     if semester is None or not semester.election_set.exists():
         execs = None
         committeeships = None
@@ -42,14 +38,14 @@ def people(request):
         ).order_by("committee__name")
 
     is_officer = get_access_level(request.user) <= GROUP_TO_ACCESSLEVEL["officer"]
-    
+
     form = ProfilePictureForm(request.POST)
     if is_officer and request.method == "POST":
         user = User.objects.get(pk=request.POST["user_id"])
         form.instance = user.profile
         if form.is_valid():
             form.save()
-    
+
     print(execs)
     print(committeeships)
 
@@ -60,5 +56,5 @@ def people(request):
         "form": form,
         "semester_select_form": SemesterSelectForm({"semester": semester}),
     }
-    
+
     return render(request, "about/people.html", context=context)
