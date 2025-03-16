@@ -37,17 +37,21 @@
         <input type="checkbox" name="active" value="true" {% if active == "true"%}checked{% endif %}> Current Officers </input>
     </form>
     <div>
-        <table class="center" >
+        <table class="center">
             <tr>
                 <th>Name</th>
                 <th>Events Attended</th>
             </tr>
-            {% for user in page_obj %}
-                <tr>
-                    <td style="text-align:center; width: 20%; overflow: hidden;">{{ user }}</td>
-                    <td style="text-align:center; width: 20%; overflow: hidden;">{{ user.num_rsvps }}</td>
-                </tr>
-            {% endfor %}
+            {% if page_obj %}
+                {% for user in page_obj %}
+                    <tr>
+                        <td style="text-align:center; width: 20%; overflow: hidden;">{{ user }}</td>
+                        <td style="text-align:center; width: 20%; overflow: hidden;">{{ user.num_rsvps }}</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <td colspan="2" style="text-align:center;">No Users Found</td>
+            {% endif %}
         </table>
     </div>
 
