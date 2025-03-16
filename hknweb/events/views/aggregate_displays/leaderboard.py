@@ -47,6 +47,3 @@ def get_leaderboard(request):
     context = {"page_obj": page_obj, "query": query, "active": active}
     return render(request, "events/leaderboard.html", context)
 
-
-# @allow_all_logged_in_users
-# def search(request):
