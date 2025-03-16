@@ -4,7 +4,6 @@ from hknweb.utils import allow_all_logged_in_users
 from django.db.models import Count, Q
 from django.contrib.auth.models import User
 from hknweb.models import Committeeship
-from itertools import chain
 
 PAGE_SIZE = 20
 
