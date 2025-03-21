@@ -28,8 +28,8 @@ def get_leaderboard(request):
     if active:
         current_semester = Semester.get_current_semester()
         curr_committeeships = Committeeship.objects.filter(
-            Q(election__semester__semester=current_semester.semester) &
-            Q(election__semester__year=current_semester.year)
+            Q(election__semester__semester=current_semester.semester)
+            & Q(election__semester__year=current_semester.year)
         )
 
         curr_users = User.objects.none()
