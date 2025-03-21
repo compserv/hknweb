@@ -37,3 +37,21 @@ class Semester(models.Model):
 
     def __str__(self):
         return "{} {}".format(self.semester, self.year)
+
+    # Assuming latest semester is always the current one, otherwise either rename the function to latest semester
+    # or change functionality to be smarter.
+    @staticmethod
+    def get_current_semester():
+        latest_year = Semester.objects.order_by("-year").first().year
+        latest_year_semesters = Semester.objects.filter(year=latest_year)
+        latest_fall = latest_year_semesters.filter(semester="Fall")
+        if latest_fall.exists():
+            return latest_fall.first()
+
+        # Add summer?
+        latest_spring = latest_year_semesters.filter(semester="Spring")
+        if latest_spring.exists():
+            return latest_spring.first()
+
+        # Should never get here.
+        return latest_year_semesters.first()

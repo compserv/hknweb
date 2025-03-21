@@ -19,33 +19,47 @@
 	    margin-left:auto; 
 	    margin-right:auto;
   	}
+    .searchbar {
+        width: 75%;
+        max-width: 300px;
+        font-size: 1em;
+        text-align: center;
+    }
+
 </style>
 {% endblock %}
 
 {% block content %}
     <h1 style="text-align: center;"> Events Leaderboard </h1>
-
+    <form method="GET" action="" style="text-align: center;">
+        <input type="search" class="searchbar" name="q" placeholder="Name or Username" value="{{ query }}">
+        <button type="submit" style="font-size:1em">Search</button>
+        <input type="checkbox" name="active" value="true" {% if active == "true"%}checked{% endif %}> Current Officers </input>
+    </form>
     <div>
-        <table class="center" >
+        <table class="center">
             <tr>
                 <th>Name</th>
                 <th>Events Attended</th>
             </tr>
-
-            {% for user in page_obj %}
-                <tr>
-                    <td style="text-align:center; width: 20%; overflow: hidden;">{{ user }}</td>
-                    <td style="text-align:center; width: 20%; overflow: hidden;">{{ user.num_rsvps }}</td>
-                </tr>
-            {% endfor %}
+            {% if page_obj %}
+                {% for user in page_obj %}
+                    <tr>
+                        <td style="text-align:center; width: 20%; overflow: hidden;">{{ user }}</td>
+                        <td style="text-align:center; width: 20%; overflow: hidden;">{{ user.num_rsvps }}</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <td colspan="2" style="text-align:center;">No Users Found</td>
+            {% endif %}
         </table>
     </div>
 
     <div style="text-align: center;">
         <span>
             {% if page_obj.has_previous %}
-                <a href="?page=1">&laquo; first</a>
-                <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+                <a href="?page=1&q={{ query }}&active={{ active }}">&laquo; first</a>
+                <a href="?page={{ page_obj.previous_page_number }}&q={{ query }}&active={{ active }}">previous</a>
             {% endif %}
 
             <span>
@@ -53,8 +67,8 @@
             </span>
 
             {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}">next</a>
-                <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+                <a href="?page={{ page_obj.next_page_number }}&q={{ query }}&active={{ active }}">next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}&q={{ query }}&active={{ active }}">last &raquo;</a>
             {% endif %}
         </span>
     </div>
