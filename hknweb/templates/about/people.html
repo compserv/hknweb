@@ -67,7 +67,7 @@
         {% endif %}
 
         <!-- Display execs -->
-        <div style="width: 80em; margin: auto;">
+        <div style="margin: auto;">
             {% if execs == None %}
                 <p>We don't have execs data for that semester. This is probably a mistake—please contact Computing Services.</p>
             {% else %}
@@ -116,7 +116,7 @@
         {% else %}
             <!-- Display committees and people -->
             {% for committeeship in committeeships %}
-                <div style="width: 80em; margin: auto;">
+                <div style="margin: auto;">
                     <h2>{{ committeeship.committee.name }}</h2>
 
                     <div>
