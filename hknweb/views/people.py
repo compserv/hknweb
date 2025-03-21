@@ -21,7 +21,11 @@ def people(request):
     ).first()
     if semester is None:
         # If the requested semester is invalid, default to the latest semester with election
-        semester = Semester.objects.exclude(election=None).order_by("-year", "semester").first()
+        semester = (
+            Semester.objects.exclude(election=None)
+            .order_by("-year", "semester")
+            .first()
+        )
 
     if semester is None or not semester.election_set.exists():
         execs = None
