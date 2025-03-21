@@ -3,7 +3,7 @@ from django.shortcuts import render
 from hknweb.utils import allow_all_logged_in_users
 from django.db.models import Count, Q
 from django.contrib.auth.models import User
-from hknweb.models import Committeeship
+from hknweb.models import Committeeship, Semester
 
 PAGE_SIZE = 20
 
@@ -26,11 +26,13 @@ def get_leaderboard(request):
 
     # Current officer filter
     if active:
+        current_semester = Semester.get_current_semester()
         curr_committeeships = Committeeship.objects.filter(
-            Q(election__semester__semester="Spring") & Q(election__semester__year=2025)
+            Q(election__semester__semester=current_semester.semester) &
+            Q(election__semester__year=current_semester.year)
         )
 
-        curr_users = Committeeship.objects.none()
+        curr_users = User.objects.none()
         for committeeship in curr_committeeships:
             curr_users |= committeeship.officers.all()
             curr_users |= committeeship.assistant_officers.all()
