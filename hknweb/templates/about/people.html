@@ -73,11 +73,40 @@
             {% else %}
                 <h2>Executives</h2>
                 {% for committeeship in execs %}
-                    {% for title, users in committeeship.people.items %}
-                        {% for user in users %}
-                            {% include 'about/_user_image.html' %}
+                    {% if committeeship.committee.name == 'President' %}
+                        {% for title, users in committeeship.people.items %}
+                            {% for user in users %}
+                                {% include 'about/_user_image.html' %}
+                            {% endfor %}
                         {% endfor %}
-                    {% endfor %}
+                    {% endif %}
+                {% endfor %}
+                {% for committeeship in execs %}
+                    {% if committeeship.committee.name == 'External Vice President' %}
+                        {% for title, users in committeeship.people.items %}
+                            {% for user in users %}
+                                {% include 'about/_user_image.html' %}
+                            {% endfor %}
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+                {% for committeeship in execs %}
+                    {% if committeeship.committee.name == 'Internal Vice President' %}
+                        {% for title, users in committeeship.people.items %}
+                            {% for user in users %}
+                                {% include 'about/_user_image.html' %}
+                            {% endfor %}
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+                {% for committeeship in execs %}
+                    {% if 'President' not in committeeship.committee.name %}
+                        {% for title, users in committeeship.people.items %}
+                            {% for user in users %}
+                                {% include 'about/_user_image.html' %}
+                            {% endfor %}
+                        {% endfor %}
+                    {% endif %}
                 {% endfor %}
             {% endif %}
         </div>
