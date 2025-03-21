@@ -16,13 +16,12 @@ def people(request):
     if "semester" in request.GET and not request.GET["semester"].isdigit():
         raise Http404
 
-    semesters_with_elections = Semester.objects.exclude(election=None)
-
     semester: Semester = Semester.objects.filter(
         pk=request.GET.get("semester") or None
     ).first()
     if semester is None:
-        semester = semesters_with_elections.order_by("-year", "semester").first()
+        # If the requested semester is invalid, default to the latest semester with election
+        semester = Semester.objects.exclude(election=None).order_by("-year", "semester").first()
 
     if semester is None or not semester.election_set.exists():
         execs = None
@@ -45,9 +44,6 @@ def people(request):
         form.instance = user.profile
         if form.is_valid():
             form.save()
-
-    print(execs)
-    print(committeeships)
 
     context = {
         "execs": execs,
