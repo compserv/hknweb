@@ -58,8 +58,8 @@
     <div style="text-align: center;">
         <span>
             {% if page_obj.has_previous %}
-                <a href="?page=1">&laquo; first</a>
-                <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+                <a href="?page=1&q={{ query }}&active={{ active }}">&laquo; first</a>
+                <a href="?page={{ page_obj.previous_page_number }}&q={{ query }}&active={{ active }}">previous</a>
             {% endif %}
 
             <span>
@@ -67,8 +67,8 @@
             </span>
 
             {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}">next</a>
-                <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+                <a href="?page={{ page_obj.next_page_number }}&q={{ query }}&active={{ active }}">next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}&q={{ query }}&active={{ active }}">last &raquo;</a>
             {% endif %}
         </span>
     </div>
