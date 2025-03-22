@@ -67,34 +67,68 @@
         {% endif %}
 
         <!-- Display execs -->
-        <div style="width: 80em; margin: auto;">
-            <h2>Executives</h2>
-
-            {% for committeeship in execs %}
-                <div>
-                    {% for title, users in committeeship.people.items %}
-                        {% for user in users %}
-                            {% include 'about/_user_image.html' %}
+        <div style="margin: auto;">
+            {% if execs == None %}
+                <p>We don't have execs data for that semester. This is probably a mistake—please contact Computing Services.</p>
+            {% else %}
+                <h2>Executives</h2>
+                {% for committeeship in execs %}
+                    {% if committeeship.committee.name == 'President' %}
+                        {% for title, users in committeeship.people.items %}
+                            {% for user in users %}
+                                {% include 'about/_user_image.html' %}
+                            {% endfor %}
                         {% endfor %}
-                    {% endfor %}
-                </div>
-            {% endfor %}
+                    {% endif %}
+                {% endfor %}
+                {% for committeeship in execs %}
+                    {% if committeeship.committee.name == 'External Vice President' %}
+                        {% for title, users in committeeship.people.items %}
+                            {% for user in users %}
+                                {% include 'about/_user_image.html' %}
+                            {% endfor %}
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+                {% for committeeship in execs %}
+                    {% if committeeship.committee.name == 'Internal Vice President' %}
+                        {% for title, users in committeeship.people.items %}
+                            {% for user in users %}
+                                {% include 'about/_user_image.html' %}
+                            {% endfor %}
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+                {% for committeeship in execs %}
+                    {% if 'President' not in committeeship.committee.name %}
+                        {% for title, users in committeeship.people.items %}
+                            {% for user in users %}
+                                {% include 'about/_user_image.html' %}
+                            {% endfor %}
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
         </div>
 
-        <!-- Display committees and people -->
-        {% for committeeship in committeeships %}
-            <div style="width: 80em; margin: auto;">
-                <h2>{{ committeeship.committee.name }}</h2>
+        {% if committeeships == None %}
+            <p>We don't have committeeships data for that semester. This is probably a mistake—please contact Computing Services.</p>
+        {% else %}
+            <!-- Display committees and people -->
+            {% for committeeship in committeeships %}
+                <div style="margin: auto;">
+                    <h2>{{ committeeship.committee.name }}</h2>
 
-                <div>
-                    {% for title, users in committeeship.people.items %}
-                        {% for user in users %}
-                            {% include 'about/_user_image.html' %}
+                    <div>
+                        {% for title, users in committeeship.people.items %}
+                            {% for user in users %}
+                                {% include 'about/_user_image.html' %}
+                            {% endfor %}
                         {% endfor %}
-                    {% endfor %}
+                    </div>
                 </div>
-            </div>
-        {% endfor %}
+            {% endfor %}
+        {% endif %}
     </div>
 
     <script>

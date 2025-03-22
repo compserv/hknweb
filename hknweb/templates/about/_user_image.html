@@ -1,8 +1,8 @@
 {% load static %}
 
-<div style="display: inline-block; margin: 0 2em 2em 2em; vertical-align: top;">
+<div style="display: inline-block; margin: 0 0.5em 1em 0.5em; vertical-align: top;">
     <img
-        style="width: 15em; height: 15em;"
+        style="width: 8em; height: 8em;"
         {% if user.profile.picture %}
             src="{{ user.profile.picture_display_url }}"
             alt="{{ user.first_name }} {{ user.last_name }}"
@@ -12,10 +12,12 @@
         {% endif %}
     >
     <br>
-    <div style="width: 15em; overflow-x: hidden; white-space: nowrap; text-overflow: ellipsis;">
-        <span style="font-size: 1.2em;">{{ user.first_name }} {{ user.last_name }}</span>
+    <div style="width: 8em; overflow-x: hidden; white-space: nowrap; text-overflow: ellipsis;">
+        <span style="font-size: 1em;">{{ user.first_name }} {{ user.last_name }}</span>
     </div>
-    <span style="font-style: italic;">{{ title }}</span>
+    <div style="font-style: italic; font-size: 0.8em">{{ title }}</div>
+    <!-- 21 is the length of "hkn.eecs.berkeley.edu" -->
+    <div style="font-size: 0.8em">{{ user.email|slice:-21 }}</div>
 
     {% if request.GET.edit == "true" %}
         <br>
