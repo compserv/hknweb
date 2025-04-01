@@ -13,11 +13,12 @@
     >
     <br>
     <div style="width: 8em; overflow-x: hidden; white-space: nowrap; text-overflow: ellipsis;">
-        <span style="font-size: 1em;">{{ user.first_name }} {{ user.last_name }}</span>
+        <p style="font-size: 1em; margin: 0">{{ user.first_name }}<br>{{ user.last_name }}</p>
     </div>
     <div style="font-style: italic; font-size: 0.8em">{{ title }}</div>
     <!-- 21 is the length of "hkn.eecs.berkeley.edu" -->
-    <div style="font-size: 0.8em">{{ user.email|slice:-21 }}</div>
+    <!-- 12 is the length of "berkeley.edu" -->
+    <div style="width: 10em; overflow-x: auto; font-size: 0.8em; white-space: nowrap;">{{ user.email|slice:-12 }}</div>
 
     {% if request.GET.edit == "true" %}
         <br>
