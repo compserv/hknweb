@@ -1,0 +1,54 @@
+{% extends "portal.html" %}
+
+
+{% block title %} Indrel Portal {% endblock %}
+{% block heading %} Indrel Admin Page {% endblock%}
+
+{% block "portal-content"%}
+    
+
+
+<a href = "{% url 'indrel_events' %}"> 
+    <div class="portal-content">
+        <h2>Events</h2>
+    </div>
+</a>
+
+<a href = "{% url 'indrel_locations' %}"> 
+    <div class="portal-content">
+        <h2>Locations</h2>
+    </div>
+</a>
+
+<a href = "{% url 'indrel_companies' %}"> 
+    <div class="portal-content">
+        <h2>Companies</h2>
+    </div>
+</a>
+
+<a href = "{% url 'indrel_contacts' %}"> 
+    <div class="portal-content">
+        <h2>Contacts</h2>
+    </div>
+</a>
+
+<a href = "{% url 'indrel_types' %}"> 
+    <div class="portal-content">
+       <h2>Event Types</h2>
+    </div>
+</a>
+
+<a href = "{% url 'indrel_resumebooks' %}"> 
+    <div class="portal-content">
+        <h2>Resume Books</h2>
+    </div>
+</a>
+
+<a href = "{% url 'committee-portal' %}"> 
+    <div class="portal-content">
+        <h2>Return to Committees</h2>
+    </div> 
+</a>
+
+
+{% endblock %}

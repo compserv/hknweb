@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block header %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        .portal-flexbox {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            row-gap: 30px;
+
+        }
+
+        .portal-content {
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0px 0px 30px rgba(0,0,0,0.1);
+            padding: 24px;
+            width: 300px;
+            text-align: center;
+
+        }
+
+        .portal-content:hover {
+            background-color: gray;
+        }
+    </style>
+{% endblock %}
+
+
+{% block content %}
+    <div class="portal-flexbox">
+        {% block "portal-content" %}{% endblock %}
+    </div>
+{% endblock %}

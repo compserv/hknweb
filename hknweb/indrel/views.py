@@ -13,6 +13,7 @@ import os
 
 from PyPDF2 import PdfWriter
 
+
 @login_and_permission("indrel.view_userresume")
 def generate_resumebook(request):
     # Data for TOC and Years
@@ -155,6 +156,12 @@ def generate_resumebook(request):
 def indrel(request):
     return render(request, "indrel/indrel.html")
 
-@allow_public_access
+
+@login_and_permission("indrel.view_userresume")
 def indrelportal(request):
-    return render(request, "indrel/indrel_portal.html")
+    return render(request, "indrel/portal.html")
+
+
+@login_and_permission("indrel.view_userresume")
+def resumebooks(request):
+    return render(request, "indrel/resumebooks.html")

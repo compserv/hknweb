@@ -1,34 +1,80 @@
-{% extends "base.html" %}
+{% extends "portal.html" %}
 {% load static %}
-
-{% block header %}
-<link rel="stylesheet" href="{% static 'css/style.css' %}">
-{% endblock %}
 
 {% block title %} Committee Portal {% endblock %}
 
 {% block heading %} Committee Portal {% endblock %}
 
 
-{% block content %}
+{% block "portal-content" %}
 
-<div class="parent">
-    
-    <div class="links-div link">
-        <table class="centered">
-            <tr>
-                <th class="right"> <a href="{% url 'home' %}" class="left">Go to home</a> </th>
-                <th class="left"> <a href="{% url 'login' %}?next={{ request.path|urlencode }}" class="left">Switch account</a> </th>
-            </tr>
-            <tr>
-                <th> <a href="{% url 'indrel_portal' %}" class="right"> Indrel </a> </th>
-            </tr>
-        </table>
+<a href="{% url 'indrel_portal' %}" class="right"> 
+    <div class="portal-content">
+        <h2>Act</h2>
+    </div> 
+</a>
+
+<a href="{% url 'indrel_portal' %}" class="right"> 
+    <div class="portal-content">
+        <h2>Bridge</h2>
+    </div> 
+</a>
+
+<a href="{% url 'indrel_portal' %}" class="right"> 
+    <div class="portal-content">
+        <h2>CompServ</h2>
+    </div> 
+</a>
+
+<a href="{% url 'indrel_portal' %}" class="right"> 
+    <div class="portal-content">
+        <h2>Decal</h2>
+    </div> 
+</a>
+
+<a href="{% url 'indrel_portal' %}" class="right"> 
+    <div class="portal-content">
+        <h2>Indrel</h2>
+    </div> 
+</a>
+
+<a href="{% url 'indrel_portal' %}" class="right"> 
+    <div class="portal-content">
+        <h2>Prodev</h2>
+    </div> 
+</a>
+
+<a href="{% url 'indrel_portal' %}" class="right"> 
+    <div class="portal-content">
+        <h2>Serv</h2>
+    </div> 
+</a>
+
+<a href="{% url 'indrel_portal' %}" class="right"> 
+    <div class="portal-content">
+        <h2>Studrel</h2>
+    </div> 
+</a>
+
+<a href="{% url 'indrel_portal' %}" class="right"> 
+    <div class="portal-content">
+        <h2>Tutoring</h2>
+    </div> 
+</a>
+
+<a href="{% url 'login' %}?next={{ request.path|urlencode }}">
+    <div class="portal-content">
+        <h2>Switch Accounts</h2>
     </div>
+</a>
 
-    <br>
+<a href="{% url 'home' %}" class="left">
+    <div class="portal-content">
+        <h2>Go to Home</h2>
+    </div>
+</a>
 
-</div>
+
 
 
 

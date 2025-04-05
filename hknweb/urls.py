@@ -30,8 +30,7 @@ app_urlpatterns = [
     path("about/people/", people.people, name="people"),
     path("indrel/", include("hknweb.indrel.urls")),
     path("outreach", outreach.outreach, name="outreach"),
-    
-    path("committees", committees.portal, name="committee-portal")
+    path("committees", committees.portal, name="committee-portal"),
 ]
 
 markdownx_urlpatterns = [
