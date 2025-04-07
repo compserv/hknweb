@@ -238,30 +238,39 @@ class ProvisionCandidatesForm(forms.Form):
 
             return password
 
-        email_information = []
+        # Process user data into useable structs
+        user_data, user_pwrds = [], []
+        profile_data = []
         for row in rows:
-            # If username is None or already exists, skip provisioning
-            if (row["username"] is None) or (row["username"] in existing_usernames):
+            if row["username"] is None or row["username"] in existing_usernames:
                 continue
 
-            # Generate a password
-            password = generate_password()
-
-            # Construct user object
-            user = User.objects.create_user(
+            user = User(
                 username=row["username"],
                 first_name=row["First name"],
                 last_name=row["Last name"],
                 email=row["Berkeley email"],
-                password=password,
             )
-            user.save()
 
-            # Add user to the candidates group
-            group.user_set.add(user)
+            password = generate_password()
 
-            # Add information for sending emails
-            email_information.append((user, password))
+            user_pwrds.append(password)
+            user.set_password(password)
+            user_data.append(user)
+
+            profile = Profile(user=user)
+            profile_data.append(profile)
+        
+        users = User.objects.bulk_create(user_data) # Bulk process accounts into database
+        Profile.objects.bulk_create(profile_data)
+        group.user_set.add(*users)
+        
+        # Save each user, add to candidate group set, and add information for emails
+        email_information = []
+        for i in range(len(users)):
+            user = users[i]
+            pwrd = user_pwrds[i]
+            email_information.append((user, pwrd))
 
         self.email_information = email_information
 
