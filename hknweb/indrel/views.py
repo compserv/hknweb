@@ -5,7 +5,7 @@ from hknweb.utils import login_and_permission
 
 from hknweb.utils import allow_public_access
 from django.conf import settings
-from hknweb.indrel.models import UserResume
+from hknweb.indrel.models import UserResume, ResumeBook
 from hknweb.models import Committeeship
 import datetime
 import subprocess
@@ -164,4 +164,11 @@ def indrelportal(request):
 
 @login_and_permission("indrel.view_userresume")
 def resumebooks(request):
-    return render(request, "indrel/resumebooks.html")
+    
+    context = {
+        "books": None
+        
+        
+    }
+    
+    return render(request, "indrel/resumebooks.html", context=context)

@@ -33,7 +33,8 @@ class Profile(models.Model):
         regex=r"^([^\d]*\d){10}$", message="Phone number must be ten digits."
     )
     phone_number = models.CharField(validators=[phone_regex], max_length=15, blank=True)
-    resume = models.FileField(blank=True)
+    # Removed and replaced by UserResume
+    #resume = models.FileField(blank=True)
     graduation_date = models.DateField(null=True, blank=True)
     candidate_semester = models.ForeignKey(
         Semester, on_delete=models.SET_NULL, null=True, blank=True

@@ -4,6 +4,7 @@ from django.http import HttpResponseRedirect
 from django.contrib.auth.models import Group
 from hknweb.forms import (
     ProfileForm,
+    ResumeForm,
     SignupForm,
     ValidPasswordForm,
     UpdatePasswordForm,
@@ -14,6 +15,7 @@ from django.contrib.auth import authenticate
 from django.contrib import messages
 from django.conf import settings
 from hknweb.models import Profile, CandidateProvisioningPassword
+from hknweb.indrel.models import UserResume
 from hknweb.coursesemester.models import Semester
 from hknweb.utils import allow_all_logged_in_users, allow_public_access
 import datetime
@@ -117,8 +119,13 @@ def account_settings(request):
 
         password_form = UpdatePasswordForm(current_user, request.POST)
         profile_form = ProfileForm(
-            request.POST, request.FILES, instance=current_user.profile
+            request.POST, instance=current_user.profile
         )
+        try:
+            resume_instance = current_user.profile.resume
+        except UserResume.DoesNotExist:
+            resume_instance = None
+        resume_form = ResumeForm(request.POST, request.FILES, instance=resume_instance)
         verify_form = ValidPasswordForm(request.POST, instance=current_user.profile)
         if verify_form.is_valid():
             correct_password = request.user.check_password(
@@ -138,18 +145,25 @@ def account_settings(request):
                             request,
                             (
                                 "Please correct the errors in your Password: {}".format(
-                                    list(password_form.errors.values())
+                                    list(password_form.errors.values()) + list(resume_form.errors.values())
                                 )
                             ),
                         )
                 elif "edit_profile" in request.POST:
-                    if profile_form.is_valid():
-                        if profile_form.has_changed():
+                    if profile_form.is_valid() and resume_form.is_valid():
+                        if profile_form.has_changed() or resume_form.has_changed():
                             # user_form.save()
+
                             profile = profile_form.save(commit=False)
                             profile.user = request.user
                             profile.save()
                             # user = password_form.save()
+                            
+                            # Resume Updating
+                            resume = resume_form.save(commit=False)
+                            resume.profile = current_user.profile
+                            resume.save()
+                            
                             update_session_auth_hash(request, current_user)
                             messages.success(
                                 request, ("Your profile was successfully updated!")
@@ -184,10 +198,16 @@ def account_settings(request):
         password_form = UpdatePasswordForm(current_user)
         profile_form = ProfileForm(instance=current_user.profile)
         verify_form = ValidPasswordForm(instance=current_user)
+        try:
+            resume_instance = current_user.profile.resume
+        except UserResume.DoesNotExist:
+            resume_instance = None
+        resume_form = ResumeForm(instance=resume_instance)
         # context = {"user": current_user, 'user_form': user_form, 'password_form': password_form, 'profile_form': profile_form}
         context = {
             "password_form": password_form,
             "profile_form": profile_form,
             "verify_form": verify_form,
+            "resume_form": resume_form
         }
         return render(request, "account/settings.html", context=context)

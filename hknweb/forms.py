@@ -18,6 +18,7 @@ import string
 import secrets
 
 from hknweb.models import User, Profile
+from hknweb.indrel.models import UserResume
 from hknweb.coursesemester.models import Semester
 from hknweb.utils import get_rand_photo
 from hknweb.utils import get_rand_photo
@@ -45,9 +46,15 @@ class ProfileForm(forms.ModelForm):
             "private",
             "phone_number",
             "date_of_birth",
-            "resume",
             "graduation_date",
             "candidate_semester",
+        )
+        
+class ResumeForm(forms.ModelForm):
+    class Meta:
+        model = UserResume
+        fields = (
+            "resume",
         )
 
 

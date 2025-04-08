@@ -1,2 +1,39 @@
 {% extends "base.html" %}
 {% load static %}
+
+{% block header %}
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+          }
+    </style>
+{% endblock %}
+
+{% block title %} Résumé Books {% endblock %}
+{% block heading %} Résumé Books {% endblock %}
+
+{% block content %}
+    <a href="{% url 'generate_resumebook'%}"> Generate Résumé Book </a>
+    <table style="width:100%">
+        <tr> 
+            <th style="width:20%">Creation Date</th>
+            <th style="width:50%">Remarks</th>
+            <th>PDF File</th>
+            <th>ISO File</th>
+        </tr>
+        {% for date, remark, pdf, iso in books %}
+            <tr>
+                <td> {{ date }} </td>
+                <td> {{ remark }} </td>
+                <td> {{ pdf }} </td>
+                <td> {{ iso }} </td>
+            </tr>
+
+        {% endfor %}
+    </table>
+
+
+
+
+{% endblock %}
