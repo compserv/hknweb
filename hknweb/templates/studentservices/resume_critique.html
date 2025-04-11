@@ -16,7 +16,8 @@
 
 
 {% block content %}
-    {% if success %}
+    <!-- Disabled until full backend functionality is implemented.
+	{% if success %}
         <div style="text-align: center;">
             {% if messages %}
                 {% for message in messages %}
@@ -30,4 +31,10 @@
     {% else %}
         {% include 'events/form.html' %}
     {% endif %}
+	-->
+
+    <div style="text-align: center; margin-bottom: 20vh;">
+        <p> Come to HKN Professional Development Office Hours for Resume Critique.
+		To check hours for this week visit <a href="//hkn.mu/tutor">hkn.mu/tutor</a>. </p>
+    </div>
 {% endblock %}

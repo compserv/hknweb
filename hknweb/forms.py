@@ -102,7 +102,9 @@ class ProfilePictureForm(forms.ModelForm):
 
 
 class SemesterSelectForm(forms.Form):
-    semester = forms.ModelChoiceField(Semester.objects.order_by("-year", "semester"))
+    semester = forms.ModelChoiceField(
+        Semester.objects.order_by("-year", "semester"), empty_label=None
+    )
 
 
 class ProvisionCandidatesForm(forms.Form):
