@@ -17,7 +17,7 @@ from hknweb.studentservices.models import (
     CourseGuideAdjacencyList,
     CourseGuideGroup,
     CourseGuideParam,
-    CourseDescription
+    CourseDescription,
 )
 from hknweb.studentservices.forms import DocumentForm, TourRequest
 
@@ -175,6 +175,9 @@ def course_guide_data(request):
     }
     return JsonResponse(data)
 
+
 def course_description(request, slug):
     course = get_object_or_404(CourseDescription, slug=slug)
-    return render(request, 'studentservices/course_description.html', {'course': course})
+    return render(
+        request, "studentservices/course_description.html", {"course": course}
+    )

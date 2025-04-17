@@ -103,31 +103,33 @@ class CourseDescription(models.Model):
     description = models.TextField()
     quick_links_raw = models.TextField(
         blank=True,
-        verbose_name = "Quick Links",
-        help_text="Enter each link on a new line in the format: Name | URL"
+        verbose_name="Quick Links",
+        help_text="Enter each link on a new line in the format: Name | URL",
     )
     prerequisites_raw = models.TextField(
         blank=True,
-        verbose_name = "Prerequisites",
-        help_text="Enter each prerequisite on a new line."
+        verbose_name="Prerequisites",
+        help_text="Enter each prerequisite on a new line.",
     )
 
     topics_covered_raw = models.TextField(
         blank=True,
-        verbose_name= "Topics Covered",
-        help_text="Enter each topic on a new line. Use '-' for subtopics (e.g., Main Topic\n- Subtopic)."
+        verbose_name="Topics Covered",
+        help_text="Enter each topic on a new line. Use '-' for subtopics (e.g., Main Topic\n- Subtopic).",
     )
     more_info = models.TextField(
         blank=True,
-        help_text="Text where lines surrounded by * will be bold (e.g., *bold text*)."
+        help_text="Text where lines surrounded by * will be bold (e.g., *bold text*).",
     )
-    
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     @property
     def prerequisites(self):
-        return [line.strip() for line in self.prerequisites_raw.splitlines() if line.strip()]
+        return [
+            line.strip() for line in self.prerequisites_raw.splitlines() if line.strip()
+        ]
 
     @property
     def quick_links(self):
@@ -149,11 +151,13 @@ class CourseDescription(models.Model):
         topics = []
         for line in self.topics_covered_raw.splitlines():
             line = line.strip()
-            if line.startswith('-'):
+            if line.startswith("-"):
                 if topics and isinstance(topics[-1], dict):
                     topics[-1]["subtopics"].append(line[1:].strip())
                 else:
-                    topics.append({"title": "Unnamed Topic", "subtopics": [line[1:].strip()]})
+                    topics.append(
+                        {"title": "Unnamed Topic", "subtopics": [line[1:].strip()]}
+                    )
             else:
                 topics.append({"title": line, "subtopics": []})
         return topics
@@ -164,9 +168,13 @@ class CourseDescription(models.Model):
         convert more_info text into html  with styles
         """
         # Replace *text* with <span> styled as bold and larger font
-        bold_text = re.sub(r'\*(.*?)\*', r'<span style="font-weight: bold; font-size: 1.2em;">\1</span>', self.more_info or "")
+        bold_text = re.sub(
+            r"\*(.*?)\*",
+            r'<span style="font-weight: bold; font-size: 1.2em;">\1</span>',
+            self.more_info or "",
+        )
         # Replace newlines with <br> tags
-        return bold_text.replace('\n', '<br>')
+        return bold_text.replace("\n", "<br>")
 
     def save(self, *args, **kwargs):
         """
@@ -174,10 +182,9 @@ class CourseDescription(models.Model):
         """
         if not self.slug:
             from django.utils.text import slugify
+
             self.slug = slugify(self.title)
         super().save(*args, **kwargs)
 
     def __str__(self):
         return self.title
-
-
