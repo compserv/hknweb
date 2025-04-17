@@ -176,6 +176,7 @@ def course_guide_data(request):
     return JsonResponse(data)
 
 
+@allow_public_access
 def course_description(request, slug):
     course = get_object_or_404(CourseDescription, slug=slug)
     return render(
