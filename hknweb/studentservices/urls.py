@@ -1,5 +1,5 @@
 from django.urls import path
-
+from . import views
 import hknweb.studentservices.views as views
 
 
@@ -15,4 +15,9 @@ urlpatterns = [
     path("tours", views.tours, name="tours"),
     path("course_guide", views.course_guide, name="course_guide"),
     path("course_guide_data", views.course_guide_data, name="course_guide_data"),
+    path(
+        "course_description/<slug:slug>/",
+        views.course_description,
+        name="course_description",
+    ),
 ]
