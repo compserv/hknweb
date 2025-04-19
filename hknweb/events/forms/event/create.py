@@ -30,6 +30,7 @@ class EventForm(forms.ModelForm):
         model = Event
         fields = (
             "name",
+            "point_of_contact",
             "location",
             "description",
             "event_type",
