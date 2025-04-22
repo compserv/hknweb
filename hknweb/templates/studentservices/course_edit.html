@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    {{ course.title|default:"Course Details" }}
+{% endblock %}
+
+{% block header %}
+    <link rel="stylesheet" href="{% static 'css/course_description.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="course-description-container">
+        <!-- Top Section: Title and Quick Links -->
+        <form method="POST">    
+            {% csrf_token %}
+            <div class="top-section">
+                <!-- Title -->
+                <div class="course-title-section">
+                    <h2 class="course-title">{{ course.title|default:"Course Title" }}</h2>
+                    <button type="submit">Save</button>
+                </div>
+                <!-- Quick Links -->
+                <div class="quick-links-section">
+                    <h3>Quick Links</h3>
+                    {{ form.quick_links }}
+            
+                </div>
+            </div>
+            
+            <!-- Bottom Section: Course Description and Topics Covered -->
+            <div class="bottom-section">
+                <!-- Course Description -->
+                <div class="course-description">
+                    <h3>Course Description</h3>
+                    <p>{{ form.description }}</p>
+                    
+                    <!-- Divider -->
+                    <hr class="divider">
+                    
+                    <!-- More Info -->
+                    <div class="more-info">
+                        <p>{{ form.more_info }}</p>
+                    </div>
+                </div>
+                
+                <!-- Topics Covered -->
+                <div class="topics-covered">
+                    <div class="prerequisites">
+                        <h3>Prerequisites</h3>
+                        {{ form.prerequisites }}
+                        
+                    </div>
+                    <h3>Topics Covered</h3>
+                    {{ form.topics_covered }}
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}

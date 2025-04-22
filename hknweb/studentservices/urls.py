@@ -20,4 +20,14 @@ urlpatterns = [
         views.course_description,
         name="course_description",
     ),
+    path(
+        "course_description/<slug:slug>/edit",
+        views.edit_description,
+        name="edit_description",
+    ),
+    path(
+        "course_description/<slug:slug>/delete",
+        views.delete_description,
+        name="delete_description",
+    ),
 ]

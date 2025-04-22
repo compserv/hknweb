@@ -3,6 +3,7 @@ from django import forms
 from dal import autocomplete
 
 from hknweb.coursesemester.models import Course
+from hknweb.studentservices.models import CourseDescription
 from hknweb.tutoring.views.autocomplete import get_tutors
 
 
@@ -32,3 +33,9 @@ class TutorFilterForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["tutor"].queryset = get_tutors()
+
+
+class AddCourseForm(forms.ModelForm):
+    class Meta:
+        model = CourseDescription
+        fields = ["title", "slug"]
