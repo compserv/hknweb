@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from django.core.validators import RegexValidator
 from django.utils.text import slugify
+from markdownx.models import MarkdownxField
 import re
 
 MAX_STRLEN = 255
@@ -100,81 +101,14 @@ class CourseGuideParam(models.Model):
 class CourseDescription(models.Model):
     title = models.CharField(max_length=200)
     slug = models.SlugField(unique=True, blank=True)
-    description = models.TextField()
-    quick_links_raw = models.TextField(
-        blank=True,
-        verbose_name="Quick Links",
-        help_text="Enter each link on a new line in the format: Name | URL",
-    )
-    prerequisites_raw = models.TextField(
-        blank=True,
-        verbose_name="Prerequisites",
-        help_text="Enter each prerequisite on a new line.",
-    )
-
-    topics_covered_raw = models.TextField(
-        blank=True,
-        verbose_name="Topics Covered",
-        help_text="Enter each topic on a new line. Use '-' for subtopics (e.g., Main Topic\n- Subtopic).",
-    )
-    more_info = models.TextField(
-        blank=True,
-        help_text="Text where lines surrounded by * will be bold (e.g., *bold text*).",
-    )
+    description = MarkdownxField(max_length=10000, blank=True)
+    quick_links = MarkdownxField(max_length=2000, blank=True)
+    prerequisites = MarkdownxField(max_length=2000, blank=True)
+    topics_covered = MarkdownxField(max_length=2000, blank=True)
+    more_info = MarkdownxField(max_length=10000, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-    @property
-    def prerequisites(self):
-        return [
-            line.strip() for line in self.prerequisites_raw.splitlines() if line.strip()
-        ]
-
-    @property
-    def quick_links(self):
-        """
-        Parse quick_links_raw into a list of dictionaries with name and URL.
-        """
-        links = []
-        for line in self.quick_links_raw.splitlines():
-            if "|" in line:
-                name, url = line.split("|", 1)
-                links.append({"name": name.strip(), "url": url.strip()})
-        return links
-
-    @property
-    def topics_covered(self):
-        """
-        parse topics_covered into bullet_point structure
-        """
-        topics = []
-        for line in self.topics_covered_raw.splitlines():
-            line = line.strip()
-            if line.startswith("-"):
-                if topics and isinstance(topics[-1], dict):
-                    topics[-1]["subtopics"].append(line[1:].strip())
-                else:
-                    topics.append(
-                        {"title": "Unnamed Topic", "subtopics": [line[1:].strip()]}
-                    )
-            else:
-                topics.append({"title": line, "subtopics": []})
-        return topics
-
-    @property
-    def more_info_html(self):
-        """
-        convert more_info text into html  with styles
-        """
-        # Replace *text* with <span> styled as bold and larger font
-        bold_text = re.sub(
-            r"\*(.*?)\*",
-            r'<span style="font-weight: bold; font-size: 1.2em;">\1</span>',
-            self.more_info or "",
-        )
-        # Replace newlines with <br> tags
-        return bold_text.replace("\n", "<br>")
 
     def save(self, *args, **kwargs):
         """

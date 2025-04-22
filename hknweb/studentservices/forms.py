@@ -1,7 +1,7 @@
 from django import forms
 from django.utils import timezone
 
-from hknweb.studentservices.models import DepTour, Resume
+from hknweb.studentservices.models import DepTour, Resume, CourseDescription
 from hknweb.utils import DATETIME_12_HOUR_FORMAT
 from hknweb.events.utils import DATETIME_WIDGET_NO_AUTOCOMPLETE
 
@@ -37,3 +37,22 @@ class TourRequest(forms.ModelForm):
             self.add_error("datetime", "Desired date and time is in the past")
 
         return self.cleaned_data
+
+
+class CourseEditForm(forms.ModelForm):
+    class Meta:
+        model = CourseDescription
+        fields = [
+            "description",
+            "quick_links",
+            "prerequisites",
+            "topics_covered",
+            "more_info",
+        ]
+        widgets = {
+            "description": forms.Textarea(attrs={"rows": 20, "class": "form"}),
+            "quick_links": forms.Textarea(attrs={"rows": 20, "class": "form"}),
+            "prerequisites": forms.Textarea(attrs={"rows": 20, "class": "form"}),
+            "topics_covered": forms.Textarea(attrs={"rows": 20, "class": "form"}),
+            "description": forms.Textarea(attrs={"rows": 20, "class": "form"}),
+        }

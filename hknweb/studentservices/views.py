@@ -6,11 +6,10 @@ from django.contrib import messages
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.shortcuts import render, get_object_or_404
-
-
+from hknweb.utils import markdownify
 from hknweb.events.views.aggregate_displays.calendar import calendar_helper
 from hknweb.events.views.event_transactions.show_event import show_details_helper
-from hknweb.utils import allow_public_access
+from hknweb.utils import allow_public_access, login_and_permission
 
 from hknweb.studentservices.models import (
     CourseGuideNode,
@@ -19,7 +18,7 @@ from hknweb.studentservices.models import (
     CourseGuideParam,
     CourseDescription,
 )
-from hknweb.studentservices.forms import DocumentForm, TourRequest
+from hknweb.studentservices.forms import DocumentForm, TourRequest, CourseEditForm
 
 
 @allow_public_access
@@ -179,6 +178,31 @@ def course_guide_data(request):
 @allow_public_access
 def course_description(request, slug):
     course = get_object_or_404(CourseDescription, slug=slug)
-    return render(
-        request, "studentservices/course_description.html", {"course": course}
-    )
+    context = {
+        "course": course,
+        "description": markdownify(course.description),
+        "quick_links": markdownify(course.quick_links),
+        "prerequisites": markdownify(course.prerequisites),
+        "topics_covered": markdownify(course.topics_covered),
+        "more_info": markdownify(course.more_info),
+    }
+    return render(request, "studentservices/course_description.html", context=context)
+
+
+@login_and_permission("studentservices.change_coursedescription")
+def edit_description(request, slug):
+    course = get_object_or_404(CourseDescription, slug=slug)
+    if request.method == "GET":
+        form = CourseEditForm(instance=course)
+    elif request.method == "POST":
+        form = CourseEditForm(request.POST, instance=course)
+        if form.is_valid():
+            form.save()
+            return redirect("studentservices:course_description", slug=slug)
+
+    context = {
+        "course": course,
+        "form": form,
+    }
+
+    return render(request, "studentservices/course_edit.html", context=context)
