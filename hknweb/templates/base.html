@@ -158,6 +158,8 @@
         </div>
         <div id="account-nav-bar" class="sub-nav-bar navi-container">
             {% if viewer_is_an_officer %}
+              <a href="{% url 'committee-portal' %}">Committee Portal</a>
+                <span class="slash">/</span>
                 <a href="{% url 'candidate:officer_portal' %}">Officer Portal</a>
                 <span class="slash">/</span>
             {% endif %}

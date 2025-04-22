@@ -5,7 +5,7 @@ from django.contrib import admin
 from django.urls import include, path
 
 from hknweb.utils import method_login_and_permission
-from hknweb.views import indrel, landing, outreach, people, users
+from hknweb.views import indrel, landing, outreach, people, users, committees
 
 __all__ = ["urlpatterns", "safe_urlpatterns"]
 
@@ -30,6 +30,7 @@ app_urlpatterns = [
     path("about/people/", people.people, name="people"),
     path("indrel", indrel.indrel, name="indrel"),
     path("outreach", outreach.outreach, name="outreach"),
+    path("committees", committees.portal, name="committee-portal"),
 ]
 
 markdownx_urlpatterns = [

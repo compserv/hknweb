@@ -1,0 +1,21 @@
+{% extends "portal.html" %}
+
+
+{% block title %} Tutoring Portal {% endblock %}
+{% block heading %} Tutoring Admin Page {% endblock%}
+
+{% block "portal-content"%}
+    <a href = "{% url 'tutoring:courses' %}"> 
+    <div class="portal-content">
+        <h2>Course Descriptions</h2>
+    </div>
+</a>
+
+<a href = "{% url 'committee-portal' %}"> 
+    <div class="portal-content">
+        <h2>Return to Committees</h2>
+    </div> 
+</a>
+
+
+{% endblock %}

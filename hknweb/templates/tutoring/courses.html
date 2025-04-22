@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %} Courses {% endblock %}
+
+{% block header %}
+    <style>
+        table {
+            width: 100%;
+            font-size: 1em;
+            margin-top: 20px;
+            text-align: center;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+        }
+
+    </style>
+{% endblock %}
+
+{% block heading %} Courses {% endblock %}
+
+
+{% block content %}
+<form method="POST">
+    {% csrf_token %}
+    {{ form }}
+    <button type="submit"> Add Course </button>
+</form>
+<table>
+    <tr>
+        <th> Name </th>
+        <th> Slug </th>
+        <th> Last Updated </th>
+        <th> Action </th>
+    </tr>
+    {% for name, last_updated, slug in courses %}
+        <tr>
+            <td><a href="{% url "studentservices:course_description" slug %}"> {{ name }}</a></td>
+            <td> {{ slug }} </td>
+            <td> {{ last_updated }} </td>
+            <td>
+                <form action="{% url 'studentservices:delete_description' slug %}" method="POST">
+                {% csrf_token %}
+                    <button type="submit" onclick="return confirm('Are you sure?');">
+                        Delete
+                    </button>
+                </form>
+            </td>
+        </tr>
+    {% endfor %}
+
+
+</table>
+{% endblock %}
+
