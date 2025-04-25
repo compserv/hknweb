@@ -138,8 +138,7 @@ def course_guide_data(request):
             if node.name in node_groups
         ]
 
-    course_surveys_link = reverse("course_surveys:index")
-    link_template = f"{course_surveys_link}?search_by=courses&search_value="
+    link_template = "course_description/"
     nodes = []
     for n in CourseGuideNode.objects.all():
         if n.name not in node_groups:
@@ -178,6 +177,7 @@ def course_guide_data(request):
 
 @allow_public_access
 def course_description(request, slug):
+    print(request, slug)
     course = get_object_or_404(CourseDescription, slug=slug)
     return render(
         request, "studentservices/course_description.html", {"course": course}
