@@ -13,7 +13,6 @@ from hknweb.utils import get_semester
 
 class Event(models.Model):
     name = models.CharField(max_length=255)
-    point_of_contact = models.CharField(max_length=255, default="N/A")
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
     location = models.CharField(max_length=255)
