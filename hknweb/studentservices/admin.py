@@ -1,4 +1,5 @@
 from django.contrib import admin
+from .models import CourseDescription
 
 from hknweb.studentservices.models import (
     CourseGuideNode,
@@ -69,3 +70,20 @@ class CourseGuideParamAdmin(admin.ModelAdmin):
         "marker_width",
         "marker_height",
     ]
+
+
+@admin.register(CourseDescription)
+class CourseDescriptionAdmin(admin.ModelAdmin):
+    list_display = ("title", "slug", "created_at")
+    fields = (
+        "title",
+        "slug",
+        "description",
+        "quick_links_raw",
+        "topics_covered_raw",
+        "prerequisites_raw",  # New field for prerequisites
+        "more_info",
+        "created_at",
+        "updated_at",
+    )
+    readonly_fields = ("created_at", "updated_at")

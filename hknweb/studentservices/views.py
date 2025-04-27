@@ -5,6 +5,8 @@ from django.conf import settings
 from django.contrib import messages
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
+from django.shortcuts import render, get_object_or_404
+
 
 from hknweb.events.views.aggregate_displays.calendar import calendar_helper
 from hknweb.events.views.event_transactions.show_event import show_details_helper
@@ -15,6 +17,7 @@ from hknweb.studentservices.models import (
     CourseGuideAdjacencyList,
     CourseGuideGroup,
     CourseGuideParam,
+    CourseDescription,
 )
 from hknweb.studentservices.forms import DocumentForm, TourRequest
 
@@ -171,3 +174,11 @@ def course_guide_data(request):
         "links": links,
     }
     return JsonResponse(data)
+
+
+@allow_public_access
+def course_description(request, slug):
+    course = get_object_or_404(CourseDescription, slug=slug)
+    return render(
+        request, "studentservices/course_description.html", {"course": course}
+    )
