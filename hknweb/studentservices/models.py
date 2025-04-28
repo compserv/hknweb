@@ -50,6 +50,7 @@ class CourseGuideNode(models.Model):
     is_title = models.BooleanField(default=False)
     x_0 = models.IntegerField(blank=True, null=True)
     y_0 = models.IntegerField(blank=True, null=True)
+    level = models.IntegerField(blank=False, default=0)
 
     def __str__(self):
         return self.name

@@ -199,10 +199,7 @@
                   .enter().append("g")
                     .attr("transform", d => `translate(${d.x},${d.y})`);
 
-                node.append("a")
-                    .attr("xlink:href", d => d.link)
-                    .attr("target", "_blank")
-                  .append("circle")
+                node.append("circle")
                     .attr("r", d => d.title ? title_circle_radius : circle_radius)
                     .attr("fill", d => color(d.group))
                     .attr("stroke", node_stroke)

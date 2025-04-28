@@ -99,7 +99,8 @@ def course_guide(request):
         g.name for g in CourseGuideGroup.objects.all() if g.name != "Core"
     ]
 
-    return render(request, "studentservices/course_guide.html", context=context)
+    # Edited for the test
+    return render(request, "studentservices/course_guide_test.html", context=context)
 
 
 @allow_public_access
@@ -152,6 +153,7 @@ def course_guide_data(request):
             "fx": n.x_0,
             "fy": n.y_0,
             "fixed": ((n.x_0 is not None) and (n.y_0 is not None)),
+            "level": n.level,
         }
 
         nodes.append(node_attrs)
