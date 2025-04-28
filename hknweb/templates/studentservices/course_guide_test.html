@@ -27,7 +27,7 @@
             overflow: hidden;
         }
         .graph {
-            width: 100%;
+            width: 80%;
             height: auto;
         }
         
@@ -104,9 +104,10 @@
             centerY = width / 2,
             link_stroke_width = 5,
             arrowhead_size = link_stroke_width*1.5,
-            circle_radius = 30,
+            circle_radius = {{ params.circle_radius }},
+            title_circle_radius = circle_radius * 1.2,
             node_stroke_width = 1,
-            node_stroke = "gray";
+            node_stroke = "gray"
 
         const svg = d3.select("svg")
             .attr("width", width)
@@ -130,15 +131,19 @@
                 nodeById.get(l.target).bk.push(l.source);
             });
     
-            const color = d3.scaleOrdinal(d3.schemeCategory10);
+            const color = d3.scaleOrdinal(d3.schemePaired);
           
             const simulation = d3.forceSimulation(nodes)
-                .force("link", d3.forceLink(links).id(d => d.id).strength(0.05))
+                .force("link", d3.forceLink(links)
+                    .id(d => d.id)
+                    .strength(0.05)
+                    .distance((d) => (d.title ? title_circle_radius*10 : circle_radius*10 )))
                 .force("charge", d3.forceManyBody().strength(-300))
-                .force("overlap", d3.forceCollide())
+                .force("overlap", d3.forceCollide((d) => (d.title ? title_circle_radius : circle_radius)*1.25).strength(1))
                 .force("x", d3.forceX())
                 .force("y", d3.forceY())
-                .force("radial", d3.forceRadial(d => d.level * 300).strength(0.7));
+                // .force("center", d3.forceCenter(centerX, centerY));
+                .force("radial", d3.forceRadial(d => d.level * 300, centerX, centerY).strength(0));
             
             // Creates a group that holds everything in the svg (ie nodes, link, etc)
             const container = svg.append("g")
@@ -216,7 +221,7 @@
                     .attr("xlink:href", d => d.link)
                     .attr("target", "_blank")
                 .append("circle")
-                    .attr("r", circle_radius)
+                    .attr("r", d => d.title ? title_circle_radius : circle_radius)
                     .attr("fill", d => color(d.group));
             
             labels = node.append("a")
