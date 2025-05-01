@@ -26,6 +26,10 @@
             width: 100%;
             overflow: hidden;
         }
+        .graph {
+            width: 80%;
+            height: auto;
+        }
         
     </style>
     <script>
@@ -72,7 +76,9 @@
     </h2>
 
     <div class="svg-container">
-        <svg class="graph">
+        <svg class="graph"
+            viewBox="0 0 2000 1200"
+            preserveAspectRatio="xMidYMid meet">
         </svg>
     </div>
     <button id="editButton" onclick="toggleEdit()"> Edit </button>
@@ -92,55 +98,52 @@
 
         }
 
-
-        const width = 1000;
-        const height = 1000;
-        const centerX = width / 2;
-        const centerY = width / 2;
-        const link_stroke_width = 5;
-        const arrowhead_size = link_stroke_width*1.5;
-        const circle_radius = 30;
+        const width = 1000,
+            height = 1000,
+            centerX = width / 2,
+            centerY = width / 2,
+            link_stroke_width = 5,
+            arrowhead_size = link_stroke_width*1.5,
+            circle_radius = {{ params.circle_radius }},
+            title_circle_radius = circle_radius * 1.2,
+            node_stroke_width = 1,
+            node_stroke = "gray"
 
         const svg = d3.select("svg")
             .attr("width", width)
             .attr("height", width)
             .attr("viewBox", [-width / 2, -height / 2, width, height]);
-        
-        
 
 
         async function grabData() {
             const data = await d3.json("{% url 'studentservices:course_guide_data' %}?groups={{ request.GET.groups }}")        
-            console.log(data)
             return data
         }
 
         async function generate() {
             const graph = await grabData();
-            const nodes = graph.nodes.map(d => ({ ...d }));
+            const nodes = graph.nodes.map(d => ({ ...d, fd: [], bk: [] }));
             const links = graph.links.map(d => ({ ...d }));
-          
-            const color = d3.scaleOrdinal(d3.schemeCategory10);
+
+            const nodeById = new Map(nodes.map(d => [d.id, d]));
+            links.forEach(l => {
+                nodeById.get(l.source).fd.push(l.target);
+                nodeById.get(l.target).bk.push(l.source);
+            });
+    
+            const color = d3.scaleOrdinal(d3.schemePaired);
           
             const simulation = d3.forceSimulation(nodes)
-                .force("link", d3.forceLink(links).id(d => d.id).strength(0.05))
+                .force("link", d3.forceLink(links)
+                    .id(d => d.id)
+                    .strength(0.05)
+                    .distance((d) => (d.title ? title_circle_radius*10 : circle_radius*10 )))
                 .force("charge", d3.forceManyBody().strength(-300))
-                .force("overlap", d3.forceCollide())
+                .force("overlap", d3.forceCollide((d) => (d.title ? title_circle_radius : circle_radius)*1.25).strength(1))
                 .force("x", d3.forceX())
                 .force("y", d3.forceY())
-                .force("radial", d3.forceRadial(d => d.level * 300).strength(0.7));
-            
-            svg.append("defs").append("marker")
-                .attr("id", "arrow")
-                .attr("viewBox", `0 0 ${arrowhead_size} ${arrowhead_size}`) // simplified
-                .attr("refX", circle_radius + arrowhead_size * 0.6) // offset by radius + a bit
-                .attr("refY", arrowhead_size / 2)
-                .attr("markerWidth", arrowhead_size)
-                .attr("markerHeight", arrowhead_size)
-                .attr("orient", "auto")
-                .append("path")
-                .attr("d", `M0,0 L${arrowhead_size},${arrowhead_size / 2} L0,${arrowhead_size} Z`)
-                .attr("fill", "#999");
+                // .force("center", d3.forceCenter(centerX, centerY));
+                .force("radial", d3.forceRadial(d => d.level * 300, centerX, centerY).strength(0));
             
             // Creates a group that holds everything in the svg (ie nodes, link, etc)
             const container = svg.append("g")
@@ -157,9 +160,6 @@
                     .attr("fill", "none");
             
 
-
-            
-
             // Defines a zoom interaction that occurs on whatever elements calls it
             const zoom = d3.zoom()
                 .scaleExtent([0.1, 5]) 
@@ -170,49 +170,117 @@
             // Binds the defined zoom interaction to the entire svg element
             svg.call(zoom)
 
+            const defs = svg.insert("defs", ":first-child");
+            const arrowhead_size = link_stroke_width*1.5;
+            for (let i = 1; i <= {{ groups|length }}; i++) {
+                defs.append("marker")
+                    .attr("id", `head-${i}`)
+                    .attr("viewBox", `0 -${arrowhead_size} ${arrowhead_size*2} ${arrowhead_size*2}`)
+                    .attr("markerUnits", "userSpaceOnUse") 
+                    .attr("refX", circle_radius + arrowhead_size*1.5) 
+                    .attr("refY", 0)
+                    .attr("markerWidth", arrowhead_size*2)
+                    .attr("markerHeight", arrowhead_size*2)
+                    .attr("orient", "auto")
+                    .append("path")
+                    .attr("d", `M 0 -${arrowhead_size} L ${arrowhead_size*2} 0 L 0 ${arrowhead_size}`)
+                    .attr("fill", color(i));
+            }
+
             // Creates the links that appear
             const link = container.append("g")
-                .attr("stroke", "#aaa")
-                .attr("stroke-opacity", 0.6)
+                    .attr("class", "links")
                 .selectAll("line")
-                .data(links)
-                .enter()
-                .append("line")
-                .attr("stroke-width", 1.5)
-                .attr("marker-end", "url(#arrow)");
+                    .data(links)
+                    .enter().append("path")
+                        .attr("fill", "none")
+                        .attr("stroke-width", link_stroke_width)
+                        .attr("stroke", d => color(
+                            nodeById.get(
+                                typeof d.source === "object" ? d.source.id : d.source
+                            ).group))
+                        .attr("marker-end", d => {
+                            const g = nodeById.get(
+                                typeof d.source==="object" ? d.source.id : d.source
+                            ).group;
+                            return `url(#head-${g})`;
+                        });
             
             // Creates the nodes that appear
             const node = container.append("g")
+                    .attr("class", "nodes")
                 .selectAll("g")
-                .data(nodes)
-                .enter()
-                .append("g")
+                    .data(nodes)
+                .enter().append("g")
                 .call(d3.drag()
                     .on("start", dragstarted)
                     .on("drag", dragged)
                     .on("end", dragended));
             
-            node.append("circle")
-                .attr("r", circle_radius)
-                .attr("fill", d => color(d.group));
+            circles = node.append("a")
+                    .attr("xlink:href", d => d.link)
+                    .attr("target", "_blank")
+                .append("circle")
+                    .attr("r", d => d.title ? title_circle_radius : circle_radius)
+                    .attr("fill", d => color(d.group));
             
-            node.append("a")
-                .attr("xlink:href", d => d.link)
-                .attr("target", "_blank")
-            .append("text")
-                .attr("text-anchor", "middle")
-                .attr("alignment-baseline", "middle")
+            labels = node.append("a")
+                    .attr("xlink:href", d => d.link)
+                    .attr("target", "_blank")
+                .append("text")
+                    .attr("text-anchor", "middle")
+                    .attr("alignment-baseline", "middle")
                 .text(d => d.id)
 
             node.append("title")
                 .text(d => d.id);
+
+            node.on("mouseover", function(d) {
+                d = d.srcElement.__data__;
+                circles
+                    .attr("opacity", 0.6);
+
+                let marked = new Set(),
+                    queue = [];
+                queue.push(d.id);
+                while (queue.length) {
+                    const id0 = queue.shift();
+                    if (marked.has(id0)) continue;
+                    marked.add(id0);
+                    queue = [...queue, ...nodeById.get(id0).bk];
+                }
+                circles
+                    .filter(d2 => marked.has(d2.id))
+                    .attr("opacity", 1);
+                circles
+                    .filter(d2 => d2.id === d.id)
+                    .attr("stroke", "black")
+                    .attr("stroke-width", node_stroke_width * 3);
+                link.filter(l => {
+                    return !marked.has(l.source.id) || !marked.has(l.target.id);
+                })
+                    .attr("opacity", 0.05);
+                svg.selectAll("text")
+                    .filter(d2 => d2.group !== d.group)
+                    .attr("opacity", 0.5);
+                svg.selectAll("text")
+                    .filter(d2 => d2.id === d.id)
+                    .attr("font-weight", "bold");
+            })
+            .on("mouseout", function() {
+                svg.selectAll("circle")
+                    .attr("opacity", 1)
+                    .attr("stroke", node_stroke)
+                    .attr("stroke-width", node_stroke_width);
+                link.attr("opacity", 1);
+                svg.selectAll("text")
+                    .attr("opacity", 1)
+                    .attr("font-weight", "normal");
+            });
               
             simulation.on("tick", () => {
               link
-                .attr("x1", d => d.source.x)
-                .attr("y1", d => d.source.y)
-                .attr("x2", d => d.target.x)
-                .attr("y2", d => d.target.y);
+                .attr("d", d => `M ${d.source.x} ${d.source.y} L ${d.target.x} ${d.target.y}`);
           
               node
                 .attr("transform", d => `translate(${d.x},${d.y})`)
@@ -230,9 +298,14 @@
             }
           
             function dragended(event, d) {
-              if (!event.active) simulation.alphaTarget(0);
-              d.fx = null;
-              d.fy = null;
+                if (isEditMode) {
+                    d.fx = event.x;
+                    d.fy = event.y;
+                } else {
+                    if (!event.active) simulation.alphaTarget(0);
+                    d.fx = null;
+                    d.fy = null;
+                }
             }
 
             
