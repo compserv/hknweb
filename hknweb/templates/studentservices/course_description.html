@@ -16,17 +16,18 @@
             <!-- Title -->
             <div class="course-title-section">
                 <h2 class="course-title">{{ course.title|default:"Course Title" }}</h2>
+                {% if viewer_is_an_officer %}
+                    <p> Last Updated: {{ course.updated_at }} </p>
+                    <a href="{{ request.path }}edit"> Edit Page </a>
+                {% endif %}
             </div>
-            <!-- Quick Links -->
             <div class="quick-links-section">
                 <h3>Quick Links</h3>
-                <ul>
-                    {% for link in course.quick_links %}
-                        <li><a href="{{ link.url }}" target="_blank">{{ link.name }}</a></li>
-                    {% empty %}
-                        <li>No quick links available.</li>
-                    {% endfor %}
-                </ul>
+                {% if quick_links %}
+                    <p> {{ quick_links }}
+                {% else %}
+                    <p> No quick links available. </p>
+                {% endif %}
             </div>
         </div>
         
@@ -35,14 +36,14 @@
             <!-- Course Description -->
             <div class="course-description">
                 <h3>Course Description</h3>
-                <p>{{ course.description|default:"No description available." }}</p>
+                <p>{{ description|default:"No description available." }}</p>
                 
                 <!-- Divider -->
                 <hr class="divider">
                 
                 <!-- More Info -->
                 <div class="more-info">
-                    <p>{{ course.more_info_html|safe }}</p>
+                    <p>{{ more_info }}</p>
                 </div>
             </div>
             
@@ -50,31 +51,19 @@
             <div class="topics-covered">
                 <div class="prerequisites">
                     <h3>Prerequisites</h3>
-                    <ul>
-                        {% for prereq in course.prerequisites %}
-                            <li>{{ prereq }}</li>
-                        {% empty %}
-                            <li>No prerequisites available.</li>
-                        {% endfor %}
-                    </ul>
+                    {% if prerequisites %}
+                        <p> {{ prerequisites }} </p>
+                    {% else %}
+                        <p>No prerequisites available.</p>
+                    {% endif %}
+                    
                 </div>
                 <h3>Topics Covered</h3>
-                <ul>
-                    {% for topic in course.topics_covered %}
-                        <li>
-                            {{ topic.title }}
-                            {% if topic.subtopics %}
-                                <ul>
-                                    {% for subtopic in topic.subtopics %}
-                                        <li>{{ subtopic }}</li>
-                                    {% endfor %}
-                                </ul>
-                            {% endif %}
-                        </li>
-                    {% empty %}
-                        <li>No topics available.</li>
-                    {% endfor %}
-                </ul>
+                {% if topics_covered %}
+                    <p> {{ topics_covered }} </p>
+                {% else %}
+                    <p> No topics available. </p>
+                {% endif %}
             </div>
         </div>
     </div>

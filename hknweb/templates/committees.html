@@ -1,0 +1,33 @@
+{% extends "portal.html" %}
+{% load static %}
+
+{% block title %} Committee Portal {% endblock %}
+
+{% block heading %} Committee Portal {% endblock %}
+
+
+{% block "portal-content" %}
+
+<a href="{% url 'tutoring:tutoring_portal' %}"> 
+    <div class="portal-content">
+        <h2>Tutoring</h2>
+    </div> 
+</a>
+
+<a href="{% url 'login' %}?next={{ request.path|urlencode }}">
+    <div class="portal-content">
+        <h2>Switch Accounts</h2>
+    </div>
+</a>
+
+<a href="{% url 'home' %}">
+    <div class="portal-content">
+        <h2>Go to Home</h2>
+    </div>
+</a>
+
+
+
+
+
+{% endblock %}
