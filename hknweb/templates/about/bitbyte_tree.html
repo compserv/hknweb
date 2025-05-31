@@ -138,7 +138,7 @@
     const baseNodeRadius = 5;
     const clickedNodeRadius = 7;
 
-        async function renderd3() {
+    async function renderd3() {
         // Current clicked node.
         let activeNode = null;
         // Current hovered node.
@@ -150,7 +150,17 @@
 
         // Copy nodes and links. Simulation changes original data.
         const links = data.links.map(d => ({...d}));
-        const nodes = data.nodes.map(d => ({...d}));
+
+
+        const years = new Set(data.nodes.map(d => (d.candidate_semester)));
+        const smallestYear = d3.min(years);
+        const biggestYear = d3.max(years);
+        const yearDifference = biggestYear - smallestYear;
+        // Set initial positions to be higher the older the person's registration date is.
+        // Idk if it actually works, but I think it did something.
+        const nodes = data.nodes.map(d => ({...d,
+                                                x: 0,
+                                                y: (d.candidate_semester - smallestYear) / yearDifference * height}));
 
         const simulation = d3.forceSimulation(nodes)
             .force("link", d3.forceLink(links).id(d => d.id))
@@ -178,7 +188,6 @@
             .append('path')
             .attr('d', 'M0,-5L10,0L0,5')   // Path for the arrowhead (a triangle)
             .attr('fill', "#999");
-
 
         // Add a line for each link, and a circle for each node.
         const link = graph.append("g")
