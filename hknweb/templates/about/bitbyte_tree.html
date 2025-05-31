@@ -86,7 +86,7 @@
 
 {% block content %}
     <div class="svg-container">
-        <button id="settings-toggle-btn" class="settings-toggle-btn">Info</button>
+        <button id="settings-toggle-btn" class="settings-toggle-btn">Search</button>
 
         <div id="settings-panel" class="settings-panel">
             <h4>Graph Settings</h4>
@@ -605,7 +605,7 @@
                 if (settingsPanel.classList.contains('open')) {
                     settingsToggleBtn.textContent = 'Close';
                 } else {
-                    settingsToggleBtn.textContent = 'Settings';
+                    settingsToggleBtn.textContent = 'Search';
                 }
             });
         } else {
