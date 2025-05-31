@@ -1,0 +1,608 @@
+{% extends 'base.html' %}
+
+{% block title %}Bitbyte tree{% endblock %}
+
+{% block header %}
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="//d3js.org/d3-scale-chromatic.v0.3.min.js"></script>
+    <style>
+        .graph {
+            width: 100%;
+            height: auto;
+            display: block;
+            text-align: center;
+            margin: auto;
+            background-color: ghostwhite;
+        }
+        /* .links line {
+            stroke: #aaa;
+        } */
+        .nodes circle {
+            pointer-events: all;
+        }
+        .group_selection {
+            text-align: center;
+            font-size: 125%;
+        }
+        .svg-container {
+            width: 100%;
+            height: 500px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Style for nodes that are candidates in the live search.
+           You can alternatively just highlight the nodes using functionality for clicking. */
+        .search-candidate {
+            stroke: #FFD700;
+            stroke-width: 3.5px;
+            stroke-opacity: 1;
+        }
+
+        .settings-toggle-btn {
+            position: absolute;
+            top: 2%;
+            right: 2%;
+            z-index: 1001;
+            padding: 8px 12px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .settings-panel {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 30%;
+            height: 100%;
+            background-color: #ffffff;
+            border-left: 1px solid #cccccc;
+            box-shadow: -3px 0 6px rgba(0,0,0,0.1);
+            transform: translateX(100%); /* Initially hidden to the right */
+            transition: transform 0.3s ease-in-out;
+            z-index: 1000;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+
+        .settings-panel.open {
+            transform: translateX(0); /* Slides in from right */
+        }
+
+        .settings-panel h4 {
+            margin-top: 0;
+            color: #333;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+    </style>
+{% endblock %}
+
+{% block heading %}Bitbyte tree{% endblock %}
+
+{% block content %}
+    <div class="svg-container">
+        <button id="settings-toggle-btn" class="settings-toggle-btn">Info</button>
+
+        <div id="settings-panel" class="settings-panel">
+            <h4>Graph Settings</h4>
+
+            <div style="display: flex; flex-direction: row;">
+<!--                This is a bit ugly, esp the byte-slider-text. If there are html ppl can you fix it. -->
+                <div class="byte-slider" style="flex:1;">
+                    <div id="byte-slider-text"> This gets overwritten in html </div>
+                    <div class="slide-container">
+                      <input type="range" min="0" max="15" value="1" class="slider" id="byteDepth">
+                    </div>
+                </div>
+
+                <div class="bit-slider" style="flex:1;">
+                    <div id="bit-slider-text"> This gets overwritten in html </div>
+                    <div class="slide-container" style="flex:1;">
+                      <input type="range" min="0" max="15" value="1" class="slider" id="bitDepth">
+                    </div>
+                </div>
+            </div>
+
+            <h4>Search</h4>
+            <div class="search-container" style="display: flex; gap: 5px;">
+                <input type="text" id="searchInput" placeholder="Find node..." style="flex-grow: 1; padding: 6px; border: 1px solid #ccc; border-radius: 4px;">
+                <button id="searchButton" style="padding: 6px 12px; border: none; background-color: #4E76AF; color: white; border-radius: 4px; cursor: pointer;">Search</button>
+            </div>
+            <div id="search-feedback" style="margin-top: 8px; font-size: 13px; color: #d9534f;"></div>
+            <hr style="margin: 20px 0;">
+
+<!--            TODO: display photo, name, and clickable list of bits/bytes up to the depth ?-->
+<!--            <h4> Selected info </h4>-->
+
+        </div>
+
+        <svg class="graph">
+        </svg>
+    </div>
+
+    <script>
+    // Specify the dimensions of the chart.
+    const width = 920;
+    const height = 680;
+
+    const maxTextSize = 14;
+    const minTextSize = 7;
+
+    const maxVisibleLabels = 20;
+
+    const baseNodeRadius = 5;
+    const clickedNodeRadius = 7;
+
+        async function renderd3() {
+        // Current clicked node.
+        let activeNode = null;
+        // Current hovered node.
+        let hoveredNode = null;
+        // Current nodes matching search term.
+        let searchNodes = [];
+
+        const data = await d3.json("{% url 'bitbyte_tree_data' %}")
+
+        // Copy nodes and links. Simulation changes original data.
+        const links = data.links.map(d => ({...d}));
+        const nodes = data.nodes.map(d => ({...d}));
+
+        const simulation = d3.forceSimulation(nodes)
+            .force("link", d3.forceLink(links).id(d => d.id))
+            .force("charge", d3.forceManyBody())
+            .force("x", d3.forceX())
+            .force("y", d3.forceY());
+
+        const svg = d3.select("svg")
+            .attr("width", width)
+            .attr("height", height)
+            .attr("viewBox", [-width / 2, -height / 2, width, height]);
+
+        // 'graph' is the group that will be transformed by zoom/pan.
+        var graph = svg.append('g');
+
+        // Add arrowhead marker definition
+        svg.append('defs').append('marker')
+            .attr("id", "arrowhead")
+            .attr("viewBox", "0 -5 10 10") // Coordinate system for the marker path
+            .attr("refX", 15)              // Relative pos of the marker's tip on the line
+            .attr("refY", 0)
+            .attr("markerWidth", 6)
+            .attr("markerHeight", 6)
+            .attr("orient", "auto-start-reverse")
+            .append('path')
+            .attr('d', 'M0,-5L10,0L0,5')   // Path for the arrowhead (a triangle)
+            .attr('fill', "#999");
+
+
+        // Add a line for each link, and a circle for each node.
+        const link = graph.append("g")
+            .attr("stroke-opacity", 0.6)
+            .attr("fill-opacity", 1)
+            .selectAll("line")
+            .data(links)
+            .join("line")
+            .attr("stroke", "#999")
+            .attr("stroke-width", d => Math.sqrt(d.value))
+            .attr("marker-end", "url(#arrowhead)"); // Apply the marker to the end of the line
+
+        const node = graph.append("g")
+            .selectAll("g")
+            .data(nodes)
+            .join("g");
+
+        // uuuuh i think there may be a faster way but i forgor cs170(edge matrix?)
+        // Map where key is the id of the node and value is the set of it's children.
+        let forwardChildren = new Map();
+        // Same as forwardChildren but for parents.
+        let backwardChildren = new Map();
+        nodes.forEach(node => {
+            forwardChildren.set(node.id, new Set());
+            backwardChildren.set(node.id, new Set());
+        });
+        links.forEach(link => {
+            forwardChildren.get(link.source.id).add(link.target.id);
+            backwardChildren.get(link.target.id).add(link.source.id);
+        });
+
+        // n => baseNodeRadius + forwardChildren.get(n.id).size/7.0;
+        // ^for size dependent on number of bits, but I decided not to implement it on this iteration of the graph.
+        node.append("circle")
+            .attr("r", baseNodeRadius)
+            .attr("fill", n => (forwardChildren.get(n.id).size != 0) ? "#4E76AF" : "#679BE5")
+            .attr("stroke", "#EEE")
+            .attr("stroke-width", 1.5);
+
+        node.append("title")
+            .text(d => d.id);
+
+        // This is probably not the way. It might be smart to have a separate sim running for text placement
+        // If anyone wants to look into it here's a good link https://gist.github.com/MoritzStefaner/1377729
+        node.append("text")
+            .attr("class", "node-label")
+            .attr("z-index", "1001")
+            .attr("font-size", maxTextSize)
+            .attr("dx", 0) // Horizontal centering
+            .attr("dy", -baseNodeRadius) // Position label slightly above the node
+            .attr("text-anchor", "middle") // Anchor text in the middle for centering
+            .text(d => d.name.split("(")[0])
+            .style("display", "none"); // Initially hide all labels
+
+        // --- Zoom logic ---
+        var zoom = d3.zoom()
+          .scaleExtent([.5, 20])  // This controls how much you can unzoom (x0.5) and zoom (x20)
+          .extent([[0, 0], [width, height]])
+          .on("zoom", updateChart);
+
+        svg.call(zoom);
+
+        function updateChart(event) {
+            graph.attr("transform", event.transform);
+
+            // Rescale the text labels to counteract the zoom
+            const scale = event.transform.k;
+            node.selectAll("text.node-label").attr("font-size", Math.max(minTextSize, Math.min(maxTextSize / scale, maxTextSize)));
+
+            updateLabelsVisibility(event.transform);
+        }
+
+        // --- Label Visibility Logic ---
+        function updateLabelsVisibility(currentTransform) {
+            const padding = 15;
+
+            const simXMin = currentTransform.invertX(-width/2) - padding;
+            const simXMax = currentTransform.invertX(width/2) + padding;
+            const simYMin = currentTransform.invertY(-height/2) - padding;
+            const simYMax = currentTransform.invertY(height/2) + padding;
+
+            let visibleNodes = []
+            // Reimplement with heap if this is a performance issue
+            node.each(function(dNode) {
+                // Check if the node's center (dNode.x, dNode.y) is within the visible simulation bounds
+                const isNodeInView = dNode.x != null && dNode.y != null &&
+                                     dNode.x >= simXMin && dNode.x <= simXMax &&
+                                     dNode.y >= simYMin && dNode.y <= simYMax;
+                if (isNodeInView) {
+                    visibleNodes.push([dNode.id, forwardChildren.get(dNode.id).size]);
+                }
+            });
+
+            // Find maxVisibleLabels nodes with highest number of childen
+            visibleNodes.sort(function(a, b){return b[1] - a[1]});
+            visibleNodes = visibleNodes.slice(0, maxVisibleLabels);
+
+            const nLargestNodes = visibleNodes.map(e => e[0]);
+
+            if (activeNode != null)
+                nLargestNodes.push(activeNode.id);
+
+            if (hoveredNode != null)
+                nLargestNodes.push(hoveredNode.id);
+
+            searchNodes.forEach(id => nLargestNodes.push(id));
+
+            // Display the text of maxVisibleLabels nodes with highest amount of children.
+            node.selectAll("text.node-label").style("display", dNode => nLargestNodes.includes(dNode.id) ? "inline" : "none");
+        }
+        updateLabelsVisibility(d3.zoomTransform(svg.node()));
+
+        // --- Mouse events logic ---
+        function nodeHoverStarted(event, d) {
+            hoveredNode = d;
+            d3.select(event.currentTarget).raise();
+            updateLabelsVisibility(d3.zoomTransform(svg.node()));
+        }
+
+        function nodeHoverEnded(event, d) {
+            hoveredNode = null;
+            updateLabelsVisibility(d3.zoomTransform(svg.node()));
+        }
+
+        // Reheat the simulation when drag starts, and fix the subject position.
+        function dragStarted(event) {
+            if (!event.active) simulation.alphaTarget(0.3).restart();
+            event.subject.fx = event.subject.x;
+            event.subject.fy = event.subject.y;
+        }
+
+        // Update the subject (dragged node) position during drag.
+        function dragged(event) {
+            event.subject.fx = event.x;
+            event.subject.fy = event.y;
+        }
+
+        // Restore the target alpha so the simulation cools after dragging ends.
+        // Unfix the subject position now that it’s no longer being dragged.
+        function dragEnded(event) {
+            if (!event.active) simulation.alphaTarget(0);
+            event.subject.fx = null;
+            event.subject.fy = null;
+        }
+
+        // Reset nodes to the unselected state
+        function resetNodes() {
+            activeNode = null;
+            node.selectAll("circle").transition().duration(300).style("opacity", 1).attr("r", baseNodeRadius);
+            node.selectAll("text").transition().duration(300).style("opacity", 1);
+            link.transition().duration(300).style("stroke-opacity", 0.6);
+            link.attr("stroke", "#999");
+            link.attr("marker-end", "url(#arrowhead)");
+            updateLabelsVisibility(d3.zoomTransform(svg.node()));
+        }
+
+        function nodeClicked(event, d, isUpdate = false) {
+            // If the same node is clicked again, deselect it
+            if (!isUpdate && activeNode && activeNode.id === d.id) {
+                resetNodes();
+            } else {
+                activeNode = d;
+                d3.select(d).raise();
+
+                // Differently colored links for children and parents
+                function determineLinkColorHelper(l) {
+                    chldrn = bfsNodesMap["children"];
+                    prnts = bfsNodesMap["parents"];
+                    if (chldrn.has(l.target.id) && (chldrn.has(l.source.id) || chldrn.has(activeNode)))
+                        return "#9D9"
+                    if (prnts.has(l.source.id) && (prnts.has(l.target.id) || prnts.has(activeNode)))
+                        return "#99D"
+                    return "#999"
+                }
+
+                // Stupid name just so that it is not that long
+                const bfsNodesMap = getNodesConnectedByBFS(d.id, byteSearchDepth, bitSearchDepth);
+                const highlightableNodeIds = new Set([...bfsNodesMap["children"], ...bfsNodesMap["parents"]]);
+
+                // Highlight the clicked node and its direct connections
+                node.selectAll("circle")
+                    .transition().duration(300)
+                    .style("opacity", otherNode => highlightableNodeIds.has(otherNode.id) || otherNode.id === d.id ? 1 : 0.1)
+                    .attr("r", otherNode => otherNode.id === d.id ? clickedNodeRadius : baseNodeRadius); // Enlarge clicked node
+
+                node.selectAll("text")
+                    .transition().duration(300)
+                    .style("opacity", otherNode => highlightableNodeIds.has(otherNode.id) || otherNode.id === d.id ? 1 : 0.1);
+
+                link.attr("stroke", l => determineLinkColorHelper(l));
+
+                // Just nuke unused arrows for performance reasons
+                link.attr("marker-end", l => (highlightableNodeIds.has(l.source.id) && highlightableNodeIds.has(l.target.id)) ? "url(#arrowhead)" : null);
+
+                link.transition().duration(300)
+                    .style("stroke-opacity", l => (highlightableNodeIds.has(l.source.id) && highlightableNodeIds.has(l.target.id)) ? 1 : 0.1);
+
+                // This is not the best. Think about better functionality for showing text names.
+                // I will leave this as an option for if people prefer this/are able to make this not cluttered.
+                // Play around with it? Maybe with the gist suggestion above this will be viable.
+                /*
+                if (byteSearchDepth <= 1 && bitSearchDepth <= 1) {
+                    node.selectAll("text.node-label").style("display", dNode => dNode.id == activeNode.id || highlightableNodeIds.has(dNode.id) ? "inline" : "none");
+                } else {
+                    node.selectAll("text.node-label").style("display", dNode =>
+                    (dNode.id == activeNode.id || (highlightableNodeIds.has(dNode.id) && forwardChildren.get(dNode.id).size > 0)) ? "inline" : "none");
+                }
+                */
+            }
+            if (!isUpdate) {
+                // Prevent click event from propagating to SVG if we want to implement svg click to deselect
+                event.stopPropagation();
+            }
+            updateLabelsVisibility(d3.zoomTransform(svg.node()));
+        }
+
+        // Function to get connected nodes using BFS up to specified depths
+        function getNodesConnectedByBFS(startNodeId, maxParentDepth, maxChildDepth) {
+            function helperRunBFS(maxDepth, childrenMap) {
+                const connectedIds = new Set([startNodeId]);
+                let queue;
+
+                if (maxDepth > 0) {
+                    queue = [{ nodeId: startNodeId, depth: 0 }];
+
+                    while (queue.length > 0) {
+                        const { nodeId, depth } = queue.shift();
+
+                        if (depth < maxDepth) {
+                            childrenMap.get(nodeId).forEach(node => {
+                                if (!connectedIds.has(node)) {
+                                    connectedIds.add(node);
+                                    queue.push({ nodeId: node, depth: depth + 1 });
+                                }
+                            });
+                        }
+                    }
+                }
+                return connectedIds;
+            }
+            const setChildren = helperRunBFS(maxChildDepth, forwardChildren);
+            const setParents = helperRunBFS(maxParentDepth, backwardChildren);
+            return {"children": setChildren, "parents": setParents};
+        }
+
+        // Call the events
+        node.call(d3.drag()
+            .on("start", dragStarted)
+            .on("drag", dragged)
+            .on("end", dragEnded))
+            .on('click', nodeClicked)
+            .on('mouseover', nodeHoverStarted)
+            .on('mouseout', nodeHoverEnded);
+
+        // Click on SVG background to deselect all
+        svg.on('click', function() {
+            if (activeNode) {
+                resetNodes();
+
+                // Restart simulation slightly to allow unfixed nodes to resettle
+                simulation.alphaTarget(0.01).restart();
+                setTimeout(() => simulation.alphaTarget(0), 150); // Cool down after a short period
+            }
+        });
+
+
+        // --- Sim logic ---
+        // Set the position attributes of links and nodes each time the simulation ticks.
+        simulation.on("tick", () => {
+           // Complicated because of arrowhead handling. It moves arrowhead backwards on expanded circle.
+           // Also potentially not needed if arrows are not directly touching the nodes.
+           link.each(function(d_link) {
+                const sourceNode = d_link.source;
+                const targetNode = d_link.target;
+
+                let currentTargetRadius = baseNodeRadius;
+                if (activeNode && targetNode.id === activeNode.id) {
+                    currentTargetRadius = clickedNodeRadius;
+                }
+
+                const dx = targetNode.x - sourceNode.x;
+                const dy = targetNode.y - sourceNode.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                if (dist === 0) { // Prevent division by zero
+                    d3.select(this)
+                        .attr("x1", sourceNode.x)
+                        .attr("y1", sourceNode.y)
+                        .attr("x2", targetNode.x)
+                        .attr("y2", targetNode.y);
+                    return;
+                }
+
+                // Adjust the target endpoint of the line to the circumference of the target node
+                // The "refX" attribute of the marker ensures the tip of the arrow is at this adjusted point.
+                const new_target_x = targetNode.x - (dx / dist) * currentTargetRadius;
+                const new_target_y = targetNode.y - (dy / dist) * currentTargetRadius;
+
+                d3.select(this)
+                    .attr("x1", sourceNode.x)
+                    .attr("y1", sourceNode.y)
+                    .attr("x2", new_target_x)
+                    .attr("y2", new_target_y);
+            });
+
+            node.attr("transform", d => `translate(${d.x},${d.y})`);
+        });
+
+        // --- Settings bar: Search depth. ---
+        // Improvement possible for this code
+        const sliderByte = document.getElementById("byteDepth");
+        const sliderBit = document.getElementById("bitDepth");
+
+        var outputByte = document.getElementById("byte-slider-text");
+        var outputBit = document.getElementById("bit-slider-text");
+
+        var byteSearchDepth = sliderByte.value;
+        var bitSearchDepth = sliderBit.value;
+
+        outputByte.innerHTML = "Byte search depth: " + byteSearchDepth;
+        outputBit.innerHTML = "Bit search depth: " + bitSearchDepth;
+
+        sliderByte.oninput = function() {
+          byteSearchDepth = this.value
+          outputByte.innerHTML = "Byte search depth: " + byteSearchDepth;
+          if (activeNode) {
+              const activeNodeData = nodes.find(n => n.id === activeNode.id);
+              if (activeNodeData) nodeClicked(null, activeNodeData, true);
+          }
+        }
+        sliderBit.oninput = function() {
+          bitSearchDepth = this.value
+          outputBit.innerHTML = "Bit search depth: " + bitSearchDepth;
+          if (activeNode) {
+              const activeNodeData = nodes.find(n => n.id === activeNode.id);
+              if (activeNodeData) nodeClicked(null, activeNodeData, true);
+          }
+        }
+
+        // --- Settings bar: Text search functionality ---
+        const searchInput = document.getElementById("searchInput");
+        const searchButton = document.getElementById("searchButton");
+        const searchFeedback = document.getElementById("search-feedback");
+
+        function clearSearchHighlights() {
+            node.selectAll("circle").classed("search-candidate", false);
+            searchNodes = [];
+        }
+
+        function updateSearchHighlight() {
+            const searchTerm = searchInput.value.trim().toLowerCase();
+            clearSearchHighlights();
+
+            if (searchTerm.length < 2) {
+                updateLabelsVisibility(d3.zoomTransform(svg.node()));
+                return;
+            }
+
+            const matchingNodeIds = new Set(
+                nodes
+                    .filter(n => (n.id.toLowerCase().includes(searchTerm)
+                                    || n.name.toLowerCase().includes(searchTerm)))
+                    .map(n => n.id)
+            );
+
+            matchingNodeIds.forEach(id => searchNodes.push(id));
+
+            if (matchingNodeIds.size > 0) {
+                node.selectAll("circle")
+                    .filter(d => matchingNodeIds.has(d.id))
+                    .classed("search-candidate", true);
+            }
+            updateLabelsVisibility(d3.zoomTransform(svg.node()));
+        }
+
+        function performSearch() {
+            const searchTerm = searchInput.value.trim().toLowerCase();
+            searchFeedback.textContent = '';
+            if (!searchTerm) return;
+
+            const foundNode = nodes.find(n => n.id.toLowerCase().includes(searchTerm)
+                                                || n.name.toLowerCase().includes(searchTerm));
+
+            if (foundNode) {
+                clearSearchHighlights();
+                nodeClicked({ stopPropagation: () => {} }, foundNode, false);
+                const scale = d3.zoomTransform(svg.node()).k;
+                const x = -foundNode.x * scale;
+                const y = -foundNode.y * scale;
+                const transform = d3.zoomIdentity.translate(x, y).scale(scale);
+                svg.transition().duration(750).call(zoom.transform, transform);
+            } else {
+                searchFeedback.textContent = `Node starting with "${searchTerm}" not found.`;
+            }
+        }
+
+        searchInput.addEventListener('input', updateSearchHighlight);
+        searchButton.addEventListener('click', performSearch);
+        searchInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                performSearch();
+            }
+        });
+    }
+    renderd3();
+
+    // --- Settings bar: open button. ---
+    document.addEventListener('DOMContentLoaded', () => {
+        const settingsToggleBtn = document.getElementById('settings-toggle-btn');
+        const settingsPanel = document.getElementById('settings-panel');
+
+        if (settingsToggleBtn && settingsPanel) {
+            settingsToggleBtn.addEventListener('click', () => {
+                settingsPanel.classList.toggle('open');
+                if (settingsPanel.classList.contains('open')) {
+                    settingsToggleBtn.textContent = 'Close';
+                } else {
+                    settingsToggleBtn.textContent = 'Settings';
+                }
+            });
+        } else {
+            console.error("Settings panel toggle button or panel itself not found.");
+        }
+    });
+
+    </script>
+{% endblock %}
