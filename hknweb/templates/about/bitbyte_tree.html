@@ -155,8 +155,8 @@
         const simulation = d3.forceSimulation(nodes)
             .force("link", d3.forceLink(links).id(d => d.id))
             .force("charge", d3.forceManyBody())
-            .force("x", d3.forceX())
-            .force("y", d3.forceY());
+            .force("x", d3.forceX().strength(0.05))
+            .force("y", d3.forceY().strength(0.05));
 
         const svg = d3.select("svg")
             .attr("width", width)
@@ -235,7 +235,7 @@
 
         // --- Zoom logic ---
         var zoom = d3.zoom()
-          .scaleExtent([.5, 20])  // This controls how much you can unzoom (x0.5) and zoom (x20)
+          .scaleExtent([.3, 20])  // This controls how much you can unzoom (x0.3) and zoom (x20)
           .extent([[0, 0], [width, height]])
           .on("zoom", updateChart);
 
