@@ -27,7 +27,11 @@ def bitbyte_tree_data(request):
     for byte in all_bytes:
         user = User.objects.get(username__iexact=byte)
         data["nodes"].append(
-            {"id": byte, "name": user.first_name + " " + user.last_name, "candidate_semester": user.date_joined.year}
+            {
+                "id": byte,
+                "name": user.first_name + " " + user.last_name,
+                "candidate_semester": user.date_joined.year,
+            }
         )
 
     for byte in byte_bits:
