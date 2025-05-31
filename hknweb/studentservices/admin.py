@@ -79,9 +79,9 @@ class CourseDescriptionAdmin(admin.ModelAdmin):
         "title",
         "slug",
         "description",
-        "quick_links_raw",
-        "topics_covered_raw",
-        "prerequisites_raw",  # New field for prerequisites
+        "quick_links",
+        "topics_covered",
+        "prerequisites",
         "more_info",
         "created_at",
         "updated_at",

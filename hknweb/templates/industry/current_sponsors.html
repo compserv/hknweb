@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Current sponsors{% endblock %}
+{% block heading %}Current sponsors{% endblock %}
+
+{% block header %}
+    <link rel="stylesheet" href="{% static 'css/static_pages.css' %}">
+{% endblock %}
+
+{% block content %}
+
+    <div id="current_sponsors", class="static-page-content">
+        We thank all of our sponsors for their support of HKN and the broader EECS community. Click on the logos display below to visit that sponsors' website!
+        
+        <div class="company-sponsors-logos">
+            <a href="https://www.citadel.com/">
+                <img src="{% static 'img/indrel_sponsors_citadel_logo.png' %}" class="company-sponsors-logo" alt="Citadel logo">
+            </a>
+        </div>
+    </div>
+{% endblock %}

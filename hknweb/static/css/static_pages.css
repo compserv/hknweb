@@ -1,0 +1,13 @@
+.static-page-content {
+    width: 70%;
+    margin: auto;
+}
+
+.company-sponsors-logos {
+    text-align: center;
+}
+
+.company-sponsors-logo {
+    width: 500px;
+    max-width: 100%;
+}

@@ -5,7 +5,7 @@ from django.contrib import admin
 from django.urls import include, path
 
 from hknweb.utils import method_login_and_permission
-from hknweb.views import indrel, landing, outreach, people, users, bitbyte_tree
+from hknweb.views import indrel, landing, outreach, people, users, committees, bitbyte_tree
 
 __all__ = ["urlpatterns", "safe_urlpatterns"]
 
@@ -21,6 +21,7 @@ app_urlpatterns = [
     path("academics/", include("hknweb.academics.urls")),
     path("events/", include("hknweb.events.urls")),
     path("studentservices/", include("hknweb.studentservices.urls")),
+    path("industry/", include("hknweb.industry.urls")),
     path("tutoring/", include("hknweb.tutoring.urls")),
     path("cand/", include("hknweb.candidate.urls")),
     path("pages/", include("hknweb.markdown_pages.urls")),
@@ -33,6 +34,7 @@ app_urlpatterns = [
     path("about/bitbyte_tree", bitbyte_tree.bitbyte_tree, name="bitbyte_tree"),
     path("indrel", indrel.indrel, name="indrel"),
     path("outreach", outreach.outreach, name="outreach"),
+    path("committees", committees.portal, name="committee-portal"),
 ]
 
 markdownx_urlpatterns = [
