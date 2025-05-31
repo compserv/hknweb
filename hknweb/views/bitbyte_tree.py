@@ -4,6 +4,7 @@ from hknweb.utils import allow_public_access
 from django.http import JsonResponse
 from django.contrib.auth.models import User
 
+
 # TODO: dont read from the file when actual model and backend for bitbyte groups exists.
 @allow_public_access
 def bitbyte_tree_data(request):
@@ -25,13 +26,16 @@ def bitbyte_tree_data(request):
 
     for byte in all_bytes:
         user = User.objects.get(username__iexact=byte)
-        data["nodes"].append({"id":byte, "name":user.first_name + " " + user.last_name})
+        data["nodes"].append(
+            {"id": byte, "name": user.first_name + " " + user.last_name}
+        )
 
     for byte in byte_bits:
         for bit in byte_bits[byte]:
-            data["links"].append({"source":byte, "target":bit})
+            data["links"].append({"source": byte, "target": bit})
 
     return JsonResponse(data)
+
 
 @allow_public_access
 def bitbyte_tree(request):

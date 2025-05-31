@@ -5,7 +5,15 @@ from django.contrib import admin
 from django.urls import include, path
 
 from hknweb.utils import method_login_and_permission
-from hknweb.views import indrel, landing, outreach, people, users, committees, bitbyte_tree
+from hknweb.views import (
+    indrel,
+    landing,
+    outreach,
+    people,
+    users,
+    committees,
+    bitbyte_tree,
+)
 
 __all__ = ["urlpatterns", "safe_urlpatterns"]
 
@@ -30,7 +38,11 @@ app_urlpatterns = [
     # TODO: refactor about to be its own module.
     path("about/", landing.about, name="about"),
     path("about/people/", people.people, name="people"),
-    path("about/bitbyte_tree_data", bitbyte_tree.bitbyte_tree_data, name="bitbyte_tree_data"),
+    path(
+        "about/bitbyte_tree_data",
+        bitbyte_tree.bitbyte_tree_data,
+        name="bitbyte_tree_data",
+    ),
     path("about/bitbyte_tree", bitbyte_tree.bitbyte_tree, name="bitbyte_tree"),
     path("indrel", indrel.indrel, name="indrel"),
     path("outreach", outreach.outreach, name="outreach"),
