@@ -5,7 +5,15 @@ from django.contrib import admin
 from django.urls import include, path
 
 from hknweb.utils import method_login_and_permission
-from hknweb.views import indrel, landing, outreach, people, users, committees
+from hknweb.views import (
+    indrel,
+    landing,
+    outreach,
+    people,
+    users,
+    committees,
+    bitbyte_tree,
+)
 
 __all__ = ["urlpatterns", "safe_urlpatterns"]
 
@@ -18,7 +26,6 @@ unsafe_urlpatterns = [
 app_urlpatterns = [
     path("accounts/create/", users.account_create, name="account-create"),
     path("accounts/settings/", users.account_settings, name="account-settings"),
-    path("about/", landing.about, name="about"),
     path("academics/", include("hknweb.academics.urls")),
     path("events/", include("hknweb.events.urls")),
     path("studentservices/", include("hknweb.studentservices.urls")),
@@ -28,7 +35,15 @@ app_urlpatterns = [
     path("pages/", include("hknweb.markdown_pages.urls")),
     path("course_surveys/", include("hknweb.course_surveys.urls")),
     path("", landing.home, name="home"),
+    # TODO: refactor about to be its own module.
+    path("about/", landing.about, name="about"),
     path("about/people/", people.people, name="people"),
+    path(
+        "about/bitbyte_tree_data",
+        bitbyte_tree.bitbyte_tree_data,
+        name="bitbyte_tree_data",
+    ),
+    path("about/bitbyte_tree", bitbyte_tree.bitbyte_tree, name="bitbyte_tree"),
     path("indrel", indrel.indrel, name="indrel"),
     path("outreach", outreach.outreach, name="outreach"),
     path("committees", committees.portal, name="committee-portal"),
