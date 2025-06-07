@@ -21,19 +21,38 @@ import datetime
 
 # context processor for base to know whether a user is in the officer group
 def add_officer_context(request):
-    return {
-        "viewer_is_an_officer": request.user.groups.filter(
-            name=settings.OFFICER_GROUP
-        ).exists()
+    usergroups = request.user.groups
+    committees = [
+        "act",
+        "bridge",
+        "compserv",
+        "decal",
+        "indrel",
+        "prodev",
+        "serv",
+        "studrel",
+        "tutoring",
+    ]
+    context = {
+        "viewer_is_an_officer": usergroups.filter(name=settings.OFFICER_GROUP).exists()
     }
+    for committee in committees:
+        context[f"viewer_in_{committee}"] = (
+            usergroups.filter(name=committee).exists()
+            or usergroups.filter(name=settings.EXEC_GROUP).exists()
+        )
+    return context
 
 
 def add_exec_context(request):
-    return {
-        "viewer_is_an_exec": request.user.groups.filter(
-            name=settings.EXEC_GROUP
-        ).exists()
+    usergroups = request.user.groups
+    execs = ["csec", "pres", "rsec", "tres", "ivp", "evp", "deprel"]
+    context = {
+        "viewer_is_an_exec": usergroups.filter(name=settings.EXEC_GROUP).exists()
     }
+    for exec in execs:
+        context[f"viewer_in_{exec}"] = usergroups.filter(name=exec).exists()
+    return context
 
 
 def get_current_cand_semester():  # pragma: no cover
@@ -77,7 +96,7 @@ def account_create(request):
                     candidate_password.lower()
                     == form.cleaned_data["candidate_password"].lower()
                 ):
-                    group = Group.objects.get(name=settings.CAND_GROUP)
+                    group = Group.objects.get(name=settings.UserGroup.CAND_GROUP)
                     group.user_set.add(user)
                     group.save()
 
