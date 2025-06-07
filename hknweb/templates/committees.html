@@ -7,12 +7,13 @@
 
 
 {% block "portal-content" %}
-
-<a href="{% url 'tutoring:tutoring_portal' %}"> 
-    <div class="portal-content">
-        <h2>Tutoring</h2>
-    </div> 
-</a>
+{% if viewer_in_tutoring %}
+    <a href="{% url 'tutoring:tutoring_portal' %}"> 
+        <div class="portal-content">
+            <h2>Tutoring</h2>
+        </div> 
+    </a>
+{% endif %}
 
 <a href="{% url 'login' %}?next={{ request.path|urlencode }}">
     <div class="portal-content">

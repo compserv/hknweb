@@ -17,22 +17,24 @@
     }
 </style>
 <script>
-    function toggle_edit(button) {
-        button.disabled = true;
+    {% if viewer_in_bridge %}
+        function toggle_edit(button) {
+            button.disabled = true;
 
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has("edit")) {
-            urlParams.delete("edit");
-        } else {
-            urlParams.set("edit", "true");
-        }
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has("edit")) {
+                urlParams.delete("edit");
+            } else {
+                urlParams.set("edit", "true");
+            }
 
-        if (history.pushState) {
-            var newurl = window.location.origin + window.location.pathname + "?" + urlParams.toString();
-            window.history.replaceState({path: newurl}, "", newurl);
-            window.location = window.location;
+            if (history.pushState) {
+                var newurl = window.location.origin + window.location.pathname + "?" + urlParams.toString();
+                window.history.replaceState({path: newurl}, "", newurl);
+                window.location = window.location;
+            }
         }
-    }
+    {% endif %}
 </script>
 
 <script async src="//embedr.flickr.com/assets/client-code.js" charset="utf-8"></script>
@@ -53,7 +55,7 @@
 {% block content %}
     <div style="text-align: center; overflow: auto;">
         <!-- Edit button -->
-        {% if is_officer %}
+        {% if viewer_in_bridge %}
             <button
                 onclick="toggle_edit(this)"
                 style="border-radius: 0.3em; border-width: 0.02em;"

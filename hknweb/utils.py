@@ -99,6 +99,26 @@ def login_and_access_level(access_level):
     )
 
 
+# Committee Permission checks
+def committee_required(committee):
+    def test_user(user):
+        if (
+            not user.groups.filter(name=committee).exists()
+            and not user.groups.filter(name=settings.EXEC_GROUP).exists()
+        ):
+            raise PermissionDenied
+        return True
+
+    return user_passes_test(test_user)
+
+
+def login_and_committee(committee):
+    return _wrap_with_access_check(
+        f"Must be in {committee}",
+        committee_required(committee),
+    )
+
+
 def method_login_and_permission(permission_name):
     return method_decorator(login_and_permission(permission_name), name="dispatch")
 
