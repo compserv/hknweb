@@ -22,21 +22,10 @@ import datetime
 # context processor for base to know whether a user is in the officer group
 def add_officer_context(request):
     usergroups = request.user.groups
-    committees = [
-        "act",
-        "bridge",
-        "compserv",
-        "decal",
-        "indrel",
-        "prodev",
-        "serv",
-        "studrel",
-        "tutoring",
-    ]
     context = {
         "viewer_is_an_officer": usergroups.filter(name=settings.OFFICER_GROUP).exists()
     }
-    for committee in committees:
+    for committee in settings.COMMITTEE_GROUPS:
         context[f"viewer_in_{committee}"] = (
             usergroups.filter(name=committee).exists()
             or usergroups.filter(name=settings.EXEC_GROUP).exists()
@@ -46,11 +35,10 @@ def add_officer_context(request):
 
 def add_exec_context(request):
     usergroups = request.user.groups
-    execs = ["csec", "pres", "rsec", "tres", "ivp", "evp", "deprel"]
     context = {
         "viewer_is_an_exec": usergroups.filter(name=settings.EXEC_GROUP).exists()
     }
-    for exec in execs:
+    for exec in settings.EXEC_GROUPS:
         context[f"viewer_in_{exec}"] = usergroups.filter(name=exec).exists()
     return context
 

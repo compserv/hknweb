@@ -18,7 +18,7 @@ def people(request):
     if "semester" in request.GET and not request.GET["semester"].isdigit():
         raise Http404
 
-    is_bridge = request.user.groups.filter(name=settings.BRIDGE_GROUP)
+    is_bridge = request.user.groups.filter(name=settings.BRIDGE_GROUP).exists()
 
     # Prevents unauthorized users from just typing the url to edit the page
     if request.GET.get("edit") == "true":

@@ -186,13 +186,25 @@ MEMBER_GROUP = "member"
 # committee groups
 ACT_GROUP = "act"
 BRIDGE_GROUP = "bridge"
-COMPSEV_GROUP = "compserv"
+COMPSERV_GROUP = "compserv"
 DECAL_GROUP = "decal"
 INDREL_GROUP = "indrel"
 PRODEV_GROUP = "prodev"
 SERV_GROUP = "serv"
 STUDREL_GROUP = "studrel"
 TUTORING_GROUP = "tutoring"
+
+COMMITTEE_GROUPS = (
+    ACT_GROUP,
+    BRIDGE_GROUP,
+    COMPSERV_GROUP,
+    DECAL_GROUP,
+    INDREL_GROUP,
+    PRODEV_GROUP,
+    SERV_GROUP,
+    STUDREL_GROUP,
+    TUTORING_GROUP,
+)
 
 # exec groups
 CSEC_GROUP = "csec"
@@ -202,6 +214,16 @@ TRES_GROUP = "tres"
 IVP_GROUP = "ivp"
 EVP_GROUP = "evp"
 DEPREL_GROUP = "deprel"
+
+EXEC_GROUPS = (
+    CSEC_GROUP,
+    PRES_GROUP,
+    RSEC_GROUP,
+    TRES_GROUP,
+    IVP_GROUP,
+    EVP_GROUP,
+    DEPREL_GROUP,
+)
 
 # Note: both candidate and officer group should have permission to add officer challenges
 

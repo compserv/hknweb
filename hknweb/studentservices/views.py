@@ -11,7 +11,6 @@ from hknweb.events.views.aggregate_displays.calendar import calendar_helper
 from hknweb.events.views.event_transactions.show_event import show_details_helper
 from hknweb.utils import (
     allow_public_access,
-    login_and_access_level,
     GROUP_TO_ACCESSLEVEL,
     login_and_committee,
 )
