@@ -2,6 +2,8 @@ from django.shortcuts import render
 from django.db.models import QuerySet
 from django.contrib.auth.models import User
 from django.http import Http404
+from django.conf import settings
+from django.core.exceptions import PermissionDenied
 
 from hknweb.utils import allow_public_access, get_access_level, GROUP_TO_ACCESSLEVEL
 
@@ -15,6 +17,13 @@ from hknweb.coursesemester.models import Semester
 def people(request):
     if "semester" in request.GET and not request.GET["semester"].isdigit():
         raise Http404
+
+    is_bridge = request.user.groups.filter(name=settings.BRIDGE_GROUP).exists()
+
+    # Prevents unauthorized users from just typing the url to edit the page
+    if request.GET.get("edit") == "true":
+        if not is_bridge:
+            raise PermissionDenied
 
     semester: Semester = Semester.objects.filter(
         pk=request.GET.get("semester") or None
@@ -40,10 +49,8 @@ def people(request):
             committee__is_exec=False
         ).order_by("committee__name")
 
-    is_officer = get_access_level(request.user) <= GROUP_TO_ACCESSLEVEL["officer"]
-
     form = ProfilePictureForm(request.POST)
-    if is_officer and request.method == "POST":
+    if is_bridge and request.method == "POST":
         user = User.objects.get(pk=request.POST["user_id"])
         form.instance = user.profile
         if form.is_valid():
@@ -52,7 +59,6 @@ def people(request):
     context = {
         "execs": execs,
         "committeeships": committeeships,
-        "is_officer": is_officer,
         "form": form,
         "semester_select_form": SemesterSelectForm({"semester": semester}),
     }

@@ -11,8 +11,8 @@ from hknweb.events.views.aggregate_displays.calendar import calendar_helper
 from hknweb.events.views.event_transactions.show_event import show_details_helper
 from hknweb.utils import (
     allow_public_access,
-    login_and_access_level,
     GROUP_TO_ACCESSLEVEL,
+    login_and_committee,
 )
 from hknweb.studentservices.models import (
     CourseGuideNode,
@@ -192,7 +192,7 @@ def course_description(request, slug):
     return render(request, "studentservices/course_description.html", context=context)
 
 
-@login_and_access_level(GROUP_TO_ACCESSLEVEL["officer"])
+@login_and_committee(settings.TUTORING_GROUP)
 def edit_description(request, slug):
     course = get_object_or_404(CourseDescription, slug=slug)
     if request.method == "GET":
@@ -211,7 +211,7 @@ def edit_description(request, slug):
     return render(request, "studentservices/course_edit.html", context=context)
 
 
-@login_and_access_level(GROUP_TO_ACCESSLEVEL["officer"])
+@login_and_committee(settings.TUTORING_GROUP)
 def delete_description(request, slug):
     course = get_object_or_404(CourseDescription, slug=slug)
 

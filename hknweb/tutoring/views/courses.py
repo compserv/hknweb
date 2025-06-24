@@ -1,10 +1,11 @@
 from django.shortcuts import render
-from hknweb.utils import login_and_access_level, GROUP_TO_ACCESSLEVEL
+from hknweb.utils import login_and_committee
 from hknweb.studentservices.models import CourseDescription
 from hknweb.tutoring.forms import AddCourseForm
+from django.conf import settings
 
 
-@login_and_access_level(GROUP_TO_ACCESSLEVEL["officer"])
+@login_and_committee(settings.TUTORING_GROUP)
 def courses(request):
     if request.method == "POST":
         new_course = AddCourseForm(request.POST)
