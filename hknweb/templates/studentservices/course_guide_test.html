@@ -177,43 +177,42 @@
                 makeMarker(`head-desat-${i}`, desaturate(color(i))); // desaturated
             }
 
-            // Creates the links that appear
-            const link = container.append("g")
-                    .attr("class", "links")
-                .selectAll("line")
-                    .data(links)
-                    .enter().append("path")
-                        .attr("fill", "none")
-                        .attr("stroke-width", link_stroke_width)
-                        .attr("stroke", d => color(
-                            nodeById.get(
-                                typeof d.source === "object" ? d.source.id : d.source
-                            ).group))
-                        .attr("marker-end", d => {
-                            const g = nodeById.get(
-                                typeof d.source==="object" ? d.source.id : d.source
-                            ).group;
-                            return `url(#head-${g})`;
-                        });
+            /* creating elements */
+            // links
+            const link = container.selectAll("path.link")
+                .data(links)
+                .enter().append("path")
+                    .attr("class", "link") // Add class for selection
+                    .attr("fill", "none")
+                    .attr("stroke-width", link_stroke_width)
+                    .attr("stroke", d => color(
+                        nodeById.get(
+                            typeof d.source === "object" ? d.source.id : d.source
+                        ).group))
+                    .attr("marker-end", d => {
+                        const g = nodeById.get(
+                            typeof d.source==="object" ? d.source.id : d.source
+                        ).group;
+                        return `url(#head-${g})`;
+                    });
             
-            // Creates the nodes that appear
-            const node = container.append("g")
-                    .attr("class", "nodes")
-                .selectAll("g")
-                    .data(nodes)
+            // nodes
+            const node = container.selectAll("g.node")
+                .data(nodes)
                 .enter().append("g")
-                .call(d3.drag()
-                    .on("start", dragstarted)
-                    .on("drag", dragged)
-                    .on("end", dragended));
+                    .attr("class", "node") // Add class for selection
+                    .call(d3.drag()
+                        .on("start", dragstarted)
+                        .on("drag", dragged)
+                        .on("end", dragended));
+                circles = node.append("a")
+                        .attr("xlink:href", d => d.link)
+                        .attr("target", "_blank")
+                    .append("circle")
+                        .attr("r", d => d.title ? title_circle_radius : circle_radius)
+                        .attr("fill", d => color(d.group));
             
-            circles = node.append("a")
-                    .attr("xlink:href", d => d.link)
-                    .attr("target", "_blank")
-                .append("circle")
-                    .attr("r", d => d.title ? title_circle_radius : circle_radius)
-                    .attr("fill", d => color(d.group));
-            
+            // labels
             labels = node.append("a")
                     .attr("xlink:href", d => d.link)
                     .attr("target", "_blank")
@@ -225,13 +224,12 @@
             node.append("title")
                 .text(d => d.id);
 
-            // make everything a bit transparent
-            node.on("mouseover", function(d) {
-                d = d.srcElement.__data__;
-
-                let marked = new Set(),
-                    queue = [];
-                queue.push(d.id);
+            /* handling mouseover/mouseout */
+            // desaturate everything not on path
+            node.on("mouseover", function(event, d) {
+                // BFS ancestors
+                let marked = new Set();
+                let queue = [d.id];
                 while (queue.length) {
                     const id0 = queue.shift();
                     if (marked.has(id0)) continue;
@@ -239,20 +237,7 @@
                     queue = [...queue, ...nodeById.get(id0).bk];
                 }
 
-                circles.each(function(d2) {
-                    const sel = d3.select(this);
-                    if (marked.has(d2.id)) {
-                        sel.attr("fill", color(d2.group))
-                        .raise();
-                    } else {
-                        sel.attr("fill", desaturate(color(d2.group)))
-                        .lower();
-                    }
-                    if (d2.id == d.id) {
-                        sel.attr("stroke", "black")
-                            .attr("stroke-width", Math.max(1, node_stroke_width) * 3);
-                    }
-                });
+                // style and reorder links (desaturated below normal)
                 link.each(function(l) {
                     const sel = d3.select(this);
                     const g = nodeById.get(l.source.id).group;
@@ -266,27 +251,39 @@
                         .lower();
                     }
                 });
-                labels.each(function(d2) {
-                    const sel = d3.select(this);
+
+                // same for nodes
+                node.each(function(d2) {
+                    const nodeGroup = d3.select(this);
                     if (marked.has(d2.id)) {
-                        sel.attr("fill", "black")
-                        .raise();
+                        nodeGroup.raise();
+                        nodeGroup.select("circle").attr("fill", color(d2.group));
+                        nodeGroup.select("text").attr("fill", "black");
                     } else {
-                        sel.attr("fill", "#888")
-                        .lower();
+                        nodeGroup.select("circle").attr("fill", desaturate(color(d2.group)));
+                        nodeGroup.select("text").attr("fill", "#888");
                     }
                 });
+
+                // highlight stroke
+                d3.select(this).select("circle")
+                    .attr("stroke", "black")
+                    .attr("stroke-width", Math.max(1, node_stroke_width) * 3);
             })
+            // reset everything
             .on("mouseout", function() {
-                circles.attr("fill", d => color(d.group))
-                    .attr("stroke", node_stroke)
-                    .attr("stroke-width", node_stroke_width)
-                    .raise();
                 link.attr("stroke", d => color(nodeById.get(d.source.id).group))
                     .attr("marker-end", d => `url(#head-${nodeById.get(d.source.id).group})`)
                     .lower();
-                labels.attr("fill", "black")
-                    .raise();
+                
+                node.each(function(d) {
+                    const nodeGroup = d3.select(this);
+                    nodeGroup.select("circle")
+                        .attr("fill", color(d.group))
+                        .attr("stroke", node_stroke)
+                        .attr("stroke-width", node_stroke_width);
+                    nodeGroup.select("text").attr("fill", "black");
+                }).raise();
             });
 
             // make everything disappear
@@ -328,6 +325,7 @@
                 link.attr("display", null);
             }); */
               
+            /* simulation stuff */
             simulation.on("tick", () => {
               link
                 .attr("d", d => `M ${d.source.x} ${d.source.y} L ${d.target.x} ${d.target.y}`);
@@ -358,7 +356,7 @@
                 }
             }
 
-            // helpers
+            /* helpers */
             function desaturate(c, amount = 0.9) {
                 let col = d3.color(c);
                 if (!col) return c;
