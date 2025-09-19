@@ -86,7 +86,7 @@
             width = +svg.attr("width"),
             height = +svg.attr("height"),
             circle_radius = {{ params.circle_radius }},
-            title_circle_radius = circle_radius * 1.5,
+            title_circle_radius = circle_radius * 1.25,
             node_stroke_width = 1,
             node_stroke = "gray";
 
@@ -226,6 +226,7 @@
                     .enter().append("svg:marker")
                         .attr("id", String)
                         .attr("viewBox", "0 -5 10 10")
+                        .attr("markerUnits", "userSpaceOnUse")
                         .attr("refX", circle_radius + 10)
                         .attr("refY", 0)
                         .attr("markerWidth", {{ params.marker_width }})
@@ -234,6 +235,7 @@
                     .append("svg:path")
                         .attr("d", "M0,-5L10,0L0,5");
                 svg.select("marker#end_title")
+                    .attr("markerUnits", "userSpaceOnUse")
                     .attr("refX", title_circle_radius + 10)
 
                 simulation
