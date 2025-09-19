@@ -103,10 +103,10 @@
             centerX = width / 2,
             centerY = width / 2,
             link_stroke_width = 5,
-            arrowhead_size = link_stroke_width*1.5,
+            arrowhead_size = link_stroke_width*1.75,
             circle_radius = {{ params.circle_radius }},
             title_circle_radius = circle_radius * 1.2,
-            node_stroke_width = 1,
+            node_stroke_width = 0,
             node_stroke = "gray"
 
         const svg = d3.select("svg")
@@ -177,7 +177,7 @@
                     .attr("id", `head-${i}`)
                     .attr("viewBox", `0 -${arrowhead_size} ${arrowhead_size*2} ${arrowhead_size*2}`)
                     .attr("markerUnits", "userSpaceOnUse") 
-                    .attr("refX", circle_radius + arrowhead_size*1.5) 
+                    .attr("refX", circle_radius + arrowhead_size*2 - link_stroke_width) 
                     .attr("refY", 0)
                     .attr("markerWidth", arrowhead_size*2)
                     .attr("markerHeight", arrowhead_size*2)
@@ -238,7 +238,7 @@
             node.on("mouseover", function(d) {
                 d = d.srcElement.__data__;
                 circles
-                    .attr("opacity", 0.6);
+                    .attr("opacity", 0.2);
 
                 let marked = new Set(),
                     queue = [];
@@ -255,7 +255,7 @@
                 circles
                     .filter(d2 => d2.id === d.id)
                     .attr("stroke", "black")
-                    .attr("stroke-width", node_stroke_width * 3);
+                    .attr("stroke-width", 3);
                 link.filter(l => {
                     return !marked.has(l.source.id) || !marked.has(l.target.id);
                 })
