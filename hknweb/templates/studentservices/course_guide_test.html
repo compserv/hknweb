@@ -106,8 +106,8 @@
             arrowhead_size = link_stroke_width*1.75,
             circle_radius = {{ params.circle_radius }},
             title_circle_radius = circle_radius * 1.2,
-            node_stroke_width = 0,
-            node_stroke = "gray"
+            node_stroke_width = 1,
+            node_stroke = "black"
 
         const svg = d3.select("svg")
             .attr("width", width)
@@ -173,18 +173,8 @@
             const defs = svg.insert("defs", ":first-child");
             const arrowhead_size = link_stroke_width*1.5;
             for (let i = 1; i <= {{ groups|length }}; i++) {
-                defs.append("marker")
-                    .attr("id", `head-${i}`)
-                    .attr("viewBox", `0 -${arrowhead_size} ${arrowhead_size*2} ${arrowhead_size*2}`)
-                    .attr("markerUnits", "userSpaceOnUse") 
-                    .attr("refX", circle_radius + arrowhead_size*2 - link_stroke_width) 
-                    .attr("refY", 0)
-                    .attr("markerWidth", arrowhead_size*2)
-                    .attr("markerHeight", arrowhead_size*2)
-                    .attr("orient", "auto")
-                    .append("path")
-                    .attr("d", `M 0 -${arrowhead_size} L ${arrowhead_size*2} 0 L 0 ${arrowhead_size}`)
-                    .attr("fill", color(i));
+                makeMarker(`head-${i}`, color(i));                   // normal
+                makeMarker(`head-desat-${i}`, desaturate(color(i))); // desaturated
             }
 
             // Creates the links that appear
@@ -235,10 +225,9 @@
             node.append("title")
                 .text(d => d.id);
 
+            // make everything a bit transparent
             node.on("mouseover", function(d) {
                 d = d.srcElement.__data__;
-                circles
-                    .attr("opacity", 0.2);
 
                 let marked = new Set(),
                     queue = [];
@@ -249,34 +238,95 @@
                     marked.add(id0);
                     queue = [...queue, ...nodeById.get(id0).bk];
                 }
-                circles
-                    .filter(d2 => marked.has(d2.id))
-                    .attr("opacity", 1);
-                circles
-                    .filter(d2 => d2.id === d.id)
-                    .attr("stroke", "black")
-                    .attr("stroke-width", 3);
-                link.filter(l => {
-                    return !marked.has(l.source.id) || !marked.has(l.target.id);
-                })
-                    .attr("opacity", 0.05);
-                svg.selectAll("text")
-                    .filter(d2 => d2.group !== d.group)
-                    .attr("opacity", 0.5);
-                svg.selectAll("text")
-                    .filter(d2 => d2.id === d.id)
-                    .attr("font-weight", "bold");
+
+                circles.each(function(d2) {
+                    const sel = d3.select(this);
+                    if (marked.has(d2.id)) {
+                        sel.attr("fill", color(d2.group))
+                        .raise();
+                    } else {
+                        sel.attr("fill", desaturate(color(d2.group)))
+                        .lower();
+                    }
+                    if (d2.id == d.id) {
+                        sel.attr("stroke", "black")
+                            .attr("stroke-width", Math.max(1, node_stroke_width) * 3);
+                    }
+                });
+                link.each(function(l) {
+                    const sel = d3.select(this);
+                    const g = nodeById.get(l.source.id).group;
+                    if (marked.has(l.source.id) && marked.has(l.target.id)) {
+                        sel.attr("stroke", color(g))
+                        .attr("marker-end", `url(#head-${g})`)
+                        .raise();
+                    } else {
+                        sel.attr("stroke", desaturate(color(g)))
+                        .attr("marker-end", `url(#head-desat-${g})`)
+                        .lower();
+                    }
+                });
+                labels.each(function(d2) {
+                    const sel = d3.select(this);
+                    if (marked.has(d2.id)) {
+                        sel.attr("fill", "black")
+                        .raise();
+                    } else {
+                        sel.attr("fill", "#888")
+                        .lower();
+                    }
+                });
             })
             .on("mouseout", function() {
-                svg.selectAll("circle")
-                    .attr("opacity", 1)
+                circles.attr("fill", d => color(d.group))
+                    .attr("stroke", node_stroke)
+                    .attr("stroke-width", node_stroke_width)
+                    .raise();
+                link.attr("stroke", d => color(nodeById.get(d.source.id).group))
+                    .attr("marker-end", d => `url(#head-${nodeById.get(d.source.id).group})`)
+                    .lower();
+                labels.attr("fill", "black")
+                    .raise();
+            });
+
+            // make everything disappear
+            /* node.on("mouseover", function(event, d) {
+                // Collect ancestors
+                let marked = new Set(),
+                    queue = [d.id];
+                while (queue.length) {
+                    const id0 = queue.shift();
+                    if (marked.has(id0)) continue;
+                    marked.add(id0);
+                    queue = [...queue, ...nodeById.get(id0).bk];
+                }
+
+                // Hide all circles, then show only ancestors + this node
+                circles.attr("display", "none");
+                circles.filter(d2 => marked.has(d2.id))
+                    .attr("display", null); // null restores default (visible)
+
+                // Hide all labels, then show only ancestors + this node
+                labels.attr("display", "none");
+                labels.filter(d2 => marked.has(d2.id))
+                    .attr("display", null);
+
+                // Hide all links, then show only those between ancestors
+                link.attr("display", "none");
+                link.filter(l => marked.has(l.source.id) && marked.has(l.target.id))
+                    .attr("display", null);
+            })
+            .on("mouseout", function() {
+                // Restore everything
+                circles.attr("display", null)
                     .attr("stroke", node_stroke)
                     .attr("stroke-width", node_stroke_width);
-                link.attr("opacity", 1);
-                svg.selectAll("text")
-                    .attr("opacity", 1)
+
+                labels.attr("display", null)
                     .attr("font-weight", "normal");
-            });
+
+                link.attr("display", null);
+            }); */
               
             simulation.on("tick", () => {
               link
@@ -308,6 +358,30 @@
                 }
             }
 
+            // helpers
+            function desaturate(c, amount = 0.9) {
+                let col = d3.color(c);
+                if (!col) return c;
+                let hsl = d3.hsl(col);
+                hsl.s *= (1 - amount);
+                return hsl.formatRgb();
+            }
+
+            function makeMarker(id, fillColor) {
+                const m = defs.append("marker")
+                    .attr("id", id)
+                    .attr("viewBox", `0 -${arrowhead_size} ${arrowhead_size*2} ${arrowhead_size*2}`)
+                    .attr("markerUnits", "userSpaceOnUse")
+                    .attr("refX", circle_radius + arrowhead_size*2 - link_stroke_width)
+                    .attr("refY", 0)
+                    .attr("markerWidth", arrowhead_size*2)
+                    .attr("markerHeight", arrowhead_size*2)
+                    .attr("orient", "auto");
+
+                m.append("path")
+                    .attr("d", `M 0 -${arrowhead_size} L ${arrowhead_size*2} 0 L 0 ${arrowhead_size}`)
+                    .attr("fill", fillColor);
+            }
             
             return 
           }
