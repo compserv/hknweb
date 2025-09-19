@@ -101,7 +101,8 @@ def course_guide(request):
         g.name for g in CourseGuideGroup.objects.all() if g.name != "Core"
     ]
 
-    return render(request, "studentservices/course_guide.html", context=context)
+    # Edited for the test
+    return render(request, "studentservices/course_guide_test.html", context=context)
 
 
 @allow_public_access
@@ -140,8 +141,7 @@ def course_guide_data(request):
             if node.name in node_groups
         ]
 
-    course_surveys_link = reverse("course_surveys:index")
-    link_template = f"{course_surveys_link}?search_by=courses&search_value="
+    link_template = "course_description/"
     nodes = []
     for n in CourseGuideNode.objects.all():
         if n.name not in node_groups:
@@ -155,6 +155,7 @@ def course_guide_data(request):
             "fx": n.x_0,
             "fy": n.y_0,
             "fixed": ((n.x_0 is not None) and (n.y_0 is not None)),
+            "level": n.level,
         }
 
         nodes.append(node_attrs)
@@ -180,6 +181,7 @@ def course_guide_data(request):
 
 @allow_public_access
 def course_description(request, slug):
+    print(request, slug)
     course = get_object_or_404(CourseDescription, slug=slug)
     context = {
         "course": course,

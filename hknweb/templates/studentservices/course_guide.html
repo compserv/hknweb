@@ -12,48 +12,42 @@
             margin: auto;
             background-color: ghostwhite;
         }
-
-        .links line {
+        /* .links line {
             stroke: #aaa;
-        }
-
+        } */
         .nodes circle {
             pointer-events: all;
         }
-
         .group_selection {
             text-align: center;
             font-size: 125%;
         }
-
+        .svg-container { /* Questionable display on phones possibly? */
+            width: 100%;
+            overflow: hidden;
+        }
+        .graph {
+            width: 100%;
+            height: auto;
+        }
     </style>
     <script>
         function action(group) {
             const urlParams = new URLSearchParams(window.location.search);
-
-            var groups = urlParams.get("groups");
-            if (!groups) {
-                groups = "Core";
-            }
-            groups = groups.split(",")
-
+            var groups = urlParams.get("groups") || "Core";
+            groups = groups.split(",");
             const checkbox = document.getElementById(group);
-            if (checkbox.checked == true) {
-                groups.push(group)
+            if (checkbox.checked) {
+                groups.push(group);
             } else {
-                const index = groups.indexOf(group);
-                if (index > -1) {
-                    groups.splice(index, 1);
-                }
+                const idx = groups.indexOf(group);
+                if (idx > -1) groups.splice(idx, 1);
             }
-
             groups = groups.join();
-
             if (history.pushState) {
-                var newurl = window.location.origin + window.location.pathname + "?groups=" + groups;
+                const newurl = window.location.origin + window.location.pathname + "?groups=" + groups;
                 window.history.replaceState({path: newurl}, "", newurl);
             }
-
             window.location = window.location;
         }
     </script>
@@ -64,23 +58,29 @@
 {% block content %}
     <div class="group_selection">
         {% for group in groups %}
-            <input type="checkbox" id="{{ group }}" {% if group in request.GET.groups %} checked {% endif %} onclick="action('{{ group }}')"> {{ group }}
+            <input type="checkbox"
+                   id="{{ group }}"
+                   {% if group in request.GET.groups %} checked {% endif %}
+                   onclick="action('{{ group }}')"> {{ group }}
         {% endfor %}
     </div>
 
     <h2 style="text-align: center;">
-        Get a description of each EECS Academic Area here: <a href="https://www2.eecs.berkeley.edu/Research/Areas/">EECS Research Areas</a>
+        Get a description of each EECS Academic Area here:
+        <a href="https://www2.eecs.berkeley.edu/Research/Areas/">EECS Research Areas</a>
     </h2>
 
     <h2 style="text-align: center;">
         <a href="/static/img/course-map-2019.png">Image version of the Course Guide</a>
     </h2>
 
-    <div style="width: 100%; overflow: scroll;">
-        <svg class="graph" width="2000" height="1200"></svg>
+    <div class="svg-container">
+        <svg class="graph"
+             viewBox="0 0 2000 1200"
+             preserveAspectRatio="xMidYMid meet">
+        </svg>
     </div>
 
-    <!-- From https://bl.ocks.org/heybignick/3faf257bbbbc7743bb72310d03b86ee8 -->
     <script>
         var svg = d3.select("svg"),
             width = +svg.attr("width"),
@@ -90,128 +90,163 @@
             node_stroke_width = 1,
             node_stroke = "gray";
 
-        var color = d3.scaleOrdinal(d3.schemeSet2);
-        for (let i = 1; i < ({{ groups|length }} + 1) + 1; i++) {
-            color(i);
-        }
+        const color = d3.scaleOrdinal(d3.schemeSet2);
+        for (let i = 1; i <= {{ groups|length }} + 1; i++) color(i);
 
         function renderd3(groups) {
             d3.json("{% url 'studentservices:course_guide_data' %}?groups=" + groups, function(error, graph) {
                 if (error) throw error;
 
-                var link = svg
-                    .append("g")
-                        .attr("class", "links")
-                    .selectAll("line")
-                        .data(graph.links)
-                        .enter().append("line")
-                            .attr("stroke-width", 2);
+                const bbox  = svg.node().getBoundingClientRect(),
+                      width = bbox.width,
+                      height= bbox.height,
+                      padding = circle_radius * 2;
 
-                var node = svg
-                    .append("g")
-                        .attr("class", "nodes")
-                    .selectAll("g")
-                        .data(graph.nodes)
-                        .enter().append("g");
+                const nodeById = new Map(graph.nodes.map(d => [d.id, d])),
+                      children = new Map(graph.nodes.map(d => [d.id, []]));
 
-                // Create the line after the nodes are rendered, dynamic to Node size
-                svg.selectAll("line")
-                    .attr("marker-end", function (l) {
-                            let found_node = node.filter((n) => (n.id == l.target && n.title));
-                            if (found_node._groups[0].length > 0) {
-                                return "url(#end_title)"
-                            }
-                            return "url(#end)";
-                        });
+                graph.links.forEach(l => {
+                    const s = (typeof l.source === "object" ? l.source.id : l.source),
+                          t = (typeof l.target === "object" ? l.target.id : l.target);
+                    children.get(s).push(t);
+                });
 
-                var circles = node
-                    .append("circle")
-                        .attr("r", function(d) { return (d.title) ? title_circle_radius : circle_radius; })
-                        .attr("fill", function(d) { return color(d.group); })
-                        .attr("stroke", node_stroke)
-                        .attr("stroke-width", node_stroke_width);
-                
-                var simulation = d3.forceSimulation()
-                    .force("link", d3.forceLink().id(function(d) { return d.id; })
-                                                .distance({{ params.link_distance }})
-                                                .strength(function (l) {
-                                                    let found_node = graph.nodes.filter((n) => (n.id == l.source.id && n.title));
-                                                    let found_links = graph.links.filter(function(l2) {
-                                                            if (l2.target.id == l.target.id) {
-                                                                let found_node = graph.nodes.filter((n) => (n.id == l2.source.id && n.title));
-                                                                return found_node.length == 1;
-                                                            }
-                                                            return false;
-                                                    });
-                                                    if (found_node.length == 1 && found_links.length == 1) {
-                                                        return 7;
-                                                    }
-                                                    return 2;
-                                                }))
-                    .force("charge", d3.forceManyBody().strength({{ params.force_strength }}))
-                    .force("collision", d3.forceCollide().radius(function(d) { 
-                        return (d.title) ? title_circle_radius : circle_radius;
-                    }))
-                    .force("center", d3.forceY(height));
-                
-                function dragstarted(d) {
-                    if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+                const inDegree = new Map(graph.nodes.map(d => [d.id, 0]));
+                graph.links.forEach(l => {
+                    const tgt = (typeof l.target === "object" ? l.target.id : l.target);
+                    inDegree.set(tgt, inDegree.get(tgt) + 1);
+                });
 
-                    d.old_fx = d.x;
-                    d.old_fy = d.y;
+                const queue = [];
+                inDegree.forEach((deg, id) => { if (deg === 0) queue.push(id); });
+                const depth = new Map(queue.map(id => [id, 0]));
 
-                    d.fx = d.x;
-                    d.fy = d.y;
+                while (queue.length) {
+                    const id0   = queue.shift(),
+                          dep0 = depth.get(id0);
+                    children.get(id0).forEach(childId => {
+                        depth.set(childId, Math.max(depth.get(childId) || 0, dep0 + 1));
+                        inDegree.set(childId, inDegree.get(childId) - 1);
+                        if (inDegree.get(childId) === 0) queue.push(childId);
+                    });
                 }
 
-                function dragged(d) {
-                    d.fx = d3.event.x;
-                    d.fy = d3.event.y;
+                const layers = {};
+                graph.nodes.forEach(d => {
+                    const dep = depth.get(d.id) || 0;
+                    if (!layers[dep]) layers[dep] = [];
+                    layers[dep].push(d);
+                });
+
+                const vSpacing = circle_radius * 4;
+                Object.keys(layers).forEach(key => {
+                    const dep  = +key,
+                          row  = layers[dep],
+                          hGap = (width  - 2 * padding) / (row.length + 1);
+
+                    row.forEach((node, i) => {
+                        node.x = padding + (i + 1) * hGap;
+                        node.y = dep === 0
+                               ? padding
+                               : padding + dep * vSpacing;
+                    });
+                });
+
+                const defs = svg.insert("defs", ":first-child");
+                const arrowhead_size = link_stroke_width*1.5;
+
+                for (let i = 1; i <= {{ groups|length }}; i++) {
+                    defs.append("marker")
+                        .attr("id", `head-${i}`)
+                        .attr("viewBox", `0 -${arrowhead_size} ${arrowhead_size*2} ${arrowhead_size*2}`)
+                        .attr("markerUnits", "userSpaceOnUse") 
+                        .attr("refX", circle_radius + arrowhead_size*1.5) 
+                        .attr("refY", 0)
+                        .attr("markerWidth", arrowhead_size*2)
+                        .attr("markerHeight", arrowhead_size*2)
+                        .attr("orient", "auto")
+                        .append("path")
+                        .attr("d", `M 0 -${arrowhead_size} L ${arrowhead_size*2} 0 L 0 ${arrowhead_size}`)
+                        .attr("fill", color(i));
                 }
 
-                function dragended(d) {
-                    if (!d3.event.active) simulation.alphaTarget(0);
-                    d.fx = null;
-                    d.fy = null;
-                    if (d.fixed) {
-                        d.fx = d.old_fx;
-                        d.fy = d.old_fy;
-                    }
-                }
+                const link = svg.append("g")
+                    .attr("class", "links")
+                  .selectAll("line")
+                    .data(graph.links)
+                  .enter().append("path")
+                    .attr("fill", "none")
+                    .attr("stroke-width", link_stroke_width)
+                    .attr("stroke", d => color(
+                        nodeById.get(
+                            typeof d.source === "object" ? d.source.id : d.source
+                        ).group))
+                    .attr("marker-end", d => {
+                        const g = nodeById.get(
+                            typeof d.source==="object" ? d.source.id : d.source
+                        ).group;
+                        return `url(#head-${g})`;
+                    })
+                    .attr("d", d => {
+                        let source = nodeById.get( typeof d.source === "object" ? d.source.id : d.source );
+                        let target = nodeById.get( typeof d.target === "object" ? d.target.id : d.target );
+                        return `M ${source.x} ${source.y} L ${target.x} ${target.y}`;
+                    });
 
-                // Create a drag handler and append it to the node object instead
-                var drag_handler = d3.drag()
-                    .on("start", dragstarted)
-                    .on("drag", dragged)
-                    .on("end", dragended);
+                const node = svg.append("g")
+                    .attr("class", "nodes")
+                  .selectAll("g")
+                    .data(graph.nodes)
+                  .enter().append("g")
+                    .attr("transform", d => `translate(${d.x},${d.y})`);
 
-                drag_handler(node);
+                node.append("circle")
+                    .attr("r", d => d.title ? title_circle_radius : circle_radius)
+                    .attr("fill", d => color(d.group))
+                    .attr("stroke", node_stroke)
+                    .attr("stroke-width", node_stroke_width);
 
-                var labels = node
-                    .append("a")
-                        .attr("xlink:href", function (d) { return d.link; })
-                        .attr("target", "_blank")
-                    .append("text")
-                        .text(function(d) { return d.id; })
-                        .attr("text-anchor", "middle")
-                        .attr("x", 0)
-                        .attr("y", 5);
+                node.append("a")
+                    .attr("xlink:href", d => d.link)
+                    .attr("target", "_blank")
+                  .append("text")
+                    .text(d => d.id)
+                    .attr("text-anchor", "middle")
+                    .attr("y", 5);
 
                 node.append("title")
-                    .text(function(d) { return d.id; });
+                    .text(d => d.id);
 
                 node.on("mouseover", function(d) {
-                    circles
-                        .filter(function(d2) { return d.group != d2.group; })
+                    svg.selectAll("circle")
+                        .filter(d2 => d2.id !== d.id)
                         .attr("opacity", 0.6);
-                    link
-                        .filter(function(l) {
-                            return (l.source_group != d.group) && (l.target_group != d.group);
-                        })
+                    svg.selectAll("circle")
+                        .filter(d2 => d2.id === d.id)
+                        .attr("stroke", "black")
+                        .attr("stroke-width", node_stroke_width * 3);
+                    link.filter(l => {
+                        const sGrp = typeof l.source === "object" ? l.source.group : null;
+                        const tGrp = typeof l.target === "object" ? l.target.group : null;
+                        return (sGrp !== d.group && tGrp !== d.group);
+                    })
                         .attr("opacity", 0.1);
-                    labels
-                        .filter(function(d2) { return d.group != d2.group; })
+                    svg.selectAll("text")
+                        .filter(d2 => d2.group !== d.group)
                         .attr("opacity", 0.5);
+                    svg.selectAll("text")
+                        .filter(d2 => d2.id === d.id)
+                        .attr("font-weight", "bold");
+                })
+                .on("mouseout", function() {
+                    svg.selectAll("circle")
+                        .attr("opacity", 1)
+                        .attr("stroke", node_stroke)
+                        .attr("stroke-width", node_stroke_width);
+                    link.attr("opacity", 1);
+                    svg.selectAll("text")
+                        .attr("opacity", 1)
+                        .attr("font-weight", "normal");
                 });
 
                 // Set the stroke width back to normal when mouse leaves the node.
@@ -271,7 +306,7 @@
                         .attr("y2", function(d) { return d.target.y; });
                 }
             });
-        };
+        }
 
         renderd3("{{ request.GET.groups }}");
     </script>

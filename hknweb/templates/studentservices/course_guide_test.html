@@ -1,0 +1,319 @@
+{% extends 'base.html' %}
+
+{% block title %}Course Guide{% endblock %}
+
+{% block header %}
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="//d3js.org/d3-scale-chromatic.v0.3.min.js"></script>
+    <style>
+        .graph {
+            display: block;
+            text-align: center;
+            margin: auto;
+            background-color: ghostwhite;
+        }
+        /* .links line {
+            stroke: #aaa;
+        } */
+        .nodes circle {
+            pointer-events: all;
+        }
+        .group_selection {
+            text-align: center;
+            font-size: 125%;
+        }
+        .svg-container { /* Questionable display on phones possibly? */
+            width: 100%;
+            overflow: hidden;
+        }
+        .graph {
+            width: 80%;
+            height: auto;
+        }
+        
+    </style>
+    <script>
+        function action(group) {
+            const urlParams = new URLSearchParams(window.location.search);
+            var groups = urlParams.get("groups") || "Core";
+            groups = groups.split(",");
+            const checkbox = document.getElementById(group);
+            if (checkbox.checked) {
+                groups.push(group);
+            } else {
+                const idx = groups.indexOf(group);
+                if (idx > -1) groups.splice(idx, 1);
+            }
+            groups = groups.join();
+            if (history.pushState) {
+                const newurl = window.location.origin + window.location.pathname + "?groups=" + groups;
+                window.history.replaceState({path: newurl}, "", newurl);
+            }
+            window.location = window.location;
+        }
+    </script>
+{% endblock %}
+
+{% block heading %}Course Guide{% endblock %}
+
+{% block content %}
+    <div class="group_selection">
+        {% for group in groups %}
+            <input type="checkbox"
+                   id="{{ group }}"
+                   {% if group in request.GET.groups %} checked {% endif %}
+                   onclick="action('{{ group }}')"> {{ group }}
+        {% endfor %}
+    </div>
+
+    <h2 style="text-align: center;">
+        Get a description of each EECS Academic Area here:
+        <a href="https://www2.eecs.berkeley.edu/Research/Areas/">EECS Research Areas</a>
+    </h2>
+
+    <h2 style="text-align: center;">
+        <a href="/static/img/course-map-2019.png">Image version of the Course Guide</a>
+    </h2>
+
+    <div class="svg-container">
+        <svg class="graph"
+            viewBox="0 0 2000 1200"
+            preserveAspectRatio="xMidYMid meet">
+        </svg>
+    </div>
+    <button id="editButton" onclick="toggleEdit()"> Edit </button>
+
+    <script>
+        // Edit Code
+        let isEditMode = false;
+        function toggleEdit() {
+            isEditMode = !isEditMode;
+            const buttonElem = document.getElementById("editButton");
+            if (isEditMode) {
+                buttonElem.textContent = "Close Edit"
+            }
+            else {
+                buttonElem.textContent = "Edit"
+            }
+
+        }
+
+        const width = 1000,
+            height = 1000,
+            centerX = width / 2,
+            centerY = width / 2,
+            link_stroke_width = 5,
+            arrowhead_size = link_stroke_width*1.5,
+            circle_radius = {{ params.circle_radius }},
+            title_circle_radius = circle_radius * 1.2,
+            node_stroke_width = 1,
+            node_stroke = "gray"
+
+        const svg = d3.select("svg")
+            .attr("width", width)
+            .attr("height", width)
+            .attr("viewBox", [-width / 2, -height / 2, width, height]);
+
+
+        async function grabData() {
+            const data = await d3.json("{% url 'studentservices:course_guide_data' %}?groups={{ request.GET.groups }}")        
+            return data
+        }
+
+        async function generate() {
+            const graph = await grabData();
+            const nodes = graph.nodes.map(d => ({ ...d, fd: [], bk: [] }));
+            const links = graph.links.map(d => ({ ...d }));
+
+            const nodeById = new Map(nodes.map(d => [d.id, d]));
+            links.forEach(l => {
+                nodeById.get(l.source).fd.push(l.target);
+                nodeById.get(l.target).bk.push(l.source);
+            });
+    
+            const color = d3.scaleOrdinal(d3.schemePaired);
+          
+            const simulation = d3.forceSimulation(nodes)
+                .force("link", d3.forceLink(links)
+                    .id(d => d.id)
+                    .strength(0.05)
+                    .distance((d) => (d.title ? title_circle_radius*10 : circle_radius*10 )))
+                .force("charge", d3.forceManyBody().strength(-300))
+                .force("overlap", d3.forceCollide((d) => (d.title ? title_circle_radius : circle_radius)*1.25).strength(1))
+                .force("x", d3.forceX())
+                .force("y", d3.forceY())
+                // .force("center", d3.forceCenter(centerX, centerY));
+                .force("radial", d3.forceRadial(d => d.level * 300, centerX, centerY).strength(0));
+            
+            // Creates a group that holds everything in the svg (ie nodes, link, etc)
+            const container = svg.append("g")
+
+            // Creates the background displays
+            const levels = [1, 2, 3, 4, 5, 6];
+            const levels_background = container.append("g")
+                .selectAll("circle")
+                .data(levels)
+                .enter()
+                .append("circle")
+                    .attr("r", d => d * 300)
+                    .attr("stroke", "#000")
+                    .attr("fill", "none");
+            
+
+            // Defines a zoom interaction that occurs on whatever elements calls it
+            const zoom = d3.zoom()
+                .scaleExtent([0.1, 5]) 
+                .on("zoom", (event) => {
+                    container.attr("transform", event.transform);
+                });
+            
+            // Binds the defined zoom interaction to the entire svg element
+            svg.call(zoom)
+
+            const defs = svg.insert("defs", ":first-child");
+            const arrowhead_size = link_stroke_width*1.5;
+            for (let i = 1; i <= {{ groups|length }}; i++) {
+                defs.append("marker")
+                    .attr("id", `head-${i}`)
+                    .attr("viewBox", `0 -${arrowhead_size} ${arrowhead_size*2} ${arrowhead_size*2}`)
+                    .attr("markerUnits", "userSpaceOnUse") 
+                    .attr("refX", circle_radius + arrowhead_size*1.5) 
+                    .attr("refY", 0)
+                    .attr("markerWidth", arrowhead_size*2)
+                    .attr("markerHeight", arrowhead_size*2)
+                    .attr("orient", "auto")
+                    .append("path")
+                    .attr("d", `M 0 -${arrowhead_size} L ${arrowhead_size*2} 0 L 0 ${arrowhead_size}`)
+                    .attr("fill", color(i));
+            }
+
+            // Creates the links that appear
+            const link = container.append("g")
+                    .attr("class", "links")
+                .selectAll("line")
+                    .data(links)
+                    .enter().append("path")
+                        .attr("fill", "none")
+                        .attr("stroke-width", link_stroke_width)
+                        .attr("stroke", d => color(
+                            nodeById.get(
+                                typeof d.source === "object" ? d.source.id : d.source
+                            ).group))
+                        .attr("marker-end", d => {
+                            const g = nodeById.get(
+                                typeof d.source==="object" ? d.source.id : d.source
+                            ).group;
+                            return `url(#head-${g})`;
+                        });
+            
+            // Creates the nodes that appear
+            const node = container.append("g")
+                    .attr("class", "nodes")
+                .selectAll("g")
+                    .data(nodes)
+                .enter().append("g")
+                .call(d3.drag()
+                    .on("start", dragstarted)
+                    .on("drag", dragged)
+                    .on("end", dragended));
+            
+            circles = node.append("a")
+                    .attr("xlink:href", d => d.link)
+                    .attr("target", "_blank")
+                .append("circle")
+                    .attr("r", d => d.title ? title_circle_radius : circle_radius)
+                    .attr("fill", d => color(d.group));
+            
+            labels = node.append("a")
+                    .attr("xlink:href", d => d.link)
+                    .attr("target", "_blank")
+                .append("text")
+                    .attr("text-anchor", "middle")
+                    .attr("alignment-baseline", "middle")
+                .text(d => d.id)
+
+            node.append("title")
+                .text(d => d.id);
+
+            node.on("mouseover", function(d) {
+                d = d.srcElement.__data__;
+                circles
+                    .attr("opacity", 0.6);
+
+                let marked = new Set(),
+                    queue = [];
+                queue.push(d.id);
+                while (queue.length) {
+                    const id0 = queue.shift();
+                    if (marked.has(id0)) continue;
+                    marked.add(id0);
+                    queue = [...queue, ...nodeById.get(id0).bk];
+                }
+                circles
+                    .filter(d2 => marked.has(d2.id))
+                    .attr("opacity", 1);
+                circles
+                    .filter(d2 => d2.id === d.id)
+                    .attr("stroke", "black")
+                    .attr("stroke-width", node_stroke_width * 3);
+                link.filter(l => {
+                    return !marked.has(l.source.id) || !marked.has(l.target.id);
+                })
+                    .attr("opacity", 0.05);
+                svg.selectAll("text")
+                    .filter(d2 => d2.group !== d.group)
+                    .attr("opacity", 0.5);
+                svg.selectAll("text")
+                    .filter(d2 => d2.id === d.id)
+                    .attr("font-weight", "bold");
+            })
+            .on("mouseout", function() {
+                svg.selectAll("circle")
+                    .attr("opacity", 1)
+                    .attr("stroke", node_stroke)
+                    .attr("stroke-width", node_stroke_width);
+                link.attr("opacity", 1);
+                svg.selectAll("text")
+                    .attr("opacity", 1)
+                    .attr("font-weight", "normal");
+            });
+              
+            simulation.on("tick", () => {
+              link
+                .attr("d", d => `M ${d.source.x} ${d.source.y} L ${d.target.x} ${d.target.y}`);
+          
+              node
+                .attr("transform", d => `translate(${d.x},${d.y})`)
+            });
+          
+            function dragstarted(event, d) {
+              if (!event.active) simulation.alphaTarget(0.3).restart();
+              d.fx = d.x;
+              d.fy = d.y;
+            }
+          
+            function dragged(event, d) {
+              d.fx = event.x;
+              d.fy = event.y;
+            }
+          
+            function dragended(event, d) {
+                if (isEditMode) {
+                    d.fx = event.x;
+                    d.fy = event.y;
+                } else {
+                    if (!event.active) simulation.alphaTarget(0);
+                    d.fx = null;
+                    d.fy = null;
+                }
+            }
+
+            
+            return 
+          }
+        generate();
+        
+    </script>
+     
+{% endblock %}
+
