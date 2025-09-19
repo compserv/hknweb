@@ -116,3 +116,6 @@ Temporary Items
 
 # VirtualEnv
 .venv
+
+# Docker
+.;C
