@@ -102,12 +102,13 @@
             height = 1000,
             centerX = width / 2,
             centerY = width / 2,
-            link_stroke_width = 5,
+            link_stroke_width = {{ params.circle_radius }} / 5,
             arrowhead_size = link_stroke_width*1.75,
             circle_radius = {{ params.circle_radius }},
             title_circle_radius = circle_radius * 1.2,
-            node_stroke_width = 1,
-            node_stroke = "black"
+            node_stroke_width = Math.max(1, Math.sqrt(Math.sqrt({{ params.circle_radius }}))),
+            node_stroke = "black",
+            font_size = {{ params.circle_radius }} / 2;
 
         const svg = d3.select("svg")
             .attr("width", width)
@@ -138,10 +139,12 @@
                     .id(d => d.id)
                     .strength(0.05)
                     .distance((d) => (d.title ? title_circle_radius*10 : circle_radius*10 )))
-                .force("charge", d3.forceManyBody().strength(-300))
+                .force("charge", d3.forceManyBody().strength({{ params.force_strength }}))
                 .force("overlap", d3.forceCollide((d) => (d.title ? title_circle_radius : circle_radius)*1.25).strength(1))
                 .force("x", d3.forceX())
                 .force("y", d3.forceY())
+                // .force("x", d3.forceX(d => (d.level - 1) * 150).strength(0.3))
+                // .force("y", d3.forceY(d => (d.level - 1) * 150).strength(0.3))
                 // .force("center", d3.forceCenter(centerX, centerY));
                 .force("radial", d3.forceRadial(d => d.level * 300, centerX, centerY).strength(0));
             
@@ -210,7 +213,9 @@
                         .attr("target", "_blank")
                     .append("circle")
                         .attr("r", d => d.title ? title_circle_radius : circle_radius)
-                        .attr("fill", d => color(d.group));
+                        .attr("fill", d => color(d.group))
+                        .attr("stroke", node_stroke)
+                        .attr("stroke-width", node_stroke_width);
             
             // labels
             labels = node.append("a")
@@ -219,10 +224,13 @@
                 .append("text")
                     .attr("text-anchor", "middle")
                     .attr("alignment-baseline", "middle")
+                    .attr("dy", ".3em")
                 .text(d => d.id)
+                    .attr("font-size", font_size);
 
             node.append("title")
-                .text(d => d.id);
+                .text(d => d.id)
+                    .attr("font-size", font_size);
 
             /* handling mouseover/mouseout */
             // desaturate everything not on path
@@ -266,9 +274,12 @@
                 });
 
                 // highlight stroke
-                d3.select(this).select("circle")
+                let hoveredNodeGroup = d3.select(this);
+                hoveredNodeGroup.select("circle")
                     .attr("stroke", "black")
-                    .attr("stroke-width", Math.max(1, node_stroke_width) * 3);
+                    .attr("stroke-width", node_stroke_width * 3);
+                hoveredNodeGroup.select("text").attr("font-weight", "bold");
+                    
             })
             // reset everything
             .on("mouseout", function() {
@@ -282,7 +293,7 @@
                         .attr("fill", color(d.group))
                         .attr("stroke", node_stroke)
                         .attr("stroke-width", node_stroke_width);
-                    nodeGroup.select("text").attr("fill", "black");
+                    nodeGroup.select("text").attr("fill", "black").attr("font-weight", "normal");
                 }).raise();
             });
 
