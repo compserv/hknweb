@@ -102,12 +102,11 @@
             height = 1000,
             centerX = width / 2,
             centerY = width / 2,
-            link_stroke_width = {{ params.circle_radius }} / 5,
-            arrowhead_size = link_stroke_width*1.75,
+            link_stroke_width = 3, //{{ params.circle_radius }} / 5,
+            arrowhead_size = link_stroke_width*link_stroke_width*100,
             circle_radius = {{ params.circle_radius }},
-            title_circle_radius = circle_radius * 1.2,
             node_stroke_width = Math.max(1, Math.sqrt(Math.sqrt({{ params.circle_radius }}))),
-            node_stroke = "black",
+            node_stroke = "gray",
             font_size = {{ params.circle_radius }} / 2;
 
         const svg = d3.select("svg")
@@ -132,7 +131,7 @@
                 nodeById.get(l.target).bk.push(l.source);
             });
     
-            const color = d3.scaleOrdinal(d3.schemePaired);
+            const color = d3.scaleOrdinal(d3.schemePastel1);
           
             const simulation = d3.forceSimulation(nodes)
                 .force("link", d3.forceLink(links)
@@ -235,7 +234,7 @@
             /* handling mouseover/mouseout */
             // desaturate everything not on path
             node.on("mouseover", function(event, d) {
-                // BFS ancestors
+                // BFS for ancestors
                 let marked = new Set();
                 let queue = [d.id];
                 while (queue.length) {
@@ -243,6 +242,12 @@
                     if (marked.has(id0)) continue;
                     marked.add(id0);
                     queue = [...queue, ...nodeById.get(id0).bk];
+                }
+
+                // add children too
+                queue = [...queue, ...nodeById.get(d.id).fd];
+                while (queue.length) {
+                    marked.add(queue.shift());
                 }
 
                 // style and reorder links (desaturated below normal)
@@ -265,20 +270,20 @@
                     const nodeGroup = d3.select(this);
                     if (marked.has(d2.id)) {
                         nodeGroup.raise();
-                        nodeGroup.select("circle").attr("fill", color(d2.group));
-                        nodeGroup.select("text").attr("fill", "black");
+                        nodeGroup.select("circle")
+                            .attr("fill", color(d2.group))
+                            .attr("stroke", "black")
+                            .attr("stroke-width", node_stroke_width);
+                        nodeGroup.select("text")
+                            .attr("fill", "black")
+                            .attr("font-weight", "bold");
                     } else {
-                        nodeGroup.select("circle").attr("fill", desaturate(color(d2.group)));
-                        nodeGroup.select("text").attr("fill", "#888");
+                        nodeGroup.select("circle")
+                            .attr("fill", desaturate(color(d2.group)))
+                        nodeGroup.select("text")
+                            .attr("fill", "#888");
                     }
                 });
-
-                // highlight stroke
-                let hoveredNodeGroup = d3.select(this);
-                hoveredNodeGroup.select("circle")
-                    .attr("stroke", "black")
-                    .attr("stroke-width", node_stroke_width * 3);
-                hoveredNodeGroup.select("text").attr("font-weight", "bold");
                     
             })
             // reset everything
@@ -293,7 +298,9 @@
                         .attr("fill", color(d.group))
                         .attr("stroke", node_stroke)
                         .attr("stroke-width", node_stroke_width);
-                    nodeGroup.select("text").attr("fill", "black").attr("font-weight", "normal");
+                    nodeGroup.select("text")
+                        .attr("fill", "black")
+                        .attr("font-weight", "normal");
                 }).raise();
             });
 
@@ -381,15 +388,15 @@
                     .attr("id", id)
                     .attr("viewBox", `0 -${arrowhead_size} ${arrowhead_size*2} ${arrowhead_size*2}`)
                     .attr("markerUnits", "userSpaceOnUse")
-                    .attr("refX", circle_radius + arrowhead_size*2 - link_stroke_width)
+                    .attr("refX", circle_radius + arrowhead_size*2 + 1.25)
                     .attr("refY", 0)
                     .attr("markerWidth", arrowhead_size*2)
                     .attr("markerHeight", arrowhead_size*2)
                     .attr("orient", "auto");
 
                 m.append("path")
-                    .attr("d", `M 0 -${arrowhead_size} L ${arrowhead_size*2} 0 L 0 ${arrowhead_size}`)
-                    .attr("fill", fillColor);
+                    .attr("d", `M 0 -${arrowhead_size} L ${arrowhead_size*2} 0 L 0 ${arrowhead_size} L 0 -${arrowhead_size}`)
+                    .attr("fill", "black");
             }
             
             return 
