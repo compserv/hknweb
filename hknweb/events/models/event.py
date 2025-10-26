@@ -136,8 +136,8 @@ class Event(models.Model):
                     end=self.end_time.isoformat(),
                     calendar_id=calendar_id,
                 )
-                for r in self.rsvp_set.all():
-                    r.save()
+            for r in self.rsvp_set.all():
+                r.save()
 
         super().save(*args, **kwargs)
 
