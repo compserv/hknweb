@@ -108,17 +108,36 @@ class Event(models.Model):
                 calendar_id=calendar_id,
             )
         else:
-            gcal.update_event(
-                self.google_calendar_event_id,
-                summary=self.name,
-                location=self.location,
-                description=self.description,
-                start=self.start_time.isoformat(),
-                end=self.end_time.isoformat(),
-                calendar_id=calendar_id,
+            old_event = Event.objects.get(pk=self.pk)
+            old_calendar_id = GCalAccessLevelMapping.get_calendar_id(
+                old_event.access_level
             )
-            for r in self.rsvp_set.all():
-                r.save()
+
+            if old_calendar_id != calendar_id:
+                gcal.delete_event(
+                    self.google_calendar_event_id, calendar_id=old_calendar_id
+                )
+
+                self.google_calendar_event_id = gcal.create_event(
+                    self.name,
+                    self.location,
+                    self.description,
+                    self.start_time.isoformat(),
+                    self.end_time.isoformat(),
+                    calendar_id=calendar_id,
+                )
+            else:
+                gcal.update_event(
+                    self.google_calendar_event_id,
+                    summary=self.name,
+                    location=self.location,
+                    description=self.description,
+                    start=self.start_time.isoformat(),
+                    end=self.end_time.isoformat(),
+                    calendar_id=calendar_id,
+                )
+                for r in self.rsvp_set.all():
+                    r.save()
 
         super().save(*args, **kwargs)
 
