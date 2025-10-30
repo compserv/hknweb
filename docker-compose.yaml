@@ -5,7 +5,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: hknweb
     working_dir: /app
     volumes:
       - .:/app
