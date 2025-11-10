@@ -16,7 +16,7 @@
             <!-- Title -->
             <div class="course-title-section">
                 <h2 class="course-title">{{ course.title|default:"Course Title" }}</h2>
-                {% if viewer_is_an_officer %}
+                {% if viewer_in_tutoring %}
                     <p> Last Updated: {{ course.updated_at }} </p>
                     <a href="{{ request.path }}edit"> Edit Page </a>
                 {% endif %}

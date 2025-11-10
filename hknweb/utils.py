@@ -21,8 +21,6 @@ from django.utils.decorators import method_decorator
 from django.utils.safestring import mark_safe
 from pytz import timezone
 
-###
-
 
 # constants
 
@@ -96,6 +94,49 @@ def login_and_access_level(access_level):
     return _wrap_with_access_check(
         f"Access level <= {access_level}",
         access_level_required(access_level),
+    )
+
+
+# Committee Permission Checks
+def committee_required(committee):
+    if committee not in settings.COMMITTEE_GROUPS:
+        return ValueError("Invalid Committee Group")
+
+    def test_user(user):
+        if (
+            not user.groups.filter(name=committee).exists()
+            and not user.groups.filter(name=settings.EXEC_GROUP).exists()
+        ):
+            raise PermissionDenied
+        return True
+
+    return user_passes_test(test_user)
+
+
+def login_and_committee(committee):
+    return _wrap_with_access_check(
+        f"Must be in {committee}",
+        committee_required(committee),
+    )
+
+
+# Exec Permission Checks
+def exec_required(position):
+    if position not in settings.EXEC_GROUPS:
+        return ValueError("Invalid Exec Position")
+
+    def test_user(user):
+        if not user.groups.filter(name=position).exists():
+            raise PermissionDenied
+        return True
+
+    return user_passes_test(test_user)
+
+
+def login_and_exec(position):
+    return _wrap_with_access_check(
+        f"Must be {position}",
+        exec_required(position),
     )
 
 
