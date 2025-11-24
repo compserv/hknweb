@@ -225,6 +225,19 @@ class ProvisionCandidatesForm(forms.Form):
                 "username", flat=True
             )
         )
+        
+        # Get existing emails
+        emails = []
+        for row in rows:
+            email = row["Berkeley email"]
+            if email:
+                emails.append(email)
+
+        existing_emails = set(
+            User.objects.filter(email__in=emails).values_list(
+                "email", flat=True
+            )
+        )
 
         # Setup account provisioning utils
         # Get candidate group to add users to
@@ -241,7 +254,7 @@ class ProvisionCandidatesForm(forms.Form):
         email_information = []
         for row in rows:
             # If username is None or already exists, skip provisioning
-            if (row["username"] is None) or (row["username"] in existing_usernames):
+                        if (row["username"] is None) or (row["username"].lower() in existing_usernames) or (row["Berkeley email"] in existing_emails):
                 continue
 
             # Generate a password
