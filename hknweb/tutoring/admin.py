@@ -1,6 +1,12 @@
 from django.contrib import admin
 
-from hknweb.tutoring.models import Room, TutoringLogistics, Slot
+from hknweb.tutoring.models import Tutor, Room, TutoringLogistics, Slot
+
+
+@admin.register(Tutor)
+class TutorAdmin(admin.ModelAdmin):
+    search_fields = ("user__username", "user__first_name", "user__last_name", "user__email")
+    autocomplete_fields = ('user',)
 
 
 @admin.register(TutoringLogistics)
