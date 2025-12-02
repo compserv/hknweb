@@ -8,12 +8,15 @@ from django.db.models import Count, QuerySet, F
 from hknweb.utils import login_and_access_level, GROUP_TO_ACCESSLEVEL
 from hknweb.events.models import Rsvp
 
-from hknweb.candidate.models import OffChallenge, BitByteActivity, Logistics
+from hknweb.candidate.models import OffChallenge, BitByteActivity, Logistics, ShortLink
 from hknweb.candidate.views.candidate_portal import get_logistics
 
 
 @login_and_access_level(GROUP_TO_ACCESSLEVEL["officer"])
 def officer_portal(request):
+    # Get shortlinks count for Quick Links section (always available)
+    shortlinks = ShortLink.objects.filter(active=True)
+
     context = {
         "logistics": {
             "challenges": OffChallenge.objects.filter(
@@ -23,6 +26,7 @@ def officer_portal(request):
                 participants__exact=request.user
             ).order_by("-request_date"),
         },
+        "shortlinks": shortlinks,
     }
 
     logistics = get_logistics()

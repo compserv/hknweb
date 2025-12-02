@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Shortlinks Management{% endblock %}
+
+{% block heading %}
+Shortlinks Management
+{% endblock %}
+
+{% block content %}
+
+    {% if messages %}
+        <div style="text-align: center; width: 80%; margin: auto;">
+            <ul class="messages">
+                {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    <section style="text-align: center; width: 80%; margin: auto;">
+        <p style="font-size: 0.9em; color: #666;">Manage URL shortlinks (e.g., hkn.mu/discord)</p>
+
+        <!-- Create Single Shortlink -->
+        <div style="margin: 1em 0; padding: 1em; background-color: #e8f4f8; border-radius: 5px;">
+            <h3>Create New Shortlink</h3>
+            <form method="POST" action="{% url 'candidate:create_shortlink' %}">
+                {% csrf_token %}
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr>
+                        <td style="width: 20%; padding: 0.5em; vertical-align: top;">
+                            <strong>Slug:</strong>
+                        </td>
+                        <td style="width: 80%; padding: 0.5em;">
+                            <input type="text" name="slug" placeholder="e.g., discord, apply" style="width: 300px; padding: 0.3em;" required>
+                            <br><small style="color: #666;">Short code (letters, numbers, hyphens, underscores only)</small>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0.5em; vertical-align: top;">
+                            <strong>Destination URL:</strong>
+                        </td>
+                        <td style="padding: 0.5em;">
+                            <input type="url" name="destination_url" placeholder="https://example.com" style="width: 500px; padding: 0.3em;" required>
+                            <br><small style="color: #666;">Full URL to redirect to</small>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0.5em; vertical-align: top;">
+                            <strong>Description:</strong>
+                        </td>
+                        <td style="padding: 0.5em;">
+                            <input type="text" name="description" placeholder="Optional description" style="width: 500px; padding: 0.3em;">
+                            <br><small style="color: #666;">Optional description for reference</small>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td style="padding: 0.5em;">
+                            <button type="submit" style="padding: 0.5em 1.5em; background-color: #4CAF50; color: white; border: none; border-radius: 3px; cursor: pointer;">Create Shortlink</button>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+
+        <!-- Import from CSV -->
+        <div style="margin: 1em 0; padding: 1em; background-color: #f5f5f5; border-radius: 5px;">
+            <h3>Import Shortlinks from CSV</h3>
+            <form method="POST" action="{% url 'candidate:import_shortlinks' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div style="margin: 0.5em 0;">
+                    <label for="id_file" style="display: inline-block; margin-right: 0.5em;"><strong>Choose CSV file:</strong></label>
+                    <input type="file" name="file" id="id_file" accept=".csv" required style="padding: 0.3em;">
+                    <button type="submit" style="margin-left: 0.5em; padding: 0.5em 1em; background-color: #2196F3; color: white; border: none; border-radius: 3px; cursor: pointer;">Upload CSV</button>
+                </div>
+                <p style="font-size: 0.85em; color: #666; margin-top: 0.5em;">
+                    CSV format: "In url", "Out url", "Creator" (additional columns will be ignored)
+                </p>
+            </form>
+        </div>
+
+        <h3 style="margin-top: 2em;">Active Shortlinks ({{ shortlinks|length }})</h3>
+        {% if shortlinks %}
+            <table style="width: 100%; margin-top: 1em; border-collapse: collapse;">
+                <thead>
+                    <tr style="background-color: #f0f0f0;">
+                        <th style="width: 15%; padding: 0.5em; border: 1px solid #ddd;">Slug</th>
+                        <th style="width: 40%; padding: 0.5em; border: 1px solid #ddd;">Destination URL</th>
+                        <th style="width: 20%; padding: 0.5em; border: 1px solid #ddd;">Description</th>
+                        <th style="width: 10%; padding: 0.5em; border: 1px solid #ddd;">Clicks</th>
+                        <th style="width: 15%; padding: 0.5em; border: 1px solid #ddd;">Short URL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for link in shortlinks %}
+                        <tr>
+                            <td style="padding: 0.5em; border: 1px solid #ddd;"><code>{{ link.slug }}</code></td>
+                            <td style="word-break: break-all; font-size: 0.85em; padding: 0.5em; border: 1px solid #ddd;">
+                                <a href="{{ link.destination_url }}" target="_blank" rel="noopener">{{ link.destination_url|truncatechars:60 }}</a>
+                            </td>
+                            <td style="font-size: 0.85em; padding: 0.5em; border: 1px solid #ddd;">{{ link.description|default:"-" }}</td>
+                            <td style="padding: 0.5em; border: 1px solid #ddd;">{{ link.click_count }}</td>
+                            <td style="padding: 0.5em; border: 1px solid #ddd;">
+                                <a href="/{{ link.slug }}" target="_blank">/{{ link.slug }}</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p style="color: #999; font-style: italic; margin-top: 1em;">No shortlinks yet. Create one above to get started!</p>
+        {% endif %}
+
+        <div style="margin-top: 2em;">
+            <a href="{% url 'candidate:officer_portal' %}" style="padding: 0.5em 1em; background-color: #555; color: white; text-decoration: none; border-radius: 3px;">← Back to Officer Portal</a>
+        </div>
+    </section>
+{% endblock %}

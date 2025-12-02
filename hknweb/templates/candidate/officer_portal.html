@@ -153,6 +153,7 @@ Officer Portal
         <h2>Quick links</h2>
 
         <div style="width: 80%; margin: auto;">
+            <h3>Admin Tools</h3>
             <table>
                 <tr>
                     <th style="width: 30%;"></th>
@@ -164,6 +165,22 @@ Officer Portal
                     </td>
                     <td>
                         Redirects to the admin page. Submit a CSV with three headers "First name", "Last name", and "Berkeley email". The Berkeley email must end in "@berkeley.edu".
+                    </td>
+                </tr>
+            </table>
+
+            <h3 style="margin-top: 2em;">Shortlinks</h3>
+            <table>
+                <tr>
+                    <th style="width: 30%;"></th>
+                    <th style="width: 70%;"></th>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="{% url 'candidate:manage_shortlinks' %}">Manage Shortlinks</a>
+                    </td>
+                    <td>
+                        Create and manage URL shortlinks (e.g., hkn.mu/discord). Currently {{ shortlinks|length }} active shortlink{{ shortlinks|length|pluralize }}.
                     </td>
                 </tr>
             </table>

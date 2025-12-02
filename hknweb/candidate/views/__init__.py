@@ -11,3 +11,9 @@ from hknweb.candidate.views.confirm_request import (
     checkoff_event,
 )
 from hknweb.candidate.views.autocomplete import OfficerAutocomplete, UserAutocomplete
+from hknweb.candidate.views.shortlinks import (
+    manage_shortlinks,
+    create_shortlink,
+    import_shortlinks,
+    redirect_shortlink,
+)

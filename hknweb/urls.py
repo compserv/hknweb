@@ -14,6 +14,7 @@ from hknweb.views import (
     committees,
     bitbyte_tree,
 )
+from hknweb.candidate.views import redirect_shortlink
 
 __all__ = ["urlpatterns", "safe_urlpatterns"]
 
@@ -47,6 +48,8 @@ app_urlpatterns = [
     path("indrel", indrel.indrel, name="indrel"),
     path("outreach", outreach.outreach, name="outreach"),
     path("committees", committees.portal, name="committee-portal"),
+    # Shortlinks - must come LAST to avoid conflicts with other routes
+    path("<slug:slug>", redirect_shortlink, name="shortlink_redirect"),
 ]
 
 markdownx_urlpatterns = [

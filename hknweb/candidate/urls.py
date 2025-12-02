@@ -47,4 +47,20 @@ urlpatterns = [
         views.UserAutocomplete.as_view(),
         name="autocomplete_user",
     ),
+    # Shortlinks
+    path(
+        "shortlinks",
+        views.manage_shortlinks,
+        name="manage_shortlinks",
+    ),
+    path(
+        "shortlinks/create",
+        views.create_shortlink,
+        name="create_shortlink",
+    ),
+    path(
+        "shortlinks/import",
+        views.import_shortlinks,
+        name="import_shortlinks",
+    ),
 ]
