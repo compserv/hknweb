@@ -6,7 +6,14 @@ from hknweb.candidate.models import ShortLink
 @admin.register(ShortLink)
 class ShortLinkAdmin(admin.ModelAdmin):
     fields = ["slug", "destination_url", "description", "created_by", "active"]
-    list_display = ("slug", "destination_url", "click_count", "created_by", "active", "created_at")
+    list_display = (
+        "slug",
+        "destination_url",
+        "click_count",
+        "created_by",
+        "active",
+        "created_at",
+    )
     list_filter = ["active", "created_at"]
     search_fields = ["slug", "destination_url", "description"]
     readonly_fields = ["click_count", "created_at", "updated_at"]

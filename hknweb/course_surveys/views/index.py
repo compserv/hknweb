@@ -192,9 +192,9 @@ class IndexView(TemplateView):
     def _get_pagination_info(page_number: int, n: int):
         return {
             Attr.PREVIOUS_PAGE: page_number - 1 if page_number > 1 else None,
-            Attr.NEXT_PAGE: page_number + 1
-            if (page_number * ITEMS_PER_PAGE) < n
-            else None,
+            Attr.NEXT_PAGE: (
+                page_number + 1 if (page_number * ITEMS_PER_PAGE) < n else None
+            ),
         }
 
     @staticmethod

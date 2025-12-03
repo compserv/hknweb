@@ -51,9 +51,11 @@ def slots(request):
 
     def serialize_tutor(tutor: User) -> Dict[str, str]:
         return {
-            "picture": tutor.profile.picture_display_url()
-            if tutor.profile.picture
-            else blank_pic_url,
+            "picture": (
+                tutor.profile.picture_display_url()
+                if tutor.profile.picture
+                else blank_pic_url
+            ),
             "name": tutor.get_full_name(),
             "courses": tutor.profile.preferred_courses_str(),
         }

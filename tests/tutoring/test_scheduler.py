@@ -6,6 +6,7 @@ Instead, use the below command to run them manually.
 python manage.py test tests.tutoring.test_scheduler
 ```
 """
+
 import random
 from typing import Callable, List
 import requests

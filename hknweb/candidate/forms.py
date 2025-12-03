@@ -153,7 +153,9 @@ class ImportShortLinksForm(forms.Form):
             try:
                 url_validator(destination_url)
             except ValidationError:
-                errors.append(f"Row {i}: Invalid URL '{destination_url}' for slug '{slug}'")
+                errors.append(
+                    f"Row {i}: Invalid URL '{destination_url}' for slug '{slug}'"
+                )
                 continue
 
             # Create or update shortlink

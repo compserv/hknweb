@@ -3,7 +3,11 @@ from django.contrib import messages
 from django.http import Http404
 from django.db.models import F
 
-from hknweb.utils import allow_public_access, login_and_access_level, GROUP_TO_ACCESSLEVEL
+from hknweb.utils import (
+    allow_public_access,
+    login_and_access_level,
+    GROUP_TO_ACCESSLEVEL,
+)
 from hknweb.candidate.models import ShortLink
 from hknweb.candidate.forms import ImportShortLinksForm, CreateShortLinkForm
 
@@ -47,7 +51,8 @@ def create_shortlink(request):
                 shortlink.save()
                 print(f"DEBUG: Shortlink saved successfully: {shortlink.id}")
                 messages.success(
-                    request, f"Shortlink created: {shortlink.slug} -> {shortlink.destination_url}"
+                    request,
+                    f"Shortlink created: {shortlink.slug} -> {shortlink.destination_url}",
                 )
             except Exception as e:
                 print(f"DEBUG: Error saving shortlink: {str(e)}")
@@ -93,7 +98,9 @@ def import_shortlinks(request):
                     for error in errors[:10]:  # Limit to first 10 errors
                         messages.warning(request, error)
                     if len(errors) > 10:
-                        messages.warning(request, f"... and {len(errors) - 10} more errors")
+                        messages.warning(
+                            request, f"... and {len(errors) - 10} more errors"
+                        )
 
             except Exception as e:
                 messages.error(request, f"Error processing CSV: {str(e)}")
