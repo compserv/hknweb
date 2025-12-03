@@ -5,9 +5,15 @@
 {% block heading %} Tutoring Admin Page {% endblock%}
 
 {% block "portal-content"%}
-    <a href = "{% url 'tutoring:courses' %}"> 
+<a href = "{% url 'tutoring:courses' %}"> 
     <div class="portal-content">
         <h2>Course Descriptions</h2>
+    </div>
+</a>
+
+<a href = "{% url 'tutoring:crib' %}"> 
+    <div class="portal-content">
+        <h2>Crib Sheets</h2>
     </div>
 </a>
 

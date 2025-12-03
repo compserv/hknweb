@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %} Crib Sheets {% endblock %}
+
+{% block header %}
+    <style>
+        table {
+            width: 100%;
+            font-size: 1em;
+            margin-top: 20px;
+            text-align: center;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+        }
+
+    </style>
+{% endblock %}
+
+{% block heading %} Crib Sheets {% endblock %}
+
+
+{% block content %}
+<form method="POST">
+    {% csrf_token %}
+    {{ form }}
+    <button type="submit"> Add Crib Sheet </button>
+</form>
+<table>
+    <tr>
+        <th style="width:15%"> Course </th>
+        <th style="width:15%"> Semester </th>
+        <th style="width:10%"> PDF </th>
+        <th style="width:40%"> Comment </th>
+        <th> Update Date </th>
+    </tr>
+    {% for sheet in crib %}
+        <tr>
+            <td><a href="{% url "studentservices:course_description" sheet.course.slug %}"> {{ sheet.course }} </a></td>
+            <td> {{ sheet.semester }} </td>
+            <td> <a href="{{ sheet.pdf }}"> Link </td>
+            <td>{{ sheet.comment }}</a></td>
+            <td> {{ sheet.update_date }} </td>
+        </tr>
+    {% empty %}
+
+    {% endfor %}
+
+
+</table>
+{% endblock %}
+

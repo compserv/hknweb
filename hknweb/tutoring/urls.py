@@ -18,4 +18,5 @@ urlpatterns = [
     ),
     path("portal", views.tutoringportal, name="tutoring_portal"),
     path("courses", views.courses, name="courses"),
+    path("crib", views.crib, name="crib"),
 ]

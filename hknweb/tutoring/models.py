@@ -8,6 +8,7 @@ from django.db.models.functions import Concat
 from django.contrib.auth.models import User
 
 from hknweb.coursesemester.models import Semester
+from hknweb.studentservices.models import CourseDescription
 
 
 class Room(models.Model):
@@ -65,3 +66,15 @@ class Slot(models.Model):
             full_name=Concat("first_name", Value(" "), "last_name")
         ).values_list("full_name", flat=True)
         return ", ".join(tutors)
+
+
+class CribSheet(models.Model):
+    semester = models.ForeignKey(Semester, on_delete=models.PROTECT)
+
+    course = models.ForeignKey(CourseDescription, on_delete=models.PROTECT)
+
+    pdf = models.URLField(max_length=300)
+
+    comment = models.CharField(max_length=300, blank=True)
+
+    update_date = models.DateTimeField(auto_now=True)
