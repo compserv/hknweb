@@ -25,12 +25,20 @@ def bitbyte_tree_data(request):
             byte_bits[line.split(",")[0]].append(line.split(",")[1])
 
     for byte in all_bytes:
-        user = User.objects.get(username__iexact=byte)
+        try:
+            user = User.objects.get(username__iexact=byte)
+            name = user.first_name + " " + user.last_name
+            candidate_semester = user.date_joined.year
+        except User.DoesNotExist:
+            # If user doesn't exist in database, use username as name
+            name = byte
+            candidate_semester = 2020  # Default year for users not in DB
+
         data["nodes"].append(
             {
                 "id": byte,
-                "name": user.first_name + " " + user.last_name,
-                "candidate_semester": user.date_joined.year,
+                "name": name,
+                "candidate_semester": candidate_semester,
             }
         )
 

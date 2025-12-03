@@ -137,6 +137,7 @@
 
     const baseNodeRadius = 5;
     const clickedNodeRadius = 7;
+    const degreeScaleFactor = 0.9; // How much to scale nodes based on degree
 
     async function renderd3() {
         // Current clicked node.
@@ -219,10 +220,21 @@
             backwardChildren.get(link.target.id).add(link.source.id);
         });
 
-        // n => baseNodeRadius + forwardChildren.get(n.id).size/7.0;
-        // ^for size dependent on number of bits, but I decided not to implement it on this iteration of the graph.
+        // Calculate node radius based on degree (total connections)
+        function getNodeRadius(nodeId, isClicked = false) {
+            const forwardDegree = forwardChildren.get(nodeId).size;
+            const backwardDegree = backwardChildren.get(nodeId).size;
+            const totalDegree = forwardDegree + backwardDegree;
+
+            // Scale radius based on square root of degree for better visual balance
+            const scaledRadius = baseNodeRadius + Math.sqrt(totalDegree) * degreeScaleFactor;
+
+            // If clicked, enlarge further
+            return isClicked ? scaledRadius + 2 : scaledRadius;
+        }
+
         node.append("circle")
-            .attr("r", baseNodeRadius)
+            .attr("r", n => getNodeRadius(n.id))
             .attr("fill", n => (forwardChildren.get(n.id).size != 0) ? "#4E76AF" : "#679BE5")
             .attr("stroke", "#EEE")
             .attr("stroke-width", 1.5);
@@ -237,7 +249,7 @@
             .attr("z-index", "1001")
             .attr("font-size", maxTextSize)
             .attr("dx", 0) // Horizontal centering
-            .attr("dy", -baseNodeRadius) // Position label slightly above the node
+            .attr("dy", d => -getNodeRadius(d.id) - 2) // Position label above the node based on its size
             .attr("text-anchor", "middle") // Anchor text in the middle for centering
             .text(d => d.name.split("(")[0])
             .style("display", "none"); // Initially hide all labels
@@ -336,7 +348,7 @@
         // Reset nodes to the unselected state
         function resetNodes() {
             activeNode = null;
-            node.selectAll("circle").transition().duration(300).style("opacity", 1).attr("r", baseNodeRadius);
+            node.selectAll("circle").transition().duration(300).style("opacity", 1).attr("r", n => getNodeRadius(n.id));
             node.selectAll("text").transition().duration(300).style("opacity", 1);
             link.transition().duration(300).style("stroke-opacity", 0.6);
             link.attr("stroke", "#999");
@@ -371,7 +383,7 @@
                 node.selectAll("circle")
                     .transition().duration(300)
                     .style("opacity", otherNode => highlightableNodeIds.has(otherNode.id) || otherNode.id === d.id ? 1 : 0.1)
-                    .attr("r", otherNode => otherNode.id === d.id ? clickedNodeRadius : baseNodeRadius); // Enlarge clicked node
+                    .attr("r", otherNode => getNodeRadius(otherNode.id, otherNode.id === d.id)); // Enlarge clicked node
 
                 node.selectAll("text")
                     .transition().duration(300)
@@ -463,10 +475,9 @@
                 const sourceNode = d_link.source;
                 const targetNode = d_link.target;
 
-                let currentTargetRadius = baseNodeRadius;
-                if (activeNode && targetNode.id === activeNode.id) {
-                    currentTargetRadius = clickedNodeRadius;
-                }
+                // Use scaled radius based on degree
+                const isTargetClicked = activeNode && targetNode.id === activeNode.id;
+                const currentTargetRadius = getNodeRadius(targetNode.id, isTargetClicked);
 
                 const dx = targetNode.x - sourceNode.x;
                 const dy = targetNode.y - sourceNode.y;
@@ -568,11 +579,28 @@
             searchFeedback.textContent = '';
             if (!searchTerm) return;
 
-            const foundNode = nodes.find(n => n.id.toLowerCase().includes(searchTerm)
-                                                || n.name.toLowerCase().includes(searchTerm));
+            // Find ALL matching nodes, not just the first one
+            const matchingNodes = nodes.filter(n => n.id.toLowerCase().includes(searchTerm)
+                                                     || n.name.toLowerCase().includes(searchTerm));
 
-            if (foundNode) {
-                clearSearchHighlights();
+            if (matchingNodes.length > 0) {
+                const foundNode = matchingNodes[0];
+
+                // Keep search highlights visible (don't clear them)
+                // This shows all matches with gold stroke
+
+                // Show feedback about multiple matches
+                if (matchingNodes.length > 1) {
+                    const matchNames = matchingNodes.slice(0, 5).map(n => n.name).join(', ');
+                    const remaining = matchingNodes.length > 5 ? ` (+${matchingNodes.length - 5} more)` : '';
+                    searchFeedback.textContent = `Found ${matchingNodes.length} matches: ${matchNames}${remaining}`;
+                    searchFeedback.style.color = '#5bc0de'; // Info color (blue)
+                } else {
+                    searchFeedback.textContent = `Found: ${foundNode.name}`;
+                    searchFeedback.style.color = '#5cb85c'; // Success color (green)
+                }
+
+                // Click and zoom to the first match
                 nodeClicked({ stopPropagation: () => {} }, foundNode, false);
                 const scale = d3.zoomTransform(svg.node()).k;
                 const x = -foundNode.x * scale;
@@ -580,7 +608,8 @@
                 const transform = d3.zoomIdentity.translate(x, y).scale(scale);
                 svg.transition().duration(750).call(zoom.transform, transform);
             } else {
-                searchFeedback.textContent = `Node starting with "${searchTerm}" not found.`;
+                searchFeedback.textContent = `No matches found for "${searchTerm}"`;
+                searchFeedback.style.color = '#d9534f'; // Error color (red)
             }
         }
 
