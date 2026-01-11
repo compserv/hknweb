@@ -1,9 +1,13 @@
 from django.shortcuts import render
 
-from hknweb.utils import allow_public_access
+from hknweb.utils import allow_public_access, login_and_committee
+from django.conf import settings
 from django.http import JsonResponse
 from django.contrib.auth.models import User
 
+@login_and_committee(settings.COMPSERV_GROUP)
+def update_bitbyte_tree(request):
+    return
 
 # TODO: dont read from the file when actual model and backend for bitbyte groups exists.
 @allow_public_access
