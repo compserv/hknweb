@@ -2,6 +2,7 @@ from django.db import models
 
 from hknweb.coursesemester.models import Semester
 
+
 class BitByteGroup(models.Model):
     """
     Model for bit byte group.
@@ -17,7 +18,7 @@ class BitByteGroup(models.Model):
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        related_name="bit_byte_groups"
+        related_name="bit_byte_groups",
     )
 
     bytes = models.ManyToManyField("auth.User", related_name="bitbyte_groups_as_byte")
@@ -25,7 +26,7 @@ class BitByteGroup(models.Model):
 
     def __str__(self):
         return (
-            f"Bit byte group {self.semester}; " +
-            f"Bytes: {', '.join([c.username for c in self.bytes.all()])}; " +
-            f"Bits: {', '.join([c.username for c in self.bits.all()])}"
+            f"Bit byte group {self.semester}; "
+            + f"Bytes: {', '.join([c.username for c in self.bytes.all()])}; "
+            + f"Bits: {', '.join([c.username for c in self.bits.all()])}"
         )

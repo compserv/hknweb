@@ -11,6 +11,7 @@ from django.contrib.auth.models import User
 def update_bitbyte_tree(request):
     return
 
+
 @allow_public_access
 def bitbyte_tree_data(request):
     groups = BitByteGroup.objects.prefetch_related("bits", "bytes").all()
@@ -36,15 +37,9 @@ def bitbyte_tree_data(request):
 
         for byte in group_bytes:
             for bit in group_bits:
-                links.append({
-                    "source": byte.username,
-                    "target": bit.username
-                })
+                links.append({"source": byte.username, "target": bit.username})
 
-    data = {
-        "nodes": list(username_to_node.values()),
-        "links": links
-    }
+    data = {"nodes": list(username_to_node.values()), "links": links}
 
     return JsonResponse(data)
 
