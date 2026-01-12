@@ -44,6 +44,8 @@ class BitByteGroupAdmin(admin.ModelAdmin):
         ]
         return custom_urls + urls
 
+    # Refactor and move this outside of admin panel if this becomes front facing feature(i.e. you
+    # want evp creating bitbyte groups)
     def import_csv(self, request):
         if request.method == "POST":
             form = CsvImportForm(request.POST, request.FILES)
