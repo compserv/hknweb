@@ -48,6 +48,16 @@ class BitByteGroupAdmin(admin.ModelAdmin):
     # Refactor and move this outside of admin panel if this becomes front facing feature(i.e. you
     # want evp creating bitbyte groups)
     def import_csv(self, request):
+        # Helper function.
+        def _get_user_or_error(username):
+            user = User.objects.filter(username__iexact=username).first()
+            if not user:
+                raise ValueError(
+                    f"Error on trying to add '{username}'."
+                    f" Check if the username is correct."
+                )
+            return user
+
         if request.method == "POST":
             form = CsvImportForm(request.POST, request.FILES)
             if form.is_valid():
@@ -71,15 +81,11 @@ class BitByteGroupAdmin(admin.ModelAdmin):
                             semester_obj = Semester.objects.get(year=year, semester=sem)
                             group = BitByteGroup.objects.create(semester=semester_obj)
                             for byte in byte_usernames.split(","):
-                                byte_user = User.objects.filter(
-                                    username__iexact=byte
-                                ).first()
+                                byte_user = _get_user_or_error(byte)
                                 group.bytes.add(byte_user)
 
                             for bit in bit_usernames.split(","):
-                                bit_user = User.objects.filter(
-                                    username__iexact=bit
-                                ).first()
+                                bit_user = _get_user_or_error(bit)
                                 group.bits.add(bit_user)
 
                             count += 1
