@@ -15,7 +15,7 @@ from hknweb.models import Course
 
 class Tutor(models.Model):
     user = models.OneToOneField(
-        User, on_delete=models.CASCADE, related_name="tutoring_info"
+        User, on_delete=models.CASCADE, related_name="tutoring_info", primary_key=True
     )
     completed_courses = models.ManyToManyField(
         Course, blank=True, related_name="completed_tutors"
