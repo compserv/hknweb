@@ -6,8 +6,35 @@ from django.db import models
 from django.db.models import Value
 from django.db.models.functions import Concat
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 
+from hknweb import settings
 from hknweb.coursesemester.models import Semester
+from hknweb.models import Course
+
+
+class Tutor(models.Model):
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name="tutoring_info", primary_key=True
+    )
+    completed_courses = models.ManyToManyField(
+        Course, blank=True, related_name="completed_tutors"
+    )
+    in_progress_courses = models.ManyToManyField(
+        Course, blank=True, related_name="in_progress_tutors"
+    )
+    preferred_courses = models.ManyToManyField(
+        Course, blank=True, related_name="preferred_tutors"
+    )
+
+    def save(self, *args, **kwargs):
+        if not self.user.cmemberships.filter(
+            committee=settings.TUTORING_GROUP
+        ).exists():
+            raise ValidationError(
+                f"User {self.user.username} is not in the tutoring committee."
+            )
+        super().save(*args, **kwargs)
 
 
 class Room(models.Model):
@@ -26,10 +53,10 @@ class TutoringLogistics(models.Model):
         Semester, on_delete=models.CASCADE, null=True, default=None
     )
     one_hour_tutors = models.ManyToManyField(
-        User, blank=True, related_name="one_hour_tutoring"
+        Tutor, blank=True, related_name="one_hour_tutoring"
     )
     two_hour_tutors = models.ManyToManyField(
-        User, blank=True, related_name="two_hour_tutoring"
+        Tutor, blank=True, related_name="two_hour_tutoring"
     )
 
     def __str__(self) -> str:  # pragma: no cover
@@ -50,7 +77,7 @@ class Slot(models.Model):
     )
     room = models.ForeignKey(Room, on_delete=models.CASCADE, null=True, default=None)
     num_tutors = models.IntegerField(default=0)
-    tutors = models.ManyToManyField(User, blank=True, related_name="tutoring_slots")
+    tutors = models.ManyToManyField(Tutor, blank=True, related_name="tutoring_slots")
 
     WEEKDAY_STRS = "Mon Tue Wed Thu Fri Sat Sun".split()
     WEEKDAY_CHOICES = list(zip(range(len(WEEKDAY_STRS)), WEEKDAY_STRS))
