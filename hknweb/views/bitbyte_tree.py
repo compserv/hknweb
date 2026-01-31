@@ -4,12 +4,7 @@ from hknweb.candidate.models import BitByteGroup
 from hknweb.utils import allow_public_access, login_and_committee
 from django.conf import settings
 from django.http import JsonResponse
-from django.contrib.auth.models import User
-
-
-@login_and_committee(settings.COMPSERV_GROUP)
-def update_bitbyte_tree(request):
-    return
+from django.contrib.auth.models import User, Group
 
 
 @allow_public_access
@@ -19,9 +14,10 @@ def bitbyte_tree_data(request):
     username_to_node = {}
     links = []
 
+    officer_group = Group.objects.get(name=settings.OFFICER_GROUP)
     for group in groups:
         group_bytes = group.bytes.all()
-        group_bits = group.bits.all()
+        group_bits = group.bits.filter(groups=officer_group)
 
         def add_to_nodes(user_list):
             for user in user_list:
