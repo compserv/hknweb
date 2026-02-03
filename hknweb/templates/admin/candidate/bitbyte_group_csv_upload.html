@@ -1,7 +1,27 @@
 {% extends "admin/base_site.html" %}
 
 {% block content %}
-
+ 
+	<h3>CSV file format</h3>
+	<p>
+		Please upload a CSV file with the following requirements:
+	</p>
+	<ul>
+		<li>File must be <strong>semicolon (<code>;</code>) separated</strong></li>
+		<li>First row must contain column headers</li>
+		<li>Required columns:
+			<ul>
+				<li><strong>Bytes</strong>: comma (<code>,</code>) separated list of usernames</li>
+				<li><strong>Bits</strong>: comma (<code>,</code>) separated list of usernames</li>
+				<li><strong>Year</strong></li>
+				<li><strong>Semester</strong>: either "Spring" or "Fall"</li>
+			</ul>
+		</li>
+	</ul>
+	
+	<br>
+	<br>
+ 
     <form action="." method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
