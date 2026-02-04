@@ -107,6 +107,8 @@ class CourseDescription(models.Model):
     topics_covered = MarkdownxField(max_length=2000, blank=True)
     more_info = MarkdownxField(max_length=10000, blank=True)
 
+    folderID = models.CharField(max_length=50, blank=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

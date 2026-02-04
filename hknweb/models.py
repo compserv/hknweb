@@ -133,3 +133,12 @@ class Committeeship(models.Model):
             "Assistant Officer": self.assistant_officers.all(),
             "Committee Member": self.committee_members.all(),
         }
+
+
+class DriveFolderID(models.Model):
+    title = models.CharField(max_length=100)
+
+    folderID = models.CharField(max_length=50)
+
+    def __str__(self) -> str:  # pragma: no cover
+        return self.title

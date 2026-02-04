@@ -73,8 +73,23 @@ class CribSheet(models.Model):
 
     course = models.ForeignKey(CourseDescription, on_delete=models.PROTECT)
 
-    pdf = models.URLField(max_length=300)
+    fileID = models.CharField(max_length=50)
 
-    comment = models.CharField(max_length=300, blank=True)
+    title = models.CharField(max_length=100)
 
-    update_date = models.DateTimeField(auto_now=True)
+    comment = models.TextField(blank=True)
+
+    upload_date = models.DateTimeField(auto_now_add=True)
+
+    public = models.BooleanField(default=False)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["semester", "course", "title"],
+                name="unique_cribsheet_per_course_per_semester",
+            )
+        ]
+
+    def __str__(self) -> str:  # pragma: no cover
+        return f"{self.course} - {self.title} ({self.semester})"

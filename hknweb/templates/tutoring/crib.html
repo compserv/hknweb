@@ -25,32 +25,90 @@
 
 
 {% block content %}
-<form method="POST">
+
+<form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form }}
     <button type="submit"> Add Crib Sheet </button>
 </form>
+
+<br><hr><br>
+
+<form method="get">
+    <input type="text" name="q" value="{{ query }}" placeholder="Search by title/course/semester">
+
+    <select name="course">
+        <option value="">All courses</option>
+        {% for course in courses %}
+            <option value="{{ course.title }}" {% if selected_course == course.title %}selected{% endif %}>
+                {{ course.title }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <select name="semester">
+        <option value="">All semesters</option>
+        {% for semester in semesters %}
+            <option value="{{ semester }}" {% if selected_semester == semester|stringformat:"s" %}selected{% endif %}>
+                {{ semester }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <button type="submit">Filter</button>
+</form>
+
+
 <table>
-    <tr>
-        <th style="width:15%"> Course </th>
-        <th style="width:15%"> Semester </th>
-        <th style="width:10%"> PDF </th>
-        <th style="width:40%"> Comment </th>
-        <th> Update Date </th>
-    </tr>
-    {% for sheet in crib %}
+    <thead>
+        <tr>
+            <th style="width:10%"> Course </th>
+            <th style="width:10%"> Semester </th>
+            <th style="width:20%"> Title </th>
+            <th> Comment </th>
+            <th style="width:15%"> Upload Date </th>
+            <th style="width:10%"> Public? </th>
+        </tr>
+    </thead>
+    {% for sheet in sheets %}
         <tr>
             <td><a href="{% url "studentservices:course_description" sheet.course.slug %}"> {{ sheet.course }} </a></td>
             <td> {{ sheet.semester }} </td>
-            <td> <a href="{{ sheet.pdf }}"> Link </td>
-            <td>{{ sheet.comment }}</a></td>
-            <td> {{ sheet.update_date }} </td>
+            <td> <a href="https://drive.google.com/file/d/{{ sheet.fileID }}/view"> {{ sheet.title}} </td>
+            <td>{{ sheet.comment }}</td>
+            <td> {{ sheet.upload_date }} </td>
+            <td>
+                <form method="post" action="{% url 'tutoring:toggle_public' sheet.id %}">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                <button type="submit"> {{ sheet.public }}</button>
+                </form>
+            </td>
         </tr>
     {% empty %}
 
     {% endfor %}
-
-
 </table>
+
+    <div style="text-align: center;">
+        <span>
+            {% if page_obj.has_previous %}
+                <a href="?page=1&q={{ query }}">&laquo; first</a>
+                <a href="?page={{ page_obj.previous_page_number }}&q={{ query }}">previous</a>
+            {% endif %}
+
+            <span>
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}&q={{ query }}">next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}&q={{ query }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+
+
+
 {% endblock %}
 

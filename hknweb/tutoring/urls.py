@@ -18,5 +18,6 @@ urlpatterns = [
     ),
     path("portal", views.tutoringportal, name="tutoring_portal"),
     path("courses", views.courses, name="courses"),
-    path("crib", views.crib, name="crib"),
+    path("crib", views.CribView.as_view(), name="crib"),
+    path("crib/toggle_public/<int:pk>", views.toggle_public, name="toggle_public"),
 ]

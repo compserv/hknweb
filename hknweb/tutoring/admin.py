@@ -15,11 +15,21 @@ class SlotAdmin(admin.ModelAdmin):
 
 @admin.register(CribSheet)
 class CribSheetsAdmin(admin.ModelAdmin):
-    fields = ["semester", "course", "pdf", "comment"]
-    list_display = ["semester", "course", "pdf", "comment", "update_date"]
-    list_display_links = ["pdf"]
-    list_filter = ["update_date"]
-    search_fields = ["course__title"]
+    fields = [
+        "semester",
+        "course",
+        "title",
+        "fileID",
+        "comment",
+        "public",
+        "upload_date",
+    ]
+    readonly_fields = ["upload_date"]
+    list_display = ("semester", "course", "title", "fileID", "public", "upload_date")
+    list_filter = ("semester", "course", "public")
+    search_fields = ("title", "course__title", "semester__year", "semester__semester")
+
+    ordering = ("-upload_date",)
 
 
 admin.site.register(Room)
