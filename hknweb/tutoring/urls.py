@@ -1,5 +1,9 @@
 from django.urls import path
 
+from hknweb import settings
+from django.utils.decorators import method_decorator
+from hknweb.utils import login_and_committee
+
 from . import views
 
 app_name = "tutoring"
@@ -18,6 +22,12 @@ urlpatterns = [
     ),
     path("portal", views.tutoringportal, name="tutoring_portal"),
     path("courses", views.courses, name="courses"),
-    path("crib", views.CribView.as_view(), name="crib"),
+    path(
+        "crib",
+        method_decorator(login_and_committee(settings.TUTORING_GROUP), name="dispatch")(
+            views.CribView.as_view()
+        ),
+        name="crib",
+    ),
     path("crib/toggle_public/<int:pk>", views.toggle_public, name="toggle_public"),
 ]

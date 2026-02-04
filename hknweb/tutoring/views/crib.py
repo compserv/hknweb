@@ -1,6 +1,5 @@
 from io import BytesIO
 from django.shortcuts import render, get_object_or_404, redirect
-from django.utils.decorators import method_decorator
 from hknweb.utils import login_and_committee
 from hknweb.tutoring.models import CribSheet, CourseDescription
 from hknweb.tutoring.forms import AddCribForm
@@ -59,14 +58,12 @@ class CribView(View):
 
         return context
 
-    @method_decorator(login_and_committee(settings.TUTORING_GROUP))
     def get(self, request):
         qs = self.get_queryset(request)
         context = self.get_context(request, qs)
 
         return render(request, self.template, context=context)
 
-    @method_decorator(login_and_committee(settings.TUTORING_GROUP))
     def post(self, request):
         form = AddCribForm(request.POST, request.FILES)
         if form.is_valid():
