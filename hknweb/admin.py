@@ -14,6 +14,7 @@ from hknweb.models import (
     Committee,
     Election,
     Committeeship,
+    DriveFolderID,
 )
 from hknweb.forms import ProvisionCandidatesForm
 
@@ -155,3 +156,4 @@ admin.site.register(Profile)
 admin.site.register(CandidateProvisioningPassword)
 admin.site.register(Committee)
 admin.site.register(Election)
+admin.site.register(DriveFolderID)

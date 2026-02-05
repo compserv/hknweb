@@ -78,6 +78,7 @@ class CourseDescriptionAdmin(admin.ModelAdmin):
     fields = (
         "title",
         "slug",
+        "folderID",
         "description",
         "quick_links",
         "topics_covered",

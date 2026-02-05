@@ -22,6 +22,7 @@ from hknweb.studentservices.models import (
     CourseDescription,
 )
 from hknweb.studentservices.forms import DocumentForm, TourRequest, CourseEditForm
+from hknweb.tutoring.models import CribSheet
 
 
 @allow_public_access
@@ -181,10 +182,19 @@ def course_guide_data(request):
 @allow_public_access
 def course_description(request, slug):
     course = get_object_or_404(CourseDescription, slug=slug)
+    cribsheets = CribSheet.objects.filter(course=course, public=True)
+    quick_links = course.quick_links
+    if cribsheets:
+        for sheet in cribsheets:
+            quick_links += (
+                "\n"
+                + f"[{sheet.title}](https://drive.google.com/file/d/{sheet.fileID}/view)"
+            )
+
     context = {
         "course": course,
         "description": markdownify(course.description),
-        "quick_links": markdownify(course.quick_links),
+        "quick_links": markdownify(quick_links),
         "prerequisites": markdownify(course.prerequisites),
         "topics_covered": markdownify(course.topics_covered),
         "more_info": markdownify(course.more_info),

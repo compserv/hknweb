@@ -8,6 +8,7 @@ from django.db.models.functions import Concat
 from django.contrib.auth.models import User
 
 from hknweb.coursesemester.models import Semester
+from hknweb.studentservices.models import CourseDescription
 
 
 class Room(models.Model):
@@ -65,3 +66,30 @@ class Slot(models.Model):
             full_name=Concat("first_name", Value(" "), "last_name")
         ).values_list("full_name", flat=True)
         return ", ".join(tutors)
+
+
+class CribSheet(models.Model):
+    semester = models.ForeignKey(Semester, on_delete=models.PROTECT)
+
+    course = models.ForeignKey(CourseDescription, on_delete=models.PROTECT)
+
+    fileID = models.CharField(max_length=50)
+
+    title = models.CharField(max_length=100)
+
+    comment = models.TextField(blank=True)
+
+    upload_date = models.DateTimeField(auto_now_add=True)
+
+    public = models.BooleanField(default=False)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["semester", "course", "title"],
+                name="unique_cribsheet_per_course_per_semester",
+            )
+        ]
+
+    def __str__(self) -> str:  # pragma: no cover
+        return f"{self.course} - {self.title} ({self.semester})"
