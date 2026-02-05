@@ -17,7 +17,6 @@ from django.db.models import Q
 from django.utils.decorators import method_decorator
 
 
-
 @method_decorator(login_and_committee(settings.TUTORING_GROUP), name="dispatch")
 class CribView(View):
     template = "tutoring/crib.html"
@@ -42,7 +41,9 @@ class CribView(View):
         semester_query = request.GET.get("semester", "").strip()
         if semester_query:
             semester_semester, semester_year = semester_query.split()
-            qs = qs.filter(semester__semester=semester_semester, semester__year=semester_year)
+            qs = qs.filter(
+                semester__semester=semester_semester, semester__year=semester_year
+            )
 
         return qs.order_by("-upload_date")
 
