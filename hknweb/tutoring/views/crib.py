@@ -1,4 +1,3 @@
-from io import BytesIO
 from django.shortcuts import render, get_object_or_404, redirect
 from hknweb.utils import login_and_committee
 from hknweb.tutoring.models import CribSheet, CourseDescription
@@ -15,11 +14,14 @@ from hknweb.google_drive_utils import (
 from django.views import View
 from django.core.paginator import Paginator
 from django.db.models import Q
+from django.utils.decorators import method_decorator
 
 
+
+@method_decorator(login_and_committee(settings.TUTORING_GROUP), name="dispatch")
 class CribView(View):
     template = "tutoring/crib.html"
-    paginte_by = 10
+    paginate_by = 10
 
     def get_queryset(self, request):
         qs = CribSheet.objects.all()
@@ -39,12 +41,13 @@ class CribView(View):
 
         semester_query = request.GET.get("semester", "").strip()
         if semester_query:
-            qs = qs.filter(semester__name=semester_query)
+            semester_semester, semester_year = semester_query.split()
+            qs = qs.filter(semester__semester=semester_semester, semester__year=semester_year)
 
         return qs.order_by("-upload_date")
 
     def get_context(self, request, qs):
-        paginator = Paginator(qs, self.paginte_by)
+        paginator = Paginator(qs, self.paginate_by)
         page_number = request.GET.get("page")
         page_obj = paginator.get_page(page_number)
 
@@ -61,7 +64,6 @@ class CribView(View):
     def get(self, request):
         qs = self.get_queryset(request)
         context = self.get_context(request, qs)
-
         return render(request, self.template, context=context)
 
     def post(self, request):
@@ -85,7 +87,6 @@ class CribView(View):
                     course.folderID = folderID
                     course.save()
                 else:
-                    print("Error creating folder for course:", result["result"])
                     return
 
             result = create_pdf(title, file, parents=[folderID], description=comment)
@@ -99,10 +100,6 @@ class CribView(View):
                     comment=comment,
                 )
                 sheet.save()
-            else:
-                print("Error uploading crib sheet:", result["result"])
-        else:
-            print("Invalid form submission:", form.errors)
 
         qs = self.get_queryset(request)
         context = self.get_context(request, qs)

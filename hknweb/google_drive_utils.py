@@ -1,3 +1,4 @@
+from functools import wraps
 import google.oauth2.service_account as service_account
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
@@ -42,6 +43,7 @@ def get_credentials():  # pragma: no cover
 
 
 def check_credentials_wrapper(fn):
+    @wraps(fn)
     def new_fn(*args, **kwargs):
         get_credentials()
         return fn(*args, **kwargs)
