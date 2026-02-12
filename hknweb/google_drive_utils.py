@@ -25,19 +25,11 @@ def get_credentials():  # pragma: no cover
     """
     SCOPE = ["https://www.googleapis.com/auth/drive"]
 
-    json_env = os.getenv("GOOGLE_DRIVE_CREDENTIALS_JSON")
+    CRED = os.getenv("GOOGLE_DRIVE_SERVICE_ACCOUNT_CREDS")
+    if not CRED:
+        raise RuntimeError("Google Drive Service Accounts Creds not found")
 
-    if not json_env:
-        raise ImproperlyConfigured(
-            "No Drive credentials found in environment variables."
-        )
-
-    try:
-        info = json.loads(json_env)
-    except json.JSONDecodeError:
-        raise ImproperlyConfigured("env doesn't contain a valid JSON")
-
-    creds = service_account.Credentials.from_service_account_info(info, scopes=SCOPE)
+    creds = service_account.Credentials.from_service_account_file(CRED, scopes=SCOPE)
 
     return creds
 
