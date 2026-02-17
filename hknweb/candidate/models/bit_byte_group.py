@@ -19,8 +19,12 @@ class BitByteGroup(models.Model):
         related_name="bit_byte_groups",
     )
 
-    bytes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="bitbyte_groups_as_byte")
-    bits = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="bitbyte_groups_as_bit")
+    bytes = models.ManyToManyField(
+        settings.AUTH_USER_MODEL, related_name="bitbyte_groups_as_byte"
+    )
+    bits = models.ManyToManyField(
+        settings.AUTH_USER_MODEL, related_name="bitbyte_groups_as_bit"
+    )
 
     def __str__(self):
         return (
