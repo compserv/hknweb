@@ -24,7 +24,7 @@
  
     <form action="." method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ form.as_p }}
+        {{ form.as_div }}
         <input type="submit" value="Upload CSV" class="default">
     </form>
 

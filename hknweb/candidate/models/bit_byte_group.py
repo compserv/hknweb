@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.conf import settings
 from hknweb.coursesemester.models import Semester
 
 
@@ -16,13 +16,11 @@ class BitByteGroup(models.Model):
     semester = models.ForeignKey(
         Semester,
         on_delete=models.CASCADE,
-        null=True,
-        blank=True,
         related_name="bit_byte_groups",
     )
 
-    bytes = models.ManyToManyField("auth.User", related_name="bitbyte_groups_as_byte")
-    bits = models.ManyToManyField("auth.User", related_name="bitbyte_groups_as_bit")
+    bytes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="bitbyte_groups_as_byte")
+    bits = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="bitbyte_groups_as_bit")
 
     def __str__(self):
         return (
