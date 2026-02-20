@@ -267,3 +267,7 @@ class ProvisionCandidatesForm(forms.Form):
 
         # Save information for adding messages
         self.invalid_emails = invalid_emails
+
+
+class CsvImportForm(forms.Form):
+    csv_file = forms.FileField(label="Select .csv file")

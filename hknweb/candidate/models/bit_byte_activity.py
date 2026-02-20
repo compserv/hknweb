@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.conf import settings
 from hknweb.candidate.models.constants import MAX_STRLEN
 
 
@@ -13,7 +13,8 @@ class BitByteActivity(models.Model):
     class Meta:
         verbose_name_plural = "Bit Byte Activities"
 
-    participants = models.ManyToManyField("auth.User")
+    # TODO: Switch to use BitByteGroup model if more/proper bitbyte group backend is added.
+    participants = models.ManyToManyField(settings.AUTH_USER_MODEL)
     # whether VP/Csec confirmed this request, null when unreviewed
     confirmed = models.BooleanField(null=True)
     proof = models.CharField(
