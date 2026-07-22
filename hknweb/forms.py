@@ -17,6 +17,11 @@ import string
 
 import secrets
 
+import functools
+import operator
+
+from django.db.models import Q
+
 from hknweb.models import User, Profile
 from hknweb.coursesemester.models import Semester
 from hknweb.utils import get_rand_photo
@@ -200,9 +205,15 @@ class ProvisionCandidatesForm(forms.Form):
             )
 
         def email_to_username(email: str) -> str:
+            # Normalize to lowercase so that emails differing only in case (e.g.
+            # "Jane.Doe@berkeley.edu" vs "jane.doe@berkeley.edu") map to the same
+            # username, and so that the "@berkeley.edu" suffix check isn't case
+            # sensitive either.
+            normalized_email = email.lower()
+
             username = None
-            if email.endswith(required_email_suffix):
-                username = email[: -len(required_email_suffix)]
+            if normalized_email.endswith(required_email_suffix.lower()):
+                username = normalized_email[: -len(required_email_suffix)]
 
             return username
 
@@ -220,11 +231,19 @@ class ProvisionCandidatesForm(forms.Form):
 
             row["username"] = username
 
-        existing_usernames = set(
-            User.objects.filter(username__in=usernames).values_list(
+        # Compare case-insensitively: a DB user "JaneDoe" should still be treated
+        # as a duplicate of a newly-derived username "janedoe".
+        existing_usernames_query = functools.reduce(
+            operator.or_,
+            (Q(username__iexact=username) for username in usernames),
+            Q(pk__in=[]),
+        )
+        existing_usernames = {
+            username.lower()
+            for username in User.objects.filter(existing_usernames_query).values_list(
                 "username", flat=True
             )
-        )
+        }
 
         # Setup account provisioning utils
         # Get candidate group to add users to
@@ -240,7 +259,8 @@ class ProvisionCandidatesForm(forms.Form):
 
         email_information = []
         for row in rows:
-            # If username is None or already exists, skip provisioning
+            # If username is None or already exists (including a duplicate earlier
+            # in this same batch), skip provisioning
             if (row["username"] is None) or (row["username"] in existing_usernames):
                 continue
 
@@ -256,6 +276,10 @@ class ProvisionCandidatesForm(forms.Form):
                 password=password,
             )
             user.save()
+
+            # Track this username so a later row in the same batch with the same
+            # email (differing only in case) is treated as a duplicate too.
+            existing_usernames.add(row["username"])
 
             # Add user to the candidates group
             group.user_set.add(user)
