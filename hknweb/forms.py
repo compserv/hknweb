@@ -59,14 +59,23 @@ class SignupForm(UserCreationForm):
 
     def clean_email(self):
         email = self.cleaned_data.get("email")
+        # Normalise to lowercase so User@Berkeley.EDU and user@berkeley.edu
+        # are treated as the same address throughout the system.
+        if email:
+            email = email.lower()
         if (email is None) or not email.endswith(
             "berkeley.edu"
         ):  # lgtm [py/incomplete-url-substring-sanitization]
             raise forms.ValidationError(
-                "Please a berkeley.edu email to register!", code="invalid"
+                "Please use a berkeley.edu email to register!", code="invalid"
             )
-        else:
-            return email
+        # Reject duplicate addresses (case-insensitive) to prevent phantom accounts.
+        if User.objects.filter(email__iexact=email).exists():
+            raise forms.ValidationError(
+                "An account with this email address already exists.",
+                code="duplicate",
+            )
+        return email
 
     class Meta:
         model = User
